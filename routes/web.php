@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\FakultasController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/dashboard', function () {
-    return view('layout.main');
+
+Route::prefix('admin')->as('admin.')->group(function () {
+    Route::get('/fakultas/data', [FakultasController::class, 'getFakultas'])->name('fakultas.data');
+    Route::resource('fakultas', FakultasController::class);
 });

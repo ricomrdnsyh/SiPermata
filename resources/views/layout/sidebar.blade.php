@@ -146,10 +146,11 @@
                         <span class="menu-section text-muted text-uppercase fs-8 ls-1">Master</span>
                     </div>
                 </div>
-                <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                    <span class="menu-link">
+                <div class="menu-item">
+                    <a class="menu-link {{ Request::is('admin/fakultas') ? 'active' : '' }}"
+                        href="{{ route('admin.fakultas.index') }}">
                         <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none">
@@ -163,27 +164,8 @@
                             </span>
                             <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Data Master</span>
-                        <span class="menu-arrow"></span>
-                    </span>
-                    <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        <div class="menu-item">
-                            <a class="menu-link {{ Request::is('admin/wilayah') ? 'active' : '' }}" href="#">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Data Wilayah</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link" href="../../demo8/dist/account/settings.html">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Settings</span>
-                            </a>
-                        </div>
-                    </div>
+                        <span class="menu-title">Master Fakultas</span>
+                    </a>
                 </div>
                 <div class="menu-item">
                     <div class="menu-content pb-2">
