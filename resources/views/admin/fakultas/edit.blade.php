@@ -31,7 +31,7 @@
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Singkatan</label>
+                                            <label class="required fw-semibold fs-6 mb-2">Singkatan Fakultas</label>
                                             <input type="text" name="singkatan" class="form-control mb-3 mb-lg-0"
                                                 value="{{ $data->singkatan }}" />
                                             @error('singkatan')

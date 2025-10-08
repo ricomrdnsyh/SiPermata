@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Fakultas')
+@section('title', 'Prodi')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Fakultas</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Prodi</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -45,8 +45,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('admin.fakultas.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Fakultas</a>
+                                <a href="{{ route('admin.prodi.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus"></i> Add Prodi</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -60,13 +60,15 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="fakultas-table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="prodi-table">
                             <!--begin::Table head-->
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="min-w-125px">Nama Fakultas</th>
-                                    <th class="min-w-125px">Singkatan Fakultas</th>
+                                    <th class="min-w-125px">Nama Prodi</th>
+                                    <th class="min-w-125px">Singkatan Prodi</th>
+                                    <th class="min-w-125px">Gelar</th>
                                     <th class="min-w-125px">Status</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
@@ -94,25 +96,33 @@
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
 
-    {{-- AJAX Show Data --}}
     <script>
         $(document).ready(function() {
-            let table = $('#fakultas-table').DataTable({
+            let table = $('#prodi-table').DataTable({
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('admin.fakultas.data') }}',
+                ajax: '{{ route('admin.prodi.data') }}',
                 columns: [{
                         data: 'nama_fakultas',
-                        name: 'nama_fakultas'
+                        name: 'fakultas.nama_fakultas'
+                    },
+                    {
+                        data: 'nama_prodi',
+                        name: 'prodi.nama_prodi'
                     },
                     {
                         data: 'singkatan',
-                        name: 'singkatan'
+                        name: 'prodi.singkatan'
+                    },
+                    {
+                        data: 'gelar',
+                        name: 'prodi.gelar'
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'prodi.status',
+                        orderable: false // Jika kolom status tidak perlu diurutkan
                     },
                     {
                         data: 'action',
@@ -126,16 +136,23 @@
                     search: "Search :_INPUT_",
                     searchPlaceholder: "Search...",
                     lengthMenu: "Show _MENU_ entries",
+                }
+            });
 
+            $('#prodi-table').on('click', '.btn-active-light-danger', function(e) {
+                e.preventDefault();
+                let button = $(this);
+                let id = button.data('id');
+
+                if (id) {
+                    confirmDelete(id);
+                } else {
+                    console.error('ID tidak ditemukan pada tombol hapus');
                 }
             });
 
         });
-    </script>
-    {{-- AJAX END Show Data --}}
 
-    {{-- AJAX Delete Data --}}
-    <script>
         function confirmDelete(id) {
             Swal.fire({
                 title: "Apakah Anda yakin?",
@@ -151,7 +168,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/admin/fakultas/' + id,
+                        url: '/admin/prodi/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -175,18 +192,20 @@
                                     confirmButton: "btn btn-primary"
                                 }
                             });
-                            $('#fakultas-table').DataTable().ajax.reload(null, false);
-                            // reload tabel tanpa reset halaman
+                            $('#prodi-table').DataTable().ajax.reload(null, false);
                         },
                         error: function(xhr) {
-                            Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
+                            let errorMessage = "Terjadi kesalahan saat menghapus data.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            Swal.fire("Error!", errorMessage, "error");
                         }
                     });
                 }
-            })
+            });
         }
     </script>
-    {{-- AJAX END Delete Data --}}
 
     @if ($message = Session::get('success'))
         <script>

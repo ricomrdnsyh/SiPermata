@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Prodi;
 use Illuminate\Database\Eloquent\Model;
 
 class Fakultas extends Model
@@ -15,4 +16,9 @@ class Fakultas extends Model
         'singkatan',
         'status',
     ];
+
+    public function prodi()
+    {
+        return $this->hasMany(Prodi::class, 'fakultas_id');
+    }
 }

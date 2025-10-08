@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Tambah Fakultas')
+@section('title', 'Edit Prodi')
 
 @section('content')
     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
@@ -12,28 +12,56 @@
                             <div class="card card-flush h-lg-100" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
-                                        <h2>Tambah Fakultas</h2>
+                                        <h2>Edit Prodi</h2>
                                     </div>
                                 </div>
                                 <div class="separator border-gray-200 mt-4"></div>
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework"
-                                        action="{{ route('admin.fakultas.store') }}" method="POST">
+                                        action="{{ route('admin.prodi.update', $prodi->id_prodi) }}" method="POST">
                                         @csrf
+                                        @method('PUT')
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <input type="text" name="nama_fakultas" class="form-control mb-3 mb-lg-0"
-                                                value="{{ old('nama_fakultas') }}" />
-                                            @error('nama_fakultas')
+                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                                data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
+                                                id="fakltas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                aria-hidden="true" data-kt-initialized="1">
+                                                <option value="" data-select2-id="select2-data-74-9zwr">
+                                                    Pilih Fakultas...</option>
+                                                @foreach ($fakultas as $fakultas)
+                                                    <option value="{{ $fakultas->id_fakultas }}"
+                                                        {{ $fakultas->id_fakultas == $prodi->fakultas_id ? 'selected' : '' }}>
+                                                        {{ $fakultas->nama_fakultas }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('fakultas_id')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Singkatan Fakultas</label>
+                                            <label class="required fw-semibold fs-6 mb-2">Nama Prodi</label>
+                                            <input type="text" name="nama_prodi" class="form-control mb-3 mb-lg-0"
+                                                value="{{ $prodi->nama_prodi }}" />
+                                            @error('nama_prodi')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Singkatan Prodi</label>
                                             <input type="text" name="singkatan" class="form-control mb-3 mb-lg-0"
-                                                value="{{ old('singkatan') }}" />
+                                                value="{{ $prodi->singkatan }}" />
                                             @error('singkatan')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Gelar</label>
+                                            <input type="text" name="gelar" class="form-control mb-3 mb-lg-0"
+                                                value="{{ $prodi->gelar }}" />
+                                            @error('gelar')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
@@ -42,14 +70,16 @@
                                             <div class="d-flex fv-col">
                                                 <div class="form-check form-check-custom form-check-solid mx-4">
                                                     <input class="form-check-input" name="status" type="radio"
-                                                        value="aktif" id="aktif" />
+                                                        value="aktif" id="aktif"
+                                                        {{ $prodi->status == 'aktif' ? 'checked' : '' }} />
                                                     <label class="form-check-label" for="aktif">
                                                         <div class="fw-bold text-gray-800">Aktif</div>
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-custom form-check-solid mx-4">
                                                     <input class="form-check-input" name="status" type="radio"
-                                                        value="nonaktif" id="nonaktif" Label-->
+                                                        value="nonaktif" id="nonaktif"
+                                                        {{ $prodi->status == 'nonaktif' ? 'checked' : '' }} />
                                                     <label class="form-check-label" for="nonaktif">
                                                         <div class="fw-bold text-gray-800">Nonaktif</div>
                                                     </label>
@@ -66,7 +96,7 @@
                                             </a>
                                             <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
                                                 <span class="indicator-label">
-                                                    Tambah
+                                                    Update
                                                 </span>
                                                 <span class="indicator-progress">
                                                     Tunggu sebentar...
