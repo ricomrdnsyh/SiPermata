@@ -6,7 +6,7 @@
     <base href="../">
     <title>@yield('title')</title>
     <meta charset="utf-8" />
-    <link rel="shortcut icon" href="{{ asset('assets/media/logos/favicon.ico') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ asset('assets/media/logos/unuja.png') }}" type="image/x-icon" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--begin::Fonts-->
