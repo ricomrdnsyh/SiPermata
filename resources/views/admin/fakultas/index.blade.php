@@ -127,9 +127,15 @@
                     searchPlaceholder: "Search...",
                     lengthMenu: "Show _MENU_ entries",
 
+                },
+                drawCallback: function() {
+                    $('#fakultas-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
 
+            table.on('draw', function() {
+                $('#fakultas-table [data-bs-toggle="tooltip"]').tooltip();
+            });
         });
     </script>
     {{-- AJAX END Show Data --}}

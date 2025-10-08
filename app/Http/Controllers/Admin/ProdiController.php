@@ -46,14 +46,14 @@ class ProdiController extends Controller
                 return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.prodi.show', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-info text-center">
-                <i class="fas fa-eye"></i></a>';
+                $showBtn = '<a href="' . route('admin.prodi.show', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('admin.prodi.edit', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-warning text-center">
-                <i class="fas fa-pen"></i></a>';
+                $editBtn = '<a href="' . route('admin.prodi.edit', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
-                $deleteBtn = '<a href="javascript:void(0)" data-id="' . $row->id_prodi . '" class="btn btn-sm btn-light btn-active-light-danger text-center delete-btn">
-                <i class="fas fa-trash-alt"></i></a>';
+                $deleteBtn = '<a href="javascript:void(0)" data-id="' . $row->id_prodi . '" class="btn btn-sm btn-light btn-active-light-danger text-center delete-btn" data-bs-toggle="tooltip" 
+                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
