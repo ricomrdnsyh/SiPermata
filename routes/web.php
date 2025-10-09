@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AkademikController;
 use App\Http\Controllers\Admin\FakultasController;
+use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\ProdiController;
 use Illuminate\Support\Facades\Route;
@@ -19,4 +20,8 @@ Route::prefix('admin')->as('admin.')->group(function () {
 
     Route::get('/mitra/data', [MitraController::class, 'getMitra'])->name('mitra.data');
     Route::resource('mitra', MitraController::class);
+
+    Route::get('/mahasiswa/data', [MahasiswaController::class, 'getmahasiswa'])->name('mahasiswa.data');
+    Route::get('/get-prodi/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
+    Route::resource('mahasiswa', MahasiswaController::class);
 });

@@ -21,4 +21,9 @@ class Fakultas extends Model
     {
         return $this->hasMany(Prodi::class, 'fakultas_id');
     }
+
+    public function mahasiswa()
+    {
+        return $this->hasMany(Mahasiswa::class, 'fakultas_id');
+    }
 }
