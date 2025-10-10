@@ -158,9 +158,9 @@
 
                 if (fakultasId) {
                     fetch(`/admin/get-prodi/${fakultasId}`)
-                        .then(response => response.json()) // <== Penting!
+                        .then(response => response.json())
                         .then(data => {
-                            console.log('Data prodi:', data); // Debug
+                            console.log('Data prodi:', data);
 
                             prodiDropdown.empty().append(
                                 '<option value="">-- Pilih Prodi --</option>');
@@ -187,12 +187,9 @@
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
 
             form.addEventListener('submit', function(event) {
-                // Hanya aktifkan spinner jika form valid (opsional)
                 if (!form.checkValidity()) {
                     return;
                 }
-
-                // Nonaktifkan tombol dan tampilkan spinner
                 submitButton.disabled = true;
                 submitButton.querySelector('.indicator-label').style.display = 'none';
                 submitButton.querySelector('.indicator-progress').style.display = 'inline-block';

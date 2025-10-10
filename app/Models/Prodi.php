@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Fakultas;
+use App\Models\Penduduk;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,5 +44,10 @@ class Prodi extends Model
     public function mahasiswa()
     {
         return $this->hasMany(Mahasiswa::class, 'prodi_id');
+    }
+
+    public function penduduk()
+    {
+        return $this->hasMany(Penduduk::class, 'prodi_id');
     }
 }

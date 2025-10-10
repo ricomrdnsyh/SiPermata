@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Prodi;
+use App\Models\Penduduk;
+use App\Models\Mahasiswa;
 use Illuminate\Database\Eloquent\Model;
 
 class Fakultas extends Model
@@ -25,5 +27,10 @@ class Fakultas extends Model
     public function mahasiswa()
     {
         return $this->hasMany(Mahasiswa::class, 'fakultas_id');
+    }
+
+    public function penduduk()
+    {
+        return $this->hasMany(Penduduk::class, 'fakultas_id');
     }
 }

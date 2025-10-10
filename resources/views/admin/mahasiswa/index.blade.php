@@ -67,9 +67,7 @@
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="min-w-125px">NIM</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
-                                    </th>
                                     <th class="min-w-125px">Jenis Kelamin</th>
-                                    </th>
                                     <th class="min-w-125px">Nama Fakultas</th>
                                     <th class="min-w-125px">Nama Prodi</th>
                                     <th class="min-w-125px">Email</th>
@@ -100,7 +98,6 @@
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
 
-    {{-- AJAX Show Data --}}
     <script>
         $(document).ready(function() {
             let table = $('#mahasiswa-table').DataTable({
@@ -160,9 +157,6 @@
             });
         });
     </script>
-    {{-- AJAX END Show Data --}}
-
-    {{-- AJAX Delete Data --}}
     <script>
         function confirmDelete(id) {
             Swal.fire({
@@ -214,7 +208,6 @@
             })
         }
     </script>
-    {{-- AJAX END Delete Data --}}
 
     @if ($message = Session::get('success'))
         <script>

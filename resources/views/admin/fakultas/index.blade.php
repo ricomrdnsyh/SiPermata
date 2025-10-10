@@ -94,7 +94,7 @@
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
 
-    {{-- AJAX Show Data --}}
+
     <script>
         $(document).ready(function() {
             let table = $('#fakultas-table').DataTable({
@@ -138,9 +138,7 @@
             });
         });
     </script>
-    {{-- AJAX END Show Data --}}
 
-    {{-- AJAX Delete Data --}}
     <script>
         function confirmDelete(id) {
             Swal.fire({
@@ -182,7 +180,6 @@
                                 }
                             });
                             $('#fakultas-table').DataTable().ajax.reload(null, false);
-                            // reload tabel tanpa reset halaman
                         },
                         error: function(xhr) {
                             Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
@@ -192,7 +189,6 @@
             })
         }
     </script>
-    {{-- AJAX END Delete Data --}}
 
     @if ($message = Session::get('success'))
         <script>

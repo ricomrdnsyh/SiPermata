@@ -23,10 +23,10 @@ class MahasiswaController extends Controller
 
     public function getMahasiswa()
     {
-        $prodi = Mahasiswa::select(['nim', 'prodi_id', 'fakultas_id', 'nama', 'jenis_kelamin', 'email', 'no_hp'])
+        $data = Mahasiswa::select(['nim', 'prodi_id', 'fakultas_id', 'nama', 'jenis_kelamin', 'email', 'no_hp'])
             ->with('fakultas', 'prodi');
 
-        return DataTables::of($prodi)
+        return DataTables::of($data)
             ->editColumn('jenis_kelamin', function ($row) {
                 if ($row->jenis_kelamin == 'L') {
                     return '<span>Laki-laki</span>';

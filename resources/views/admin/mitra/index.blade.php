@@ -92,7 +92,6 @@
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
 
-    {{-- AJAX Show Data --}}
     <script>
         $(document).ready(function() {
             let table = $('#mitra-table').DataTable({
@@ -127,9 +126,7 @@
             });
         });
     </script>
-    {{-- AJAX END Show Data --}}
 
-    {{-- AJAX Delete Data --}}
     <script>
         function confirmDelete(id) {
             Swal.fire({
@@ -181,7 +178,6 @@
             })
         }
     </script>
-    {{-- AJAX END Delete Data --}}
 
     @if ($message = Session::get('success'))
         <script>

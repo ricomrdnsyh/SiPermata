@@ -63,12 +63,9 @@
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
 
             form.addEventListener('submit', function(event) {
-                // Hanya aktifkan spinner jika form valid (opsional)
                 if (!form.checkValidity()) {
                     return;
                 }
-
-                // Nonaktifkan tombol dan tampilkan spinner
                 submitButton.disabled = true;
                 submitButton.querySelector('.indicator-label').style.display = 'none';
                 submitButton.querySelector('.indicator-progress').style.display = 'inline-block';

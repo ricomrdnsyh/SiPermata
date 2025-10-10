@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Edit Prodi')
+@section('title', 'Tambah Penduduk')
 
 @section('content')
     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
@@ -12,27 +12,41 @@
                             <div class="card card-flush h-lg-100" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
-                                        <h2>Edit Prodi</h2>
+                                        <h2>Tambah Penduduk</h2>
                                     </div>
                                 </div>
                                 <div class="separator border-gray-200 mt-4"></div>
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework"
-                                        action="{{ route('admin.prodi.update', $prodi->id_prodi) }}" method="POST">
+                                        action="{{ route('admin.penduduk.store') }}" method="POST">
                                         @csrf
-                                        @method('PUT')
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">NIDN</label>
+                                            <input type="number" name="nidn" class="form-control mb-3 mb-lg-0"
+                                                value="{{ old('nidn') }}" />
+                                            @error('nidn')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Nama Penduduk</label>
+                                            <input type="text" name="nama_penduduk" class="form-control mb-3 mb-lg-0"
+                                                value="{{ old('nama_penduduk') }}" />
+                                            @error('nama_penduduk')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
                                             <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
-                                                id="fakltas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                id="fakultas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
                                                 aria-hidden="true" data-kt-initialized="1">
                                                 <option value="" data-select2-id="select2-data-74-9zwr">
                                                     Pilih Fakultas...</option>
                                                 @foreach ($fakultas as $fakultas)
-                                                    <option value="{{ $fakultas->id_fakultas }}"
-                                                        {{ $fakultas->id_fakultas == $prodi->fakultas_id ? 'selected' : '' }}>
+                                                    <option value="{{ $fakultas->id_fakultas }}">
                                                         {{ $fakultas->nama_fakultas }}
                                                     </option>
                                                 @endforeach
@@ -43,60 +57,41 @@
                                         </div>
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <input type="text" name="nama_prodi" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $prodi->nama_prodi }}" />
-                                            @error('nama_prodi')
+                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                                data-control="select2" data-placeholder="Pilih Prodi" id="prodi_id"
+                                                name="prodi_id" data-select2-id="select2-data-72-r5i5" tabindex="-1"
+                                                aria-hidden="true" data-kt-initialized="2">
+                                                <option value="" data-select2-id="select2-data-74-9zwr">
+                                                    Pilih Prodi</option>
+                                            </select>
+                                            @error('prodi_id')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Singkatan Prodi</label>
-                                            <input type="text" name="singkatan" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $prodi->singkatan }}" />
-                                            @error('singkatan')
+                                            <label class="required fw-semibold fs-6 mb-2">Email</label>
+                                            <input type="email" name="email" class="form-control mb-3 mb-lg-0"
+                                                value="{{ old('email') }}" />
+                                            @error('email')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Gelar</label>
-                                            <input type="text" name="gelar" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $prodi->gelar }}" />
-                                            @error('gelar')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="mb-7">
-                                            <label class="required fw-semibold fs-6 mb-5">Status</label>
-                                            <div class="d-flex fv-col">
-                                                <div class="form-check form-check-custom form-check-solid mx-4">
-                                                    <input class="form-check-input" name="status" type="radio"
-                                                        value="aktif" id="aktif"
-                                                        {{ $prodi->status == 'aktif' ? 'checked' : '' }} />
-                                                    <label class="form-check-label" for="aktif">
-                                                        <div class="fw-bold text-gray-800">Aktif</div>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-custom form-check-solid mx-4">
-                                                    <input class="form-check-input" name="status" type="radio"
-                                                        value="nonaktif" id="nonaktif"
-                                                        {{ $prodi->status == 'nonaktif' ? 'checked' : '' }} />
-                                                    <label class="form-check-label" for="nonaktif">
-                                                        <div class="fw-bold text-gray-800">Nonaktif</div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            @error('status')
+                                            <label class="required fw-semibold fs-6 mb-2">No Telepon</label>
+                                            <input type="number" name="no_hp" class="form-control mb-3 mb-lg-0"
+                                                value="{{ old('no_hp') }}" />
+                                            @error('no_hp')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.fakultas.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.penduduk.index') }}" class="btn btn-light me-3">
                                                 Batal
                                             </a>
                                             <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
                                                 <span class="indicator-label">
-                                                    Update
+                                                    Tambah
                                                 </span>
                                                 <span class="indicator-progress">
                                                     Tunggu sebentar...
@@ -116,6 +111,42 @@
 @endsection
 
 @section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fakultasDropdown = document.getElementById('fakultas_id');
+            const prodiDropdown = $('#prodi_id');
+
+            $('#fakultas_id').on('change', function() {
+                const fakultasId = this.value;
+
+                prodiDropdown.empty().trigger('change');
+                prodiDropdown.append('<option value="">Pilih Prodi</option>');
+
+                if (fakultasId) {
+                    fetch(`/admin/get-prodi/${fakultasId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Data prodi:', data);
+
+                            prodiDropdown.empty().append(
+                                '<option value="">-- Pilih Prodi --</option>');
+
+                            data.forEach(prodi => {
+                                const option = new Option(prodi.nama_prodi, prodi
+                                    .id_prodi,
+                                    false, false);
+                                prodiDropdown.append(option);
+                            });
+
+                            prodiDropdown.trigger('change');
+                        })
+                        .catch(err => {
+                            console.error('Gagal ambil data prodi:', err);
+                        });
+                }
+            });
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');

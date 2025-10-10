@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Tahun Akademik')
+@section('title', 'Penduduk')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Tahun Akademik</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Penduduk</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -45,8 +45,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('admin.akademik.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Tahun Akademik</a>
+                                <a href="{{ route('admin.penduduk.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus"></i> Add Penduduk</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -60,13 +60,17 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="akademik-table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="penduduk-table">
                             <!--begin::Table head-->
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="min-w-125px">Kode Akademik</th>
-                                    <th class="min-w-125px">Tahun Akademik</th>
+                                    <th class="min-w-125px">NIDN</th>
+                                    <th class="min-w-125px">Nama Penduduk</th>
+                                    <th class="min-w-125px">Nama Fakultas</th>
+                                    <th class="min-w-125px">Nama Prodi</th>
+                                    <th class="min-w-125px">Email</th>
+                                    <th class="min-w-125px">No Telepon</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
@@ -95,18 +99,34 @@
 
     <script>
         $(document).ready(function() {
-            let table = $('#akademik-table').DataTable({
+            let table = $('#penduduk-table').DataTable({
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('admin.akademik.data') }}',
+                ajax: '{{ route('admin.penduduk.data') }}',
                 columns: [{
-                        data: 'kode_akademik',
-                        name: 'kode_akademik'
+                        data: 'nidn',
+                        name: 'nidn'
                     },
                     {
-                        data: 'tahun_akademik',
-                        name: 'tahun_akademik'
+                        data: 'nama_penduduk',
+                        name: 'nama_penduduk'
+                    },
+                    {
+                        data: 'nama_fakultas',
+                        name: 'fakultas.nama_fakultas'
+                    },
+                    {
+                        data: 'nama_prodi',
+                        name: 'prodi.nama_prodi'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'no_hp',
+                        name: 'no_hp'
                     },
                     {
                         data: 'action',
@@ -123,16 +143,28 @@
 
                 },
                 drawCallback: function() {
-                    $('#akademik-table [data-bs-toggle="tooltip"]').tooltip();
+                    $('#penduduk-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
-            table.on('draw', function() {
-                $('#akademik-table [data-bs-toggle="tooltip"]').tooltip();
-            });
-        });
-    </script>
 
-    <script>
+            table.on('draw', function() {
+                $('#penduduk-table [data-bs-toggle="tooltip"]').tooltip();
+            });
+
+            $('#penduduk-table').on('click', '.btn-active-light-danger', function(e) {
+                e.preventDefault();
+                let button = $(this);
+                let id = button.data('id');
+
+                if (id) {
+                    confirmDelete(id);
+                } else {
+                    console.error('ID tidak ditemukan pada tombol hapus');
+                }
+            });
+
+        });
+
         function confirmDelete(id) {
             Swal.fire({
                 title: "Apakah Anda yakin?",
@@ -148,7 +180,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/admin/akademik/' + id,
+                        url: '/admin/penduduk/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -172,14 +204,18 @@
                                     confirmButton: "btn btn-primary"
                                 }
                             });
-                            $('#akademik-table').DataTable().ajax.reload(null, false);
+                            $('#penduduk-table').DataTable().ajax.reload(null, false);
                         },
                         error: function(xhr) {
-                            Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
+                            let errorMessage = "Terjadi kesalahan saat menghapus data.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            Swal.fire("Error!", errorMessage, "error");
                         }
                     });
                 }
-            })
+            });
         }
     </script>
 

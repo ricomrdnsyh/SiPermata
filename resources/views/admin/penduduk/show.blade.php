@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Detail Mahasiswa')
+@section('title', 'Detail Penduduk')
 
 @section('content')
     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
@@ -12,7 +12,7 @@
                             <div class="card card-flush h-lg-100" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
-                                        <h2>Detail Mahasiswa</h2>
+                                        <h2>Detail Penduduk</h2>
                                     </div>
                                 </div>
                                 <div class="separator border-gray-200 mt-4"></div>
@@ -20,20 +20,14 @@
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
                                         <div class="fv-row mb-7">
-                                            <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                            <input type="text" name="nim" class="form-control mb-3 mb-lg-0" disabled
-                                                value="{{ $data->nim }}" />
+                                            <label class="fw-semibold fs-6 mb-2">NIDN</label>
+                                            <input type="text" name="nidn" class="form-control mb-3 mb-lg-0" disabled
+                                                value="{{ $data->nidn }}" />
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                            <input type="text" name="nama" class="form-control mb-3 mb-lg-0" disabled
-                                                value="{{ $data->nama }}" />
-                                        </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="fw-semibold fs-6 mb-2">Jenis Kelamin</label>
-                                            <input type="text" name="jenis_kelamin" class="form-control mb-3 mb-lg-0"
-                                                disabled
-                                                value="{{ $data->jenis_kelamin == 'L' ? 'Laki-laki' : ($data->jenis_kelamin == 'P' ? 'Perempuan' : 'Tidak Diketahui') }}" />
+                                            <label class="fw-semibold fs-6 mb-2">Nama Penduduk</label>
+                                            <input type="text" name="nama_penduduk" class="form-control mb-3 mb-lg-0" disabled
+                                                value="{{ $data->nama_penduduk }}" />
                                         </div>
                                         <div class="fv-row mb-7">
                                             <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
@@ -57,7 +51,7 @@
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.mahasiswa.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.penduduk.index') }}" class="btn btn-light me-3">
                                                 Kembali
                                             </a>
                                         </div>
