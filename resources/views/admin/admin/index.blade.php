@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Fakultas')
+@section('title', 'Admin')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Fakultas</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Admin</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -45,8 +45,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('admin.fakultas.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Fakultas</a>
+                                <a href="{{ route('admin.admin.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus"></i> Add Admin</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -60,14 +60,14 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="fakultas-table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="admin-table">
                             <!--begin::Table head-->
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="min-w-125px">Nama Fakultas</th>
-                                    <th class="min-w-125px">Singkatan Fakultas</th>
-                                    <th class="min-w-125px">Status</th>
+                                    <th class="min-w-125px">Nama Admin</th>
+                                    <th class="min-w-125px">Email</th>
+                                    <th class="min-w-125px">Created at</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
@@ -96,22 +96,22 @@
 
     <script>
         $(document).ready(function() {
-            let table = $('#fakultas-table').DataTable({
+            let table = $('#admin-table').DataTable({
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('admin.fakultas.data') }}',
+                ajax: '{{ route('admin.admin.data') }}',
                 columns: [{
-                        data: 'nama_fakultas',
-                        name: 'nama_fakultas'
+                        data: 'nama',
+                        name: 'nama'
                     },
                     {
-                        data: 'singkatan',
-                        name: 'singkatan'
+                        data: 'email',
+                        name: 'email'
                     },
                     {
-                        data: 'status',
-                        name: 'status'
+                        data: 'created_at',
+                        name: 'created_at'
                     },
                     {
                         data: 'action',
@@ -128,12 +128,12 @@
 
                 },
                 drawCallback: function() {
-                    $('#fakultas-table [data-bs-toggle="tooltip"]').tooltip();
+                    $('#admin-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
 
             table.on('draw', function() {
-                $('#fakultas-table [data-bs-toggle="tooltip"]').tooltip();
+                $('#admin-table [data-bs-toggle="tooltip"]').tooltip();
             });
         });
     </script>
@@ -154,7 +154,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/admin/fakultas/' + id,
+                        url: '/admin/admin/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -178,7 +178,7 @@
                                     confirmButton: "btn btn-primary"
                                 }
                             });
-                            $('#fakultas-table').DataTable().ajax.reload(null, false);
+                            $('#admin-table').DataTable().ajax.reload(null, false);
                         },
                         error: function(xhr) {
                             Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");

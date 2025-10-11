@@ -22,7 +22,7 @@ class TemplateControler extends Controller
         return view('admin.template.index', compact('data'));
     }
 
-    public function getMahasiswa()
+    public function getTemplate()
     {
         $data = Template::select(['id_template', 'nama_template', 'file', 'fakultas_id', 'prodi_id'])
             ->with('fakultas', 'prodi');

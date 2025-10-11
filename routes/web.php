@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AkademikController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\MahasiswaController;
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('admin')->as('admin.')->group(function () {
+    Route::get('/admin/data', [AdminController::class, 'getAdmin'])->name('admin.data');
+    Route::resource('admin', AdminController::class);
+
     Route::get('/fakultas/data', [FakultasController::class, 'getFakultas'])->name('fakultas.data');
     Route::resource('fakultas', FakultasController::class);
 
@@ -31,7 +35,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::get('/get-prodi/{fakultas_id}', [PendudukController::class, 'getProdi'])->name('getProdi');
     Route::resource('penduduk', PendudukController::class);
 
-    Route::get('/template/data', [TemplateControler::class, 'getmahasiswa'])->name('template.data');
+    Route::get('/template/data', [TemplateControler::class, 'getTemplate'])->name('template.data');
     Route::get('/get-prodi/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
     Route::resource('template', TemplateControler::class);
 });

@@ -299,7 +299,8 @@
                     </div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/user') ? 'active' : '' }}" href="#">
+                    <a class="menu-link {{ Request::is('admin/admin') ? 'active' : '' }}"
+                        href="{{ route('admin.admin.index') }}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -315,7 +316,7 @@
                             </span>
                             <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Users</span>
+                        <span class="menu-title">Administrator</span>
                     </a>
                 </div>
                 <div class="menu-content">
