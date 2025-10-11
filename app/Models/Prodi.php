@@ -50,4 +50,9 @@ class Prodi extends Model
     {
         return $this->hasMany(Penduduk::class, 'prodi_id');
     }
+
+    public function template()
+    {
+        return $this->hasMany(Template::class, 'prodi_id');
+    }
 }

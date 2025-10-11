@@ -33,4 +33,9 @@ class Fakultas extends Model
     {
         return $this->hasMany(Penduduk::class, 'fakultas_id');
     }
+
+    public function template()
+    {
+        return $this->hasMany(Template::class, 'fakultas_id');
+    }
 }

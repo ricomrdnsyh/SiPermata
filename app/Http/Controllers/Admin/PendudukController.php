@@ -21,7 +21,7 @@ class PendudukController extends Controller
         return view('admin.penduduk.index', compact('data'));
     }
 
-    public function getMahasiswa()
+    public function getPenduduk()
     {
         $data = Penduduk::select(['id_penduduk', 'fakultas_id', 'prodi_id', 'nama_penduduk', 'nidn', 'email', 'no_hp'])
             ->with('fakultas', 'prodi');
