@@ -28,14 +28,14 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::resource('mitra', MitraController::class);
 
     Route::get('/mahasiswa/data', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswa.data');
-    Route::get('/get-prodi/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
+    Route::get('/get-prodim/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
     Route::resource('mahasiswa', MahasiswaController::class);
 
     Route::get('/penduduk/data', [PendudukController::class, 'getPenduduk'])->name('penduduk.data');
-    Route::get('/get-prodi/{fakultas_id}', [PendudukController::class, 'getProdi'])->name('getProdi');
+    Route::get('/get-prodip/{fakultas_id}', [PendudukController::class, 'getProdi'])->name('getProdi');
     Route::resource('penduduk', PendudukController::class);
 
     Route::get('/template/data', [TemplateControler::class, 'getTemplate'])->name('template.data');
-    Route::get('/get-prodi/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
+    Route::get('/get-prodit/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
     Route::resource('template', TemplateControler::class);
 });

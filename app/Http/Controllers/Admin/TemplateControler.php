@@ -78,6 +78,13 @@ class TemplateControler extends Controller
             ->make(true);
     }
 
+    public function getProdi($fakultas_id)
+    {
+        $prodi = Prodi::where('fakultas_id', $fakultas_id)->get();
+
+        return response()->json($prodi);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

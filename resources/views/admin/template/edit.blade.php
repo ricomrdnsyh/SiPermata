@@ -120,7 +120,7 @@
                 prodiDropdown.append('<option value="">Pilih Prodi</option>');
 
                 if (fakultasId) {
-                    fetch(`/admin/get-prodi/${fakultasId}`)
+                    fetch(`/admin/get-prodit/${fakultasId}`)
                         .then(response => response.json())
                         .then(data => {
                             console.log('Data prodi:', data);
