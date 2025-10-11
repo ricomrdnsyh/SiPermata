@@ -3,11 +3,13 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AkademikController;
 use App\Http\Controllers\Admin\FakultasController;
+use App\Http\Controllers\Admin\JabatanController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\TemplateControler;
+use App\Models\Jabatan;
 use Illuminate\Support\Facades\Route;
 
 
@@ -38,4 +40,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::get('/template/data', [TemplateControler::class, 'getTemplate'])->name('template.data');
     Route::get('/get-prodit/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
     Route::resource('template', TemplateControler::class);
+
+    Route::get('/jabatan/data', [JabatanController::class, 'getJabatan'])->name('jabatan.data');
+    Route::resource('jabatan', JabatanController::class);
 });

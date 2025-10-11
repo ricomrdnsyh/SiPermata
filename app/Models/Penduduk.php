@@ -52,4 +52,9 @@ class Penduduk extends Model
     {
         return $this->belongsTo(Prodi::class, 'prodi_id');
     }
+
+    public function jabatan()
+    {
+        return $this->hasMany(Jabatan::class, 'penduduk_id');
+    }
 }
