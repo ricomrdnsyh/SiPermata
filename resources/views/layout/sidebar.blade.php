@@ -18,13 +18,29 @@
                     <!--begin::Info-->
                     <div class="flex-grow-1 me-2">
                         <!--begin::Username-->
-                        <a href="#" class="text-white text-hover-primary fs-6 fw-bold">
-                            Rico
-                        </a>
+                        <span class="text-white text-hover-primary fs-6 fw-bold">
+                            @if (Auth::user()->role == 'admin')
+                                <span>{{ Auth::user()->nama }}</span>
+                            @elseif (Auth::user()->role == 'DEKAN')
+                                <span>{{ Auth::user()->nama }}</span>
+                            @elseif (Auth::user()->role == 'BAK')
+                                <span>{{ Auth::user()->nama }}</span>
+                            @elseif (Auth::user()->role == 'mahasiswa')
+                                <span>{{ Auth::user()->nama }}</span>
+                            @endif
+                        </span>
                         <!--end::Username-->
                         <!--begin::Description-->
                         <span class="text-gray-600 fw-bold d-block fs-8 mb-1">
-                            Admin
+                            @if (Auth::user()->role == 'admin')
+                                <span>Admin</span>
+                            @elseif (Auth::user()->role == 'DEKAN')
+                                <span>Dekan</span>
+                            @elseif (Auth::user()->role == 'BAK')
+                                <span>BAK</span>
+                            @elseif (Auth::user()->role == 'mahasiswa')
+                                <span>Mahasiswa</span>
+                            @endif
                         </span>
                         <!--end::Description-->
                         <!--begin::Label-->
@@ -68,11 +84,16 @@
                                     <!--begin::Username-->
                                     <div class="d-flex flex-column">
                                         <div class="fw-bolder d-flex align-items-center fs-5">
-                                            Rico
+                                            @if (Auth::user()->role == 'admin')
+                                                <span>{{ Auth::user()->nama }}</span>
+                                            @elseif (Auth::user()->role == 'DEKAN')
+                                                <span>{{ Auth::user()->nama }}</span>
+                                            @elseif (Auth::user()->role == 'BAK')
+                                                <span>{{ Auth::user()->nama }}</span>
+                                            @elseif (Auth::user()->role == 'mahasiswa')
+                                                <span>{{ Auth::user()->nama }}</span>
+                                            @endif
                                         </div>
-                                        <a class="fw-bold text-muted text-hover-primary fs-7">
-                                            admin@gmail.com
-                                        </a>
                                     </div>
                                     <!--end::Username-->
                                 </div>
@@ -121,225 +142,297 @@
                         <span class="menu-section text-muted text-uppercase fs-8 ls-1">Main</span>
                     </div>
                 </div>
-                <div class="menu-item">
-                    <a class="menu-link" href="">
-                        <span class="menu-icon">
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <rect x="2" y="2" width="9" height="9" rx="2" fill="black" />
-                                    <rect opacity="0.3" x="13" y="2" width="9" height="9" rx="2"
-                                        fill="black" />
-                                    <rect opacity="0.3" x="13" y="13" width="9" height="9" rx="2"
-                                        fill="black" />
-                                    <rect opacity="0.3" x="2" y="13" width="9" height="9" rx="2"
-                                        fill="black" />
-                                </svg>
+                @if (Auth::user()->role == 'admin')
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/dashboard') ? 'active' : '' }}"
+                            href="{{ route('admin.dashboard') }}">
+                            <span class="menu-icon">
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <rect x="2" y="2" width="9" height="9" rx="2" fill="black" />
+                                        <rect opacity="0.3" x="13" y="2" width="9" height="9" rx="2"
+                                            fill="black" />
+                                        <rect opacity="0.3" x="13" y="13" width="9" height="9" rx="2"
+                                            fill="black" />
+                                        <rect opacity="0.3" x="2" y="13" width="9" height="9" rx="2"
+                                            fill="black" />
+                                    </svg>
+                                </span>
                             </span>
-                        </span>
-                        <span class="menu-title">Dashboard</span>
-                    </a>
-                </div>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </div>
 
-                <div class="menu-item">
-                    <div class="menu-content pb-2">
-                        <span class="menu-section text-muted text-uppercase fs-8 ls-1">Master</span>
+                    <div class="menu-item">
+                        <div class="menu-content pb-2">
+                            <span class="menu-section text-muted text-uppercase fs-8 ls-1">Master</span>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/fakultas') ? 'active' : '' }}"
-                        href="{{ route('admin.fakultas.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
+                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                        <span class="menu-link">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
                             </span>
-                            <!--end::Svg Icon-->
+                            <span class="menu-title">Master Penduduk</span>
+                            <span class="menu-arrow"></span>
                         </span>
-                        <span class="menu-title">Master Fakultas</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/prodi') ? 'active' : '' }}"
-                        href="{{ route('admin.prodi.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Prodi</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/akademik') ? 'active' : '' }}"
-                        href="{{ route('admin.akademik.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Tahun Akademik</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/mitra') ? 'active' : '' }}"
-                        href="{{ route('admin.mitra.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Mitra</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/mahasiswa') ? 'active' : '' }}"
-                        href="{{ route('admin.mahasiswa.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Mahasiswa</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/penduduk') ? 'active' : '' }}"
-                        href="{{ route('admin.penduduk.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Penduduk</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/jabatan') ? 'active' : '' }}"
-                        href="{{ route('admin.jabatan.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Jabatan</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/template') ? 'active' : '' }}"
-                        href="{{ route('admin.template.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
-                                        fill="black"></path>
-                                    <path
-                                        d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
-                                        fill="black"></path>
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Master Template</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <div class="menu-content pb-2">
-                        <span class="menu-section text-muted text-uppercase fs-8 ls-1">Account</span>
+                        <div class="menu-sub menu-sub-accordion menu-active-bg">
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('admin/penduduk') ? 'active' : '' }}"
+                                    href="{{ route('admin.penduduk.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Data Penduduk</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('admin/jabatan') ? 'active' : '' }}"
+                                    href="{{ route('admin.jabatan.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Master Jabatan</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/users') ? 'active' : '' }}"
-                        href="{{ route('admin.users.index') }}">
-                        <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                            <span class="svg-icon svg-icon-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <path opacity="0.3"
-                                        d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM12 7C10.3 7 9 8.3 9 10C9 11.7 10.3 13 12 13C13.7 13 15 11.7 15 10C15 8.3 13.7 7 12 7Z"
-                                        fill="black" />
-                                    <path
-                                        d="M12 22C14.6 22 17 21 18.7 19.4C17.9 16.9 15.2 15 12 15C8.8 15 6.09999 16.9 5.29999 19.4C6.99999 21 9.4 22 12 22Z"
-                                        fill="black" />
-                                </svg>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/mahasiswa') ? 'active' : '' }}"
+                            href="{{ route('admin.mahasiswa.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
                             </span>
-                            <!--end::Svg Icon-->
-                        </span>
-                        <span class="menu-title">Users</span>
-                    </a>
-                </div>
+                            <span class="menu-title">Master Mahasiswa</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/fakultas') ? 'active' : '' }}"
+                            href="{{ route('admin.fakultas.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Master Fakultas</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/prodi') ? 'active' : '' }}"
+                            href="{{ route('admin.prodi.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Master Prodi</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/akademik') ? 'active' : '' }}"
+                            href="{{ route('admin.akademik.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Master Tahun Akademik</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/mitra') ? 'active' : '' }}"
+                            href="{{ route('admin.mitra.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Master Mitra</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/template') ? 'active' : '' }}"
+                            href="{{ route('admin.template.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M20 15H4C2.9 15 2 14.1 2 13V7C2 6.4 2.4 6 3 6H21C21.6 6 22 6.4 22 7V13C22 14.1 21.1 15 20 15ZM13 12H11C10.5 12 10 12.4 10 13V16C10 16.5 10.4 17 11 17H13C13.6 17 14 16.6 14 16V13C14 12.4 13.6 12 13 12Z"
+                                            fill="black"></path>
+                                        <path
+                                            d="M14 6V5H10V6H8V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V6H14ZM20 15H14V16C14 16.6 13.5 17 13 17H11C10.5 17 10 16.6 10 16V15H4C3.6 15 3.3 14.9 3 14.7V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V14.7C20.7 14.9 20.4 15 20 15Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Master Template</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-content pb-2">
+                            <span class="menu-section text-muted text-uppercase fs-8 ls-1">Account</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/users') ? 'active' : '' }}"
+                            href="{{ route('admin.users.index') }}">
+                            <span class="menu-icon">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM12 7C10.3 7 9 8.3 9 10C9 11.7 10.3 13 12 13C13.7 13 15 11.7 15 10C15 8.3 13.7 7 12 7Z"
+                                            fill="black" />
+                                        <path
+                                            d="M12 22C14.6 22 17 21 18.7 19.4C17.9 16.9 15.2 15 12 15C8.8 15 6.09999 16.9 5.29999 19.4C6.99999 21 9.4 22 12 22Z"
+                                            fill="black" />
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                            </span>
+                            <span class="menu-title">Users</span>
+                        </a>
+                    </div>
+                @endif
+                @if (Auth::user()->role == 'DEKAN')
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('dekan/dashboard') ? 'active' : '' }}"
+                            href="{{ route('dekan.dashboard') }}">
+                            <span class="menu-icon">
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <rect x="2" y="2" width="9" height="9" rx="2"
+                                            fill="black" />
+                                        <rect opacity="0.3" x="13" y="2" width="9" height="9"
+                                            rx="2" fill="black" />
+                                        <rect opacity="0.3" x="13" y="13" width="9" height="9"
+                                            rx="2" fill="black" />
+                                        <rect opacity="0.3" x="2" y="13" width="9" height="9"
+                                            rx="2" fill="black" />
+                                    </svg>
+                                </span>
+                            </span>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </div>
+                @endif
+                @if (Auth::user()->role == 'BAK')
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('bak/dashboard') ? 'active' : '' }}"
+                            href="{{ route('bak.dashboard') }}">
+                            <span class="menu-icon">
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <rect x="2" y="2" width="9" height="9" rx="2"
+                                            fill="black" />
+                                        <rect opacity="0.3" x="13" y="2" width="9" height="9"
+                                            rx="2" fill="black" />
+                                        <rect opacity="0.3" x="13" y="13" width="9" height="9"
+                                            rx="2" fill="black" />
+                                        <rect opacity="0.3" x="2" y="13" width="9" height="9"
+                                            rx="2" fill="black" />
+                                    </svg>
+                                </span>
+                            </span>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </div>
+                @endif
+                @if (Auth::user()->role == 'mahasiswa')
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('mahasiswa/dashboard') ? 'active' : '' }}"
+                            href="{{ route('mahasiswa.dashboard') }}">
+                            <span class="menu-icon">
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <rect x="2" y="2" width="9" height="9" rx="2"
+                                            fill="black" />
+                                        <rect opacity="0.3" x="13" y="2" width="9" height="9"
+                                            rx="2" fill="black" />
+                                        <rect opacity="0.3" x="13" y="13" width="9" height="9"
+                                            rx="2" fill="black" />
+                                        <rect opacity="0.3" x="2" y="13" width="9" height="9"
+                                            rx="2" fill="black" />
+                                    </svg>
+                                </span>
+                            </span>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </div>
+                @endif
+
                 <div class="menu-content">
                     <div class="separator mx-1 my-4"></div>
                 </div>

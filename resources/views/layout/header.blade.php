@@ -2,9 +2,9 @@
     <!--begin::Brand-->
     <div class="header-brand">
         <!--begin::Logo-->
-        <a href="../../demo8/dist/index.html">
+        <span class="header-logo">
             <img alt="Logo" src="{{ asset('assets/media/logos/logo-1-dark.svg') }}" class="h-25px h-lg-25px" />
-        </a>
+        </span>
         <!--end::Logo-->
         <!--begin::Aside minimize-->
         <div id="kt_aside_toggle" class="btn btn-icon w-auto px-0 btn-active-color-primary aside-minimize"
@@ -74,7 +74,15 @@
                 <ul class="breadcrumb breadcrumb-separatorless fw-bold fs-7 pt-1">
                     <!--begin::Item-->
                     <li class="breadcrumb-item text-muted text-hover-primary">
-                        Admin
+                        @if (Auth::user()->role == 'admin')
+                            <span>Admin</span>
+                        @elseif (Auth::user()->role == 'DEKAN')
+                            <span>Dekan</span>
+                        @elseif (Auth::user()->role == 'BAK')
+                            <span>BAK</span>
+                        @elseif (Auth::user()->role == 'mahasiswa')
+                            <span>Mahasiswa</span>
+                        @endif
                     </li>
                 </ul>
                 <!--end::Breadcrumb-->

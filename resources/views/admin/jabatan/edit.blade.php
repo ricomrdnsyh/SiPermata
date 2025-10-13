@@ -65,15 +65,6 @@
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Urutan Jabatan(BAK=10,
-                                                Dekan=20)</label>
-                                            <input type="text" name="urutan" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $data->urutan }}" />
-                                            @error('urutan')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
                                             <a href="{{ route('admin.jabatan.index') }}" class="btn btn-light me-3">

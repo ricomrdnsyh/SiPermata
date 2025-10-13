@@ -76,26 +76,33 @@ class JabatanController extends Controller
     {
         $request->validate([
             'penduduk_id' => 'required|exists:penduduk,id_penduduk',
-            'status'      => 'required',
-            'urutan'      => 'required',
+            'status'      => 'required|string',
         ], [
             'penduduk_id.required' => 'Penduduk harus diisi.',
             'status.required'      => 'Status harus diisi.',
-            'urutan.required'      => 'Urutan harus diisi.',
         ]);
 
-        // Ambil data penduduk untuk dapatkan fakultas_id
+        $status = $request->status;
+        $urutan = 0;
+
+        if ($status === 'BAK') {
+            $urutan = 10;
+        } elseif ($status === 'DEKAN') {
+            $urutan = 20;
+        } else {
+            $urutan = $request->input('urutan', 0);
+        }
+
         $penduduk = Penduduk::where('id_penduduk', $request->penduduk_id)->first();
         if (!$penduduk || !$penduduk->fakultas_id) {
             throw ValidationException::withMessages([
                 'penduduk_id' => 'Penduduk tidak ditemukan atau tidak memiliki fakultas.',
             ]);
         }
-
         Jabatan::create([
             'penduduk_id' => $request->penduduk_id,
             'status'      => $request->status,
-            'urutan'      => $request->urutan,
+            'urutan'      => $urutan,
             'fakultas_id' => $penduduk->fakultas_id,
         ]);
 
@@ -131,12 +138,23 @@ class JabatanController extends Controller
         $request->validate([
             'penduduk_id' => 'required|exists:penduduk,id_penduduk',
             'status'      => 'required',
-            'urutan'      => 'required',
         ], [
             'penduduk_id.required' => 'Penduduk harus diisi.',
             'status.required'      => 'Status harus diisi.',
-            'urutan.required'      => 'Urutan harus diisi.',
         ]);
+
+        $jabatan = Jabatan::findOrFail($id);
+
+        $status = $request->status;
+        $urutan = 0;
+
+        if ($status === 'BAK') {
+            $urutan = 10;
+        } elseif ($status === 'DEKAN') {
+            $urutan = 20;
+        } else {
+            $urutan = $request->input('urutan', $jabatan->urutan);
+        }
 
         // Ambil data penduduk untuk dapatkan fakultas_id
         $penduduk = Penduduk::where('id_penduduk', $request->penduduk_id)->first();
@@ -146,7 +164,6 @@ class JabatanController extends Controller
             ]);
         }
 
-        $jabatan = Jabatan::findOrFail($id);
         $jabatan->update([
             'penduduk_id' => $request->penduduk_id,
             'status'      => $request->status,

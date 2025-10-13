@@ -34,11 +34,6 @@
                                             <input type="text" name="status" class="form-control mb-3 mb-lg-0" disabled
                                                 value="{{ $data->status }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="fw-semibold fs-6 mb-2">Urutan Jabatan</label>
-                                            <input type="text" name="urutan" class="form-control mb-3 mb-lg-0" disabled
-                                                value="{{ $data->urutan }}" />
-                                        </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
                                             <a href="{{ route('admin.jabatan.index') }}" class="btn btn-light me-3">

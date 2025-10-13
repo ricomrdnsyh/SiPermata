@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class RedirectIfAuthenticated
 {
@@ -25,20 +24,20 @@ class RedirectIfAuthenticated
                 $user = Auth::user();
 
                 // Menggunakan accessor 'role' yang sudah Anda buat di model User
-                $role = strtolower($user->role);
+                $role = $user->role;
 
                 switch ($role) {
                     case 'admin':
                         return redirect()->route('admin.dashboard');
                     case 'mahasiswa':
                         return redirect()->route('mahasiswa.dashboard');
-                    case 'bak':
+                    case 'BAK':
                         return redirect()->route('bak.dashboard');
-                    case 'dekan':
+                    case 'DEKAN':
                         return redirect()->route('dekan.dashboard');
                     default:
                         // Pengalihan default jika role tidak dikenali atau '-'
-                        return redirect('/login');
+                        return redirect('/');
                 }
             }
         }

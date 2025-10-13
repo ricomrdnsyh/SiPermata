@@ -8,9 +8,13 @@ use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\JabatanController;
 use App\Http\Controllers\Admin\TemplateControler;
 use App\Http\Controllers\Admin\AkademikController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\MahasiswaController;
+use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
+use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
+use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -21,12 +25,11 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('Dashboard Admin');
-        })->name('dashboard');
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/admin/data', [AdminController::class, 'getAdmin'])->name('admin.data');
-        Route::resource('users', AdminController::class);
+        Route::resource('users', AdminController::class)->only(['index', 'create', 'store', 'destroy']);
 
         Route::get('/fakultas/data', [FakultasController::class, 'getFakultas'])->name('fakultas.data');
         Route::resource('fakultas', FakultasController::class);
@@ -56,9 +59,18 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('jabatan', JabatanController::class);
     });
 
-    Route::middleware(['role:mahasiswa'])->group(function () {});
+    Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
 
-    Route::middleware(['role:BAK'])->group(function () {});
+        Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
+    });
 
-    Route::middleware(['role:DEKAN'])->group(function () {});
+    Route::middleware(['role:DEKAN'])->prefix('dekan')->name('dekan.')->group(function () {
+
+        Route::get('/dashboard', [DekanDashboardController::class, 'index'])->name('dashboard');
+    });
+
+    Route::middleware(['role:BAK'])->prefix('bak')->name('bak.')->group(function () {
+
+        Route::get('/dashboard', [BAKDashboardController::class, 'index'])->name('dashboard');
+    });
 });

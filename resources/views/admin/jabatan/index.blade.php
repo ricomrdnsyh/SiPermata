@@ -68,7 +68,6 @@
                                     <th class="min-w-125px">Nama Penduduk</th>
                                     <th class="min-w-125px">Nama Fakultas</th>
                                     <th class="min-w-125px">Status Jabatan</th>
-                                    <th class="min-w-125px">Urutan Jabatan</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
@@ -113,10 +112,6 @@
                     {
                         data: 'status',
                         name: 'status'
-                    },
-                    {
-                        data: 'urutan',
-                        name: 'urutan'
                     },
                     {
                         data: 'action',
