@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
+use App\Http\Controllers\BAK\MitraController as BAKMitraController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 
@@ -72,5 +73,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:BAK'])->prefix('bak')->name('bak.')->group(function () {
 
         Route::get('/dashboard', [BAKDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/mitra/data', [BAKMitraController::class, 'getMitra'])->name('mitra.data');
+        Route::resource('mitra', BAKMitraController::class);
     });
 });
