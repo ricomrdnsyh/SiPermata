@@ -25,7 +25,7 @@
                                             <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
                                             <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
-                                                id="fakltas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                id="fakultas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
                                                 aria-hidden="true" data-kt-initialized="1">
                                                 <option value="" data-select2-id="select2-data-74-9zwr">
                                                     Pilih Fakultas...</option>

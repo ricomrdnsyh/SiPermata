@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Admin')
+@section('title', 'Users')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Admin</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Users</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -45,8 +45,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('admin.admin.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Admin</a>
+                                <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus"></i> Add User</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -65,9 +65,9 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="min-w-125px">Nama Admin</th>
-                                    <th class="min-w-125px">Email</th>
-                                    <th class="min-w-125px">Created at</th>
+                                    <th class="min-w-125px">Username</th>
+                                    <th class="min-w-125px">Nama</th>
+                                    <th class="min-w-125px">Role</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
@@ -102,16 +102,16 @@
                 responsive: true,
                 ajax: '{{ route('admin.admin.data') }}',
                 columns: [{
+                        data: 'identifier',
+                        name: 'identifier'
+                    },
+                    {
                         data: 'nama',
                         name: 'nama'
                     },
                     {
-                        data: 'email',
-                        name: 'email'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'type',
+                        name: 'type'
                     },
                     {
                         data: 'action',
@@ -154,7 +154,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/admin/admin/' + id,
+                        url: '/admin/users/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

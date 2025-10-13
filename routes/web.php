@@ -1,46 +1,64 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\MitraController;
+use App\Http\Controllers\Admin\ProdiController;
+use App\Http\Controllers\Admin\JabatanController;
+use App\Http\Controllers\Admin\TemplateControler;
 use App\Http\Controllers\Admin\AkademikController;
 use App\Http\Controllers\Admin\FakultasController;
-use App\Http\Controllers\Admin\JabatanController;
-use App\Http\Controllers\Admin\MahasiswaController;
-use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\PendudukController;
-use App\Http\Controllers\Admin\ProdiController;
-use App\Http\Controllers\Admin\TemplateControler;
-use App\Models\Jabatan;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\MahasiswaController;
 
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login-proses', [LoginController::class, 'login'])->name('login-proses');
+});
 
-Route::prefix('admin')->as('admin.')->group(function () {
-    Route::get('/admin/data', [AdminController::class, 'getAdmin'])->name('admin.data');
-    Route::resource('admin', AdminController::class);
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::get('/fakultas/data', [FakultasController::class, 'getFakultas'])->name('fakultas.data');
-    Route::resource('fakultas', FakultasController::class);
+Route::middleware(['auth'])->group(function () {
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('Dashboard Admin');
+        })->name('dashboard');
 
-    Route::get('/prodi/data', [ProdiController::class, 'getProdi'])->name('prodi.data');
-    Route::resource('prodi', ProdiController::class);
+        Route::get('/admin/data', [AdminController::class, 'getAdmin'])->name('admin.data');
+        Route::resource('users', AdminController::class);
 
-    Route::get('/akademik/data', [AkademikController::class, 'getAkademik'])->name('akademik.data');
-    Route::resource('akademik', AkademikController::class);
+        Route::get('/fakultas/data', [FakultasController::class, 'getFakultas'])->name('fakultas.data');
+        Route::resource('fakultas', FakultasController::class);
 
-    Route::get('/mitra/data', [MitraController::class, 'getMitra'])->name('mitra.data');
-    Route::resource('mitra', MitraController::class);
+        Route::get('/prodi/data', [ProdiController::class, 'getProdi'])->name('prodi.data');
+        Route::resource('prodi', ProdiController::class);
 
-    Route::get('/mahasiswa/data', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswa.data');
-    Route::get('/get-prodim/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
-    Route::resource('mahasiswa', MahasiswaController::class);
+        Route::get('/akademik/data', [AkademikController::class, 'getAkademik'])->name('akademik.data');
+        Route::resource('akademik', AkademikController::class);
 
-    Route::get('/penduduk/data', [PendudukController::class, 'getPenduduk'])->name('penduduk.data');
-    Route::get('/get-prodip/{fakultas_id}', [PendudukController::class, 'getProdi'])->name('getProdi');
-    Route::resource('penduduk', PendudukController::class);
+        Route::get('/mitra/data', [MitraController::class, 'getMitra'])->name('mitra.data');
+        Route::resource('mitra', MitraController::class);
 
-    Route::get('/template/data', [TemplateControler::class, 'getTemplate'])->name('template.data');
-    Route::get('/get-prodit/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
-    Route::resource('template', TemplateControler::class);
+        Route::get('/mahasiswa/data', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswa.data');
+        Route::get('/get-prodim/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
+        Route::resource('mahasiswa', MahasiswaController::class);
 
-    Route::get('/jabatan/data', [JabatanController::class, 'getJabatan'])->name('jabatan.data');
-    Route::resource('jabatan', JabatanController::class);
+        Route::get('/penduduk/data', [PendudukController::class, 'getPenduduk'])->name('penduduk.data');
+        Route::get('/get-prodip/{fakultas_id}', [PendudukController::class, 'getProdi'])->name('getProdi');
+        Route::resource('penduduk', PendudukController::class);
+
+        Route::get('/template/data', [TemplateControler::class, 'getTemplate'])->name('template.data');
+        Route::get('/get-prodit/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
+        Route::resource('template', TemplateControler::class);
+
+        Route::get('/jabatan/data', [JabatanController::class, 'getJabatan'])->name('jabatan.data');
+        Route::resource('jabatan', JabatanController::class);
+    });
+
+    Route::middleware(['role:mahasiswa'])->group(function () {});
+
+    Route::middleware(['role:BAK'])->group(function () {});
+
+    Route::middleware(['role:DEKAN'])->group(function () {});
 });

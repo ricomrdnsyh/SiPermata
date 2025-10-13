@@ -83,13 +83,13 @@
                             <!--end::Menu separator-->
                             <!--begin::Menu item-->
                             <div class="menu-item px-5">
-                                <a href="../../demo8/dist/account/overview.html" class="menu-link px-5">My
+                                <a href="#" class="menu-link px-5">My
                                     Profile</a>
                             </div>
                             <!--end::Menu item-->
                             <!--begin::Menu item-->
                             <div class="menu-item px-5">
-                                <a href="#" class="menu-link px-5">Logout</a>
+                                <a href="{{ route('logout') }}" class="menu-link px-5">Logout</a>
                             </div>
                             <!--end::Menu item-->
                         </div>
@@ -320,8 +320,8 @@
                     </div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link {{ Request::is('admin/admin') ? 'active' : '' }}"
-                        href="{{ route('admin.admin.index') }}">
+                    <a class="menu-link {{ Request::is('admin/users') ? 'active' : '' }}"
+                        href="{{ route('admin.users.index') }}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -337,14 +337,14 @@
                             </span>
                             <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Administrator</span>
+                        <span class="menu-title">Users</span>
                     </a>
                 </div>
                 <div class="menu-content">
                     <div class="separator mx-1 my-4"></div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="#">
+                    <a class="menu-link" href="{{ route('logout') }}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                             <span class="svg-icon svg-icon-2">

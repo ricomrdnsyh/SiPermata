@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Penduduk;
+use App\Models\Mahasiswa;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -18,8 +20,10 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'identifier',
         'nama',
-        'email',
+        'type',
+        'reference_id',
         'password',
     ];
 
@@ -44,5 +48,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected $appends = ['role'];
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'reference_id', 'nim');
+    }
+
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'reference_id', 'id_penduduk');
+    }
+
+    public function getRoleAttribute()
+    {
+        if ($this->type === 'admin') {
+            return 'admin';
+        }
+        if ($this->type === 'mahasiswa') {
+            return 'mahasiswa';
+        }
+        // type = penduduk
+        $jabatan = $this->penduduk?->jabatan;
+        return $jabatan ? strtoupper($jabatan->status) : '-';
     }
 }

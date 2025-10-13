@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Penduduk;
+use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -16,32 +18,32 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $data = User::all();
+        $data = User::with('mahasiswa', 'penduduk.jabatan')->get();
 
-        return view('admin.admin.index', compact('data'));
+        return view('admin.users.index', compact('data'));
     }
 
     public function getAdmin()
     {
-        $data = User::select(['id', 'nama', 'email', 'created_at']);
+        $data = User::select(['id', 'identifier', 'nama', 'type', 'password']);
 
         return DataTables::of($data)
-            ->editColumn('created_at', function ($user) {
-                return Carbon::parse($user->created_at)->timezone('Asia/Jakarta')->format('d-m-Y H:i:s');
+            ->editColumn('type', function ($row) {
+                if ($row->type == 'mahasiswa') {
+                    return '<span class="badge bg-warning">Mahasiswa</span>';
+                } elseif ($row->type == 'penduduk') {
+                    return '<span class="badge bg-success">Penduduk</span>';
+                } elseif ($row->type == 'admin') {
+                    return '<span class="badge bg-primary">Admin</span>';
+                }
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.admin.show', $row->id) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
-
-                $editBtn = '<a href="' . route('admin.admin.edit', $row->id) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
-
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="text-center">' . $deleteBtn . '</div>';
             })
-            ->rawColumns(['created_at', 'action'])
+            ->rawColumns(['type', 'action'])
             ->make(true);
     }
 
@@ -50,7 +52,10 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('admin.admin.create');
+        $mahasiswa = Mahasiswa::all();
+        $penduduk  = Penduduk::with('jabatan')->get(); // untuk tahu BAK/Dekan
+
+        return view('admin.users.create', compact('mahasiswa', 'penduduk'));
     }
 
     /**
@@ -59,68 +64,67 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-        ], [
-            'nama.required'     => 'Nama admin wajib diisi.',
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'email.unique'      => 'Email sudah terdaftar.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min'      => 'Password minimal 6 karakter.',
+            'type'         => 'required|in:mahasiswa,penduduk,admin',
+            'reference_id' => 'required_if:type,mahasiswa,penduduk',
+            'identifier'   => 'required|unique:users,identifier',
+            'nama'         => 'required|string|max:255',
         ]);
 
-        User::create([
-            'nama'     => $request->nama,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        // Password default
+        $password = '123456';
 
-        return redirect()->route('admin.admin.index')->with('success', 'Data berhasil ditambahkan!');
+        if ($request->type === 'admin') {
+            // Buat admin manual
+            User::create([
+                'identifier'   => $request->identifier,
+                'nama'         => $request->nama,
+                'type'         => 'admin',
+                'reference_id' => 'admin', // atau null jika kolom nullable
+                'password'     => Hash::make($password),
+            ]);
+        } elseif ($request->type === 'mahasiswa') {
+            $mahasiswa = Mahasiswa::where('nim', $request->reference_id)->firstOrFail();
+            User::create([
+                'identifier'   => $mahasiswa->nim,
+                'nama'         => $mahasiswa->nama,
+                'type'         => 'mahasiswa',
+                'reference_id' => $mahasiswa->nim,
+                'password'     => Hash::make($password),
+            ]);
+        } else {
+            // type = penduduk
+            $penduduk = Penduduk::where('id_penduduk', $request->reference_id)->firstOrFail();
+            $identifier = $penduduk->nidn ?: $penduduk->email;
+            if (!$identifier) {
+                return back()->withErrors(['identifier' => 'Penduduk ini tidak memiliki NIDN atau email.']);
+            }
+
+            User::create([
+                'identifier'   => $identifier,
+                'nama'         => $penduduk->nama_penduduk,
+                'type'         => 'penduduk',
+                'reference_id' => $penduduk->id_penduduk,
+                'password'     => Hash::make($password),
+            ]);
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $data = User::findOrFail($id);
-
-        return view('admin.admin.show', compact('data'));
-    }
+    public function show(string $id) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $data = User::findOrFail($id);
-
-        return view('admin.admin.edit', compact('data'));
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'nama'          => 'required',
-            'email'         => 'required',
-            'password'      => 'nullable|min:6',
-        ]);
-
-        $data = User::findOrFail($id);
-
-        $data->update([
-            'nama'          => $request->nama,
-            'email'         => $request->email,
-            'password'      => $request->password ? Hash::make($request->password) : $data->password,
-        ]);
-
-        return redirect()->route('admin.admin.index')->with('success', 'Data berhasil diupdate!');
-    }
+    public function update(Request $request, string $id) {}
 
     /**
      * Remove the specified resource from storage.

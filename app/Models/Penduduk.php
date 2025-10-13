@@ -55,6 +55,6 @@ class Penduduk extends Model
 
     public function jabatan()
     {
-        return $this->hasMany(Jabatan::class, 'penduduk_id');
+        return $this->hasOne(Jabatan::class, 'penduduk_id');
     }
 }
