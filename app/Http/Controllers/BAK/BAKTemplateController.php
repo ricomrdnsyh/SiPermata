@@ -94,6 +94,12 @@ class BAKTemplateController extends Controller
      */
     public function create()
     {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
         $fakultas = Fakultas::all();
         $prodi    = Prodi::all();
         return view('bak.template.create', compact('fakultas', 'prodi'));
@@ -104,13 +110,21 @@ class BAKTemplateController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
         $request->validate([
             'nama_template' => 'required',
+            'jenis_surat  ' => 'required',
             'file'          => 'required|mimes:doc,docx|max:10240',
             'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
             'prodi_id'      => 'nullable|exists:prodi,id_prodi',
         ], [
             'nama_template.required' => 'Nama template wajib diisi',
+            'jenis_surat.required'   => 'Jenis Surat wajib diisi',
             'file.required'          => 'File template wajib diisi',
             'file.mimes'             => 'File harus berformat .doc atau .docx',
             'file.max'               => 'Ukuran file maksimal 10MB',
@@ -126,6 +140,7 @@ class BAKTemplateController extends Controller
 
         Template::create([
             'nama_template' => $request->nama_template,
+            'jenis_surat'   => $request->jenis_surat,
             'file'          => $filePath,
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,
@@ -139,6 +154,12 @@ class BAKTemplateController extends Controller
      */
     public function show(string $id)
     {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
         $data = Template::with(['fakultas', 'prodi'])->findOrFail($id);
 
         return view('bak.template.show', compact('data'));
@@ -149,6 +170,12 @@ class BAKTemplateController extends Controller
      */
     public function edit(string $id)
     {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
         $data     = Template::findOrFail($id);
         $fakultas = Fakultas::all();
         $prodi    = Prodi::all();
@@ -161,15 +188,24 @@ class BAKTemplateController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
         $template = Template::findOrFail($id);
 
         $request->validate([
             'nama_template' => 'required',
+            'jenis_surat'   => 'required',
             'file'          => 'nullable|mimes:doc,docx|max:10240',
             'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
             'prodi_id'      => 'nullable|exists:prodi,id_prodi',
         ], [
             'nama_template.required' => 'Nama template wajib diisi',
+            'jenis_surat.required'   => 'Jenis surat wajib diisi',
             'file.mimes'             => 'File harus berformat .doc atau .docx',
             'file.max'               => 'Ukuran file maksimal 10MB',
             'fakultas_id.required'   => 'Fakultas harus diisi.',
@@ -189,6 +225,7 @@ class BAKTemplateController extends Controller
 
         $template->update([
             'nama_template' => $request->nama_template,
+            'jenis_surat'   => $request->jenis_surat,
             'file'          => $filePath,
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,
@@ -202,6 +239,13 @@ class BAKTemplateController extends Controller
      */
     public function destroy(string $id)
     {
+
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
         $data = Template::findOrFail($id);
         // Hapus file dari storage jika ada
         if ($data->file && Storage::disk('public')->exists($data->file)) {

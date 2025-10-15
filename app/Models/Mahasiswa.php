@@ -29,4 +29,9 @@ class Mahasiswa extends Model
     {
         return $this->belongsTo(Fakultas::class, 'fakultas_id');
     }
+
+    public function historyPengajuan()
+    {
+        return $this->hasMany(HistoryPengajuan::class, 'nim');
+    }
 }

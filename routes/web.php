@@ -17,6 +17,8 @@ use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\BAK\MitraController as BAKMitraController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
+use App\Http\Controllers\Mahasiswa\MahasiswaHistoryPegajuan;
+use App\Http\Controllers\Mahasiswa\MahasiswaSuratAktifController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -64,6 +66,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
 
         Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/surat-aktif/create', [MahasiswaSuratAktifController::class, 'create'])->name('suratAktif.create');
+        Route::post('/surat-aktif', [MahasiswaSuratAktifController::class, 'store'])->name('suratAktif.store');
+
+        Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
+        Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');
     });
 
     Route::middleware(['role:DEKAN'])->prefix('dekan')->name('dekan.')->group(function () {
@@ -81,5 +89,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/template/data', [BAKTemplateController::class, 'getTemplate'])->name('template.data');
         Route::get('/get-prodibak/{fakultas_id}', [BAKTemplateController::class, 'getProdi'])->name('getProdi');
         Route::resource('template', BAKTemplateController::class);
+
+        Route::get('/surat-aktif/create', [MahasiswaSuratAktifController::class, 'create'])->name('suratAktif.create');
+        Route::post('/surat-aktif', [MahasiswaSuratAktifController::class, 'store'])->name('suratAktif.store');
     });
 });

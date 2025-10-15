@@ -66,6 +66,7 @@
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="min-w-125px">Nama Template</th>
+                                    <th class="min-w-125px">Jenis Surat</th>
                                     <th class="min-w-125px">File</th>
                                     <th class="min-w-125px">Nama Fakultas</th>
                                     <th class="min-w-125px">Nama Prodi</th>
@@ -105,6 +106,10 @@
                 columns: [{
                         data: 'nama_template',
                         name: 'nama_template'
+                    },
+                    {
+                        data: 'jenis_surat',
+                        name: 'jenis_surat',
                     },
                     {
                         data: 'file',

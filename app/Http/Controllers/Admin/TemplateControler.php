@@ -24,7 +24,7 @@ class TemplateControler extends Controller
 
     public function getTemplate()
     {
-        $data = Template::select(['id_template', 'nama_template', 'file', 'fakultas_id', 'prodi_id'])
+        $data = Template::select(['id_template', 'nama_template', 'jenis_surat', 'file', 'fakultas_id', 'prodi_id'])
             ->with('fakultas', 'prodi');
 
         return DataTables::of($data)
@@ -102,11 +102,13 @@ class TemplateControler extends Controller
     {
         $request->validate([
             'nama_template' => 'required',
+            'jenis_surat'   => 'required',
             'file'          => 'required|mimes:doc,docx|max:10240',
             'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
             'prodi_id'      => 'nullable|exists:prodi,id_prodi',
         ], [
             'nama_template.required' => 'Nama template wajib diisi',
+            'jenis_surat.required'   => 'Jenis surat wajib diisi',
             'file.required'          => 'File template wajib diisi',
             'file.mimes'             => 'File harus berformat .doc atau .docx',
             'file.max'               => 'Ukuran file maksimal 10MB',
@@ -122,6 +124,7 @@ class TemplateControler extends Controller
 
         Template::create([
             'nama_template' => $request->nama_template,
+            'jenis_surat'   => $request->jenis_surat,
             'file'          => $filePath,
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,
@@ -161,11 +164,13 @@ class TemplateControler extends Controller
 
         $request->validate([
             'nama_template' => 'required',
+            'jenis_surat'   => 'required',
             'file'          => 'nullable|mimes:doc,docx|max:10240',
             'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
             'prodi_id'      => 'nullable|exists:prodi,id_prodi',
         ], [
             'nama_template.required' => 'Nama template wajib diisi',
+            'jenis_surat.required'   => 'Jenis surat wajib diisi',
             'file.mimes'             => 'File harus berformat .doc atau .docx',
             'file.max'               => 'Ukuran file maksimal 10MB',
             'fakultas_id.required'   => 'Fakultas harus diisi.',
@@ -185,6 +190,7 @@ class TemplateControler extends Controller
 
         $template->update([
             'nama_template' => $request->nama_template,
+            'jenis_surat'   => $request->jenis_surat,
             'file'          => $filePath,
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,

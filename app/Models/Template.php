@@ -12,6 +12,7 @@ class Template extends Model
 
     protected $fillable = [
         'nama_template',
+        'jenis_surat',
         'file',
         'fakultas_id',
         'prodi_id',

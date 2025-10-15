@@ -31,6 +31,15 @@
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Jenis
+                                                Surat(contoh_nama_jenis_surat)</label>
+                                            <input type="text" name="jenis_surat" class="form-control mb-3 mb-lg-0"
+                                                value="{{ old('jenis_surat') }}" />
+                                            @error('jenis_surat')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">File Template(Doc/Docx)</label>
                                             <input type="file" name="file" class="form-control mb-3 mb-lg-0" />
                                             @error('file')

@@ -24,6 +24,11 @@
                                             <input type="text" name="nama_template" class="form-control mb-3 mb-lg-0"
                                                 disabled value="{{ $data->nama_template }}" />
                                         </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="fw-semibold fs-6 mb-2">Jenis Surat</label>
+                                            <input type="text" name="jenis_surat" class="form-control mb-3 mb-lg-0"
+                                                disabled value="{{ $data->jenis_surat }}" />
+                                        </div>
                                         <div class="fv-row mb-7"> <label class="fw-semibold fs-6 mb-2">File Template</label>
                                             @if ($data->file)
                                                 @php

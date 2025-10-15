@@ -50,8 +50,6 @@ class User extends Authenticatable
         ];
     }
 
-    protected $appends = ['role'];
-
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'reference_id', 'nim');
