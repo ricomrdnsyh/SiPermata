@@ -95,7 +95,8 @@ class MahasiswaSuratAktifController extends Controller
         HistoryPengajuan::create([
             'id_tabel_surat' => $surat->id_surat_aktif,
             'nim'            => $mahasiswa->nim,
-            'tabel'          => $namaTemplate,
+            'fakultas_id'    => $mahasiswa->fakultas_id,
+            'tabel'          => 'surat_aktif',
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh mahasiswa',
             'jabatan_id'     => null,

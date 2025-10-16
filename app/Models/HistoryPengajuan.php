@@ -13,6 +13,7 @@ class HistoryPengajuan extends Model
     protected $fillable = [
         'id_tabel_surat',
         'nim',
+        'fakultas_id',
         'tabel',
         'jabatan_id',
         'status',

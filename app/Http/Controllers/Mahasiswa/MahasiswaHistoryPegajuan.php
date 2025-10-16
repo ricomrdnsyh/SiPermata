@@ -47,15 +47,34 @@ class MahasiswaHistoryPegajuan extends Controller
                 return $row->catatan ?: '<em>Tidak ada catatan</em>';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('mahasiswa.suratAktif.create', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('mahasiswa.suratAktif.create', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                $editBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
+    }
+
+    public function show($id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'mahasiswa') {
+            abort(403);
+        }
+
+        $pengajuan = HistoryPengajuan::findOrFail($id);
+
+        $surat = $pengajuan->surat;
+
+        if (!$surat) {
+            abort(404, 'Data surat tidak ditemukan.');
+        }
+
+        return view('mahasiswa.history.detail', compact('pengajuan', 'surat'));
     }
 }

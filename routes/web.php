@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\MahasiswaController;
+use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKTemplateController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\BAK\MitraController as BAKMitraController;
@@ -72,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
         Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');
+        Route::get('/history/{id}/detail', [MahasiswaHistoryPegajuan::class, 'show'])->name('history.detail');
     });
 
     Route::middleware(['role:DEKAN'])->prefix('dekan')->name('dekan.')->group(function () {
@@ -90,7 +92,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/get-prodibak/{fakultas_id}', [BAKTemplateController::class, 'getProdi'])->name('getProdi');
         Route::resource('template', BAKTemplateController::class);
 
-        Route::get('/surat-aktif/create', [MahasiswaSuratAktifController::class, 'create'])->name('suratAktif.create');
-        Route::post('/surat-aktif', [MahasiswaSuratAktifController::class, 'store'])->name('suratAktif.store');
+        Route::get('/history-pengajuan', [BAKHistoryPengajuanController::class, 'index'])->name('history.index');
+        Route::get('/history/data', [BAKHistoryPengajuanController::class, 'historyData'])->name('history.data');
+        Route::get('/history/{id}/detail', [BAKHistoryPengajuanController::class, 'show'])->name('history.detail');
+        Route::post('/history/{id}/approve', [BAKHistoryPengajuanController::class, 'approve'])->name('history.approve');
+        Route::post('/history/{id}/reject', [BAKHistoryPengajuanController::class, 'reject'])->name('history.reject');
     });
 });
