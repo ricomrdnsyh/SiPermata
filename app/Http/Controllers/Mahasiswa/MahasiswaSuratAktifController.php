@@ -104,4 +104,84 @@ class MahasiswaSuratAktifController extends Controller
 
         return redirect()->route('mahasiswa.history.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
+
+    public function edit($id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'mahasiswa') {
+            abort(403);
+        }
+
+        // Cari history pengajuan yang ditolak milik mahasiswa ini
+        $pengajuan = HistoryPengajuan::where('id_history', $id)
+            ->where('nim', $user->mahasiswa?->nim)
+            ->where('status', 'ditolak')
+            ->firstOrFail();
+
+        $surat = $pengajuan->surat;
+
+        if (!$surat) {
+            abort(404, 'Data surat tidak ditemukan.');
+        }
+
+        $akademik = TahunAkademik::all();
+
+        return view('mahasiswa.surat_aktif.edit', compact('pengajuan', 'surat', 'akademik'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validasi sama seperti store
+        $request->validate([
+            'kategori'            => 'required|in:UMUM,PNS,PPPK',
+            'semester'            => 'required',
+            'akademik_id'         => 'required|exists:tahun_akademik,id_akademik',
+            'nama_ortu'           => 'required_if:kategori,PNS,PPPK|nullable',
+            'nip'                 => 'required_if:kategori,PNS,PPPK|nullable',
+            'pendidikan_terakhir' => 'required_if:kategori,PNS,PPPK|nullable',
+            'pangkat'             => 'required_if:kategori,PNS,PPPK|nullable',
+            'golongan'            => 'required_if:kategori,PNS,PPPK|nullable',
+            'tmt'                 => 'required_if:kategori,PNS,PPPK|nullable',
+            'unit_kerja'          => 'required_if:kategori,PNS,PPPK|nullable',
+            'alamat'              => 'required_if:kategori,PNS,PPPK|nullable',
+        ]);
+
+        $user = Auth::user();
+
+        $pengajuan = HistoryPengajuan::where('id_history', $id)
+            ->where('nim', $user->mahasiswa?->nim)
+            ->where('status', 'ditolak')
+            ->firstOrFail();
+
+        $surat = $pengajuan->surat;
+
+        if (!$surat) {
+            return back()->with('failed', 'Data surat tidak ditemukan.');
+        }
+
+        // Update data surat
+        $surat->update([
+            'akademik_id'         => $request->akademik_id,
+            'semester'            => $request->semester,
+            'alamat'              => $request->alamat,
+            'nama_ortu'           => $request->nama_ortu,
+            'nip'                 => $request->nip,
+            'pendidikan_terakhir' => $request->pendidikan_terakhir,
+            'pangkat'             => $request->pangkat,
+            'golongan'            => $request->golongan,
+            'tmt'                 => $request->tmt,
+            'unit_kerja'          => $request->unit_kerja,
+            'status'              => 'pengajuan' // reset status
+        ]);
+
+        // Update status history jadi 'pengajuan' lagi
+        $pengajuan->update([
+            'status'  => 'pengajuan',
+            'catatan' => 'Diajukan ulang oleh mahasiswa'
+        ]);
+
+        return redirect()->route('mahasiswa.history.index')
+            ->with('success', 'Pengajuan berhasil diperbarui! Silakan tunggu proses persetujuan.');
+    }
 }

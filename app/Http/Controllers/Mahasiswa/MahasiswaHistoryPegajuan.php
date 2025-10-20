@@ -50,8 +50,13 @@ class MahasiswaHistoryPegajuan extends Controller
                 $showBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                $editBtn = '';
+                if ($row->status === 'ditolak') {
+                    $editBtn = '<a href="' . route('mahasiswa.history.edit', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+                }
+
+
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })

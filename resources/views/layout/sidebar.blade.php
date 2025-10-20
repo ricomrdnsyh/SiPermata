@@ -78,7 +78,7 @@
                                 <div class="menu-content d-flex align-items-center px-3">
                                     <!--begin::Avatar-->
                                     <div class="symbol symbol-50px me-5">
-                                        <img alt="Logo" src="{{ asset('assets/media/avatars/150-26.jpg') }}" />
+                                        <img alt="Logo" src="{{ asset('assets/media/avatars/profile.png') }}" />
                                     </div>
                                     <!--end::Avatar-->
                                     <!--begin::Username-->
@@ -102,12 +102,6 @@
                             <!--begin::Menu separator-->
                             <div class="separator my-2"></div>
                             <!--end::Menu separator-->
-                            <!--begin::Menu item-->
-                            <div class="menu-item px-5">
-                                <a href="#" class="menu-link px-5">My
-                                    Profile</a>
-                            </div>
-                            <!--end::Menu item-->
                             <!--begin::Menu item-->
                             <div class="menu-item px-5">
                                 <a href="{{ route('logout') }}" class="menu-link px-5">Logout</a>

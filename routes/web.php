@@ -70,6 +70,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-aktif/create', [MahasiswaSuratAktifController::class, 'create'])->name('suratAktif.create');
         Route::post('/surat-aktif', [MahasiswaSuratAktifController::class, 'store'])->name('suratAktif.store');
+        Route::get('/history-pengajuan/{id}/edit', [MahasiswaSuratAktifController::class, 'edit'])->name('history.edit');
+        Route::put('/history-pengajuan/{id}', [MahasiswaSuratAktifController::class, 'update'])->name('history.update');
 
         Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
         Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');

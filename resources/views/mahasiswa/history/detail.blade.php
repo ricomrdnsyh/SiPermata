@@ -52,7 +52,7 @@
                                                             @break
 
                                                             @case('proses')
-                                                                <span class="badge bg-info">Diproses Dekan</span>
+                                                                <span class="badge bg-info">Menunggu Dekan</span>
                                                             @break
 
                                                             @case('diterima')

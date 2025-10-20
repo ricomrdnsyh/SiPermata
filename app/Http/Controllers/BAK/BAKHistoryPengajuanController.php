@@ -35,7 +35,7 @@ class BAKHistoryPengajuanController extends Controller
         // Ambil semua pengajuan di fakultas ini yang statusnya 'pengajuan'
         $query = HistoryPengajuan::with([])
             ->where('fakultas_id', $fakultasId)
-            ->whereIn('status', ['pengajuan', 'diproses', 'diterima', 'ditolak']); // hanya yang menunggu BAK
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']); // hanya yang menunggu BAK
 
         return DataTables::of($query)
             ->addColumn('nama_mahasiswa', function ($row) {
