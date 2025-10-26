@@ -45,7 +45,8 @@
                                                 @endphp
                                                 <div class="input-group"> <span class="input-group-text bg-light"> <i
                                                             class="fas {{ $icon }} {{ $color }}"></i> </span>
-                                                    <a href="{{ asset('storage/' . $data->file) }}" target="_blank"
+                                                    <a href="{{ route('admin.template.download', $data->id_template) }}"
+                                                        target="_blank"
                                                         class="form-control text-decoration-none d-flex align-items-center"
                                                         style="background-color: #f8f9fa; border: 1px solid #ced4da; cursor: pointer;">
                                                         {{ basename($data->file) }} </a>

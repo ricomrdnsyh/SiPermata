@@ -101,14 +101,13 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('bak.history.data') }}',
+                ajax: '{{ route('dekan.history.data') }}',
                 columns: [{
                         data: 'action',
                         name: 'action',
                         orderable: false,
                         searchable: false
-                    },
-                    {
+                    }, {
                         data: 'nama_mahasiswa',
                         name: 'nama_mahasiswa'
                     },

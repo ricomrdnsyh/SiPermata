@@ -44,7 +44,8 @@
                                             <label class="required fw-semibold fs-6 mb-2">File Template(Doc/Docx)</label>
                                             @if ($data->file)
                                                 <small class="form-text">File saat ini: <a
-                                                        href="{{ asset('storage/' . $data->file) }}" target="_blank">Lihat
+                                                        href="{{ route('admin.template.download', $data->id_template) }}"
+                                                        target="_blank">Lihat
                                                         File</a></small>
                                             @endif
                                             <input type="file" name="file" class="form-control mb-3 mb-lg-0" />

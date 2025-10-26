@@ -1,37 +1,45 @@
 <?php
 
-namespace App\Http\Controllers\BAK;
+namespace App\Http\Controllers\Dekan;
 
 use App\Models\Mahasiswa;
+use App\Models\SuratAktif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Mail\SuratAktifDiterima;
 use App\Models\HistoryPengajuan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Services\SuratAktifGenerator;
 use Yajra\DataTables\Facades\DataTables;
 
-class BAKHistoryPengajuanController extends Controller
+class DekanHistoryPengajuanController extends Controller
 {
     public function index()
     {
-        return view('bak.history.index');
+        return view('dekan.history.index');
     }
 
     public function historyData()
     {
         $user = Auth::user();
 
-        // Pastikan user adalah BAK
-        if ($user->role !== 'BAK') {
+        // Pastikan user adalah DEKAN
+        if ($user->role !== 'DEKAN') {
             abort(403);
         }
 
         // Ambil fakultas_id dari data penduduk BAK
         $fakultasId = $user->penduduk?->fakultas_id;
+
         if (!$fakultasId) {
             return DataTables::of(HistoryPengajuan::whereRaw('1=0'))->make(true);
         }
 
+        // Ambil semua pengajuan di fakultas ini yang statusnya 'pengajuan'
         $query = HistoryPengajuan::with([])
             ->where('fakultas_id', $fakultasId)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
@@ -64,24 +72,25 @@ class BAKHistoryPengajuanController extends Controller
                 return $row->catatan ?: '<em>Tidak ada catatan</em>';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('bak.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('dekan.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . '</div>';
             })
-            ->rawColumns(['prodi', 'status', 'action'])
+            ->rawColumns(['catatan', 'status', 'action'])
             ->make(true);
     }
 
     public function show($id)
     {
         $user = Auth::user();
-        if ($user->role !== 'BAK') {
+        if ($user->role !== 'DEKAN') {
             abort(403);
         }
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
 
+        // Pastikan ini surat di fakultas BAK yang login
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
             abort(403, 'Surat ini bukan milik fakultas Anda.');
         }
@@ -91,46 +100,81 @@ class BAKHistoryPengajuanController extends Controller
             abort(404, 'Data surat tidak ditemukan.');
         }
 
-        return view('bak.history.detail', compact('pengajuan', 'surat'));
+        return view('dekan.history.detail', compact('pengajuan', 'surat'));
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
         $user = Auth::user();
-        if ($user->role !== 'BAK') {
-            return redirect()->back()->with('failed', 'Akses ditolak');
+        if ($user->role !== 'DEKAN') {
+            return response()->json(['error' => 'Akses ditolak'], 403);
         }
 
-        $pengajuan = HistoryPengajuan::findOrFail($id);
+        try {
+            $pengajuan = HistoryPengajuan::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // SOLUSI: Tangkap kegagalan findOrFail dan kembalikan JSON 404
+            return response()->json(['error' => 'Pengajuan tidak ditemukan.'], 404);
+        }
 
-        $suratAktif = $pengajuan->suratAktif;
-
+        // ... (Logika validasi fakultas dan surat) ...
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
-            return redirect()->back()->with('failed', 'Akses ditolak');
+            return response()->json(['error' => 'Surat ini bukan milik fakultas Anda.'], 403);
         }
 
-        if ($pengajuan->status !== 'pengajuan') {
-            return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
+        $surat = SuratAktif::find($pengajuan->id_tabel_surat);
+        if (!$surat) {
+            return response()->json(['error' => 'Data surat terkait tidak ditemukan.'], 404);
         }
 
-        $pengajuan->update([
-            'status' => 'proses',
-            'catatan' => 'Disetujui oleh BAK',
-            'jabatan_id' => $user->penduduk->jabatan->id_jabatan
-        ]);
+        try {
+            DB::beginTransaction();
 
-        $suratAktif->update([
-            'status' => 'proses',
-            'catatan' => 'Disetujui oleh BAK',
-        ]);
+            // 3. Update Status Surat
+            // Ubah status ke 'disetujui' (atau 'selesai' jika itu final status Anda)
+            $surat->update([
+                'status' => 'diterima',
+            ]);
 
-        return response()->json(['success' => true, 'message' => 'Pengajuan berhasil disetujui!']);
+            // 4. Update Status History
+            $pengajuan->update([
+                'status' => 'disetujui',
+                'catatan' => 'Disetujui oleh Dekan',
+                'jabatan_id' => $user->penduduk->jabatan_id ?? null,
+            ]);
+
+            // 5. Kirim email dengan melampirkan file yang sudah ada
+            $this->sendEmail($surat, $pengajuan);
+
+            DB::commit();
+
+            return response()->json(['success' => 'Surat berhasil disetujui dan dikirim ke email mahasiswa!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error saat ACC surat oleh Dekan ID ' . $surat->id_surat_aktif . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Gagal memproses persetujuan atau mengirim email. Detail: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // Metode sendEmail tetap sama
+    private function sendEmail(SuratAktif $surat, HistoryPengajuan $pengajuan)
+    {
+        // Asumsi: SuratAktif memiliki relasi ke Mahasiswa, dan Mahasiswa memiliki relasi ke User (dengan email)
+        $mahasiswa = $surat->mahasiswa;
+        $mahasiswaEmail = $mahasiswa?->email;
+
+        if ($mahasiswaEmail) {
+            // Pastikan SuratAktifDiterima (Mail Class) dapat melampirkan file yang ada di $surat->file_generated
+            Mail::to($mahasiswaEmail)->send(new SuratAktifDiterima($surat));
+        } else {
+            Log::warning('Email mahasiswa tidak ditemukan untuk NIM: ' . $pengajuan->nim);
+        }
     }
 
     public function reject(Request $request, $id)
     {
         $user = Auth::user();
-        if ($user->role !== 'BAK') {
+        if ($user->role !== 'DEKAN') {
             return redirect()->back()->with('failed', 'Akses ditolak');
         }
 
@@ -146,19 +190,19 @@ class BAKHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Akses ditolak');
         }
 
-        if ($pengajuan->status !== 'pengajuan') {
-            return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
+        if ($pengajuan->status !== 'proses') {
+            return redirect()->back()->with('failed', 'Surat ini sudah diterima.');
         }
 
         $pengajuan->update([
             'status'     => 'ditolak',
-            'catatan'    => 'Ditolak oleh BAK: ' . $request->catatan,
+            'catatan'    => 'Ditolak oleh Dekan: ' . $request->catatan,
             'jabatan_id' => $user->penduduk->jabatan->id_jabatan
         ]);
 
         $suratAktif->update([
             'status'     => 'ditolak',
-            'catatan'    => 'Ditolak oleh BAK: ' . $request->catatan,
+            'catatan'    => 'Ditolak oleh Dekan: ' . $request->catatan,
         ]);
 
         return response()->json(['success' => true, 'message' => 'Pengajuan berhasil ditolak!']);

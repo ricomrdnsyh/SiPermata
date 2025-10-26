@@ -44,7 +44,8 @@
                                             <tbody class="fw-bold text-gray-800">
                                                 <tr>
                                                     <td>{{ $pengajuan->nama_surat }}</td>
-                                                    <td>{{ $pengajuan->created_at?->format('d M Y H:i') }}</td>
+                                                    <td>{{ $pengajuan->created_at?->locale('id')->isoFormat('D MMMM YYYY') }}
+                                                    </td>
                                                     <td>
                                                         @switch($pengajuan->status)
                                                             @case('pengajuan')

@@ -29,30 +29,17 @@ class TemplateControler extends Controller
 
         return DataTables::of($data)
             ->addColumn('file', function ($template) {
-                if (!$template->file || !Storage::disk('public')->exists($template->file)) {
+                if (!$template->file || !Storage::disk('local')->exists($template->file)) {
                     return '<span class="text-muted">File tidak ditemukan</span>';
                 }
+                $url = route('admin.template.download', $template->id_template);
 
-                $url = asset('storage/' . $template->file);
                 $extension = strtolower(pathinfo($template->file, PATHINFO_EXTENSION));
 
-                $icon = '<i class="fas fa-file fa-2x"></i>';
+                $icon = (in_array($extension, ['doc', 'docx'])) ? '<i class="fas fa-file-word fa-2x"></i>' : '<i class="fas fa-file fa-2x"></i>';
                 $color = 'text-primary';
 
-                if (in_array($extension, ['doc', 'docx'])) {
-                    $icon = '<i class="fas fa-file-word fa-2x"></i>';
-                    $color = 'text-primary';
-                }
-
-                // Opsi 1: Buka langsung
-                $link = $url;
-
-                // Opsi 2 (opsional): Preview Word via Google Docs
-                // if (in_array($extension, ['doc', 'docx'])) {
-                //     $link = "https://docs.google.com/gview?url=" . urlencode($url) . "&embedded=true";
-                // }
-
-                return '<a href="' . e($link) . '" target="_blank" title="Lihat file">' .
+                return '<a href="' . e($url) . '" target="_blank" title="Unduh file">' .
                     '<span class="' . $color . '">' . $icon . '</span>' .
                     '</a>';
             })
@@ -76,6 +63,23 @@ class TemplateControler extends Controller
             })
             ->rawColumns(['file', 'nama_fakultas', 'nama_prodi', 'action'])
             ->make(true);
+    }
+
+    public function downloadTemplate($id)
+    {
+        $template = Template::findOrFail($id);
+
+        $filePath = $template->file;
+
+        if (Storage::disk('local')->exists($filePath)) {
+
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+            $downloadFileName = "Template_" . $template->nama_template . "." . $extension;
+
+            return Storage::download($filePath, $downloadFileName);
+        }
+
+        abort(404, "File template tidak ditemukan.");
     }
 
     public function getProdi($fakultas_id)
@@ -118,8 +122,10 @@ class TemplateControler extends Controller
         $filePath = null;
         if ($request->hasFile('file')) {
             $file     = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('templates', $fileName, 'public');
+            $jenisSuratName = $request->jenis_surat;
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $request->fakultas_id . '/' . $jenisSuratName . '.' . $extension;
+            $filePath = $file->storeAs('templates', $fileName);
         }
 
         Template::create([
@@ -179,13 +185,15 @@ class TemplateControler extends Controller
         $filePath = $template->file; // Simpan path file lama
         if ($request->hasFile('file')) {
             // Hapus file lama jika ada
-            if ($template->file && Storage::disk('public')->exists($template->file)) {
-                Storage::disk('public')->delete($template->file);
+            if ($template->file && Storage::disk('local')->exists($template->file)) {
+                Storage::disk()->delete($template->file);
             }
 
             $file     = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('templates', $fileName, 'public');
+            $jenisSuratName = $request->jenis_surat;
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $request->fakultas_id . '/' . $jenisSuratName . '.' . $extension;
+            $filePath = $file->storeAs('templates', $fileName);
         }
 
         $template->update([
@@ -206,8 +214,8 @@ class TemplateControler extends Controller
     {
         $data = Template::findOrFail($id);
         // Hapus file dari storage jika ada
-        if ($data->file && Storage::disk('public')->exists($data->file)) {
-            Storage::disk('public')->delete($data->file);
+        if ($data->file && Storage::disk('local')->exists($data->file)) {
+            Storage::disk()->delete($data->file);
         }
         $data->delete();
 

@@ -30,7 +30,6 @@ class HistoryPengajuan extends Model
         return $this->belongsTo(Mahasiswa::class, 'nim');
     }
 
-    // Mapping model surat
     protected $modelMapping = [
         'surat_aktif' => SuratAktif::class,
         // 'surat_lulus' => SuratLulus::class,
@@ -59,15 +58,15 @@ class HistoryPengajuan extends Model
         if (!$surat) return 'Surat Tidak Ditemukan';
 
         return match ($this->tabel) {
-            'surat_aktif' => match ($surat->kategori ?? '') {
-                'UMUM' => 'Surat Keterangan Aktif Umum',
-                'PNS'  => 'Surat Keterangan Aktif PNS',
-                'PPPK' => 'Surat Keterangan Aktif PPPK',
-                default => 'Surat Lainnya'
+            'surat_aktif'  => match ($surat->kategori ?? '') {
+                'UMUM'     => 'Surat Keterangan Aktif Umum',
+                'PNS'      => 'Surat Keterangan Aktif PNS',
+                'PPPK'     => 'Surat Keterangan Aktif PPPK',
+                default    => 'Surat Lainnya'
             },
-            'surat_lulus' => 'Surat Keterangan Lulus',
+            'surat_lulus'  => 'Surat Keterangan Lulus',
             'surat_pindah' => 'Surat Keterangan Pindah',
-            default => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
+            default        => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
         };
     }
 }

@@ -25,14 +25,16 @@ class MahasiswaHistoryPegajuan extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = HistoryPengajuan::where('nim', $nim);
+        $query = HistoryPengajuan::with([])->where('nim', $nim)
+            ->whereIn('status', ['diterima'])
+            ->get();
 
         return DataTables::of($query)
             ->addColumn('nama_surat', function ($row) {
                 return $row->nama_surat;
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i') ?? '—';
+                return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
@@ -50,15 +52,7 @@ class MahasiswaHistoryPegajuan extends Controller
                 $showBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '';
-                if ($row->status === 'ditolak') {
-                    $editBtn = '<a href="' . route('mahasiswa.history.edit', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
-                }
-
-
-
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
+                return '<div class="text-center">' . $showBtn . '</div>';
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

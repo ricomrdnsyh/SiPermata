@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'History Pengajuan Mahasiswa')
+@section('title', 'Surat Keterangan Aktif')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List History Pengajuan</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Surat Keterangan Aktif</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -45,6 +45,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
+                                <a href="{{ route('bak.surat-aktif.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus"></i>Add Pengajuan</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -58,18 +60,17 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-aktif-table">
                             <!--begin::Table head-->
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
-                                    <th class="min-w-125px">Program Studi</th>
-                                    <th class="min-w-125px">Nama Surat Pengajuan</th>
+                                    <th class="min-w-125px">Kategori</th>
                                     <th class="min-w-125px">Tanggal Pengajuan</th>
                                     <th class="min-w-125px">Status Pengajuan</th>
                                     <th class="min-w-125px">Catatan</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -97,28 +98,17 @@
 
     <script>
         $(document).ready(function() {
-            let table = $('#history-table').DataTable({
+            let table = $('#surat-aktif-table').DataTable({
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('bak.history.data') }}',
+                ajax: '{{ route('bak.surat-aktif.data') }}',
                 columns: [{
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
                         data: 'nama_mahasiswa',
-                        name: 'nama_mahasiswa'
-                    },
-                    {
-                        data: 'prodi',
-                        name: 'prodi'
-                    },
-                    {
-                        data: 'nama_surat',
-                        name: 'nama_surat'
+                        name: 'nim'
+                    }, {
+                        data: 'kategori',
+                        name: 'kategori'
                     },
                     {
                         data: 'tanggal_pengajuan',
@@ -131,6 +121,12 @@
                     {
                         data: 'catatan',
                         name: 'catatan'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
                     }
                 ],
 
@@ -141,13 +137,40 @@
 
                 },
                 drawCallback: function() {
-                    $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+                    $('#surat-aktif-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
 
             table.on('draw', function() {
-                $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+                $('#surat-aktif-table [data-bs-toggle="tooltip"]').tooltip();
             });
         });
     </script>
+
+    @if ($message = Session::get('success'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+        </script>
+    @endif
+    @if ($message = Session::get('failed'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-danger"
+                }
+            });
+        </script>
+    @endif
 @endsection

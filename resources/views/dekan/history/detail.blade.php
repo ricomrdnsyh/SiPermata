@@ -26,17 +26,24 @@
                                     <h2 class="fw-bolder">Detail Surat Pengajuan</h2>
                                 </div>
                                 <div class="card-toolbar gap-3">
-                                    @if ($pengajuan->status === 'pengajuan')
+                                    @if ($pengajuan->status === 'proses')
                                         <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
                                             Tolak Pengajuan
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-light-success" id="btn-approve-main">
-                                            Terima Pengajuan
+                                        <button type="button" class="btn btn-sm btn-light-success approve-btn"
+                                            data-id="{{ $pengajuan->id_history }}"><i class="fas fa-check-circle"></i>
+                                            Terima & Kirim ke Mahasiswa
                                         </button>
+                                    @elseif($pengajuan->status === 'diterima')
+                                        <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pengajuan
+                                            sudah
+                                            dikonfirmasi</button>
+                                    @elseif($pengajuan->status === 'pengajuan')
+                                        <button class="btn btn-sm btn-warning">Menunggu BAK untuk validasi</button>
                                     @else
                                         <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pengajuan
                                             sudah
-                                            dikonfirmasi</bu>
+                                            dikonfirmasi</button>
                                     @endif
                                 </div>
                             </div>
@@ -193,90 +200,113 @@
             </div>
         </div>
     </div>
-
-    <form id="approveForm" method="POST" action="{{ route('bak.history.approve', $pengajuan->id_history) }}"
-        style="display: none;">
-        @csrf
-    </form>
 @endsection
 
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const pengajuanId = {{ $pengajuan->id_history }};
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            // Handle approve from detail page
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id'); // Ini adalah ID HistoryPengajuan
 
-            document.getElementById('btn-approve-main').addEventListener('click', function() {
-                Swal.fire({
-                    title: "Konfirmasi Persetujuan",
-                    text: "Apakah Anda yakin ingin menyetujui pengajuan ini?",
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Ya, Setujui!",
-                    cancelButtonText: "Batal",
-                    customClass: {
-                        confirmButton: "btn btn-success",
-                        cancelButton: "btn btn-light text-black"
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            text: 'Memproses persetujuan...',
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        fetch("{{ route('bak.history.approve', ':id') }}".replace(':id',
-                                pengajuanId), {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': csrfToken,
-                                    'Content-Type': 'application/json'
+                    Swal.fire({
+                        title: 'Konfirmasi Persetujuan',
+                        text: "Apakah Anda yakin ingin menyetujui surat ini? Surat akan dikirim ke email mahasiswa.",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Setujui!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-light'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Memproses Surat',
+                                text: 'Memproses persetujuan dan pengiriman email...',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
                                 }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire({
-                                        text: data.message,
-                                        icon: "success",
-                                        buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
-                                        customClass: {
-                                            confirmButton: "btn btn-primary"
-                                        }
-                                    }).then(() => {
-                                        window.location.reload();
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        text: data.message ||
-                                            'Terjadi kesalahan saat menyetujui.',
-                                        icon: "error",
-                                        buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
-                                        customClass: {
-                                            confirmButton: "btn btn-danger"
-                                        }
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    text: 'Terjadi kesalahan saat menyetujui.',
-                                    icon: "error",
-                                    buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
-                                    customClass: {
-                                        confirmButton: "btn btn-danger"
-                                    }
-                                });
                             });
-                    }
+
+                            // !!! MODIFIKASI PADA URL FETCH !!!
+                            fetch("{{ route('dekan.surat-aktif.approve', ['id' => ':id']) }}"
+                                    .replace(':id', id), {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]').getAttribute(
+                                                'content'),
+                                            'Content-Type': 'application/json'
+                                        }
+                                    })
+                                .then(response => {
+                                    // Cek apakah response.ok (status 200-299)
+                                    if (response.ok) {
+                                        return response
+                                            .json(); // Harusnya sukses, parse JSON
+                                    }
+
+                                    // Jika status TIDAK OK (misal 403, 500):
+                                    return response.text().then(text => {
+                                        // Coba parse teks sebagai JSON
+                                        try {
+                                            const errorData = JSON.parse(text);
+                                            // Jika berhasil parse JSON dan ada properti 'error'
+                                            throw new Error(errorData.error ||
+                                                'Kesalahan Server. Coba lagi.'
+                                            );
+                                        } catch (e) {
+                                            // Jika gagal parse JSON (berarti response-nya HTML atau teks biasa)
+                                            // Cek apakah ada status code spesifik dari server
+                                            if (response.status === 403) {
+                                                throw new Error(
+                                                    'Akses Ditolak: Surat ini bukan milik fakultas Anda.'
+                                                );
+                                            }
+                                            // Jika tidak dapat diidentifikasi
+                                            throw new Error(
+                                                'Gagal memproses. Respon tidak valid atau non-JSON. Cek log server.'
+                                            );
+                                        }
+                                    });
+                                })
+                                .then(data => {
+                                    // Penanganan Sukses
+                                    Swal.fire({
+                                        text: data.success,
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        window.location.href =
+                                            "{{ route('dekan.history.index') }}";
+                                    });
+                                })
+                                .catch(error => {
+                                    // Penanganan Kesalahan
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: error
+                                            .message, // Menampilkan pesan error dari throw new Error
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                        }
+                    });
                 });
             });
+
+            // ... (Tambahkan logika penolakan (Reject) di sini jika diperlukan) ...
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pengajuanId = {{ $pengajuan->id_history }};
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             // Tolak Pengajuan
             document.getElementById('btn-reject-main').addEventListener('click', function() {
@@ -306,7 +336,7 @@
                 label.style.display = 'none';
                 progress.style.display = 'inline-block';
 
-                fetch("{{ route('bak.history.reject', ':id') }}".replace(':id', pengajuanId), {
+                fetch("{{ route('dekan.history.reject', ':id') }}".replace(':id', pengajuanId), {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken,

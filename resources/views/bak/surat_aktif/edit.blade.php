@@ -31,7 +31,7 @@
                             <div id="form-container" class="mt-2">
                                 <!-- Form Umum -->
                                 <form id="form-umum" class="form-section active" method="POST"
-                                    action="{{ route('mahasiswa.surat-aktif.update', $surat->id_surat_aktif) }}">
+                                    action="{{ route('bak.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
@@ -39,9 +39,22 @@
                                     <h3 class="mb-5 text-center">Pengajuan Surat Keterangan Aktif Umum</h3>
 
                                     <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
-                                            value="{{ auth()->user()->reference_id }}" disabled required />
+                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                            data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1">
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Mahasiswa...</option>
+                                            @foreach ($mahasiswa as $mhs)
+                                                <option value="{{ $mhs->nim }}" {{ $mhs->nim == $surat->nim ? 'selected' : '' }}>
+                                                    {{ $mhs->nim }} - {{ $mhs->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('nim')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
@@ -93,7 +106,7 @@
 
                                 <!-- Form PNS -->
                                 <form id="form-pns" class="form-section" method="POST"
-                                    action="{{ route('mahasiswa.surat-aktif.update', $surat->id_surat_aktif) }}">
+                                    action="{{ route('bak.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
@@ -101,9 +114,22 @@
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PNS</h3>
 
                                     <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control"
-                                            value="{{ auth()->user()->reference_id }}" disabled required />
+                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                            data-select2-id="select2-data-72-r5i9" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1">
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Mahasiswa...</option>
+                                            @foreach ($mahasiswa as $mhsw)
+                                                <option value="{{ $mhsw->nim }}" {{ $mhsw->nim == $surat->nim ? 'selected' : '' }}>
+                                                    {{ $mhsw->nim }} - {{ $mhsw->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('nim')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
 
                                     <div class="row">
@@ -315,9 +341,22 @@
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PPPK</h3>
 
                                     <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control"
-                                            value="{{ auth()->user()->reference_id }}" disabled required />
+                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                            data-select2-id="select2-data-72-r5i1" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1">
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Mahasiswa...</option>
+                                            @foreach ($mahasiswa as $mhswa)
+                                                <option value="{{ $mhswa->nim }}" {{ $mhswa->nim == $surat->nim ? 'selected' : '' }}>
+                                                    {{ $mhswa->nim }} - {{ $mhswa->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('nim')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
 
                                     <div class="row">

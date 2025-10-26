@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Template')
+@section('title', 'Surat Keterangan Aktif')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Template</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Surat Keterangan Aktif</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -45,8 +45,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('bak.template.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Template</a>
+                                <a href="{{ route('mahasiswa.surat-aktif.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus"></i>Add Pengajuan</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -60,16 +60,15 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="template-table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-aktif-table">
                             <!--begin::Table head-->
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="min-w-125px">Nama Template</th>
-                                    <th class="min-w-125px">Jenis Surat</th>
-                                    <th class="min-w-125px">File</th>
-                                    <th class="min-w-125px">Nama Fakultas</th>
-                                    <th class="min-w-125px">Nama Prodi</th>
+                                    <th class="min-w-125px">Kategori</th>
+                                    <th class="min-w-125px">Tanggal Pengajuan</th>
+                                    <th class="min-w-125px">Status Pengajuan</th>
+                                    <th class="min-w-125px">Catatan</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
@@ -98,32 +97,26 @@
 
     <script>
         $(document).ready(function() {
-            let table = $('#template-table').DataTable({
+            let table = $('#surat-aktif-table').DataTable({
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('bak.template.data') }}',
+                ajax: '{{ route('mahasiswa.surat-aktif.data') }}',
                 columns: [{
-                        data: 'nama_template',
-                        name: 'nama_template'
+                        data: 'kategori',
+                        name: 'kategori'
                     },
                     {
-                        data: 'jenis_surat',
-                        name: 'jenis_surat'
+                        data: 'tanggal_pengajuan',
+                        name: 'created_at'
                     },
                     {
-                        data: 'file',
-                        name: 'file',
-                        orderable: false,
-                        searchable: false
+                        data: 'status',
+                        name: 'status'
                     },
                     {
-                        data: 'nama_fakultas',
-                        name: 'fakultas.nama_fakultas'
-                    },
-                    {
-                        data: 'nama_prodi',
-                        name: 'prodi.nama_prodi'
+                        data: 'catatan',
+                        name: 'catatan'
                     },
                     {
                         data: 'action',
@@ -140,80 +133,14 @@
 
                 },
                 drawCallback: function() {
-                    $('#template-table [data-bs-toggle="tooltip"]').tooltip();
+                    $('#surat-aktif-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
 
             table.on('draw', function() {
-                $('#template-table [data-bs-toggle="tooltip"]').tooltip();
+                $('#surat-aktif-table [data-bs-toggle="tooltip"]').tooltip();
             });
-
-            $('#template-table').on('click', '.btn-active-light-danger', function(e) {
-                e.preventDefault();
-                let button = $(this);
-                let id = button.data('id');
-
-                if (id) {
-                    confirmDelete(id);
-                } else {
-                    console.error('ID tidak ditemukan pada tombol hapus');
-                }
-            });
-
         });
-
-        function confirmDelete(id) {
-            Swal.fire({
-                title: "Apakah Anda yakin?",
-                text: "Data akan dihapus permanen.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Ya, hapus!",
-                cancelButtonText: "Batal",
-                customClass: {
-                    confirmButton: "btn btn-danger",
-                    cancelButton: 'btn btn-light text-black'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/bak/template/' + id,
-                        type: 'DELETE',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        beforeSend: function() {
-                            Swal.fire({
-                                text: 'Mohon tunggu sebentar...',
-                                allowOutsideClick: false,
-                                didOpen: () => {
-                                    Swal.showLoading()
-                                }
-                            });
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                text: response.message,
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            });
-                            $('#template-table').DataTable().ajax.reload(null, false);
-                        },
-                        error: function(xhr) {
-                            let errorMessage = "Terjadi kesalahan saat menghapus data.";
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            Swal.fire("Error!", errorMessage, "error");
-                        }
-                    });
-                }
-            });
-        }
     </script>
 
     @if ($message = Session::get('success'))

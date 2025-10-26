@@ -26,7 +26,8 @@ class SuratAktif extends Model
         'unit_kerja',
         'alamat',
         'status',
-        'pdf_path'
+        'catatan',
+        'file_generated'
     ];
 
     public function template()
@@ -38,7 +39,7 @@ class SuratAktif extends Model
     {
         $last = self::where('template_id', $templateId)->orderBy('id_surat_aktif', 'desc')->first();
         $number = $last ? intval(substr($last->no_surat, -4)) + 1 : 1;
-        return "SA-" . sprintf("%04d", $number);
+        return sprintf("%04d", $number);
     }
 
     public function akademik()
@@ -46,7 +47,12 @@ class SuratAktif extends Model
         return $this->belongsTo(TahunAkademik::class, 'akademik_id', 'id_akademik');
     }
 
-    public function pengajuan()
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
+    }
+
+    public function historyPengajuan()
     {
         return $this->hasOne(HistoryPengajuan::class, 'id_tabel_surat')
             ->where('tabel', 'surat_aktif');
