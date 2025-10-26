@@ -45,6 +45,9 @@ class BAKSuratAktifController extends Controller
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;
             })
+            ->addColumn('prodi', function ($row) {
+                return $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim;
+            })
             ->editColumn('kategori', function ($row) {
                 if ($row->kategori == 'UMUM') {
                     return '<span>Surat Keterangan Aktif UMUM</span>';
@@ -78,7 +81,7 @@ class BAKSuratAktifController extends Controller
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })
-            ->rawColumns(['nama_mahasiswa', 'kategori', 'tanggal_pengajuan', 'status', 'catatan', 'action'])
+            ->rawColumns(['nama_mahasiswa', 'prodi', 'kategori', 'tanggal_pengajuan', 'status', 'catatan', 'action'])
             ->make(true);
     }
 

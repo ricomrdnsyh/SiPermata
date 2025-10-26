@@ -12,9 +12,9 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\MahasiswaController;
+use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
-use App\Http\Controllers\BAK\BAKTemplateController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\BAK\MitraController as BAKMitraController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
@@ -65,6 +65,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/jabatan/data', [JabatanController::class, 'getJabatan'])->name('jabatan.data');
         Route::resource('jabatan', JabatanController::class);
+
+        Route::get('/surat-aktif/data', [SuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
+        Route::resource('surat-aktif', SuratAktifController::class);
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {

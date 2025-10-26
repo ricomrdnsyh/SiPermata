@@ -103,7 +103,7 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('bak.surat-aktif.data') }}',
+                ajax: '{{ route('admin.surat-aktif.data') }}',
                 columns: [{
                         data: 'nama_mahasiswa',
                         name: 'nim'
