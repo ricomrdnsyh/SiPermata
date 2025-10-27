@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class HistoryPengajuan extends Model
 {
@@ -23,6 +24,24 @@ class HistoryPengajuan extends Model
     public function suratAktif()
     {
         return $this->belongsTo(SuratAktif::class, 'id_tabel_surat');
+    }
+
+    protected static function booted()
+    {
+        static::deleted(function ($history) {
+            if ($history->tabel === 'surat_aktif') {
+
+                $suratAktif = $history->suratAktif;
+
+                $filePath = $suratAktif->file_generated ?? null;
+
+                $history->suratAktif()->delete();
+
+                if ($filePath) {
+                    Storage::disk('local')->delete($filePath);
+                }
+            }
+        });
     }
 
     public function mahasiswa()

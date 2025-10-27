@@ -45,6 +45,9 @@ class DekanHistoryPengajuanController extends Controller
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->addColumn('nama_mahasiswa', function ($row) {
                 $mahasiswa = Mahasiswa::where('nim', $row->nim)->first();
                 return $mahasiswa?->nama ?? $row->nim;

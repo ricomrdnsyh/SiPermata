@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\TemplateControler;
 use App\Http\Controllers\Admin\AkademikController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FakultasController;
+use App\Http\Controllers\Admin\HistoryPengajuanController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\SuratAktifController;
@@ -68,6 +69,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-aktif/data', [SuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', SuratAktifController::class);
+
+        Route::get('/history/data', [HistoryPengajuanController::class, 'getHistory'])->name('history.data');
+        Route::resource('history-pengajuan', HistoryPengajuanController::class)->only(['index', 'show', 'destroy']);
+        Route::post('history/{id}/action', [HistoryPengajuanController::class, 'handleApprovalAction'])->name('history.action');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
