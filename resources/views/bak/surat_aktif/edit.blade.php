@@ -332,7 +332,7 @@
 
                                 <!-- Form PPPK (sama seperti PNS) -->
                                 <form id="form-pppk" class="form-section" method="POST"
-                                    action="{{ route('mahasiswa.surat-aktif.update', $surat->id_surat_aktif) }}">
+                                    action="{{ route('bak.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
                                     @method('PUT')
 

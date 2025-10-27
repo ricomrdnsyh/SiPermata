@@ -106,10 +106,12 @@
                 ajax: '{{ route('bak.surat-aktif.data') }}',
                 columns: [{
                         data: 'nama_mahasiswa',
-                        name: 'nim'
+                        name: 'nim',
+                        orderable: false,
                     }, {
                         data: 'prodi',
-                        name: 'prodi'
+                        name: 'prodi',
+                        orderable: false,
                     },
                     {
                         data: 'kategori',

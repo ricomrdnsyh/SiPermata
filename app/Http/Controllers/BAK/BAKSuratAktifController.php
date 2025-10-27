@@ -42,6 +42,9 @@ class BAKSuratAktifController extends Controller
         $query = $query->with('mahasiswa');
 
         return DataTables::of($query)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;
             })

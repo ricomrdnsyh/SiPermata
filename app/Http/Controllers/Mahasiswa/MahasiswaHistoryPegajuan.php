@@ -26,10 +26,12 @@ class MahasiswaHistoryPegajuan extends Controller
         }
 
         $query = HistoryPengajuan::with([])->where('nim', $nim)
-            ->whereIn('status', ['diterima'])
-            ->get();
+            ->whereIn('status', ['diterima']);
 
         return DataTables::of($query)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->addColumn('nama_surat', function ($row) {
                 return $row->nama_surat;
             })

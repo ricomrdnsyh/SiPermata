@@ -30,10 +30,12 @@ class MahasiswaSuratAktifController extends Controller
         }
 
         $query = SuratAktif::with([])->where('nim', $nim)
-            ->whereIn('status', ['pengajuan', 'proses', 'ditolak'])
-            ->get();
+            ->whereIn('status', ['pengajuan', 'proses', 'ditolak']);
 
         return DataTables::of($query)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->editColumn('kategori', function ($row) {
                 if ($row->kategori == 'UMUM') {
                     return '<span>Surat Keterangan Aktif UMUM</span>';

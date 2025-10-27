@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Template;
+use App\Models\Mahasiswa;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
+use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
+use App\Models\HistoryPengajuan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\SuratAktifGenerator;
 use Yajra\DataTables\Facades\DataTables;
 
 class SuratAktifController extends Controller
@@ -30,6 +35,9 @@ class SuratAktifController extends Controller
         $query = SuratAktif::with(['mahasiswa.prodi', 'mahasiswa.fakultas', 'akademik']);
 
         return DataTables::of($query)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;
             })
@@ -61,10 +69,10 @@ class SuratAktifController extends Controller
                 };
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('bak.surat-aktif.show', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('admin.surat-aktif.show', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('bak.surat-aktif.edit', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                $editBtn = '<a href="' . route('admin.surat-aktif.edit', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
@@ -78,15 +86,117 @@ class SuratAktifController extends Controller
      */
     public function create()
     {
-        //
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $mahasiswa = Mahasiswa::all();
+        $akademik  = TahunAkademik::all();
+
+        return view('admin.surat_aktif.create', compact('mahasiswa', 'akademik'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, SuratAktifGenerator $generatorService)
     {
-        //
+        $request->validate([
+            'nim'                       => 'required|exists:mahasiswa,nim',
+            'kategori'                  => 'required|in:UMUM,PNS,PPPK',
+            'semester'                  => 'required',
+            'akademik_id'               => 'required|exists:tahun_akademik,id_akademik',
+            'nama_ortu'                 => 'required_if:kategori,PNS,PPPK|nullable',
+            'nip'                       => 'required_if:kategori,PNS,PPPK|nullable',
+            'pendidikan_terakhir'       => 'required_if:kategori,PNS,PPPK|nullable',
+            'pangkat'                   => 'required_if:kategori,PNS,PPPK|nullable',
+            'golongan'                  => 'required_if:kategori,PNS,PPPK|nullable',
+            'tmt'                       => 'required_if:kategori,PNS,PPPK|nullable',
+            'unit_kerja'                => 'required_if:kategori,PNS,PPPK|nullable',
+            'alamat'                    => 'required_if:kategori,PNS,PPPK|nullable',
+        ]);
+
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
+
+        if (!$mahasiswa) {
+            return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        $fakultasId = $mahasiswa->fakultas_id;
+
+        if (!$fakultasId) {
+            return back()->with('failed', 'Fakultas Anda belum ditentukan.');
+        }
+
+        $kategoriToTemplate = [
+            'UMUM'  => 'surat_aktif_umum',
+            'PNS'   => 'surat_aktif_pns',
+            'PPPK'  => 'surat_aktif_pppk',
+        ];
+
+        $namaTemplate = $kategoriToTemplate[$request->kategori];
+
+        // Cari template berdasarkan kategori + fakultas
+        $template = Template::where('jenis_surat', $namaTemplate)
+            ->where('fakultas_id', $fakultasId)
+            ->first();
+
+        if (!$template) {
+            return back()->with('failed', "Template untuk kategori {$request->kategori} belum tersedia untuk fakultas Anda.");
+        }
+
+        // Generate nomor surat
+        $noSurat = SuratAktif::getNextNoSurat($template->id_template);
+
+        $surat = SuratAktif::create([
+            'template_id'          => $template->id_template,
+            'no_surat'             => $noSurat,
+            'nim'                  => $mahasiswa->nim,
+            'akademik_id'          => $request->akademik_id,
+            'semester'             => $request->semester,
+            'kategori'             => $request->kategori,
+            'nama_ortu'            => $request->nama_ortu,
+            'nip'                  => $request->nip,
+            'pendidikan_terakhir'  => $request->pendidikan_terakhir,
+            'pangkat'              => $request->pangkat,
+            'golongan'             => $request->golongan,
+            'tmt'                  => $request->tmt,
+            'unit_kerja'           => $request->unit_kerja,
+            'alamat'               => $request->alamat,
+            'status'               => 'pengajuan',
+            'catatan'              => 'Diajukan oleh Admin untuk mahasiswa',
+        ]);
+
+        try {
+            $generatedFilePath = $generatorService->generateWord($surat, $template);
+
+            $surat->update([
+                'file_generated' => $generatedFilePath,
+            ]);
+        } catch (\Exception $e) {
+            $surat->delete();
+            return back()->with('failed', 'Gagal memproses template dokumen. Error: ' . $e->getMessage());
+        }
+
+        HistoryPengajuan::create([
+            'id_tabel_surat' => $surat->id_surat_aktif,
+            'nim'            => $mahasiswa->nim,
+            'fakultas_id'    => $mahasiswa->fakultas_id,
+            'tabel'          => 'surat_aktif',
+            'status'         => 'pengajuan',
+            'catatan'        => 'Diajukan oleh Admin untuk mahasiswa',
+            'jabatan_id'     => null,
+        ]);
+
+        return redirect()->route('admin.surat-aktif.index')->with('success', 'Pengajuan surat berhasil dibuat!');
     }
 
     /**
@@ -94,7 +204,9 @@ class SuratAktifController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $surat = SuratAktif::with(['mahasiswa', 'akademik'])->findOrFail($id);
+
+        return view('admin.surat_aktif.show', compact('surat'));
     }
 
     /**
@@ -102,22 +214,77 @@ class SuratAktifController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $surat = SuratAktif::findOrFail($id);
+        $mahasiswa = Mahasiswa::all();
+        $akademik = TahunAkademik::all();
+
+        return view('admin.surat_aktif.edit', compact('surat', 'mahasiswa', 'akademik'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, SuratAktifGenerator $generatorService)
     {
-        //
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        $request->validate([
+            'nim'                   => 'required|exists:mahasiswa,nim',
+            'semester'              => 'required',
+            'akademik_id'           => 'required|exists:tahun_akademik,id_akademik',
+            'nama_ortu'             => 'required_if:kategori,PNS,PPPK|nullable',
+            'nip'                   => 'required_if:kategori,PNS,PPPK|nullable',
+            'pendidikan_terakhir'   => 'required_if:kategori,PNS,PPPK|nullable',
+            'pangkat'               => 'required_if:kategori,PNS,PPPK|nullable',
+            'golongan'              => 'required_if:kategori,PNS,PPPK|nullable',
+            'tmt'                   => 'required_if:kategori,PNS,PPPK|nullable',
+            'unit_kerja'            => 'required_if:kategori,PNS,PPPK|nullable',
+            'alamat'                => 'required_if:kategori,PNS,PPPK|nullable',
+        ]);
+
+        $surat = SuratAktif::findOrFail($id);
+
+        $surat->update([
+            'nim'                   => $request->nim,
+            'akademik_id'           => $request->akademik_id,
+            'semester'              => $request->semester,
+            'nama_ortu'             => $request->nama_ortu,
+            'nip'                   => $request->nip,
+            'pendidikan_terakhir'   => $request->pendidikan_terakhir,
+            'pangkat'               => $request->pangkat,
+            'golongan'              => $request->golongan,
+            'tmt'                   => $request->tmt,
+            'unit_kerja'            => $request->unit_kerja,
+            'alamat'                => $request->alamat,
+        ]);
+
+        try {
+            $template = Template::findOrFail($surat->template_id);
+
+            $generatedFilePath = $generatorService->generateWord($surat, $template);
+
+            $surat->update([
+                'file_generated' => $generatedFilePath
+            ]);
+
+            return redirect()->route('admin.surat-aktif.index')->with('success', 'Data surat berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+    public function destroy(string $id) {}
 }

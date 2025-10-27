@@ -45,7 +45,7 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('bak.surat-aktif.create') }}" class="btn btn-sm btn-primary"><i
+                                <a href="{{ route('admin.surat-aktif.create') }}" class="btn btn-sm btn-primary"><i
                                         class="fas fa-plus"></i>Add Pengajuan</a>
                                 <!--end::Add user-->
                             </div>
@@ -106,10 +106,12 @@
                 ajax: '{{ route('admin.surat-aktif.data') }}',
                 columns: [{
                         data: 'nama_mahasiswa',
-                        name: 'nim'
+                        name: 'nim',
+                        orderable: false,
                     }, {
                         data: 'prodi',
-                        name: 'prodi'
+                        name: 'prodi',
+                        orderable: false,
                     },
                     {
                         data: 'kategori',
