@@ -26,7 +26,7 @@ class MahasiswaHistoryPegajuan extends Controller
         }
 
         $query = HistoryPengajuan::with([])->where('nim', $nim)
-            ->whereIn('status', ['diterima']);
+            ->whereIn('status', ['selesai']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -40,10 +40,7 @@ class MahasiswaHistoryPegajuan extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge bg-success">Disetujui</span>',
-                    'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
+                    'selesai'  => '<span class="badge bg-primary">Selesai</span>',
                     default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };
             })

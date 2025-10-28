@@ -45,7 +45,7 @@ class DekanHistoryPengajuanController extends Controller
         // Ambil semua pengajuan di fakultas ini yang statusnya 'pengajuan'
         $query = HistoryPengajuan::with([])
             ->where('fakultas_id', $fakultasId)
-            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -70,6 +70,7 @@ class DekanHistoryPengajuanController extends Controller
                     'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
                     'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
                     'diterima'  => '<span class="badge bg-success">Disetujui</span>',
+                    'selesai'   => '<span class="badge bg-primary">Selesai</span>',
                     'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
                     default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };

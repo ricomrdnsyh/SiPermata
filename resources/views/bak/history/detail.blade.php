@@ -74,6 +74,10 @@
                                                                 <span class="badge bg-success">Disetujui</span>
                                                             @break
 
+                                                            @case('selesai')
+                                                                <span class="badge bg-primary">Selesai</span>
+                                                            @break
+
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break

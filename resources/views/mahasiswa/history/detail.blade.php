@@ -48,20 +48,8 @@
                                                     </td>
                                                     <td>
                                                         @switch($pengajuan->status)
-                                                            @case('pengajuan')
-                                                                <span class="badge bg-warning">Menunggu Persetujuan</span>
-                                                            @break
-
-                                                            @case('proses')
-                                                                <span class="badge bg-info">Menunggu Dekan</span>
-                                                            @break
-
-                                                            @case('diterima')
-                                                                <span class="badge bg-success">Disetujui</span>
-                                                            @break
-
-                                                            @case('ditolak')
-                                                                <span class="badge bg-danger">Ditolak</span>
+                                                            @case('selesai')
+                                                                <span class="badge bg-primary">Selesai</span>
                                                             @break
                                                         @endswitch
                                                     </td>

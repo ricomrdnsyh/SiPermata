@@ -97,7 +97,7 @@
                                                     <td>
                                                         @switch($pengajuan->status)
                                                             @case('pengajuan')
-                                                                <span class="badge bg-warning">Menunggu Persetujuan</span>
+                                                                <span class="badge bg-warning">Menunggu BAK</span>
                                                             @break
 
                                                             @case('proses')
@@ -106,6 +106,10 @@
 
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui</span>
+                                                            @break
+
+                                                            @case('selesai')
+                                                                <span class="badge bg-success">Selesai</span>
                                                             @break
 
                                                             @case('ditolak')

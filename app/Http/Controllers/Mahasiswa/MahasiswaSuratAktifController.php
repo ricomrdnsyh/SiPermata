@@ -30,7 +30,7 @@ class MahasiswaSuratAktifController extends Controller
         }
 
         $query = SuratAktif::with([])->where('nim', $nim)
-            ->whereIn('status', ['pengajuan', 'proses', 'ditolak']);
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
             ->order(function ($query) {

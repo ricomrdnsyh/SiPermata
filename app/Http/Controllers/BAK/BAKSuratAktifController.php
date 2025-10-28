@@ -71,6 +71,7 @@ class BAKSuratAktifController extends Controller
                     'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
                     'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
                     'diterima'  => '<span class="badge bg-success">Disetujui</span>',
+                    'selesai'   => '<span class="badge bg-primary">Selesai</span>',
                     'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
                     default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };
