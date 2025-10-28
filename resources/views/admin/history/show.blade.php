@@ -143,7 +143,7 @@
                                             <span class="fs-4 fw-bolder text-gray-900 text-hover-primary me-2">
                                                 {{ $mahasiswa?->nama ?? '-' }}
                                             </span>
-                                            <span class="fw-bold text-gray-600 text-hover-primary">
+                                            <span class="fw-bold text-gray-600 text-hover-primary text-break">
                                                 {{ $mahasiswa?->email ?? '-' }}
                                             </span>
                                         </div>
@@ -189,7 +189,6 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    {{-- ID ini akan diubah oleh JS untuk menunjukkan tahap (BAK/Dekan) --}}
                     <h5 class="modal-title" id="rejectReasonModalLabel">Catatan Penolakan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -200,16 +199,12 @@
                         <textarea class="form-control" name="catatan" id="rejectReason" rows="4" required
                             placeholder="Jelaskan alasan penolakan secara rinci...">
                     </textarea>
-                        {{-- Div untuk menampilkan pesan error validasi (jika catatan kosong) --}}
                         <div id="rejectError" class="text-danger mt-2" style="display: none;"></div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-
-                    {{-- Tombol Submit Penolakan --}}
-                    {{-- Atribut data-stage akan diisi oleh JS saat tombol tolak di luar modal diklik --}}
                     <button type="button" class="btn btn-danger" id="btn-submit-reject" data-stage="">
                         <span class="indicator-label">Tolak Pengajuan</span>
                         <span class="indicator-progress" style="display: none;">

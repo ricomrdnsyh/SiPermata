@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Dekan;
 
+use App\Models\TtdSurat;
 use App\Models\Mahasiswa;
+use App\Mail\SuratSelesai;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Mail\SuratAktifDiterima;
 use App\Models\HistoryPengajuan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +15,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Services\SuratAktifGenerator;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Symfony\Component\HttpFoundation\Response;
 
 class DekanHistoryPengajuanController extends Controller
 {
@@ -84,26 +87,133 @@ class DekanHistoryPengajuanController extends Controller
             ->make(true);
     }
 
+    private function getModelClass($tableName)
+    {
+        switch ($tableName) {
+            case 'surat_aktif':
+                return SuratAktif::class;
+                // case 'surat_lulus':
+                //     return SuratLulus::class;
+                // 💡 TAMBAHKAN KASUS UNTUK JENIS SURAT LAINNYA
+                // case 'surat_cuti':
+                //     return SuratCuti::class;
+            default:
+                return null;
+        }
+    }
+
     public function show($id)
     {
         $user = Auth::user();
+
         if ($user->role !== 'DEKAN') {
             abort(403);
         }
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
 
-        // Pastikan ini surat di fakultas BAK yang login
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
             abort(403, 'Surat ini bukan milik fakultas Anda.');
         }
 
-        $surat = $pengajuan->surat;
-        if (!$surat) {
-            abort(404, 'Data surat tidak ditemukan.');
+        $surat = null;
+        $fileGeneratedPath = null;
+
+        $modelClass = $this->getModelClass($pengajuan->tabel);
+
+        if ($modelClass) {
+            $surat = $modelClass::find($pengajuan->id_tabel_surat);
+
+            if ($surat) {
+                $fileGeneratedPath = $surat->file_generated ?? null;
+            }
         }
 
-        return view('dekan.history.detail', compact('pengajuan', 'surat'));
+        if (!$surat) {
+            abort(404, 'Data surat tidak ditemukan di tabel sumber.');
+        }
+
+        return view('dekan.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
+    }
+
+    public function approve($id, SuratAktifGenerator $generatorService)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'DEKAN') {
+            return redirect()->back()->with('failed', 'Akses ditolak');
+        }
+
+        $pengajuan = HistoryPengajuan::findOrFail($id);
+
+        $suratAktif = $pengajuan->suratAktif;
+
+        if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
+            return redirect()->back()->with('failed', 'Akses ditolak');
+        }
+
+        // Tambahkan Pengecekan Ketersediaan File
+        if (empty($suratAktif->file_generated)) {
+            return response()->json(['success' => false, 'message' => 'File surat belum tersedia untuk ditandatangani.'], 400);
+        }
+
+        // Dapatkan ID Fakultas dan ID Template
+        $fakultasId = $pengajuan->fakultas_id; // Diambil dari HistoryPengajuan
+        $templateId = $suratAktif->template_id; // Diambil dari SuratAktif
+
+        // 1. Ambil data TTD dari tabel ttd_surat
+        // Cari TTD yang aktif, sesuai fakultas, dan sesuai template.
+        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
+            ->where('template_id', $templateId)
+            ->where('status', 'aktif')
+            ->first();
+
+        if (!$ttdDekan) {
+            return response()->json(['success' => false, 'message' => 'Data penanda tangan (TTD Dekan) untuk fakultas dan template ini tidak ditemukan atau tidak aktif.'], 404);
+        }
+
+        // Data yang akan digunakan
+        $namaDekan = $ttdDekan->nama_ttd;
+        // Asumsi jabatan diambil dari data user Dekan saat ini (Auth::user()->penduduk->jabatan->nama_jabatan)
+        // atau jika Anda menyimpan jabatan di tabel ttd_surat, gunakan kolom tersebut (misal: $ttdDekan->jabatan)
+        $jabatanDekan = $user->penduduk->jabatan->nama_jabatan ?? 'Dekan'; // Gunakan data jabatan dari user yang approve
+
+        try {
+            DB::beginTransaction();
+
+            // 2. Panggil service untuk menyisipkan TTD QR ke file Word yang sudah ada
+            // Menggunakan $namaDekan dari tabel ttd_surat
+            $generatedFilePath = $generatorService->insertSignatureWithQR(
+                $suratAktif,
+                $jabatanDekan, // Jabatan tetap diambil dari user yang login (dekan)
+                $namaDekan
+            );
+
+            // 3. Update Status SuratAktif
+            $suratAktif->update([
+                'status' => 'diterima',
+                'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
+                'file_generated' => $generatedFilePath,
+            ]);
+
+            // 4. Update History Pengajuan
+            $pengajuan->update([
+                'status' => 'diterima',
+                'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
+                'jabatan_id' => $user->penduduk->jabatan->id_jabatan,
+            ]);
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Pengajuan berhasil disetujui dan TTD QR berhasil ditambahkan!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Gagal menambahkan TTD QR pada surat aktif {$suratAktif->id_surat_aktif}: " . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses TTD QR. Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function reject(Request $request, $id)
@@ -141,5 +251,116 @@ class DekanHistoryPengajuanController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Pengajuan berhasil ditolak!']);
+    }
+
+    public function viewGeneratedFile(string $tabel, int $id): Response
+    {
+        $user = Auth::user();
+        if ($user->role !== 'DEKAN') {
+            abort(403);
+        }
+
+        $modelClass = $this->getModelClass($tabel);
+
+        if (!$modelClass) {
+            abort(404, 'Jenis surat tidak valid.');
+        }
+
+        $surat = $modelClass::find($id);
+
+        if (!$surat || empty($surat->file_generated)) {
+            abort(404, 'File surat tidak ditemukan atau belum disetujui/digenerate.');
+        }
+
+        if ($surat->mahasiswa->fakultas_id !== $user->penduduk?->fakultas_id) {
+            abort(403, 'Anda tidak berhak melihat surat ini.');
+        }
+
+        $filePath = $surat->file_generated;
+        $disk = 'local';
+
+        // 3. Cek keberadaan file
+        if (!Storage::disk($disk)->exists($filePath)) {
+            abort(404, 'File di server tidak ditemukan.');
+        }
+
+        $fileName = 'Surat_' . ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
+
+        // 5. Unduh file
+        return Storage::download($filePath, $fileName);
+    }
+
+    public function sendEmailMahasiswa(Request $request, string $tabel, int $id)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'DEKAN') {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
+        }
+
+        $modelClass = $this->getModelClass($tabel);
+        if (!$modelClass) {
+            return response()->json(['success' => false, 'message' => 'Jenis surat tidak valid.'], 404);
+        }
+
+        // 1. Ambil data Surat dan Mahasiswa
+        $surat = $modelClass::find($id);
+
+        // Asumsi model surat memiliki relasi/kolom nim
+        $mahasiswa = Mahasiswa::where('nim', $surat->nim)->first();
+
+        if (!$surat || empty($surat->file_generated) || !$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Surat atau data mahasiswa tidak valid.'], 404);
+        }
+
+        $filePath = $surat->file_generated;
+        $disk = 'local';
+
+        if (!Storage::disk($disk)->exists($filePath)) {
+            return response()->json(['success' => false, 'message' => 'File surat tidak ditemukan di server.'], 404);
+        }
+
+        // 2. Siapkan File Name
+
+        $pengajuanHistory = HistoryPengajuan::where('tabel', $tabel)
+            ->where('id_tabel_surat', $id)
+            ->first();
+
+        $namaSurat = $pengajuanHistory->nama_surat;
+
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . $surat->nim . '.docx';
+        try {
+            // Mulai Transaksi Database
+            DB::beginTransaction();
+
+            // 3. Kirim Email
+            Mail::to($mahasiswa->email)->send(new SuratSelesai($mahasiswa, $surat, $filePath, $fileName, $namaSurat));
+
+            // --- 4. LOGIKA PENTING: UPDATE STATUS DI DATABASE ---
+
+            // A. Update Status di tabel Surat ($tabel)
+            $surat->status = 'selesai';
+            $surat->catatan = 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.';
+            $surat->save();
+
+            if ($pengajuanHistory) {
+                $pengajuanHistory->update([
+                    'status' => 'selesai',
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Commit Transaksi jika pengiriman email dan update status berhasil
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Surat berhasil dikirim ke email mahasiswa!']);
+        } catch (\Exception $e) {
+            // Rollback Transaksi jika terjadi kegagalan (email gagal terkirim atau update DB gagal)
+            DB::rollBack();
+
+            // Log the error
+            Log::error('Gagal mengirim email surat: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Gagal mengirim email atau memperbarui status. Silakan cek log server.'], 500);
+        }
     }
 }

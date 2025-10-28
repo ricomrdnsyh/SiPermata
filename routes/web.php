@@ -23,6 +23,7 @@ use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\MahasiswaHistoryPegajuan;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratAktifController;
+use App\Http\Controllers\VerifikasiController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -30,6 +31,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/verifikasi/surat-aktif/{identifier}', [VerifikasiController::class, 'verifySuratAktif'])->name('verifikasi.surat-aktif');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -94,7 +96,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/history-pengajuan', [DekanHistoryPengajuanController::class, 'index'])->name('history.index');
         Route::get('/history/data', [DekanHistoryPengajuanController::class, 'historyData'])->name('history.data');
         Route::get('/history/{id}/detail', [DekanHistoryPengajuanController::class, 'show'])->name('history.detail');
+        Route::post('/history/{id}/approve', [DekanHistoryPengajuanController::class, 'approve'])->name('history.approve');
         Route::post('/history/{id}/reject', [DekanHistoryPengajuanController::class, 'reject'])->name('history.reject');
+        Route::get('surat/view/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
+        Route::post('surat/kirim/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'sendEmailMahasiswa'])->name('surat.send');
     });
 
     Route::middleware(['role:BAK'])->prefix('bak')->name('bak.')->group(function () {

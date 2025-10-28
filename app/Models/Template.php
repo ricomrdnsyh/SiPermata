@@ -27,4 +27,9 @@ class Template extends Model
     {
         return $this->belongsTo(Prodi::class, 'prodi_id');
     }
+
+    public function ttdSurat()
+    {
+        return $this->hasMany(Jabatan::class, 'fakultas_id');
+    }
 }

@@ -117,7 +117,7 @@
                                             <span class="fs-4 fw-bolder text-gray-900 text-hover-primary me-2">
                                                 {{ $mahasiswa?->nama ?? '-' }}
                                             </span>
-                                            <span class="fw-bold text-gray-600 text-hover-primary">
+                                            <span class="fw-bold text-gray-600 text-hover-primary text-break">
                                                 {{ $mahasiswa?->email ?? '-' }}
                                             </span>
                                         </div>

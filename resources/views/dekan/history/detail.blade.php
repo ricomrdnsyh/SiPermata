@@ -13,6 +13,7 @@
             border-bottom: 1px dashed #cccccc !important;
         }
     </style>
+@endsection
 
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -30,20 +31,46 @@
                                         <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
                                             Tolak Pengajuan
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-light-success approve-btn"
-                                            data-id="{{ $pengajuan->id_history }}"><i class="fas fa-check-circle"></i>
-                                            Terima & Kirim ke Mahasiswa
+                                        <button type="button" class="btn btn-sm btn-light-success" id="btn-approve-main"><i
+                                                class="fas fa-check-circle"></i>
+                                            Terima Pengajuan
                                         </button>
                                     @elseif($pengajuan->status === 'diterima')
-                                        <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pengajuan
-                                            sudah
-                                            dikonfirmasi</button>
+                                        {{-- HANYA PERLU SATU KONDISIONAL UNTUK FILE YANG TERSEDIA --}}
+                                        @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                            {{-- 1. TOMBOL LIHAT SURAT --}}
+                                            <a href="{{ route('dekan.surat.view', [
+                                                'tabel' => $pengajuan->tabel,
+                                                'id' => $pengajuan->id_tabel_surat,
+                                            ]) }}"
+                                                class="btn btn-sm btn-light-primary" target="_blank">
+                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                            </a>
+
+                                            {{-- 2. TOMBOL KIRIM SURAT --}}
+                                            <button type="button" class="btn btn-sm btn-light-success"
+                                                id="btn-kirim-surat">
+                                                <i class="fas fa-external-link-alt"></i> Kirim Surat ke Mahasiswa
+                                            </button>
+                                        @endif
+                                    @elseif($pengajuan->status === 'selesai')
+                                        @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                            <a href="{{ route('dekan.surat.view', [
+                                                'tabel' => $pengajuan->tabel,
+                                                'id' => $pengajuan->id_tabel_surat,
+                                            ]) }}"
+                                                class="btn btn-sm btn-light-primary" target="_blank">
+                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                            </a>
+                                        @endif
                                     @elseif($pengajuan->status === 'pengajuan')
                                         <button class="btn btn-sm btn-warning">Menunggu BAK untuk validasi</button>
                                     @else
-                                        <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pengajuan
-                                            sudah
-                                            dikonfirmasi</button>
+                                        {{-- Status Lain (misalnya 'selesai' atau sudah dikirim) --}}
+                                        <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
+                                            Pengajuan
+                                            sudah dikonfirmasi</button>
+
                                     @endif
                                 </div>
                             </div>
@@ -138,7 +165,7 @@
                                             <span class="fs-4 fw-bolder text-gray-900 text-hover-primary me-2">
                                                 {{ $mahasiswa?->nama ?? '-' }}
                                             </span>
-                                            <span class="fw-bold text-gray-600 text-hover-primary">
+                                            <span class="fw-bold text-gray-600 text-hover-primary text-break">
                                                 {{ $mahasiswa?->email ?? '-' }}
                                             </span>
                                         </div>
@@ -178,47 +205,212 @@
     </div>
 
     <!-- Modal Penolakan -->
-    <div class="modal fade" id="rejectReasonModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title">Catatan Penolakan</h5> <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="rejectReasonModalLabel">Catatan Penolakan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
-                    <div class="mb-3"> <label class="required form-label">Catatan Penolakan</span></label>
-                        <textarea class="form-control"name="catatan" id="rejectReason" rows="3" required
-                            placeholder="Jelaskan alasan penolakan..."></textarea>
+                    <div class="mb-3">
+                        <label for="rejectReason" class="required form-label">Catatan Penolakan</label>
+                        <textarea class="form-control" name="catatan" id="rejectReason" rows="4" required
+                            placeholder="Jelaskan alasan penolakan secara rinci...">
+                    </textarea>
                         <div id="rejectError" class="text-danger mt-2" style="display: none;"></div>
                     </div>
                 </div>
-                <div class="modal-footer"> <button type="button" class="btn btn-secondary"
-                        data-bs-dismiss="modal">Batal</button> <button type="button" class="btn btn-danger"
-                        id="btn-submit-reject"> <span class="indicator-label">Tolak Pengajuan</span> <span
-                            class="indicator-progress" style="display: none;"> Memproses... <span
-                                class="spinner-border spinner-border-sm align-middle ms-2"></span> </span> </button> </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="btn-submit-reject" data-stage="">
+                        <span class="indicator-label">Tolak Pengajuan</span>
+                        <span class="indicator-progress" style="display: none;">
+                            Memproses...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
+    <form id="approveForm" method="POST" action="{{ route('dekan.history.approve', $pengajuan->id_history) }}"
+        style="display: none;">
+        @csrf
+    </form>
 @endsection
 
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const pengajuanId = {{ $pengajuan->id_history }};
+            // Pastikan Anda memiliki tag <meta name="csrf-token" content="..."> di layout utama
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            // Tolak Pengajuan
-            document.getElementById('btn-reject-main').addEventListener('click', function() {
-                document.getElementById('rejectReason').value = '';
-                document.getElementById('rejectError').style.display = 'none';
+            // 1. Tombol 'Terima Pengajuan' (btn-approve-main)
+            const btnApproveMain = document.getElementById('btn-approve-main');
+            if (btnApproveMain) { // ✅ PERBAIKAN: Cek apakah elemen ada
+                btnApproveMain.addEventListener('click', function() {
+                    Swal.fire({
+                        title: "Konfirmasi Persetujuan",
+                        text: "Apakah Anda yakin ingin menyetujui pengajuan ini?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya, Setujui!",
+                        cancelButtonText: "Batal",
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                            cancelButton: "btn btn-light text-black"
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                text: 'Memproses persetujuan...',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
 
-                const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'));
-                rejectModal.show();
-            });
+                            fetch("{{ route('dekan.history.approve', ':id') }}".replace(':id',
+                                    pengajuanId), {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken,
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            text: data.message,
+                                            icon: "success",
+                                            buttonsStyling: false,
+                                            confirmButtonText: "Ok, got it!",
+                                            customClass: {
+                                                confirmButton: "btn btn-primary"
+                                            }
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            text: data.message ||
+                                                'Terjadi kesalahan saat menyetujui.',
+                                            icon: "error",
+                                            buttonsStyling: false,
+                                            confirmButtonText: "Ok, got it!",
+                                            customClass: {
+                                                confirmButton: "btn btn-danger"
+                                            }
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire({
+                                        text: 'Terjadi kesalahan saat menyetujui.',
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn btn-danger"
+                                        }
+                                    });
+                                });
+                        }
+                    });
+                });
+            }
 
-            // Submit Penolakan 
-            document.getElementById('btn-submit-reject').addEventListener('click', function() {
+
+            // 2. Tombol 'Tolak Pengajuan' (btn-reject-main)
+            const btnRejectMain = document.getElementById('btn-reject-main');
+            if (btnRejectMain) { // ✅ PERBAIKAN: Cek apakah elemen ada
+                btnRejectMain.addEventListener('click', function() {
+                    document.getElementById('rejectReason').value = '';
+                    document.getElementById('rejectError').style.display = 'none';
+
+                    // Pastikan Bootstrap dimuat untuk modal ini
+                    const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'));
+                    rejectModal.show();
+                });
+            }
+
+            // 3. Tombol 'Kirim Surat ke Mahasiswa' (btn-kirim-surat)
+            const tabelSurat = "{{ $pengajuan->tabel }}";
+            const idSurat = "{{ $pengajuan->id_tabel_surat }}";
+            const btnKirimSurat = document.getElementById('btn-kirim-surat');
+
+            if (btnKirimSurat) { // Ini sudah benar, tapi dipertahankan untuk keamanan
+                btnKirimSurat.addEventListener('click', function() {
+                    Swal.fire({
+                        title: "Konfirmasi Kirim Surat",
+                        text: "Apakah Anda yakin ingin mengirim surat yang sudah ditandatangani ini ke email mahasiswa?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya, Kirim!",
+                        cancelButtonText: "Batal",
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                            cancelButton: "btn btn-light text-black"
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                text: 'Memproses pengiriman email...',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            // Buat URL POST
+                            const sendUrl =
+                                "{{ route('dekan.surat.send', ['tabel' => ':tabel', 'id' => ':id']) }}"
+                                .replace(':tabel', tabelSurat)
+                                .replace(':id', idSurat);
+
+                            fetch(sendUrl, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken,
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire("Berhasil!", data.message, "success").then(
+                                            () => {
+                                                window.location.reload();
+                                            });
+                                    } else {
+                                        Swal.fire("Gagal!", data.message ||
+                                            'Terjadi kesalahan saat mengirim email.',
+                                            "error");
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire("Gagal!",
+                                        'Terjadi kesalahan jaringan atau server.',
+                                        "error");
+                                });
+                        }
+                    });
+                });
+            }
+        });
+
+        // Listener untuk submit penolakan (Modal) - tidak kondisional, tetapi tetap di dalam DOMContentLoaded lebih aman.
+        const btnSubmitReject = document.getElementById('btn-submit-reject');
+        if (btnSubmitReject) {
+            btnSubmitReject.addEventListener('click', function() {
                 const reason = document.getElementById('rejectReason').value.trim();
                 const errorDiv = document.getElementById('rejectError');
 
@@ -296,6 +488,6 @@
                         progress.style.display = 'none';
                     });
             });
-        });
+        }
     </script>
 @endsection

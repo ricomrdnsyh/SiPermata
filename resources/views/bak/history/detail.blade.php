@@ -30,8 +30,8 @@
                                         <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
                                             Tolak Pengajuan
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-light-success" id="btn-approve-main">
-                                            Terima Pengajuan
+                                        <button type="button" class="btn btn-sm btn-light-success" id="btn-approve-main"><i
+                                                class="fas fa-check-circle"></i> Terima Pengajuan
                                         </button>
                                     @else
                                         <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pengajuan
@@ -131,7 +131,7 @@
                                             <span class="fs-4 fw-bolder text-gray-900 text-hover-primary me-2">
                                                 {{ $mahasiswa?->nama ?? '-' }}
                                             </span>
-                                            <span class="fw-bold text-gray-600 text-hover-primary">
+                                            <span class="fw-bold text-gray-600 text-hover-primary text-break">
                                                 {{ $mahasiswa?->email ?? '-' }}
                                             </span>
                                         </div>
@@ -171,25 +171,36 @@
     </div>
 
     <!-- Modal Penolakan -->
-    <div class="modal fade" id="rejectReasonModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title">Catatan Penolakan</h5> <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="rejectReasonModalLabel">Catatan Penolakan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
-                    <div class="mb-3"> <label class="required form-label">Catatan Penolakan</span></label>
-                        <textarea class="form-control"name="catatan" id="rejectReason" rows="3" required
-                            placeholder="Jelaskan alasan penolakan..."></textarea>
+                    <div class="mb-3">
+                        <label for="rejectReason" class="required form-label">Catatan Penolakan</label>
+                        <textarea class="form-control" name="catatan" id="rejectReason" rows="4" required
+                            placeholder="Jelaskan alasan penolakan secara rinci...">
+                    </textarea>
                         <div id="rejectError" class="text-danger mt-2" style="display: none;"></div>
                     </div>
                 </div>
-                <div class="modal-footer"> <button type="button" class="btn btn-secondary"
-                        data-bs-dismiss="modal">Batal</button> <button type="button" class="btn btn-danger"
-                        id="btn-submit-reject"> <span class="indicator-label">Tolak Pengajuan</span> <span
-                            class="indicator-progress" style="display: none;"> Memproses... <span
-                                class="spinner-border spinner-border-sm align-middle ms-2"></span> </span> </button> </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="btn-submit-reject" data-stage="">
+                        <span class="indicator-label">Tolak Pengajuan</span>
+                        <span class="indicator-progress" style="display: none;">
+                            Memproses...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

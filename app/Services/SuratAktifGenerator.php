@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Template;
 use App\Models\SuratAktif;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SuratAktifGenerator
 {
@@ -31,12 +33,12 @@ class SuratAktifGenerator
         // 3. Set Data Variabel (Placeholder) ke dalam template
         $mahasiswa = $surat->mahasiswa;
         $tmtCarbon = Carbon::parse($surat->tmt);
-        $tglSuratCarbon = Carbon::parse($surat->created_at);
-        $bulanSuratCarbon = Carbon::parse($surat->created_at);
+        $tglSuratCarbon = Carbon::parse($surat->updated_at);
+        $bulanSuratCarbon = Carbon::parse($surat->updated_at);
 
         $tmtOrtu = $tmtCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $tglSurat = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
-        $bulanSurat = $tglSuratCarbon->locale('id')->isoFormat('MM.YYYY');
+        $bulanSurat = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
         $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
@@ -75,5 +77,58 @@ class SuratAktifGenerator
 
         // Kembalikan path relatif untuk disimpan di database SuratAktif
         return $outputFileRelatif;
+    }
+
+    public function insertSignatureWithQR(SuratAktif $surat, string $jabatan, string $nama)
+    {
+        $filePath = $surat->file_generated;
+        $outputPathAbsolut = storage_path("app/{$filePath}");
+
+        if (!file_exists($outputPathAbsolut)) {
+            throw new \Exception("File surat tidak ditemukan: " . $outputPathAbsolut);
+        }
+
+        // 1. Definisikan Data QR Code
+        // Anda harus menentukan data apa yang akan dienkripsi di QR (misalnya, URL verifikasi)
+        $qrData = route('verifikasi.surat-aktif', ['id' => $surat->id_surat_aktif]); // *Asumsi Anda memiliki route verifikasi*
+
+        // 2. Generate Gambar QR Code
+        // Buat QR code sebagai string biner PNG
+        $qrCodeBinary = QrCode::size(100)
+            ->format('png')
+            ->errorCorrection('H')
+            ->margin(1)
+            ->generate($qrData);
+
+        // Simpan sementara QR Code sebagai file untuk disisipkan oleh TemplateProcessor
+        $qrTempFileName = 'temp_qr_' . time() . '.png';
+        $qrTempPath = storage_path("app/temp/{$qrTempFileName}");
+        Storage::put("temp/{$qrTempFileName}", $qrCodeBinary);
+
+        try {
+            // Load file Word yang sudah ada
+            $processor = new TemplateProcessor($outputPathAbsolut);
+
+            // 3. Sisipkan QR Code
+            // Pastikan placeholder {TTD_QR} ada di template Word Anda
+            $processor->setImageValue('TTD_QR', [
+                'path' => $qrTempPath,
+                'width' => 100,
+                'height' => 100,
+                'ratio' => true
+            ]);
+
+            // 4. Sisipkan Data Dekan
+            $processor->setValue('JABATAN', $jabatan);
+            $processor->setValue('NAMA_DEKAN', $nama);
+
+            // 5. Simpan (Overwrite) file Word yang sudah dimodifikasi
+            $processor->saveAs($outputPathAbsolut);
+        } finally {
+            // Hapus file QR Code sementara setelah selesai
+            Storage::delete("temp/{$qrTempFileName}");
+        }
+
+        return $filePath; // Kembalikan path relatif yang sama
     }
 }

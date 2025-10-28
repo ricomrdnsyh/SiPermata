@@ -43,4 +43,9 @@ class Fakultas extends Model
     {
         return $this->hasMany(Jabatan::class, 'fakultas_id');
     }
+
+    public function ttdSurat()
+    {
+        return $this->hasMany(Jabatan::class, 'fakultas_id');
+    }
 }
