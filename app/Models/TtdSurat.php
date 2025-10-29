@@ -13,6 +13,7 @@ class TtdSurat extends Model
     protected $fillable = [
         'template_id',
         'nama_ttd',
+        'nidn',
         'fakultas_id',
         'status',
     ];

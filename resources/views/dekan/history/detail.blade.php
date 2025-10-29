@@ -36,9 +36,7 @@
                                             Terima Pengajuan
                                         </button>
                                     @elseif($pengajuan->status === 'diterima')
-                                        {{-- HANYA PERLU SATU KONDISIONAL UNTUK FILE YANG TERSEDIA --}}
                                         @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
-                                            {{-- 1. TOMBOL LIHAT SURAT --}}
                                             <a href="{{ route('dekan.surat.view', [
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
@@ -46,8 +44,6 @@
                                                 class="btn btn-sm btn-light-primary" target="_blank">
                                                 <i class="fas fa-cloud-download-alt"></i> Lihat Surat
                                             </a>
-
-                                            {{-- 2. TOMBOL KIRIM SURAT --}}
                                             <button type="button" class="btn btn-sm btn-light-success"
                                                 id="btn-kirim-surat">
                                                 <i class="fas fa-external-link-alt"></i> Kirim Surat ke Mahasiswa
@@ -66,11 +62,9 @@
                                     @elseif($pengajuan->status === 'pengajuan')
                                         <button class="btn btn-sm btn-warning">Menunggu BAK untuk validasi</button>
                                     @else
-                                        {{-- Status Lain (misalnya 'selesai' atau sudah dikirim) --}}
                                         <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
                                             Pengajuan
                                             sudah dikonfirmasi</button>
-
                                     @endif
                                 </div>
                             </div>

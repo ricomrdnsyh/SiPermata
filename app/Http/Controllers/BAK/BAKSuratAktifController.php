@@ -312,6 +312,10 @@ class BAKSuratAktifController extends Controller
 
         $surat = SuratAktif::findOrFail($id);
 
+        $pengajuan = $surat->historyPengajuan()
+            ->where('nim', $request->nim)->firstOrFail();
+
+
         $surat->update([
             'nim'                   => $request->nim,
             'akademik_id'           => $request->akademik_id,
@@ -324,6 +328,8 @@ class BAKSuratAktifController extends Controller
             'tmt'                   => $request->tmt,
             'unit_kerja'            => $request->unit_kerja,
             'alamat'                => $request->alamat,
+            'status'                => 'pengajuan',
+            'catatan'               => 'Diajukan ulang oleh BAK untuk mahasiswa',
         ]);
 
         try {
@@ -333,6 +339,11 @@ class BAKSuratAktifController extends Controller
 
             $surat->update([
                 'file_generated' => $generatedFilePath
+            ]);
+
+            $pengajuan->update([
+                'status'  => 'pengajuan',
+                'catatan' => 'Diajukan ulang oleh BAK untuk mahasiswa'
             ]);
 
             return redirect()->route('bak.surat-aktif.index')->with('success', 'Data surat berhasil diperbarui!');

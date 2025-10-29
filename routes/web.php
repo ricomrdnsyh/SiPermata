@@ -14,8 +14,10 @@ use App\Http\Controllers\Admin\HistoryPengajuanController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\SuratAktifController;
+use App\Http\Controllers\Admin\TtdSuratConroller;
 use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
+use App\Http\Controllers\BAK\BAKTtdSuratController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\BAK\MitraController as BAKMitraController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
@@ -31,7 +33,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/verifikasi/surat-aktif/{identifier}', [VerifikasiController::class, 'verifySuratAktif'])->name('verifikasi.surat-aktif');
+Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])->name('verifikasi.surat-aktif');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -65,6 +67,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/get-prodit/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
         Route::resource('template', TemplateControler::class);
         Route::get('template/download/{id}', [TemplateControler::class, 'downloadTemplate'])->name('template.download');
+
+        Route::get('/ttdSurat/data', [TtdSuratConroller::class, 'getTtdSurat'])->name('ttdSurat.data');
+        Route::resource('ttdSurat', TtdSuratConroller::class);
 
         Route::get('/jabatan/data', [JabatanController::class, 'getJabatan'])->name('jabatan.data');
         Route::resource('jabatan', JabatanController::class);
@@ -108,6 +113,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/mitra/data', [BAKMitraController::class, 'getMitra'])->name('mitra.data');
         Route::resource('mitra', BAKMitraController::class);
+
+        Route::get('/ttdSurat/data', [BAKTtdSuratController::class, 'getTtdSurat'])->name('ttdSurat.data');
+        Route::resource('ttdSurat', BAKTtdSuratController::class);
 
         Route::get('/surat-aktif/data', [BAKSuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', BAKSuratAktifController::class)->except(['destroy']);

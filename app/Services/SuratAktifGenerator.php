@@ -63,8 +63,8 @@ class SuratAktifGenerator
         }
 
         // Direktori Output
-        $outputFileName = "surat_aktif_{$surat->nim}_{$surat->id_surat_aktif}.docx";
-        $outputFileRelatif = "surat_aktif/output/{$outputFileName}";
+        $outputFileName    = "SURAT_KETERANGAN_AKTIF_{$surat->kategori}_{$surat->nim}.docx";
+        $outputFileRelatif = "surat_aktif/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 
         $outputDirectory = dirname($outputPathAbsolut);
@@ -79,7 +79,7 @@ class SuratAktifGenerator
         return $outputFileRelatif;
     }
 
-    public function insertSignatureWithQR(SuratAktif $surat, string $jabatan, string $nama)
+    public function insertSignatureWithQR(SuratAktif $surat, string $jabatan, string $nama, $nidn)
     {
         $filePath = $surat->file_generated;
         $outputPathAbsolut = storage_path("app/{$filePath}");
@@ -121,6 +121,7 @@ class SuratAktifGenerator
             // 4. Sisipkan Data Dekan
             $processor->setValue('JABATAN', $jabatan);
             $processor->setValue('NAMA_DEKAN', $nama);
+            $processor->setValue('NIDN', $nidn);
 
             // 5. Simpan (Overwrite) file Word yang sudah dimodifikasi
             $processor->saveAs($outputPathAbsolut);

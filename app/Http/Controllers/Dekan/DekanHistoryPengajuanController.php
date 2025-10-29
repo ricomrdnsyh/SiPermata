@@ -174,6 +174,7 @@ class DekanHistoryPengajuanController extends Controller
 
         // Data yang akan digunakan
         $namaDekan = $ttdDekan->nama_ttd;
+        $nidn      = $ttdDekan->nidn;
         // Asumsi jabatan diambil dari data user Dekan saat ini (Auth::user()->penduduk->jabatan->nama_jabatan)
         // atau jika Anda menyimpan jabatan di tabel ttd_surat, gunakan kolom tersebut (misal: $ttdDekan->jabatan)
         $jabatanDekan = $user->penduduk->jabatan->nama_jabatan ?? 'Dekan'; // Gunakan data jabatan dari user yang approve
@@ -186,7 +187,8 @@ class DekanHistoryPengajuanController extends Controller
             $generatedFilePath = $generatorService->insertSignatureWithQR(
                 $suratAktif,
                 $jabatanDekan, // Jabatan tetap diambil dari user yang login (dekan)
-                $namaDekan
+                $namaDekan,
+                $nidn
             );
 
             // 3. Update Status SuratAktif
@@ -285,7 +287,7 @@ class DekanHistoryPengajuanController extends Controller
             abort(404, 'File di server tidak ditemukan.');
         }
 
-        $fileName = 'Surat_' . ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
 
         // 5. Unduh file
         return Storage::download($filePath, $fileName);

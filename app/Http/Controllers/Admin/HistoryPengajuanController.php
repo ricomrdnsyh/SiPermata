@@ -30,8 +30,7 @@ class HistoryPengajuanController extends Controller
             abort(403);
         }
 
-        $query = HistoryPengajuan::with(['mahasiswa.prodi'])
-            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
+        $query = HistoryPengajuan::with(['mahasiswa.prodi']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -54,6 +53,7 @@ class HistoryPengajuanController extends Controller
                     'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
                     'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
                     'diterima'  => '<span class="badge bg-success">Disetujui</span>',
+                    'selesai'   => '<span class="badge bg-primary">Selesai</span>',
                     'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
                     default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };

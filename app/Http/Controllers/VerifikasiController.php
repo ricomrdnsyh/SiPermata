@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 
 class VerifikasiController extends Controller
 {
-    public function verifySuratAktif(string $identifier)
+    public function verifySuratAktif(string $id)
     {
-        $surat = SuratAktif::where('id_surat_aktif', $identifier)
-            ->orWhere('no_surat', $identifier)
+        $surat = SuratAktif::where('id_surat_aktif', $id)
+            ->orWhere('no_surat', $id)
             ->with(['mahasiswa', 'akademik'])
             ->first();
 

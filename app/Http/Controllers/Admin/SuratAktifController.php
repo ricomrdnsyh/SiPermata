@@ -64,6 +64,7 @@ class SuratAktifController extends Controller
                     'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
                     'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
                     'diterima'  => '<span class="badge bg-success">Disetujui</span>',
+                    'selesai'  => '<span class="badge bg-primary">Selesai</span>',
                     'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
                     default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };
@@ -254,6 +255,10 @@ class SuratAktifController extends Controller
 
         $surat = SuratAktif::findOrFail($id);
 
+        $pengajuan = $surat->historyPengajuan()
+            ->where('nim', $request->nim)->firstOrFail();
+
+
         $surat->update([
             'nim'                   => $request->nim,
             'akademik_id'           => $request->akademik_id,
@@ -266,6 +271,8 @@ class SuratAktifController extends Controller
             'tmt'                   => $request->tmt,
             'unit_kerja'            => $request->unit_kerja,
             'alamat'                => $request->alamat,
+            'status'                => 'pengajuan',
+            'catatan'               => 'Diajukan ulang oleh Admin untuk mahasiswa',
         ]);
 
         try {
@@ -275,6 +282,11 @@ class SuratAktifController extends Controller
 
             $surat->update([
                 'file_generated' => $generatedFilePath
+            ]);
+
+            $pengajuan->update([
+                'status'  => 'pengajuan',
+                'catatan' => 'Diajukan ulang oleh Admin untuk mahasiswa'
             ]);
 
             return redirect()->route('admin.surat-aktif.index')->with('success', 'Data surat berhasil diperbarui!');

@@ -32,7 +32,7 @@
                                             Tolak Pengajuan(BAK)
                                         </button>
                                         <button type="button" class="btn btn-sm btn-light-success" data-action="approve"
-                                            data-stage="bak" id="btn-approve-main">
+                                            data-stage="bak" id="btn-approve-main"><i class="fas fa-check-circle"></i>
                                             Terima Pengajuan(BAK)
                                         </button>
                                     @elseif ($pengajuan->status === 'proses')
@@ -41,8 +41,8 @@
                                             Tolak Pengajuan(Dekan)
                                         </button>
                                         <button type="button" class="btn btn-sm btn-light-success" data-action="approve"
-                                            data-stage="dekan" id="btn-approve-dekan">
-                                            Terima Pengajuan(Disetujui)
+                                            data-stage="dekan" id="btn-approve-dekan"><i class="fas fa-check-circle"></i>
+                                            Terima Pengajuan(Dekan)
                                         </button>
                                     @else
                                         <button class="btn btn-sm btn-success">
@@ -84,6 +84,10 @@
 
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui</span>
+                                                            @break
+
+                                                            @case('selesai')
+                                                                <span class="badge bg-success">Selesai</span>
                                                             @break
 
                                                             @case('ditolak')
