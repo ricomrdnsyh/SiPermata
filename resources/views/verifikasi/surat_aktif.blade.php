@@ -9,7 +9,6 @@
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <style>
-        /* CSS Tambahan untuk memastikan body/html mengambil tinggi penuh */
         html,
         body {
             height: 100%;
@@ -18,11 +17,9 @@
 </head>
 
 <body id="kt_body_custom" class="bg-body d-flex justify-content-center align-items-center min-vh-100">
-    {{-- Hapus class container py-5 dari div luar, biarkan card tetap di tengah flexbox --}}
     <div class="container" style="max-width: 800px;">
         <div class="card shadow-lg">
             <div class="card-header bg-success text-white">
-                {{-- Teks Header: Gunakan d-flex, justify-content-center, dan align-items-center untuk rata tengah vertikal/horizontal --}}
                 <h3 class="mb-0 w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;">
                     ✅ Verifikasi Dokumen Sukses!
                 </h3>

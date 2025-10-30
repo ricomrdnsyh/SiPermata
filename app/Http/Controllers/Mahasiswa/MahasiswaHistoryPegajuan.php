@@ -41,7 +41,7 @@ class MahasiswaHistoryPegajuan extends Controller
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
                     'selesai'  => '<span class="badge bg-primary">Selesai</span>',
-                    default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
+                    default    => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('catatan', function ($row) {

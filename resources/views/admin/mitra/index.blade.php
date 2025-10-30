@@ -168,7 +168,6 @@
                                 }
                             });
                             $('#mitra-table').DataTable().ajax.reload(null, false);
-                            // reload tabel tanpa reset halaman
                         },
                         error: function(xhr) {
                             Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");

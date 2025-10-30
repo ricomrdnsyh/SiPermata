@@ -95,9 +95,6 @@ class DekanHistoryPengajuanController extends Controller
                 return SuratAktif::class;
                 // case 'surat_lulus':
                 //     return SuratLulus::class;
-                // 💡 TAMBAHKAN KASUS UNTUK JENIS SURAT LAINNYA
-                // case 'surat_cuti':
-                //     return SuratCuti::class;
             default:
                 return null;
         }
@@ -152,17 +149,16 @@ class DekanHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Akses ditolak');
         }
 
-        // Tambahkan Pengecekan Ketersediaan File
+        // Pengecekan Ketersediaan File
         if (empty($suratAktif->file_generated)) {
             return response()->json(['success' => false, 'message' => 'File surat belum tersedia untuk ditandatangani.'], 400);
         }
 
         // Dapatkan ID Fakultas dan ID Template
-        $fakultasId = $pengajuan->fakultas_id; // Diambil dari HistoryPengajuan
-        $templateId = $suratAktif->template_id; // Diambil dari SuratAktif
+        $fakultasId = $pengajuan->fakultas_id;
+        $templateId = $suratAktif->template_id;
 
-        // 1. Ambil data TTD dari tabel ttd_surat
-        // Cari TTD yang aktif, sesuai fakultas, dan sesuai template.
+        // Cari TTD aktif, sesuai fakultas, dan sesuai template.
         $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
             ->where('template_id', $templateId)
             ->where('status', 'aktif')
@@ -175,30 +171,24 @@ class DekanHistoryPengajuanController extends Controller
         // Data yang akan digunakan
         $namaDekan = $ttdDekan->nama_ttd;
         $nidn      = $ttdDekan->nidn;
-        // Asumsi jabatan diambil dari data user Dekan saat ini (Auth::user()->penduduk->jabatan->nama_jabatan)
-        // atau jika Anda menyimpan jabatan di tabel ttd_surat, gunakan kolom tersebut (misal: $ttdDekan->jabatan)
-        $jabatanDekan = $user->penduduk->jabatan->nama_jabatan ?? 'Dekan'; // Gunakan data jabatan dari user yang approve
+        $jabatanDekan = $user->penduduk->jabatan->nama_jabatan ?? 'Dekan';
 
         try {
             DB::beginTransaction();
 
-            // 2. Panggil service untuk menyisipkan TTD QR ke file Word yang sudah ada
-            // Menggunakan $namaDekan dari tabel ttd_surat
             $generatedFilePath = $generatorService->insertSignatureWithQR(
                 $suratAktif,
-                $jabatanDekan, // Jabatan tetap diambil dari user yang login (dekan)
+                $jabatanDekan,
                 $namaDekan,
                 $nidn
             );
 
-            // 3. Update Status SuratAktif
             $suratAktif->update([
                 'status' => 'diterima',
                 'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
                 'file_generated' => $generatedFilePath,
             ]);
 
-            // 4. Update History Pengajuan
             $pengajuan->update([
                 'status' => 'diterima',
                 'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
@@ -282,14 +272,13 @@ class DekanHistoryPengajuanController extends Controller
         $filePath = $surat->file_generated;
         $disk = 'local';
 
-        // 3. Cek keberadaan file
+        // Cek keberadaan file
         if (!Storage::disk($disk)->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }
 
         $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
 
-        // 5. Unduh file
         return Storage::download($filePath, $fileName);
     }
 
@@ -305,10 +294,9 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Jenis surat tidak valid.'], 404);
         }
 
-        // 1. Ambil data Surat dan Mahasiswa
+        // Ambil data Surat dan Mahasiswa
         $surat = $modelClass::find($id);
 
-        // Asumsi model surat memiliki relasi/kolom nim
         $mahasiswa = Mahasiswa::where('nim', $surat->nim)->first();
 
         if (!$surat || empty($surat->file_generated) || !$mahasiswa) {
@@ -322,7 +310,6 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'File surat tidak ditemukan di server.'], 404);
         }
 
-        // 2. Siapkan File Name
 
         $pengajuanHistory = HistoryPengajuan::where('tabel', $tabel)
             ->where('id_tabel_surat', $id)
@@ -332,15 +319,10 @@ class DekanHistoryPengajuanController extends Controller
 
         $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . $surat->nim . '.docx';
         try {
-            // Mulai Transaksi Database
             DB::beginTransaction();
 
-            // 3. Kirim Email
             Mail::to($mahasiswa->email)->send(new SuratSelesai($mahasiswa, $surat, $filePath, $fileName, $namaSurat));
 
-            // --- 4. LOGIKA PENTING: UPDATE STATUS DI DATABASE ---
-
-            // A. Update Status di tabel Surat ($tabel)
             $surat->status = 'selesai';
             $surat->catatan = 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.';
             $surat->save();
@@ -353,15 +335,12 @@ class DekanHistoryPengajuanController extends Controller
                 ]);
             }
 
-            // Commit Transaksi jika pengiriman email dan update status berhasil
             DB::commit();
 
             return response()->json(['success' => true, 'message' => 'Surat berhasil dikirim ke email mahasiswa!']);
         } catch (\Exception $e) {
-            // Rollback Transaksi jika terjadi kegagalan (email gagal terkirim atau update DB gagal)
             DB::rollBack();
 
-            // Log the error
             Log::error('Gagal mengirim email surat: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Gagal mengirim email atau memperbarui status. Silakan cek log server.'], 500);
         }

@@ -120,19 +120,18 @@ class BAKSuratAktifController extends Controller
     {
         $userBak = Auth::user();
 
-        // 1. Otorisasi
         if ($userBak->role !== 'BAK') {
             abort(403, 'Akses Ditolak.');
         }
 
-        // 2. Tentukan ID Fakultas BAK yang login
+        // Tentukan ID Fakultas BAK yang login
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
 
         if (!$fakultasIdBak) {
             return back()->with('failed', 'Data BAK tidak terhubung ke fakultas manapun.');
         }
 
-        // 3. Validasi Input (Tambahkan Validasi NIM)
+        // Validasi Input (Tambahkan Validasi NIM)
         $request->validate([
             'nim'                       => 'required|exists:mahasiswa,nim',
             'kategori'                  => 'required|in:UMUM,PNS,PPPK',
@@ -148,7 +147,7 @@ class BAKSuratAktifController extends Controller
             'alamat'                    => 'required_if:kategori,PNS,PPPK|nullable',
         ]);
 
-        // 4. Identifikasi Mahasiswa Pemohon
+        // Identifikasi Mahasiswa Pemohon
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
 
         if ($mahasiswa->fakultas_id != $fakultasIdBak) {

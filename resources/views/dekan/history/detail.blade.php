@@ -247,12 +247,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const pengajuanId = {{ $pengajuan->id_history }};
-            // Pastikan Anda memiliki tag <meta name="csrf-token" content="..."> di layout utama
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            // 1. Tombol 'Terima Pengajuan' (btn-approve-main)
+
             const btnApproveMain = document.getElementById('btn-approve-main');
-            if (btnApproveMain) { // ✅ PERBAIKAN: Cek apakah elemen ada
+            if (btnApproveMain) {
                 btnApproveMain.addEventListener('click', function() {
                     Swal.fire({
                         title: "Konfirmasi Persetujuan",
@@ -327,25 +326,24 @@
             }
 
 
-            // 2. Tombol 'Tolak Pengajuan' (btn-reject-main)
+            // Tolak Pengajuan
             const btnRejectMain = document.getElementById('btn-reject-main');
-            if (btnRejectMain) { // ✅ PERBAIKAN: Cek apakah elemen ada
+            if (btnRejectMain) {
                 btnRejectMain.addEventListener('click', function() {
                     document.getElementById('rejectReason').value = '';
                     document.getElementById('rejectError').style.display = 'none';
 
-                    // Pastikan Bootstrap dimuat untuk modal ini
                     const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'));
                     rejectModal.show();
                 });
             }
 
-            // 3. Tombol 'Kirim Surat ke Mahasiswa' (btn-kirim-surat)
+            // Kirim Surat ke Mahasiswa
             const tabelSurat = "{{ $pengajuan->tabel }}";
             const idSurat = "{{ $pengajuan->id_tabel_surat }}";
             const btnKirimSurat = document.getElementById('btn-kirim-surat');
 
-            if (btnKirimSurat) { // Ini sudah benar, tapi dipertahankan untuk keamanan
+            if (btnKirimSurat) {
                 btnKirimSurat.addEventListener('click', function() {
                     Swal.fire({
                         title: "Konfirmasi Kirim Surat",
@@ -368,7 +366,6 @@
                                 }
                             });
 
-                            // Buat URL POST
                             const sendUrl =
                                 "{{ route('dekan.surat.send', ['tabel' => ':tabel', 'id' => ':id']) }}"
                                 .replace(':tabel', tabelSurat)
@@ -405,7 +402,7 @@
             }
         });
 
-        // Listener untuk submit penolakan (Modal) - tidak kondisional, tetapi tetap di dalam DOMContentLoaded lebih aman.
+        // Submit penolakan (Modal)
         const btnSubmitReject = document.getElementById('btn-submit-reject');
         if (btnSubmitReject) {
             btnSubmitReject.addEventListener('click', function() {

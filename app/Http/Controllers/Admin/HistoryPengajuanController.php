@@ -131,7 +131,6 @@ class HistoryPengajuanController extends Controller
             return response()->json(['message' => 'Akses ditolak.'], 403);
         }
 
-        // 1. Validasi Input
         $validator = Validator::make($request->all(), [
             'action' => 'required|in:approve,reject',
             'stage' => 'required|in:bak,dekan',
@@ -150,10 +149,8 @@ class HistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Catatan penolakan wajib diisi.'], 400);
         }
 
-        // 2. Cari Pengajuan
         $pengajuan = HistoryPengajuan::findOrFail($id);
 
-        // 3. Cek Status saat ini
         $allowedStages = [
             'bak'   => 'pengajuan',
             'dekan' => 'proses'
@@ -166,7 +163,6 @@ class HistoryPengajuanController extends Controller
             ], 403);
         }
 
-        // Cek apakah pengajuan terkait dengan Surat Aktif
         $isSuratAktif = ($pengajuan->tabel === 'surat_aktif');
         $suratAktif = $isSuratAktif ? $pengajuan->suratAktif : null;
 
@@ -177,7 +173,6 @@ class HistoryPengajuanController extends Controller
             $fullCatatan = '';
 
             if ($action === 'approve') {
-                // TAHAP PERSETUJUAN
                 if ($stage === 'bak') {
                     $newStatus = 'proses';
                     $message = 'Pengajuan disetujui BAK dan dilanjutkan ke Dekan.';
@@ -188,22 +183,17 @@ class HistoryPengajuanController extends Controller
                     $fullCatatan = 'Disetujui oleh Dekan';
                 }
             } elseif ($action === 'reject') {
-                // TAHAP PENOLAKAN
                 $newStatus = 'ditolak';
                 $fullCatatan = "Ditolak oleh $stage: " . $catatan;
                 $message = "Pengajuan ditolak pada tahap $stage.";
             }
 
-            // --- UPDATE HISTORY PENGAJUAN ---
             $pengajuan->update([
                 'status' => $newStatus,
                 'catatan' => $fullCatatan,
-                // Asumsi Admin tidak punya jabatan id/jabatan id yang diupdate adalah milik admin
-                // Anda bisa menyesuaikan ini jika Admin merepresentasikan jabatan tertentu
                 'jabatan_id' => $user->penduduk->jabatan->id_jabatan ?? null,
             ]);
 
-            // --- UPDATE SURAT AKTIF (JIKA ADA) ---
             if ($isSuratAktif && $suratAktif) {
                 $suratAktif->update([
                     'status' => $newStatus,
@@ -220,7 +210,6 @@ class HistoryPengajuanController extends Controller
             return response()->json(['success' => true, 'message' => $message]);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Log error $e->getMessage();
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan server saat memproses data: ' . $e->getMessage()], 500);
         }
     }

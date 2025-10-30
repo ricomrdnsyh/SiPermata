@@ -21,28 +21,24 @@ class VerifikasiController extends Controller
             ]);
         }
 
-        // Cek apakah surat sudah benar-benar disetujui
         if ($surat->status !== 'diterima') {
             return view('verifikasi.gagal', [
                 'message' => 'Surat ini belum disetujui (Status: ' . $surat->status . '). Verifikasi gagal.'
             ]);
         }
 
-        // Dapatkan ID Fakultas yang mengajukan surat (dari mahasiswa atau history)
         $fakultasId = $surat->mahasiswa->fakultas_id;
         $templateId = $surat->template_id;
 
-        // 1. Ambil data TTD Dekan yang SAH untuk surat ini
         $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
             ->where('template_id', $templateId)
             ->where('status', 'aktif')
             ->first();
 
-        // Kirim data TTD ke view
         return view('verifikasi.surat_aktif', [
             'surat' => $surat,
             'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan, // <-- Kirim model TtdSurat ke view
+            'ttd_dekan' => $ttdDekan,
         ]);
     }
 }

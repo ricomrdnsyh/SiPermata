@@ -22,19 +22,18 @@ class LoginController extends Controller
 
         if (Auth::attempt([
             'identifier' => $request->identifier,
-            'password' => $request->password
+            'password'   => $request->password
         ])) {
             $request->session()->regenerate();
 
-            // ✅ Ambil user setelah pasti login
             $user = Auth::user();
 
             return match ($user->role) {
                 'mahasiswa' => redirect()->route('mahasiswa.dashboard'),
-                'BAK'      => redirect()->route('bak.dashboard'),
-                'DEKAN'    => redirect()->route('dekan.dashboard'),
-                'admin'    => redirect()->route('admin.dashboard'),
-                default    => redirect('/login'),
+                'BAK'       => redirect()->route('bak.dashboard'),
+                'DEKAN'     => redirect()->route('dekan.dashboard'),
+                'admin'     => redirect()->route('admin.dashboard'),
+                default     => redirect('/login'),
             };
         }
 

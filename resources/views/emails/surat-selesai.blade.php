@@ -96,66 +96,64 @@
                     </tr>
 
                     <tr>
-                        <td class="content">
-                            {{-- Mengakses data yang dilewatkan melalui Mailable --}}
-                            <p>Halo, <b>{{ $mahasiswa->nama }}</b> (NIM: {{ $mahasiswa->nim }}),</p>
+                        <p>Halo, <b>{{ $mahasiswa->nama }}</b> (NIM: {{ $mahasiswa->nim }}),</p>
 
-                            <p>Kami sangat senang untuk mengabarkan bahwa proses pengajuan surat Anda, yaitu
-                                <b>{{ $namaSurat ?? 'Surat Pengajuan' }}</b>
-                                telah <b>SELESAI</b> diproses.
-                            </p>
+                        <p>Kami sangat senang untuk mengabarkan bahwa proses pengajuan surat Anda, yaitu
+                            <b>{{ $namaSurat ?? 'Surat Pengajuan' }}</b>
+                            telah <b>SELESAI</b> diproses.
+                        </p>
 
-                            <div class="highlight-box">
-                                <p style="margin: 0; font-weight: bold; color: #007bff;">Surat ini telah diverifikasi
-                                    dan ditandatangani secara elektronik oleh Dekan
-                                    {{ $mahasiswa->fakultas->nama_fakultas }}. Surat resmi Anda tersedia
-                                    sebagai lampiran pada email ini.</p>
-                            </div>
+                        <div class="highlight-box">
+                            <p style="margin: 0; font-weight: bold; color: #007bff;">Surat ini telah diverifikasi
+                                dan ditandatangani secara elektronik oleh Dekan
+                                {{ $mahasiswa->fakultas->nama_fakultas }}. Surat resmi Anda tersedia
+                                sebagai lampiran pada email ini.</p>
+                        </div>
 
-                            <p>Berikut adalah rincian singkat:</p>
+                        <p>Berikut adalah rincian singkat:</p>
 
-                            <table width="100%" cellpadding="5" cellspacing="0" border="0" role="presentation"
-                                style="margin: 15px 0; font-size: 14px;">
-                                <tr>
-                                    <td width="150" style="padding: 10px; border-bottom: 1px dashed #dddddd;">Jenis
-                                        Surat</td>
-                                    <td style="padding: 10px; border-bottom: 1px dashed #dddddd;">:
-                                        <b>{{ $namaSurat ?? 'N/A' }}</b>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px;">Tanggal Persetujuan</td>
-                                    <td style="padding: 10px;">:
-                                        {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY') }}
-                                    </td>
-                                </tr>
-                            </table>
+                        <table width="100%" cellpadding="5" cellspacing="0" border="0" role="presentation"
+                            style="margin: 15px 0; font-size: 14px;">
+                            <tr>
+                                <td width="150" style="padding: 10px; border-bottom: 1px dashed #dddddd;">Jenis
+                                    Surat</td>
+                                <td style="padding: 10px; border-bottom: 1px dashed #dddddd;">:
+                                    <b>{{ $namaSurat ?? 'N/A' }}</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px;">Tanggal Persetujuan</td>
+                                <td style="padding: 10px;">:
+                                    {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY') }}
+                                </td>
+                            </tr>
+                        </table>
 
-                            <div class="attachment-info">
-                                Mohon periksa bagian lampiran (attachment) email ini untuk melihat dokumen!
-                                {{ $fileName }}.
-                            </div>
+                        <div class="attachment-info">
+                            Mohon periksa bagian lampiran (attachment) email ini untuk melihat dokumen!
+                            {{ $fileName }}.
+                        </div>
 
-                            <p>Silakan gunakan surat tersebut sebagaimana mestinya. Jika ada pertanyaan, jangan ragu
-                                untuk menghubungi kami.</p>
+                        <p>Silakan gunakan surat tersebut sebagaimana mestinya. Jika ada pertanyaan, jangan ragu
+                            untuk menghubungi kami.</p>
 
-                            <p style="margin-top: 30px;">
-                                Salam Hormat,<br>
-                                <b>BAK {{ $mahasiswa->fakultas->nama_fakultas }}</b><br>
-                            </p>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="footer">
-                            <p style="margin: 0;">&copy; {{ date('Y') }} Universitas Nurul Jadid.</p>
-                            <p style="margin: 5px 0 0; font-style: italic;">Ini adalah pemberitahuan otomatis. Harap
-                                tidak membalas email ini.</p>
-                        </td>
-                    </tr>
-                </table>
+                        <p style="margin-top: 30px;">
+                            Salam Hormat,<br>
+                            <b>BAK {{ $mahasiswa->fakultas->nama_fakultas }}</b><br>
+                        </p>
             </td>
         </tr>
+
+        <tr>
+            <td class="footer">
+                <p style="margin: 0;">&copy; {{ date('Y') }} Universitas Nurul Jadid.</p>
+                <p style="margin: 5px 0 0; font-style: italic;">Ini adalah pemberitahuan otomatis. Harap
+                    tidak membalas email ini.</p>
+            </td>
+        </tr>
+    </table>
+    </td>
+    </tr>
     </table>
 
 </body>

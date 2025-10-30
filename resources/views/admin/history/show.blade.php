@@ -228,13 +228,12 @@
             const pengajuanId = {{ $pengajuan->id_history }};
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            // Base URL untuk semua aksi konfirmasi/penolakan
             const actionUrl = "{{ route('admin.history.action', ['id' => $pengajuan->id_history]) }}";
 
             const approveButtons = document.querySelectorAll('[data-action="approve"]');
             const rejectButtons = document.querySelectorAll('[data-action="reject"]');
 
-            // --- HANDLER UNTUK PERSETUJUAN (APPROVE) ---
+            // HANDLER APPROVE
             approveButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const stage = this.getAttribute('data-stage');
@@ -262,24 +261,22 @@
                 });
             });
 
-            // --- HANDLER UNTUK PENOLAKAN (REJECT) ---
+            // HANDLER REJECT
             rejectButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const stage = this.getAttribute('data-stage');
 
-                    // Set data stage di modal untuk digunakan saat submit
                     document.getElementById('btn-submit-reject').setAttribute('data-stage', stage);
                     document.getElementById('rejectReasonModalLabel').textContent =
                         `Catatan Penolakan (${stage.toUpperCase()})`;
 
-                    // Tampilkan modal penolakan
                     const rejectModal = new bootstrap.Modal(document.getElementById(
                         'rejectReasonModal'));
                     rejectModal.show();
                 });
             });
 
-            // --- SUBMIT PENOLAKAN DARI MODAL ---
+            // SUBMIT PENOLAKAN MODAL
             document.getElementById('btn-submit-reject').addEventListener('click', function() {
                 const reason = document.getElementById('rejectReason').value.trim();
                 const errorDiv = document.getElementById('rejectError');
@@ -295,10 +292,8 @@
                 performAction('reject', stage, reason);
             });
 
-            // --- FUNGSI AJAX UTAMA ---
             function performAction(action, stage, reason = null) {
 
-                // Tampilkan loading screen
                 Swal.fire({
                     text: `Memproses ${action === 'approve' ? 'persetujuan' : 'penolakan'}...`,
                     allowOutsideClick: false,
@@ -309,9 +304,9 @@
 
                 const payload = {
                     _token: csrfToken,
-                    action: action, // 'approve' atau 'reject'
-                    stage: stage, // 'bak' atau 'dekan'
-                    catatan: reason // hanya ada saat reject
+                    action: action,
+                    stage: stage,
+                    catatan: reason
                 };
 
                 fetch(actionUrl, {
