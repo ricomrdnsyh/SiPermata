@@ -13,4 +13,9 @@ class Mitra extends Model
     protected $fillable = [
         'nama_mitra',
     ];
+
+    public function mitra()
+    {
+        return $this->hasMany(SuratPenelitian::class, 'mitra_id');
+    }
 }

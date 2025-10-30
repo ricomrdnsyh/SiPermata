@@ -2,30 +2,31 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\JabatanController;
 use App\Http\Controllers\Admin\TemplateControler;
-use App\Http\Controllers\Admin\AkademikController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\FakultasController;
-use App\Http\Controllers\Admin\HistoryPengajuanController;
-use App\Http\Controllers\Admin\PendudukController;
-use App\Http\Controllers\Admin\MahasiswaController;
-use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\Admin\TtdSuratConroller;
-use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
-use App\Http\Controllers\BAK\BAKSuratAktifController;
+use App\Http\Controllers\Admin\AkademikController;
+use App\Http\Controllers\Admin\FakultasController;
+use App\Http\Controllers\Admin\PendudukController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\BAK\BAKTtdSuratController;
-use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
-use App\Http\Controllers\BAK\MitraController as BAKMitraController;
-use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
-use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
-use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
+use App\Http\Controllers\Admin\SuratAktifController;
+use App\Http\Controllers\BAK\BAKSuratAktifController;
+use App\Http\Controllers\Admin\HistoryPengajuanController;
+use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\Mahasiswa\MahasiswaHistoryPegajuan;
+use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratAktifController;
-use App\Http\Controllers\VerifikasiController;
+use App\Http\Controllers\BAK\MitraController as BAKMitraController;
+use App\Http\Controllers\Mahasiswa\MahasiswaSuratPenelitianController;
+use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
+use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
+use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -87,7 +88,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/surat-aktif/data', [MahasiswaSuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
-        Route::resource('surat-aktif', MahasiswaSuratAktifController::class);
+        Route::resource('surat-aktif', MahasiswaSuratAktifController::class)->except(['destroy']);
+
+        Route::get('/surat-izin-penelitian/data', [MahasiswaSuratPenelitianController::class, 'getSuratPenelitian'])->name('surat-izin-penelitian.data');
+        Route::resource('surat-izin-penelitian', MahasiswaSuratPenelitianController::class)->except(['destroy']);
 
         Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
         Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');

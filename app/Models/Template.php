@@ -32,4 +32,14 @@ class Template extends Model
     {
         return $this->hasMany(Jabatan::class, 'fakultas_id');
     }
+
+    public function suratAktif()
+    {
+        return $this->hasMany(SuratAktif::class, 'akademik_id');
+    }
+
+    public function suratPenelitian()
+    {
+        return $this->hasMany(SuratPenelitian::class, 'akademik_id');
+    }
 }

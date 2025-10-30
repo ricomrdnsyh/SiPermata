@@ -21,9 +21,19 @@ class HistoryPengajuan extends Model
         'catatan'
     ];
 
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'nim');
+    }
+
     public function suratAktif()
     {
         return $this->belongsTo(SuratAktif::class, 'id_tabel_surat');
+    }
+
+    public function suratPenelitian()
+    {
+        return $this->belongsTo(SuratPenelitian::class, 'id_tabel_surat');
     }
 
     protected static function booted()
@@ -33,9 +43,20 @@ class HistoryPengajuan extends Model
 
                 $suratAktif = $history->suratAktif;
 
-                $filePath = $suratAktif->file_generated ?? null;
+                $filePath   = $suratAktif->file_generated ?? null;
 
                 $history->suratAktif()->delete();
+
+                if ($filePath) {
+                    Storage::disk('local')->delete($filePath);
+                }
+            } elseif ($history->tabel === 'surat_izin_penelitian') {
+
+                $suratPenelitian = $history->suratPenelitian;
+
+                $filePath        = $suratPenelitian->file_generated ?? null;
+
+                $history->suratPenelitian()->delete();
 
                 if ($filePath) {
                     Storage::disk('local')->delete($filePath);
@@ -44,14 +65,9 @@ class HistoryPengajuan extends Model
         });
     }
 
-    public function mahasiswa()
-    {
-        return $this->belongsTo(Mahasiswa::class, 'nim');
-    }
-
     protected $modelMapping = [
-        'surat_aktif' => SuratAktif::class,
-        // 'surat_lulus' => SuratLulus::class,
+        'surat_aktif'           => SuratAktif::class,
+        'surat_izin_penelitian' => SuratPenelitian::class,
         // tambahkan jenis surat lain di sini
     ];
 
@@ -83,9 +99,9 @@ class HistoryPengajuan extends Model
                 'PPPK'     => 'Surat Keterangan Aktif PPPK',
                 default    => 'Surat Lainnya'
             },
-            'surat_lulus'  => 'Surat Keterangan Lulus',
-            'surat_pindah' => 'Surat Keterangan Pindah',
-            default        => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
+            'surat_izin_penelitian'  => 'Surat Izin Penelitian',
+            // 'surat_pindah'           => 'Surat Keterangan Pindah',
+            default                  => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
         };
     }
 }
