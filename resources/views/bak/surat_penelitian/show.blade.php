@@ -22,7 +22,7 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">NIM</label>
                                         <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
-                                            value="{{ auth()->user()->reference_id }}" disabled required />
+                                            value="{{ $surat->nim . ' - ' . $surat->mahasiswa->nama }}" disabled required />
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\BAK;
 
 use App\Models\Mahasiswa;
+use App\Models\SuratAktif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -98,16 +100,21 @@ class BAKHistoryPengajuanController extends Controller
         return view('bak.history.detail', compact('pengajuan', 'surat'));
     }
 
+    protected $suratModels = [
+        'surat_aktif'           => SuratAktif::class,
+        'surat_izin_penelitian' => SuratPenelitian::class,
+        // Tambahkan jenis surat lain di sini
+    ];
+
     public function approve($id)
     {
         $user = Auth::user();
+
         if ($user->role !== 'BAK') {
             return redirect()->back()->with('failed', 'Akses ditolak');
         }
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
-
-        $suratAktif = $pengajuan->suratAktif;
 
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
             return redirect()->back()->with('failed', 'Akses ditolak');
@@ -117,34 +124,52 @@ class BAKHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
         }
 
+
+        $jenisTabel = $pengajuan->tabel; // Ambil nilai 'surat_aktif' atau 'surat_izin_penelitian'
+        $idSuratUtama = $pengajuan->id_tabel_surat; // Ambil ID surat utama di tabel yang benar
+
+        // A. Cek ketersediaan mapping
+        if (!isset($this->suratModels[$jenisTabel])) {
+            return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
+        }
+
+        $ModelSurat = $this->suratModels[$jenisTabel];
+
+        $suratUtama = $ModelSurat::find($idSuratUtama);
+
+        if (!$suratUtama) {
+            return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
+        }
+
         $pengajuan->update([
             'status' => 'proses',
             'catatan' => 'Disetujui oleh BAK',
             'jabatan_id' => $user->penduduk->jabatan->id_jabatan
         ]);
 
-        $suratAktif->update([
+        $suratUtama->update([
             'status' => 'proses',
             'catatan' => 'Disetujui oleh BAK',
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Pengajuan berhasil disetujui!']);
+        $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
+
+        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil disetujui!"]);
     }
 
     public function reject(Request $request, $id)
     {
         $user = Auth::user();
+
         if ($user->role !== 'BAK') {
             return redirect()->back()->with('failed', 'Akses ditolak');
         }
 
         $request->validate([
-            'catatan' => 'required'
+            'catatan' => 'required|string|max:500'
         ]);
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
-
-        $suratAktif = $pengajuan->suratAktif;
 
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
             return redirect()->back()->with('failed', 'Akses ditolak');
@@ -154,17 +179,38 @@ class BAKHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
         }
 
+
+        $jenisTabel = $pengajuan->tabel; // Contoh: 'surat_aktif' atau 'surat_izin_penelitian'
+        $idSuratUtama = $pengajuan->id_tabel_surat; // ID surat di tabel utama
+
+        // Cek ketersediaan mapping
+        if (!isset($this->suratModels[$jenisTabel])) {
+            return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
+        }
+
+        $ModelSurat = $this->suratModels[$jenisTabel];
+
+        $suratUtama = $ModelSurat::find($idSuratUtama);
+
+        if (!$suratUtama) {
+            return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
+        }
+
+        $catatanPenolakan = 'Ditolak oleh BAK: ' . $request->catatan;
+
         $pengajuan->update([
-            'status'     => 'ditolak',
-            'catatan'    => 'Ditolak oleh BAK: ' . $request->catatan,
+            'status' => 'ditolak',
+            'catatan' => $catatanPenolakan,
             'jabatan_id' => $user->penduduk->jabatan->id_jabatan
         ]);
 
-        $suratAktif->update([
-            'status'     => 'ditolak',
-            'catatan'    => 'Ditolak oleh BAK: ' . $request->catatan,
+        $suratUtama->update([
+            'status' => 'ditolak',
+            'catatan' => $catatanPenolakan,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Pengajuan berhasil ditolak!']);
+        $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
+
+        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil ditolak!"]);
     }
 }

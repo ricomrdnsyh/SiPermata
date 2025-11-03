@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
+use App\Http\Controllers\BAK\BAKSuratPenelitianController;
 use App\Http\Controllers\Mahasiswa\MahasiswaHistoryPegajuan;
 use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratAktifController;
@@ -123,6 +124,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-aktif/data', [BAKSuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', BAKSuratAktifController::class)->except(['destroy']);
+
+        Route::get('/surat-izin-penelitian/data', [BAKSuratPenelitianController::class, 'getSuratPenelitian'])->name('surat-izin-penelitian.data');
+        Route::resource('surat-izin-penelitian', BAKSuratPenelitianController::class)->except(['destroy']);
 
         Route::get('/history-pengajuan', [BAKHistoryPengajuanController::class, 'index'])->name('history.index');
         Route::get('/history/data', [BAKHistoryPengajuanController::class, 'historyData'])->name('history.data');

@@ -10,6 +10,11 @@ class SuratPenelitian extends Model
 
     protected $primaryKey = 'id_surat_izin_penelitian';
 
+    protected $casts = [
+        'tgl_mulai' => 'datetime',
+        'tgl_selesai' => 'datetime',
+    ];
+
     protected $fillable = [
         'template_id',
         'no_surat',

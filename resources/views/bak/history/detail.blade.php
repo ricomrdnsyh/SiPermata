@@ -97,8 +97,8 @@
                                                 @include('bak.history.partials.surat_aktif', [
                                                     'surat' => $surat,
                                                 ])
-                                            @elseif($pengajuan->tabel === 'surat_lulus')
-                                                @include('bak.history.partials.surat_lulus', [
+                                            @elseif($pengajuan->tabel === 'surat_izin_penelitian')
+                                                @include('bak.history.partials.surat_penelitian', [
                                                     'surat' => $surat,
                                                 ])
                                             @else
