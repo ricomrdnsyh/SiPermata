@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TtdSurat;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
+use App\Models\SuratPenelitian;
 
 class VerifikasiController extends Controller
 {
@@ -36,6 +37,40 @@ class VerifikasiController extends Controller
             ->first();
 
         return view('verifikasi.surat_aktif', [
+            'surat' => $surat,
+            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
+            'ttd_dekan' => $ttdDekan,
+        ]);
+    }
+
+    public function verifySuratPenelitian(string $id)
+    {
+        $surat = SuratPenelitian::where('id_surat_izin_penelitian', $id)
+            ->orWhere('no_surat', $id)
+            ->with(['mahasiswa', 'akademik'])
+            ->first();
+
+        if (!$surat) {
+            return view('verifikasi.gagal', [
+                'message' => 'Surat tidak ditemukan atau kode verifikasi tidak valid.'
+            ]);
+        }
+
+        if ($surat->status !== 'diterima') {
+            return view('verifikasi.gagal', [
+                'message' => 'Surat ini belum disetujui (Status: ' . $surat->status . '). Verifikasi gagal.'
+            ]);
+        }
+
+        $fakultasId = $surat->mahasiswa->fakultas_id;
+        $templateId = $surat->template_id;
+
+        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
+            ->where('template_id', $templateId)
+            ->where('status', 'aktif')
+            ->first();
+
+        return view('verifikasi.surat_penelitian', [
             'surat' => $surat,
             'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
             'ttd_dekan' => $ttdDekan,

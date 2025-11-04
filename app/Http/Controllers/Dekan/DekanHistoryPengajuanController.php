@@ -8,7 +8,9 @@ use App\Mail\SuratSelesai;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
+use App\Services\SignatureService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -93,8 +95,8 @@ class DekanHistoryPengajuanController extends Controller
         switch ($tableName) {
             case 'surat_aktif':
                 return SuratAktif::class;
-                // case 'surat_lulus':
-                //     return SuratLulus::class;
+            case 'surat_izin_penelitian':
+                return SuratPenelitian::class;
             default:
                 return null;
         }
@@ -134,31 +136,55 @@ class DekanHistoryPengajuanController extends Controller
         return view('dekan.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
     }
 
-    public function approve($id, SuratAktifGenerator $generatorService)
+    public function approve($id, SignatureService $signatureService) // Injeksi SignatureService
     {
         $user = Auth::user();
+
+        // 1. Pengecekan Akses (Respons JSON)
         if ($user->role !== 'DEKAN') {
-            return redirect()->back()->with('failed', 'Akses ditolak');
+            return response()->json(['success' => false, 'message' => 'Akses ditolak: Hanya Dekan yang diizinkan.'], 403);
         }
 
-        $pengajuan = HistoryPengajuan::findOrFail($id);
+        $pengajuan = HistoryPengajuan::find($id);
 
-        $suratAktif = $pengajuan->suratAktif;
+        if (!$pengajuan) {
+            return response()->json(['success' => false, 'message' => 'Pengajuan tidak ditemukan.'], 404);
+        }
 
-        if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
-            return redirect()->back()->with('failed', 'Akses ditolak');
+        // Pengecekan status pengajuan
+        if ($pengajuan->status !== 'proses') {
+            return response()->json(['success' => false, 'message' => 'Surat ini sudah diproses atau ditolak sebelumnya.'], 400);
+        }
+
+        // Pengecekan Fakultas (Respons JSON)
+        if (!isset($user->penduduk->fakultas_id) || $pengajuan->fakultas_id !== $user->penduduk->fakultas_id) {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak: Fakultas tidak cocok.'], 403);
+        }
+
+        // 2. Dapatkan Detail Surat Secara Dinamis
+        $modelClass = $this->getModelClass($pengajuan->tabel);
+
+        if (!$modelClass) {
+            return response()->json(['success' => false, 'message' => 'Jenis surat tidak valid atau tidak terdaftar.'], 400);
+        }
+
+        $detailSurat = $modelClass::find($pengajuan->id_tabel_surat);
+
+        if (!$detailSurat) {
+            return response()->json(['success' => false, 'message' => 'Detail surat (tabel ' . $pengajuan->tabel . ') tidak ditemukan.'], 404);
         }
 
         // Pengecekan Ketersediaan File
-        if (empty($suratAktif->file_generated)) {
+        // Asumsi semua model surat memiliki kolom 'file_generated'
+        if (empty($detailSurat->file_generated)) {
             return response()->json(['success' => false, 'message' => 'File surat belum tersedia untuk ditandatangani.'], 400);
         }
 
-        // Dapatkan ID Fakultas dan ID Template
+        // 3. Dapatkan Data TTD
         $fakultasId = $pengajuan->fakultas_id;
-        $templateId = $suratAktif->template_id;
+        // Asumsi semua model surat memiliki kolom 'template_id'
+        $templateId = $detailSurat->template_id;
 
-        // Cari TTD aktif, sesuai fakultas, dan sesuai template.
         $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
             ->where('template_id', $templateId)
             ->where('status', 'aktif')
@@ -171,79 +197,132 @@ class DekanHistoryPengajuanController extends Controller
         // Data yang akan digunakan
         $namaDekan = $ttdDekan->nama_ttd;
         $nidn      = $ttdDekan->nidn;
-        $jabatanDekan = $user->penduduk->jabatan->nama_jabatan ?? 'Dekan';
+        $jabatanDekan = $user->penduduk?->jabatan?->nama_jabatan ?? 'Dekan';
+        $idJabatan = $user->penduduk?->jabatan?->id_jabatan ?? null;
 
+
+        // 4. Proses Tanda Tangan dan Update Database
         try {
             DB::beginTransaction();
 
-            $generatedFilePath = $generatorService->insertSignatureWithQR(
-                $suratAktif,
+            // Panggil SignatureService yang universal
+            $generatedFilePath = $signatureService->insertSignatureWithQR(
+                $detailSurat, // Model yang di-handle secara dinamis
                 $jabatanDekan,
                 $namaDekan,
                 $nidn
             );
 
-            $suratAktif->update([
+            // Update status di tabel detail surat ($detailSurat)
+            $detailSurat->update([
                 'status' => 'diterima',
                 'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
                 'file_generated' => $generatedFilePath,
             ]);
 
+            // Update status di tabel HistoryPengajuan
             $pengajuan->update([
                 'status' => 'diterima',
                 'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
-                'jabatan_id' => $user->penduduk->jabatan->id_jabatan,
+                'jabatan_id' => $idJabatan,
             ]);
 
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'Pengajuan berhasil disetujui dan TTD QR berhasil ditambahkan!']);
+            return response()->json(['success' => true, 'message' => 'Pengajuan berhasil disetujui dan TTD QR berhasil ditambahkan!'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Gagal menambahkan TTD QR pada surat aktif {$suratAktif->id_surat_aktif}: " . $e->getMessage());
+            Log::error("Gagal menambahkan TTD QR pada pengajuan {$pengajuan->id_history}: " . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memproses TTD QR. Error: ' . $e->getMessage()
+                'message' => 'Gagal memproses TTD QR. Silakan cek log server untuk detail lebih lanjut.'
             ], 500);
         }
     }
 
+    // --- FUNGSI REJECT (DINAMIS) ---
     public function reject(Request $request, $id)
     {
         $user = Auth::user();
+
+        // 1. Validasi Input (Respons JSON 422 jika gagal)
+        $validated = $request->validate([
+            'catatan' => 'required|string|max:500'
+        ]);
+
+        // Pengecekan Akses
         if ($user->role !== 'DEKAN') {
-            return redirect()->back()->with('failed', 'Akses ditolak');
+            return response()->json(['success' => false, 'message' => 'Akses ditolak: Hanya Dekan yang diizinkan.'], 403);
         }
 
-        $request->validate([
-            'catatan' => 'required'
-        ]);
+        // 2. Cari History Pengajuan
+        $pengajuan = HistoryPengajuan::find($id);
 
-        $pengajuan = HistoryPengajuan::findOrFail($id);
-
-        $suratAktif = $pengajuan->suratAktif;
-
-        if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
-            return redirect()->back()->with('failed', 'Akses ditolak');
+        if (!$pengajuan) {
+            return response()->json(['success' => false, 'message' => 'Pengajuan tidak ditemukan.'], 404);
         }
 
+        // Pengecekan status pengajuan
         if ($pengajuan->status !== 'proses') {
-            return redirect()->back()->with('failed', 'Surat ini sudah diterima.');
+            return response()->json(['success' => false, 'message' => 'Surat ini sudah diproses atau ditolak sebelumnya.'], 400);
         }
 
-        $pengajuan->update([
-            'status'     => 'ditolak',
-            'catatan'    => 'Ditolak oleh Dekan: ' . $request->catatan,
-            'jabatan_id' => $user->penduduk->jabatan->id_jabatan
-        ]);
+        // Pengecekan Fakultas
+        if (!isset($user->penduduk->fakultas_id) || $pengajuan->fakultas_id !== $user->penduduk->fakultas_id) {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak: Fakultas tidak cocok.'], 403);
+        }
 
-        $suratAktif->update([
-            'status'     => 'ditolak',
-            'catatan'    => 'Ditolak oleh Dekan: ' . $request->catatan,
-        ]);
 
-        return response()->json(['success' => true, 'message' => 'Pengajuan berhasil ditolak!']);
+        // 3. Mengakses Detail Surat Secara Dinamis
+        $modelClass = $this->getModelClass($pengajuan->tabel);
+
+        if (!$modelClass) {
+            return response()->json(['success' => false, 'message' => 'Jenis surat tidak valid atau tidak terdaftar.'], 400);
+        }
+
+        $detailSurat = $modelClass::find($pengajuan->id_tabel_surat);
+
+        if (!$detailSurat) {
+            return response()->json(['success' => false, 'message' => 'Detail surat (tabel ' . $pengajuan->tabel . ') tidak ditemukan.'], 404);
+        }
+
+
+        // 4. Proses Penolakan (Transaksi Database)
+        try {
+            DB::beginTransaction();
+
+            $catatan = 'Ditolak oleh Dekan: ' . $validated['catatan'];
+            $idJabatan = $user->penduduk?->jabatan?->id_jabatan ?? null;
+
+            // Update status di tabel detail surat
+            $detailSurat->update([
+                'status' => 'ditolak',
+                'catatan' => $catatan,
+            ]);
+
+            // Update status di tabel HistoryPengajuan
+            $pengajuan->update([
+                'status' => 'ditolak',
+                'catatan' => $catatan,
+                'jabatan_id' => $idJabatan,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pengajuan berhasil ditolak.'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Gagal menolak pengajuan (ID History: {$id}): " . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses penolakan. Silakan cek log server.'
+            ], 500);
+        }
     }
 
     public function viewGeneratedFile(string $tabel, int $id): Response

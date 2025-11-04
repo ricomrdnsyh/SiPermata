@@ -36,6 +36,7 @@ Route::middleware('guest')->group(function () {
 
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])->name('verifikasi.surat-aktif');
+Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::class, 'verifySuratPenelitian'])->name('verifikasi.surat-izin-penelitian');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

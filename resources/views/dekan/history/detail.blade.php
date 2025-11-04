@@ -103,7 +103,7 @@
                                                             @break
 
                                                             @case('selesai')
-                                                                <span class="badge bg-success">Selesai</span>
+                                                                <span class="badge bg-primary">Selesai</span>
                                                             @break
 
                                                             @case('ditolak')
@@ -125,8 +125,8 @@
                                                 @include('bak.history.partials.surat_aktif', [
                                                     'surat' => $surat,
                                                 ])
-                                            @elseif($pengajuan->tabel === 'surat_lulus')
-                                                @include('bak.history.partials.surat_lulus', [
+                                            @elseif($pengajuan->tabel === 'surat_izin_penelitian')
+                                                @include('bak.history.partials.surat_penelitian', [
                                                     'surat' => $surat,
                                                 ])
                                             @else
@@ -245,11 +245,11 @@
 
 @section('js')
     <script>
+        const pengajuanId = {{ $pengajuan->id_history }};
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Terima Pengajuan
         document.addEventListener('DOMContentLoaded', function() {
-            const pengajuanId = {{ $pengajuan->id_history }};
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-
             const btnApproveMain = document.getElementById('btn-approve-main');
             if (btnApproveMain) {
                 btnApproveMain.addEventListener('click', function() {
@@ -348,7 +348,7 @@
                     Swal.fire({
                         title: "Konfirmasi Kirim Surat",
                         text: "Apakah Anda yakin ingin mengirim surat yang sudah ditandatangani ini ke email mahasiswa?",
-                        icon: "warning",
+                        icon: "question",
                         showCancelButton: true,
                         confirmButtonText: "Ya, Kirim!",
                         cancelButtonText: "Batal",
@@ -478,10 +478,6 @@
                             }
                         });
                     })
-                    .finally(() => {
-                        label.style.display = 'inline';
-                        progress.style.display = 'none';
-                    });
             });
         }
     </script>

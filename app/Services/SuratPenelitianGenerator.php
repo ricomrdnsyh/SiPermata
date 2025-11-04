@@ -67,47 +67,4 @@ class SuratPenelitianGenerator
 
         return $outputFileRelatif;
     }
-
-    public function insertSignatureWithQR(SuratPenelitian $surat, string $jabatan, string $nama, $nidn)
-    {
-        $filePath = $surat->file_generated;
-        $outputPathAbsolut = storage_path("app/{$filePath}");
-
-        if (!file_exists($outputPathAbsolut)) {
-            throw new \Exception("File surat tidak ditemukan: " . $outputPathAbsolut);
-        }
-
-        $qrData = route('verifikasi.surat-penelitian', ['id' => $surat->id_surat_izin_penelitian]);
-
-        $qrCodeBinary = QrCode::size(100)
-            ->format('png')
-            ->errorCorrection('H')
-            ->margin(1)
-            ->generate($qrData);
-
-        $qrTempFileName = 'temp_qr_' . time() . '.png';
-        $qrTempPath = storage_path("app/temp/{$qrTempFileName}");
-        Storage::put("temp/{$qrTempFileName}", $qrCodeBinary);
-
-        try {
-            $processor = new TemplateProcessor($outputPathAbsolut);
-
-            $processor->setImageValue('TTD_QR', [
-                'path' => $qrTempPath,
-                'width' => 100,
-                'height' => 100,
-                'ratio' => true
-            ]);
-
-            $processor->setValue('JABATAN', $jabatan);
-            $processor->setValue('NAMA_DEKAN', $nama);
-            $processor->setValue('NIDN', $nidn);
-
-            $processor->saveAs($outputPathAbsolut);
-        } finally {
-            Storage::delete("temp/{$qrTempFileName}");
-        }
-
-        return $filePath;
-    }
 }
