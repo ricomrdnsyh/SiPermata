@@ -3,19 +3,19 @@
 namespace App\Services;
 
 use App\Models\Template;
-use App\Models\SuratPenelitian;
+use App\Models\SuratRekomendasi;
 use Illuminate\Support\Carbon;
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class SuratPenelitianGenerator
+class SuratRekomendasiGenerator
 {
     /**
      * Memproses data dan template untuk membuat file Word.
-     * * @param SuratPenelitian
+     * * @param SuratRekomendasi
      * @param Template $template Model Template yang sudah dipilih.
      * @return string Path relatif file Word yang berhasil dibuat.
      */
-    public function generateWord(SuratPenelitian $surat, Template $template)
+    public function generateWord(SuratRekomendasi $surat, Template $template)
     {
         $relativePathTemplate = $template->file;
 
@@ -28,32 +28,29 @@ class SuratPenelitianGenerator
         // Load Template
         $processor = new TemplateProcessor($templatePath);
 
-        $mahasiswa          = $surat->mahasiswa;
-        $tglSuratCarbon     = Carbon::parse($surat->updated_at);
-        $bulanSuratCarbon   = Carbon::parse($surat->updated_at);
-        $tglMulaiCarbon     = Carbon::parse($surat->tgl_mulai);
-        $tglSelesaiCarbon   = Carbon::parse($surat->tgl_selesai);
+        $mahasiswa                = $surat->mahasiswa;
+        $tglSuratCarbon           = Carbon::parse($surat->updated_at);
+        $bulanSuratCarbon         = Carbon::parse($surat->updated_at);
+        $tahunKeperluanCarbon     = Carbon::parse($surat->updated_at);
 
-        $tglSurat   = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
-        $tglMulai   = $tglMulaiCarbon->locale('id')->isoFormat('D MMMM YYYY');
-        $tglSelesai = $tglSelesaiCarbon->locale('id')->isoFormat('D MMMM YYYY');
-        $bulanSurat = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
+        $tglSurat       = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
+        $bulanSurat     = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
+        $tahunKeperluan = $tahunKeperluanCarbon->locale('id')->isoFormat('YYYY');
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
         $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
-        $processor->setValue('NAMA_MITRA', $surat->mitra->nama_mitra ?? '-');
         $processor->setValue('NAMA_MAHASISWA', $surat->mahasiswa?->nama ?? '-');
         $processor->setValue('FAKULTAS', $mahasiswa?->fakultas?->nama_fakultas ?? '-');
         $processor->setValue('PRODI', $mahasiswa?->prodi?->nama_prodi ?? '-');
         $processor->setValue('NIM', $surat->nim);
-        $processor->setValue('TGL_MULAI', $tglMulai ?? '-');
-        $processor->setValue('TGL_SELESAI', $tglSelesai ?? '-');
-        $processor->setValue('JUDUL_PENELITIAN', $surat->judul_penelitian ?? '-');
+        $processor->setValue('KEPERLUAN', $surat->keperluan ?? '-');
+        $processor->setValue('PENYELENGGARA', $surat->penyelenggara ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
+        $processor->setValue('TAHUN_KEPERLUAN', $tahunKeperluan ?? '-');
 
         // Direktori Output
-        $outputFileName    = "SURAT_IZIN_PENELITIAN_{$surat->nim}.docx";
-        $outputFileRelatif = "surat_penelitian/{$outputFileName}";
+        $outputFileName    = "SURAT_REKOMENDASI_{$surat->nim}.docx";
+        $outputFileRelatif = "surat_rekomendasi/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 
         $outputDirectory = dirname($outputPathAbsolut);

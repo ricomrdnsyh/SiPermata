@@ -48,9 +48,6 @@ class MahasiswaSuratAktifController extends Controller
             ->addColumn('tanggal_pengajuan', function ($row) {
                 return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
             })
-            ->addColumn('tahun_akademik', function ($row) {
-                return $row->akademik ? $row->akademik->tahun_akademik : '—';
-            })
             ->addColumn('catatan', function ($row) {
                 return $row->catatan ?: '<em>Tidak ada catatan</em>';
             })
@@ -75,7 +72,7 @@ class MahasiswaSuratAktifController extends Controller
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })
-            ->rawColumns(['kategori', 'tahun_akademik', 'status', 'catatan', 'action'])
+            ->rawColumns(['kategori', 'status', 'catatan', 'action'])
             ->make(true);
     }
 

@@ -25,4 +25,9 @@ class TahunAkademik extends Model
     {
         return $this->hasMany(SuratPenelitian::class, 'akademik_id');
     }
+
+    public function suratRekomendasi()
+    {
+        return $this->hasMany(SuratRekomendasi::class, 'akademik_id');
+    }
 }

@@ -10,13 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
+use App\Models\SuratRekomendasi;
 use App\Services\SignatureService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Services\SuratAktifGenerator;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,6 +97,8 @@ class DekanHistoryPengajuanController extends Controller
                 return SuratAktif::class;
             case 'surat_izin_penelitian':
                 return SuratPenelitian::class;
+            case 'surat_rekomendasi':
+                return SuratRekomendasi::class;
             default:
                 return null;
         }
@@ -140,7 +142,6 @@ class DekanHistoryPengajuanController extends Controller
     {
         $user = Auth::user();
 
-        // 1. Pengecekan Akses (Respons JSON)
         if ($user->role !== 'DEKAN') {
             return response()->json(['success' => false, 'message' => 'Akses ditolak: Hanya Dekan yang diizinkan.'], 403);
         }
@@ -151,17 +152,15 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Pengajuan tidak ditemukan.'], 404);
         }
 
-        // Pengecekan status pengajuan
         if ($pengajuan->status !== 'proses') {
             return response()->json(['success' => false, 'message' => 'Surat ini sudah diproses atau ditolak sebelumnya.'], 400);
         }
 
-        // Pengecekan Fakultas (Respons JSON)
         if (!isset($user->penduduk->fakultas_id) || $pengajuan->fakultas_id !== $user->penduduk->fakultas_id) {
             return response()->json(['success' => false, 'message' => 'Akses ditolak: Fakultas tidak cocok.'], 403);
         }
 
-        // 2. Dapatkan Detail Surat Secara Dinamis
+        // Detail Surat Secara Dinamis
         $modelClass = $this->getModelClass($pengajuan->tabel);
 
         if (!$modelClass) {
@@ -175,14 +174,12 @@ class DekanHistoryPengajuanController extends Controller
         }
 
         // Pengecekan Ketersediaan File
-        // Asumsi semua model surat memiliki kolom 'file_generated'
         if (empty($detailSurat->file_generated)) {
             return response()->json(['success' => false, 'message' => 'File surat belum tersedia untuk ditandatangani.'], 400);
         }
 
-        // 3. Dapatkan Data TTD
+        // Dapatkan Data TTD
         $fakultasId = $pengajuan->fakultas_id;
-        // Asumsi semua model surat memiliki kolom 'template_id'
         $templateId = $detailSurat->template_id;
 
         $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
@@ -201,26 +198,24 @@ class DekanHistoryPengajuanController extends Controller
         $idJabatan = $user->penduduk?->jabatan?->id_jabatan ?? null;
 
 
-        // 4. Proses Tanda Tangan dan Update Database
+        // Proses Tanda Tangan dan Update Database
         try {
             DB::beginTransaction();
 
             // Panggil SignatureService yang universal
             $generatedFilePath = $signatureService->insertSignatureWithQR(
-                $detailSurat, // Model yang di-handle secara dinamis
+                $detailSurat,
                 $jabatanDekan,
                 $namaDekan,
                 $nidn
             );
 
-            // Update status di tabel detail surat ($detailSurat)
             $detailSurat->update([
                 'status' => 'diterima',
                 'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
                 'file_generated' => $generatedFilePath,
             ]);
 
-            // Update status di tabel HistoryPengajuan
             $pengajuan->update([
                 'status' => 'diterima',
                 'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
@@ -241,12 +236,10 @@ class DekanHistoryPengajuanController extends Controller
         }
     }
 
-    // --- FUNGSI REJECT (DINAMIS) ---
     public function reject(Request $request, $id)
     {
         $user = Auth::user();
 
-        // 1. Validasi Input (Respons JSON 422 jika gagal)
         $validated = $request->validate([
             'catatan' => 'required|string|max:500'
         ]);
@@ -256,7 +249,7 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Akses ditolak: Hanya Dekan yang diizinkan.'], 403);
         }
 
-        // 2. Cari History Pengajuan
+        // Cari History Pengajuan
         $pengajuan = HistoryPengajuan::find($id);
 
         if (!$pengajuan) {
@@ -274,7 +267,7 @@ class DekanHistoryPengajuanController extends Controller
         }
 
 
-        // 3. Mengakses Detail Surat Secara Dinamis
+        // Mengakses Detail Surat Secara Dinamis
         $modelClass = $this->getModelClass($pengajuan->tabel);
 
         if (!$modelClass) {
@@ -288,7 +281,7 @@ class DekanHistoryPengajuanController extends Controller
         }
 
 
-        // 4. Proses Penolakan (Transaksi Database)
+        // Proses Penolakan (Transaksi Database)
         try {
             DB::beginTransaction();
 

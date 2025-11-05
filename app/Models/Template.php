@@ -35,11 +35,16 @@ class Template extends Model
 
     public function suratAktif()
     {
-        return $this->hasMany(SuratAktif::class, 'akademik_id');
+        return $this->hasMany(SuratAktif::class, 'template_id');
     }
 
     public function suratPenelitian()
     {
-        return $this->hasMany(SuratPenelitian::class, 'akademik_id');
+        return $this->hasMany(SuratPenelitian::class, 'template_id');
+    }
+
+    public function suratRekomendasi()
+    {
+        return $this->hasMany(SuratRekomendasi::class, 'template_id');
     }
 }

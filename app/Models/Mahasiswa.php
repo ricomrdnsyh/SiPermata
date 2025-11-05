@@ -37,11 +37,16 @@ class Mahasiswa extends Model
 
     public function suratAktif()
     {
-        return $this->hasMany(SuratAktif::class, 'akademik_id');
+        return $this->hasMany(SuratAktif::class, 'nim');
     }
 
     public function suratPenelitian()
     {
-        return $this->hasMany(SuratPenelitian::class, 'akademik_id');
+        return $this->hasMany(SuratPenelitian::class, 'nim');
+    }
+
+    public function suratRekomendasi()
+    {
+        return $this->hasMany(SuratRekomendasi::class, 'nim');
     }
 }

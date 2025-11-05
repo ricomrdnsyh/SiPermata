@@ -5,9 +5,7 @@ namespace App\Services;
 use App\Models\Template;
 use App\Models\SuratAktif;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SuratAktifGenerator
 {

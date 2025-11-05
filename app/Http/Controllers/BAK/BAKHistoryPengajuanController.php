@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
+use App\Models\SuratRekomendasi;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -103,6 +104,7 @@ class BAKHistoryPengajuanController extends Controller
     protected $suratModels = [
         'surat_aktif'           => SuratAktif::class,
         'surat_izin_penelitian' => SuratPenelitian::class,
+        'surat_rekomendasi'     => SuratRekomendasi::class,
         // Tambahkan jenis surat lain di sini
     ];
 

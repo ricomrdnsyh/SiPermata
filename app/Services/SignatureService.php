@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Models\SuratAktif;
 use App\Models\SuratPenelitian;
-use Illuminate\Database\Eloquent\Model; // Import Model Eloquent dasar
+use App\Models\SuratRekomendasi;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -34,6 +35,8 @@ class SignatureService
             $qrData = route('verifikasi.surat-aktif', ['id' => $suratModel->id_surat_aktif]);
         } elseif ($suratModel instanceof SuratPenelitian) {
             $qrData = route('verifikasi.surat-izin-penelitian', ['id' => $suratModel->id_surat_izin_penelitian]);
+        } elseif ($suratModel instanceof SuratRekomendasi) {
+            $qrData = route('verifikasi.surat-rekomendasi', ['id' => $suratModel->id_surat_rekomendasi]);
         } else {
             // Jika Anda memiliki banyak jenis surat, pertimbangkan field 'tabel' di History
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
