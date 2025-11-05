@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\BAK;
 
+use App\Models\Template;
+use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
+use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
+use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use App\Services\SuratRekomendasiGenerator;
 
 class BAKSuratRekomendasiController extends Controller
 {
@@ -80,15 +85,103 @@ class BAKSuratRekomendasiController extends Controller
      */
     public function create()
     {
-        //
+        $user     = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses ditolak');
+        }
+
+        $fakultasId = $user->penduduk?->fakultas_id;
+
+        if (!$fakultasId) {
+            return redirect()->route('bak.dashboard')->with('failed', 'Anda belum terhubung ke fakultas manapun.');
+        }
+
+        $akademik = TahunAkademik::all();
+        $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
+
+        return view('bak.surat_rekomendasi.create', compact('akademik', 'mahasiswa'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, SuratRekomendasiGenerator $generatorService)
     {
-        //
+        $userBak = Auth::user();
+
+        if ($userBak->role !== 'BAK') {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        // Tentukan ID Fakultas BAK yang login
+        $fakultasIdBak = $userBak->penduduk?->fakultas_id;
+
+        if (!$fakultasIdBak) {
+            return back()->with('failed', 'Data BAK tidak terhubung ke fakultas manapun.');
+        }
+
+        $request->validate([
+            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
+            'keperluan'        => 'required',
+            'penyelenggara'    => 'required',
+        ]);
+
+        $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
+
+        if ($mahasiswa->fakultas_id != $fakultasIdBak) {
+            return back()->with('failed', 'Mahasiswa tersebut bukan bagian dari fakultas Anda.');
+        }
+
+        $namaTemplate = 'surat_rekomendasi';
+
+        $template = Template::where('jenis_surat', $namaTemplate)
+            ->where('fakultas_id', $fakultasIdBak)
+            ->first();
+
+        if (!$template) {
+            return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
+        }
+
+        // Generate nomor surat
+        $noSurat = SuratRekomendasi::getNextNoSurat($template->id_template);
+
+        $surat = SuratRekomendasi::create([
+            'template_id'         => $template->id_template,
+            'no_surat'            => $noSurat,
+            'nim'                 => $mahasiswa->nim,
+            'akademik_id'         => $request->akademik_id,
+            'keperluan'           => $request->keperluan,
+            'penyelenggara'       => $request->penyelenggara,
+            'status'              => 'pengajuan',
+            'catatan'             => 'Diajukan BAK untuk mahasiswa',
+            'file_generated'      => null,
+        ]);
+
+        try {
+            // GENERATE FILE WORD
+            $generatedFilePath = $generatorService->generateWord($surat, $template);
+
+            // UPDATE MODEL DENGAN PATH FILE
+            $surat->update([
+                'file_generated' => $generatedFilePath,
+            ]);
+        } catch (\Exception $e) {
+            $surat->delete();
+            return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
+        }
+
+        HistoryPengajuan::create([
+            'id_tabel_surat' => $surat->id_surat_rekomendasi,
+            'nim'            => $mahasiswa->nim,
+            'fakultas_id'    => $mahasiswa->fakultas_id,
+            'tabel'          => 'surat_rekomendasi',
+            'status'         => 'pengajuan',
+            'catatan'        => 'Diajukan oleh mahasiswa',
+            'jabatan_id'     => null,
+        ]);
+
+        return redirect()->route('bak.surat-rekomendasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
     /**
@@ -120,15 +213,83 @@ class BAKSuratRekomendasiController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        $fakultasId = $user->penduduk?->fakultas_id;
+
+        if (!$fakultasId) {
+            abort(403, 'Anda tidak terhubung ke fakultas manapun.');
+        }
+
+        $surat = SuratRekomendasi::with('mahasiswa')
+            ->where('id_surat_rekomendasi', $id)
+            ->firstOrFail();
+
+        $akademik = TahunAkademik::all();
+        $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
+
+        return view('bak.surat_rekomendasi.edit', compact('surat', 'akademik', 'mahasiswa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, SuratRekomendasiGenerator $generatorService)
     {
-        //
+        $userBak = Auth::user();
+
+        if ($userBak->role !== 'BAK') {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        $fakultasIdBak = $userBak->penduduk?->fakultas_id;
+
+        if (!$fakultasIdBak) {
+            return back()->with('failed', 'Data BAK tidak terhubung ke fakultas manapun.');
+        }
+
+        $request->validate([
+            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
+            'keperluan'        => 'required',
+            'penyelenggara'    => 'required',
+        ]);
+
+        $surat = SuratRekomendasi::findOrFail($id);
+
+        $pengajuan = $surat->historyPengajuan()
+            ->where('nim', $request->nim)->firstOrFail();
+
+        $surat->update([
+            'nim'              => $request->nim,
+            'akademik_id'      => $request->akademik_id,
+            'keperluan'        => $request->keperluan,
+            'penyelenggara'    => $request->penyelenggara,
+            'status'           => 'pengajuan',
+            'catatan'          => 'Diajukan ulang oleh BAK untuk mahasiswa',
+        ]);
+
+        try {
+            $template = Template::findOrFail($surat->template_id);
+
+            $generatedFilePath = $generatorService->generateWord($surat, $template);
+
+            $surat->update([
+                'file_generated' => $generatedFilePath
+            ]);
+
+            $pengajuan->update([
+                'status'  => 'pengajuan',
+                'catatan' => 'Diajukan ulang oleh BAK untuk mahasiswa'
+            ]);
+
+            return redirect()->route('bak.surat-rekomendasi.index')->with('success', 'Data surat berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
+        }
     }
 
     /**

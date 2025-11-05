@@ -25,20 +25,6 @@
                                 <div class="card-title">
                                     <h2 class="fw-bolder">Detail Surat Pengajuan</h2>
                                 </div>
-                                <div class="card-toolbar gap-3">
-                                    @if ($pengajuan->status === 'pengajuan')
-                                        <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
-                                            Tolak Pengajuan
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-light-success" id="btn-approve-main"><i
-                                                class="fas fa-check-circle"></i> Terima Pengajuan
-                                        </button>
-                                    @else
-                                        <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pengajuan
-                                            sudah
-                                            dikonfirmasi</bu>
-                                    @endif
-                                </div>
                             </div>
                             <div class="separator my-2"></div>
                             <div class="card-body pt-3 mt-5">
@@ -109,6 +95,21 @@
                                                 <p class="text-muted">Detail untuk jenis surat ini belum tersedia.</p>
                                             @endif
                                         </div>
+                                    </div>
+                                    <div class="mt-10 pt-5 border-top border-gray-200 d-flex justify-content-end">
+                                        @if ($pengajuan->status === 'pengajuan')
+                                            <button type="button" class="btn btn-light-danger" id="btn-reject-main">
+                                                Tolak Pengajuan
+                                            </button>
+                                            <button type="button" class="btn btn-success ms-3" id="btn-approve-main"><i
+                                                    class="fas fa-check-circle"></i> Terima Pengajuan
+                                            </button>
+                                        @else
+                                            <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
+                                                Pengajuan
+                                                sudah dikonfirmasi
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

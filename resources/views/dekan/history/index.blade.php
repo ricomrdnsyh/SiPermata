@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'History Pengajuan Mahasiswa')
+@section('title', 'Pengajuan Surat Mahasiswa')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -34,7 +34,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List History Pengajuan</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Pengajuan</span>
                                 </h3>
                             </div>
                             <!--end::Search-->

@@ -26,47 +26,6 @@
                                 <div class="card-title">
                                     <h2 class="fw-bolder">Detail Surat Pengajuan</h2>
                                 </div>
-                                <div class="card-toolbar gap-3">
-                                    @if ($pengajuan->status === 'proses')
-                                        <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
-                                            Tolak Pengajuan
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-light-success" id="btn-approve-main"><i
-                                                class="fas fa-check-circle"></i>
-                                            Terima Pengajuan
-                                        </button>
-                                    @elseif($pengajuan->status === 'diterima')
-                                        @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
-                                            <a href="{{ route('dekan.surat.view', [
-                                                'tabel' => $pengajuan->tabel,
-                                                'id' => $pengajuan->id_tabel_surat,
-                                            ]) }}"
-                                                class="btn btn-sm btn-light-primary" target="_blank">
-                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-light-success"
-                                                id="btn-kirim-surat">
-                                                <i class="fas fa-external-link-alt"></i> Kirim Surat ke Mahasiswa
-                                            </button>
-                                        @endif
-                                    @elseif($pengajuan->status === 'selesai')
-                                        @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
-                                            <a href="{{ route('dekan.surat.view', [
-                                                'tabel' => $pengajuan->tabel,
-                                                'id' => $pengajuan->id_tabel_surat,
-                                            ]) }}"
-                                                class="btn btn-sm btn-light-primary" target="_blank">
-                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
-                                            </a>
-                                        @endif
-                                    @elseif($pengajuan->status === 'pengajuan')
-                                        <button class="btn btn-sm btn-warning">Menunggu BAK untuk validasi</button>
-                                    @else
-                                        <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
-                                            Pengajuan
-                                            sudah dikonfirmasi</button>
-                                    @endif
-                                </div>
                             </div>
                             <div class="separator my-2"></div>
                             <div class="card-body pt-3 mt-5">
@@ -137,6 +96,46 @@
                                                 <p class="text-muted">Detail untuk jenis surat ini belum tersedia.</p>
                                             @endif
                                         </div>
+                                    </div>
+                                    <div class="mt-10 pt-5 border-top border-gray-200 d-flex justify-content-end">
+                                        @if ($pengajuan->status === 'proses')
+                                            <button type="button" class="btn btn-light-danger" id="btn-reject-main">
+                                                Tolak Pengajuan
+                                            </button>
+                                            <button type="button" class="btn btn-success ms-3" id="btn-approve-main"><i
+                                                    class="fas fa-check-circle"></i>
+                                                Terima Pengajuan
+                                            </button>
+                                        @elseif($pengajuan->status === 'diterima')
+                                            @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                                <a href="{{ route('dekan.surat.view', [
+                                                    'tabel' => $pengajuan->tabel,
+                                                    'id' => $pengajuan->id_tabel_surat,
+                                                ]) }}"
+                                                    class="btn btn-light-primary" target="_blank">
+                                                    <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                </a>
+                                                <button type="button" class="btn btn-success ms-3" id="btn-kirim-surat">
+                                                    <i class="fas fa-external-link-alt"></i> Kirim Surat ke Mahasiswa
+                                                </button>
+                                            @endif
+                                        @elseif($pengajuan->status === 'selesai')
+                                            @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                                <a href="{{ route('dekan.surat.view', [
+                                                    'tabel' => $pengajuan->tabel,
+                                                    'id' => $pengajuan->id_tabel_surat,
+                                                ]) }}"
+                                                    class="btn btn-light-primary" target="_blank">
+                                                    <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                </a>
+                                            @endif
+                                        @elseif($pengajuan->status === 'pengajuan')
+                                            <button class="btn btn-warning">Menunggu BAK untuk validasi</button>
+                                        @else
+                                            <button class="btn btn-success"><i class="fas fa-check-circle"></i>
+                                                Pengajuan
+                                                sudah dikonfirmasi</button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
