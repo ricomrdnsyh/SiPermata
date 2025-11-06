@@ -47,4 +47,9 @@ class Template extends Model
     {
         return $this->hasMany(SuratRekomendasi::class, 'template_id');
     }
+
+    public function suratPKL()
+    {
+        return $this->hasMany(SuratPKL::class, 'template_id');
+    }
 }

@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Surat Izin Penelitian')
+@section('title', 'Surat Pemohonan PKL')
 
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -10,7 +10,7 @@
                     <div class="card-body p-lg-17">
                         <div class="d-flex flex-column">
                             <div class="mb-13 text-center">
-                                <h1 class="fs-2hx fw-bolder mb-5">Detail Surat Permohonan Izin Penelitian</h1>
+                                <h1 class="fs-2hx fw-bolder mb-5">Detail Surat Pemohonan PKL</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Silakan lihat detail pengajuan Anda !</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
@@ -22,7 +22,7 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">NIM</label>
                                         <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
-                                            value="{{ auth()->user()->reference_id }}" disabled required />
+                                            value="{{ $surat->nim . ' - ' . $surat->mahasiswa->nama }}" disabled required />
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
@@ -31,8 +31,8 @@
                                             disabled />
                                     </div>
                                     <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">Tempat Penelitian</label>
-                                        <input type="text" name="mitra_id" class="form-control mb-3 mb-lg-0"
+                                        <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
+                                        <input type="text" name="akademik_id" class="form-control mb-3 mb-lg-0"
                                             value="{{ $surat->mitra ? $surat->mitra->nama_mitra : '-' }}" disabled />
                                     </div>
                                     <div class="fv-row mb-7">
@@ -46,10 +46,6 @@
                                         <input type="text" name="tgl_selesai" class="form-control mb-3 mb-lg-0"
                                             value="{{ $surat->tgl_selesai?->locale('id')->isoFormat('D MMMM YYYY') }}"
                                             disabled />
-                                    </div>
-                                    <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
-                                        <textarea name="judul_penelitian" class="form-control mb-3 mb-lg-0" rows="3" disabled>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Catatan</label>

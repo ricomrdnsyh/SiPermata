@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\BAK;
 
+use App\Models\SuratPKL;
 use App\Models\Mahasiswa;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
@@ -105,6 +106,7 @@ class BAKHistoryPengajuanController extends Controller
         'surat_aktif'           => SuratAktif::class,
         'surat_izin_penelitian' => SuratPenelitian::class,
         'surat_rekomendasi'     => SuratRekomendasi::class,
+        'surat_pkl'             => SuratPKL::class,
         // Tambahkan jenis surat lain di sini
     ];
 

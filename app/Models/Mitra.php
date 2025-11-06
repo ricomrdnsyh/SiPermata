@@ -18,4 +18,9 @@ class Mitra extends Model
     {
         return $this->hasMany(SuratPenelitian::class, 'mitra_id');
     }
+
+    public function mitraPKL()
+    {
+        return $this->hasMany(SuratPKL::class, 'mitra_id');
+    }
 }

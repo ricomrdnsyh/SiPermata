@@ -92,6 +92,10 @@
                                                 @include('bak.history.partials.surat_rekomendasi', [
                                                     'surat' => $surat,
                                                 ])
+                                            @elseif($pengajuan->tabel === 'surat_pkl')
+                                                @include('bak.history.partials.surat_pkl', [
+                                                    'surat' => $surat,
+                                                ])
                                             @else
                                                 <p class="text-muted">Detail untuk jenis surat ini belum tersedia.</p>
                                             @endif

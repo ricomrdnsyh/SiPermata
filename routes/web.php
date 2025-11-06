@@ -14,22 +14,24 @@ use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\PendudukController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MahasiswaController;
+use App\Http\Controllers\BAK\BAKSuratPKLController;
 use App\Http\Controllers\BAK\BAKTtdSuratController;
 use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
-use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratPenelitianController;
+use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratRekomendasiController;
 use App\Http\Controllers\Mahasiswa\MahasiswaHistoryPegajuan;
 use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
+use App\Http\Controllers\Mahasiswa\MahasiswaSuratPKLController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratAktifController;
 use App\Http\Controllers\BAK\MitraController as BAKMitraController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratPenelitianController;
+use App\Http\Controllers\Mahasiswa\MahasiswaSuratRekomendasiController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
-use App\Http\Controllers\Mahasiswa\MahasiswaSuratRekomendasiController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -40,6 +42,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])->name('verifikasi.surat-aktif');
 Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::class, 'verifySuratPenelitian'])->name('verifikasi.surat-izin-penelitian');
 Route::get('/verifikasi/surat-rekomendasi/{id}', [VerifikasiController::class, 'verifySuratRekomendasi'])->name('verifikasi.surat-rekomendasi');
+Route::get('/verifikasi/surat-pkl/{id}', [VerifikasiController::class, 'verifySuratPKL'])->name('verifikasi.surat-pkl');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -101,6 +104,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-rekomendasi/data', [MahasiswaSuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
         Route::resource('surat-rekomendasi', MahasiswaSuratRekomendasiController::class)->except(['destroy']);
 
+        Route::get('/surat-pkl/data', [MahasiswaSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
+        Route::resource('surat-pkl', MahasiswaSuratPKLController::class)->except(['destroy']);
+
         Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
         Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');
         Route::get('/history/{id}/detail', [MahasiswaHistoryPegajuan::class, 'show'])->name('history.detail');
@@ -137,6 +143,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-rekomendasi/data', [BAKSuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
         Route::resource('surat-rekomendasi', BAKSuratRekomendasiController::class)->except(['destroy']);
+
+        Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
+        Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
 
         Route::get('/history-pengajuan', [BAKHistoryPengajuanController::class, 'index'])->name('history.index');
         Route::get('/history/data', [BAKHistoryPengajuanController::class, 'historyData'])->name('history.data');

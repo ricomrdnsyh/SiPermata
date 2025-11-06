@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dekan;
 
+use App\Models\SuratPKL;
 use App\Models\TtdSurat;
 use App\Models\Mahasiswa;
 use App\Mail\SuratSelesai;
@@ -99,6 +100,8 @@ class DekanHistoryPengajuanController extends Controller
                 return SuratPenelitian::class;
             case 'surat_rekomendasi':
                 return SuratRekomendasi::class;
+            case 'surat_pkl':
+                return SuratPKL::class;
             default:
                 return null;
         }

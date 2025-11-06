@@ -592,6 +592,17 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="menu-sub menu-sub-accordion menu-active-bg">
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('bak/surat-pkl') ? 'active' : '' }}"
+                                    href="{{ route('bak.surat-pkl.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Surat Permohonan PKL</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="menu-item">
                         <a class="menu-link {{ Request::is('bak/history-pengajuan') ? 'active' : '' }}"
@@ -687,6 +698,17 @@
                                         <span class="bullet bullet-dot"></span>
                                     </span>
                                     <span class="menu-title">Surat Rekomendasi</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="menu-sub menu-sub-accordion menu-active-bg">
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-pkl') ? 'active' : '' }}"
+                                    href="{{ route('mahasiswa.surat-pkl.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Surat Permohonan PKL</span>
                                 </a>
                             </div>
                         </div>

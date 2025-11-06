@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\SuratPKL;
 use App\Models\SuratAktif;
 use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
@@ -37,6 +38,8 @@ class SignatureService
             $qrData = route('verifikasi.surat-izin-penelitian', ['id' => $suratModel->id_surat_izin_penelitian]);
         } elseif ($suratModel instanceof SuratRekomendasi) {
             $qrData = route('verifikasi.surat-rekomendasi', ['id' => $suratModel->id_surat_rekomendasi]);
+        } elseif ($suratModel instanceof SuratPKL) {
+            $qrData = route('verifikasi.surat-pkl', ['id' => $suratModel->id_surat_pkl]);
         } else {
             // Jika Anda memiliki banyak jenis surat, pertimbangkan field 'tabel' di History
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
