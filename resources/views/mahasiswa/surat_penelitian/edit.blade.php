@@ -24,10 +24,10 @@
                                     @method('PUT')
                                     <div class="fv-row mb-7">
                                         <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
-                                            value="{{ auth()->user()->reference_id }}" disabled required />
-                                    </div>
+                                            <label class="required fw-semibold fs-6 mb-2">NIM</label>
+                                            <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
+                                                value="{{ auth()->user()->reference_id }}" disabled required />
+                                        </div>
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                             <select class="form-select form-select-solid select2-hidden-accessible w-100"
@@ -127,4 +127,31 @@
             });
         });
     </script>
+
+    @if ($message = Session::get('success'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+        </script>
+    @endif
+    @if ($message = Session::get('failed'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-danger"
+                }
+            });
+        </script>
+    @endif
 @endsection

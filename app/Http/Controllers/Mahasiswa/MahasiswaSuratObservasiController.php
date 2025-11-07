@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
+use App\Models\Mitra;
 use App\Models\Template;
 use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
-use App\Models\SuratRekomendasi;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Services\SuratRekomendasiGenerator;
+use App\Services\SuratObservasiGenerator;
 
-class MahasiswaSuratRekomendasiController extends Controller
+class MahasiswaSuratObservasiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('mahasiswa.surat_rekomendasi.index');
+        return view('mahasiswa.surat_observasi.index');
     }
 
-    public function getSuratRekomendasi()
+    public function getSuratObservasi()
     {
         $user = Auth::user();
         $nim = $user->mahasiswa?->nim;
@@ -32,7 +33,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = SuratRekomendasi::with([])->where('nim', $nim)
+        $query = SuratObservasi::with([])->where('nim', $nim)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
@@ -55,12 +56,12 @@ class MahasiswaSuratRekomendasiController extends Controller
                 };
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('mahasiswa.surat-rekomendasi.show', $row->id_surat_rekomendasi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('mahasiswa.surat-observasi.show', $row->id_surat_observasi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '';
                 if ($row->status === 'ditolak') {
-                    $editBtn = '<a href="' . route('mahasiswa.surat-rekomendasi.edit', $row->id_surat_rekomendasi) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                    $editBtn = '<a href="' . route('mahasiswa.surat-observasi.edit', $row->id_surat_observasi) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
                 }
 
@@ -69,6 +70,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->rawColumns(['status', 'catatan', 'action'])
             ->make(true);
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -81,18 +83,21 @@ class MahasiswaSuratRekomendasiController extends Controller
         }
 
         $akademik = TahunAkademik::all();
-        return view('mahasiswa.surat_rekomendasi.create', compact('akademik'));
+        $mitra    = Mitra::all();
+        return view('mahasiswa.surat_observasi.create', compact('akademik', 'mitra'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, SuratRekomendasiGenerator $generatorService)
+    public function store(Request $request, SuratObservasiGenerator $generatorService)
     {
         $request->validate([
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
+            'mitra_id'         => 'required|exists:mitra,id_mitra',
+            'semester'         => 'required',
+            'tgl_observasi'    => 'required',
             'keperluan'        => 'required',
-            'penyelenggara'    => 'required',
         ]);
 
         $user = Auth::user();
@@ -109,7 +114,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             return back()->with('failed', 'Fakultas Anda belum ditentukan.');
         }
 
-        $namaTemplate = 'surat_rekomendasi';
+        $namaTemplate = 'surat_observasi';
 
         $template = Template::where('jenis_surat', $namaTemplate)
             ->where('fakultas_id', $fakultasId)
@@ -120,15 +125,17 @@ class MahasiswaSuratRekomendasiController extends Controller
         }
 
         // Generate nomor surat
-        $noSurat = SuratRekomendasi::getNextNoSurat($template->id_template);
+        $noSurat = SuratObservasi::getNextNoSurat($template->id_template);
 
-        $surat = SuratRekomendasi::create([
+        $surat = SuratObservasi::create([
             'template_id'         => $template->id_template,
             'no_surat'            => $noSurat,
             'nim'                 => $mahasiswa->nim,
             'akademik_id'         => $request->akademik_id,
+            'mitra_id'            => $request->mitra_id,
+            'semester'            => $request->semester,
+            'tgl_observasi'       => $request->tgl_observasi,
             'keperluan'           => $request->keperluan,
-            'penyelenggara'       => $request->penyelenggara,
             'status'              => 'pengajuan',
             'catatan'             => 'Diajukan oleh mahasiswa',
             'file_generated'      => null,
@@ -148,16 +155,16 @@ class MahasiswaSuratRekomendasiController extends Controller
         }
 
         HistoryPengajuan::create([
-            'id_tabel_surat' => $surat->id_surat_rekomendasi,
+            'id_tabel_surat' => $surat->id_surat_observasi,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
-            'tabel'          => 'surat_rekomendasi',
+            'tabel'          => 'surat_observasi',
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh mahasiswa',
             'jabatan_id'     => null,
         ]);
 
-        return redirect()->route('mahasiswa.surat-rekomendasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
+        return redirect()->route('mahasiswa.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
     /**
@@ -170,11 +177,14 @@ class MahasiswaSuratRekomendasiController extends Controller
         if ($user->role !== 'mahasiswa') {
             abort(403);
         }
-        $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)
+        $surat = SuratObservasi::where('id_surat_observasi', $id)
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        return view('mahasiswa.surat_rekomendasi.show', compact('surat'));
+        $akademik = TahunAkademik::all();
+        $mitra    = Mitra::all();
+
+        return view('mahasiswa.surat_observasi.show', compact('surat', 'akademik', 'mitra'));
     }
 
     /**
@@ -187,33 +197,36 @@ class MahasiswaSuratRekomendasiController extends Controller
         if ($user->role !== 'mahasiswa') {
             abort(403);
         }
-        $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)
+        $surat = SuratObservasi::where('id_surat_observasi', $id)
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
         if ($surat->status !== 'ditolak') {
-            return redirect()->route('mahasiswa.surat-rekomendasi.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
+            return redirect()->route('mahasiswa.surat-observasi.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
         }
 
         $akademik = TahunAkademik::all();
+        $mitra    = Mitra::all();
 
-        return view('mahasiswa.surat_rekomendasi.edit', compact('surat', 'akademik'));
+        return view('mahasiswa.surat_observasi.edit', compact('surat', 'akademik', 'mitra'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id, SuratRekomendasiGenerator $generatorService)
+    public function update(Request $request, string $id, SuratObservasiGenerator $generatorService)
     {
         $request->validate([
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
+            'mitra_id'         => 'required|exists:mitra,id_mitra',
+            'semester'         => 'required',
+            'tgl_observasi'    => 'required',
             'keperluan'        => 'required',
-            'penyelenggara'    => 'required',
         ]);
 
         $user = Auth::user();
 
-        $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)
+        $surat = SuratObservasi::where('id_surat_observasi', $id)
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
@@ -221,11 +234,13 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
 
         $surat->update([
-            'akademik_id'     => $request->akademik_id,
-            'keperluan'       => $request->keperluan,
-            'penyelenggara'   => $request->penyelenggara,
-            'status'          => 'pengajuan',
-            'catatan'         => 'Diajukan ulang oleh mahasiswa',
+            'akademik_id'      => $request->akademik_id,
+            'mitra_id'         => $request->mitra_id,
+            'semester'         => $request->semester,
+            'tgl_observasi'    => $request->tgl_observasi,
+            'keperluan'        => $request->keperluan,
+            'status'           => 'pengajuan',
+            'catatan'          => 'Diajukan ulang oleh mahasiswa',
         ]);
 
         try {
@@ -239,7 +254,7 @@ class MahasiswaSuratRekomendasiController extends Controller
                 'catatan' => 'Diajukan ulang oleh mahasiswa'
             ]);
 
-            return redirect()->route('mahasiswa.surat-rekomendasi.index')
+            return redirect()->route('mahasiswa.surat-observasi.index')
                 ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
         } catch (\Exception $e) {
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());

@@ -46,6 +46,11 @@ class HistoryPengajuan extends Model
         return $this->belongsTo(SuratPKL::class, 'id_tabel_surat');
     }
 
+    public function suratObservasi()
+    {
+        return $this->belongsTo(SuratObservasi::class, 'id_tabel_surat');
+    }
+
     protected static function booted()
     {
         static::deleted(function ($history) {
@@ -93,6 +98,17 @@ class HistoryPengajuan extends Model
                 if ($filePath) {
                     Storage::disk('local')->delete($filePath);
                 }
+            } elseif ($history->tabel === 'surat_observasi') {
+
+                $suratObservasi = $history->suratObservasi;
+
+                $filePath = $suratObservasi->file_generated ?? null;
+
+                $history->suratObservasi()->delete();
+
+                if ($filePath) {
+                    Storage::disk('local')->delete($filePath);
+                }
             }
         });
     }
@@ -102,6 +118,7 @@ class HistoryPengajuan extends Model
         'surat_izin_penelitian' => SuratPenelitian::class,
         'surat_rekomendasi'     => SuratRekomendasi::class,
         'surat_pkl'             => SuratPKL::class,
+        'surat_observasi'       => SuratObservasi::class,
         // tambahkan jenis surat lain di sini
     ];
 
@@ -136,6 +153,7 @@ class HistoryPengajuan extends Model
             'surat_izin_penelitian'  => 'Surat Izin Penelitian',
             'surat_rekomendasi'      => 'Surat Rekomendasi',
             'surat_pkl'              => 'Surat Permohonan PKL',
+            'surat_observasi'        => 'Surat Permohonan Observasi',
             // 'surat_pindah'           => 'Surat Keterangan Pindah',
             default                  => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
         };

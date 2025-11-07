@@ -27,6 +27,7 @@ use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratPKLController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratAktifController;
 use App\Http\Controllers\BAK\MitraController as BAKMitraController;
+use App\Http\Controllers\Mahasiswa\MahasiswaSuratObservasiController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratPenelitianController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratRekomendasiController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
@@ -106,6 +107,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-pkl/data', [MahasiswaSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', MahasiswaSuratPKLController::class)->except(['destroy']);
+
+        Route::get('/surat-observasi/data', [MahasiswaSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
+        Route::resource('surat-observasi', MahasiswaSuratObservasiController::class)->except(['destroy']);
 
         Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
         Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');

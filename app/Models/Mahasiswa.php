@@ -54,4 +54,9 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(SuratPKL::class, 'nim');
     }
+
+    public function suratObservasi()
+    {
+        return $this->hasMany(SuratObservasi::class, 'nim');
+    }
 }

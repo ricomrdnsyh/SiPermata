@@ -52,4 +52,9 @@ class Template extends Model
     {
         return $this->hasMany(SuratPKL::class, 'template_id');
     }
+
+    public function suratObservasi()
+    {
+        return $this->hasMany(SuratObservasi::class, 'template_id');
+    }
 }

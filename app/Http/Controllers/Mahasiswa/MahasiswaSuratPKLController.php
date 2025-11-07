@@ -120,7 +120,7 @@ class MahasiswaSuratPKLController extends Controller
             ->first();
 
         if (!$template) {
-            return back()->with('failed', "Template untuk kategori {$request->kategori} belum tersedia untuk fakultas Anda.");
+            return back()->with('failed', "Template surat ini belum tersedia untuk fakultas Anda.");
         }
 
         // Generate nomor surat
