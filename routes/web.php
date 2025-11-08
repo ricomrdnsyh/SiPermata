@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\SuratObservasiController;
 use App\Http\Controllers\Admin\SuratPenelitianController;
 use App\Http\Controllers\BAK\BAKSuratObservasiController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
+use App\Http\Controllers\Admin\SuratRekomendasiController;
 use App\Http\Controllers\BAK\BAKSuratPenelitianController;
 use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratRekomendasiController;
@@ -94,8 +95,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-izin-penelitian/data', [SuratPenelitianController::class, 'getSuratPenelitian'])->name('surat-izin-penelitian.data');
         Route::resource('surat-izin-penelitian', SuratPenelitianController::class)->except(['destroy']);
 
-        Route::get('/surat-rekomendasi/data', [BAKSuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
-        Route::resource('surat-rekomendasi', BAKSuratRekomendasiController::class)->except(['destroy']);
+        Route::get('/surat-rekomendasi/data', [SuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
+        Route::resource('surat-rekomendasi', SuratRekomendasiController::class)->except(['destroy']);
 
         Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
