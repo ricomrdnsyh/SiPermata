@@ -205,7 +205,15 @@ class SuratAktifController extends Controller
      */
     public function show(string $id)
     {
-        $surat = SuratAktif::with(['mahasiswa', 'akademik'])->findOrFail($id);
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        $surat = SuratAktif::with('mahasiswa')
+            ->where('id_surat_aktif', $id)
+            ->firstOrFail();
 
         return view('admin.surat_aktif.show', compact('surat'));
     }

@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Mahasiswa;
+use App\Models\SuratPKL;
+use App\Models\SuratAktif;
 use Illuminate\Http\Request;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
+use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
+use App\Models\SuratRekomendasi;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class HistoryPengajuanController extends Controller
 {
@@ -85,12 +90,24 @@ class HistoryPengajuanController extends Controller
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
 
-        $surat = $pengajuan->surat;
-        if (!$surat) {
-            abort(404, 'Data surat tidak ditemukan.');
+        $surat = null;
+        $fileGeneratedPath = null;
+
+        $modelClass = $this->getModelClass($pengajuan->tabel);
+
+        if ($modelClass) {
+            $surat = $modelClass::find($pengajuan->id_tabel_surat);
+
+            if ($surat) {
+                $fileGeneratedPath = $surat->file_generated ?? null;
+            }
         }
 
-        return view('admin.history.show', compact('pengajuan', 'surat'));
+        if (!$surat) {
+            abort(404, 'Data surat tidak ditemukan di tabel sumber.');
+        }
+
+        return view('admin.history.show', compact('pengajuan', 'surat', 'fileGeneratedPath'));
     }
     /**
      * Remove the specified resource from storage.
@@ -123,94 +140,160 @@ class HistoryPengajuanController extends Controller
         }
     }
 
-    public function handleApprovalAction(Request $request, $id)
+    protected $suratModels = [
+        'surat_aktif'           => SuratAktif::class,
+        'surat_izin_penelitian' => SuratPenelitian::class,
+        'surat_rekomendasi'     => SuratRekomendasi::class,
+        'surat_pkl'             => SuratPKL::class,
+        'surat_observasi'       => SuratObservasi::class,
+        // Tambahkan jenis surat lain di sini
+    ];
+
+    private function getModelClass($tableName)
+    {
+        switch ($tableName) {
+            case 'surat_aktif':
+                return SuratAktif::class;
+            case 'surat_izin_penelitian':
+                return SuratPenelitian::class;
+            case 'surat_rekomendasi':
+                return SuratRekomendasi::class;
+            case 'surat_pkl':
+                return SuratPKL::class;
+            case 'surat_observasi':
+                return SuratObservasi::class;
+            default:
+                return null;
+        }
+    }
+
+    public function approve($id)
     {
         $user = Auth::user();
 
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['message' => 'Akses ditolak.'], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'action' => 'required|in:approve,reject',
-            'stage' => 'required|in:bak,dekan',
-            'catatan' => 'nullable|string|max:500',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => 'Data input tidak valid.'], 422);
-        }
-
-        $action = $request->input('action');
-        $stage = $request->input('stage');
-        $catatan = $request->input('catatan');
-
-        if ($action === 'reject' && empty($catatan)) {
-            return response()->json(['success' => false, 'message' => 'Catatan penolakan wajib diisi.'], 400);
+        if ($user->role !== 'admin') {
+            return redirect()->back()->with('failed', 'Akses ditolak');
         }
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
 
-        $allowedStages = [
-            'bak'   => 'pengajuan',
-            'dekan' => 'proses'
-        ];
-
-        if ($pengajuan->status !== $allowedStages[$stage]) {
-            return response()->json([
-                'success' => false,
-                'message' => "Pengajuan tidak dapat diproses. Status saat ini tidak sesuai dengan tahap $stage."
-            ], 403);
+        if ($pengajuan->status !== 'pengajuan') {
+            return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
         }
 
-        $isSuratAktif = ($pengajuan->tabel === 'surat_aktif');
-        $suratAktif = $isSuratAktif ? $pengajuan->suratAktif : null;
 
-        DB::beginTransaction();
-        try {
-            $newStatus = '';
-            $message = '';
-            $fullCatatan = '';
+        $jenisTabel   = $pengajuan->tabel; // Ambil nilai 'surat_aktif' atau 'surat_izin_penelitian'
+        $idSuratUtama = $pengajuan->id_tabel_surat; // Ambil ID surat utama di tabel yang benar
 
-            if ($action === 'approve') {
-                if ($stage === 'bak') {
-                    $newStatus = 'proses';
-                    $message = 'Pengajuan disetujui BAK dan dilanjutkan ke Dekan.';
-                    $fullCatatan = 'Disetujui oleh BAK';
-                } elseif ($stage === 'dekan') {
-                    $newStatus = 'diterima';
-                    $message = 'Pengajuan disetujui Dekan. Surat selesai diproses.';
-                    $fullCatatan = 'Disetujui oleh Dekan';
-                }
-            } elseif ($action === 'reject') {
-                $newStatus = 'ditolak';
-                $fullCatatan = "Ditolak oleh $stage: " . $catatan;
-                $message = "Pengajuan ditolak pada tahap $stage.";
-            }
-
-            $pengajuan->update([
-                'status' => $newStatus,
-                'catatan' => $fullCatatan,
-                'jabatan_id' => $user->penduduk->jabatan->id_jabatan ?? null,
-            ]);
-
-            if ($isSuratAktif && $suratAktif) {
-                $suratAktif->update([
-                    'status' => $newStatus,
-                    'catatan' => $fullCatatan,
-                ]);
-            }
-
-            // NOTE: Jika ada model surat lain (SuratLulus, dll.), tambahkan logic di sini:
-            // elseif ($pengajuan->tabel === 'surat_lulus') { ... }
-
-
-            DB::commit();
-
-            return response()->json(['success' => true, 'message' => $message]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan server saat memproses data: ' . $e->getMessage()], 500);
+        // A. Cek ketersediaan mapping
+        if (!isset($this->suratModels[$jenisTabel])) {
+            return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
         }
+
+        $ModelSurat = $this->suratModels[$jenisTabel];
+
+        $suratUtama = $ModelSurat::find($idSuratUtama);
+
+        if (!$suratUtama) {
+            return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
+        }
+
+        $pengajuan->update([
+            'status'     => 'proses',
+            'catatan'    => 'Disetujui oleh BAK'
+        ]);
+
+        $suratUtama->update([
+            'status'  => 'proses',
+            'catatan' => 'Disetujui oleh BAK',
+        ]);
+
+        $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
+
+        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil disetujui!"]);
+    }
+
+    public function reject(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            return redirect()->back()->with('failed', 'Akses ditolak');
+        }
+
+        $request->validate([
+            'catatan' => 'required|string|max:500'
+        ]);
+
+        $pengajuan = HistoryPengajuan::findOrFail($id);
+
+        if ($pengajuan->status !== 'pengajuan') {
+            return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
+        }
+
+
+        $jenisTabel   = $pengajuan->tabel; // Contoh: 'surat_aktif' atau 'surat_izin_penelitian'
+        $idSuratUtama = $pengajuan->id_tabel_surat; // ID surat di tabel utama
+
+        // Cek ketersediaan mapping
+        if (!isset($this->suratModels[$jenisTabel])) {
+            return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
+        }
+
+        $ModelSurat = $this->suratModels[$jenisTabel];
+
+        $suratUtama = $ModelSurat::find($idSuratUtama);
+
+        if (!$suratUtama) {
+            return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
+        }
+
+        $catatanPenolakan = 'Ditolak oleh BAK: ' . $request->catatan;
+
+        $pengajuan->update([
+            'status'  => 'ditolak',
+            'catatan' => $catatanPenolakan,
+        ]);
+
+        $suratUtama->update([
+            'status'  => 'ditolak',
+            'catatan' => $catatanPenolakan,
+        ]);
+
+        $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
+
+        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil ditolak!"]);
+    }
+
+    public function viewGeneratedFile(string $tabel, int $id): Response
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $modelClass = $this->getModelClass($tabel);
+
+        if (!$modelClass) {
+            abort(404, 'Jenis surat tidak valid.');
+        }
+
+        $surat = $modelClass::find($id);
+
+        if (!$surat || empty($surat->file_generated)) {
+            abort(404, 'File surat tidak ditemukan atau belum disetujui/digenerate.');
+        }
+
+        $filePath = $surat->file_generated;
+        $disk = 'local';
+
+        // Cek keberadaan file
+        if (!Storage::disk($disk)->exists($filePath)) {
+            abort(404, 'File di server tidak ditemukan.');
+        }
+
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
+
+        return Storage::download($filePath, $fileName);
     }
 }

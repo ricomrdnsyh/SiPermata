@@ -18,6 +18,7 @@ use App\Http\Controllers\BAK\BAKSuratPKLController;
 use App\Http\Controllers\BAK\BAKTtdSuratController;
 use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
+use App\Http\Controllers\Admin\SuratPenelitianController;
 use App\Http\Controllers\BAK\BAKSuratObservasiController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratPenelitianController;
@@ -89,9 +90,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-aktif/data', [SuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', SuratAktifController::class);
 
+        Route::get('/surat-izin-penelitian/data', [SuratPenelitianController::class, 'getSuratPenelitian'])->name('surat-izin-penelitian.data');
+        Route::resource('surat-izin-penelitian', SuratPenelitianController::class)->except(['destroy']);
+
+        Route::get('/surat-rekomendasi/data', [BAKSuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
+        Route::resource('surat-rekomendasi', BAKSuratRekomendasiController::class)->except(['destroy']);
+
+        Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
+        Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
+
+        Route::get('/surat-observasi/data', [BAKSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
+        Route::resource('surat-observasi', BAKSuratObservasiController::class)->except(['destroy']);
+
         Route::get('/history/data', [HistoryPengajuanController::class, 'getHistory'])->name('history.data');
         Route::resource('history-pengajuan', HistoryPengajuanController::class)->only(['index', 'show', 'destroy']);
-        Route::post('history/{id}/action', [HistoryPengajuanController::class, 'handleApprovalAction'])->name('history.action');
+        Route::post('/history/{id}/approve', [HistoryPengajuanController::class, 'approve'])->name('history.approve');
+        Route::post('/history/{id}/reject', [HistoryPengajuanController::class, 'reject'])->name('history.reject');
+        Route::get('surat/view/{tabel}/{id}', [HistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {

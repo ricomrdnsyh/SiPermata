@@ -25,32 +25,6 @@
                                 <div class="card-title">
                                     <h2 class="fw-bolder">Detail Surat Pengajuan</h2>
                                 </div>
-                                <div class="card-toolbar gap-3">
-                                    @if ($pengajuan->status === 'pengajuan')
-                                        <button type="button" class="btn btn-sm btn-light-danger" data-action="reject"
-                                            data-stage="bak" id="btn-reject-main">
-                                            Tolak Pengajuan(BAK)
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-light-success" data-action="approve"
-                                            data-stage="bak" id="btn-approve-main"><i class="fas fa-check-circle"></i>
-                                            Terima Pengajuan(BAK)
-                                        </button>
-                                    @elseif ($pengajuan->status === 'proses')
-                                        <button type="button" class="btn btn-sm btn-light-danger" data-action="reject"
-                                            data-stage="dekan" id="btn-reject-dekan">
-                                            Tolak Pengajuan(Dekan)
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-light-success" data-action="approve"
-                                            data-stage="dekan" id="btn-approve-dekan"><i class="fas fa-check-circle"></i>
-                                            Terima Pengajuan(Dekan)
-                                        </button>
-                                    @else
-                                        <button class="btn btn-sm btn-success">
-                                            <i class="fas fa-check-circle"></i> Pengajuan
-                                            {{ $pengajuan->status === 'diterima' ? 'Disetujui' : 'Ditolak' }}
-                                        </button>
-                                    @endif
-                                </div>
                             </div>
                             <div class="separator my-2"></div>
                             <div class="card-body pt-3 mt-5">
@@ -87,7 +61,7 @@
                                                             @break
 
                                                             @case('selesai')
-                                                                <span class="badge bg-success">Selesai</span>
+                                                                <span class="badge bg-primary">Selesai</span>
                                                             @break
 
                                                             @case('ditolak')
@@ -109,14 +83,61 @@
                                                 @include('admin.history.partials.surat_aktif', [
                                                     'surat' => $surat,
                                                 ])
-                                            @elseif($pengajuan->tabel === 'surat_lulus')
-                                                @include('admin.history.partials.surat_lulus', [
+                                            @elseif($pengajuan->tabel === 'surat_izin_penelitian')
+                                                @include('admin.history.partials.surat_penelitian', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_rekomendasi')
+                                                @include('admin.history.partials.surat_rekomendasi', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_pkl')
+                                                @include('admin.history.partials.surat_pkl', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_observasi')
+                                                @include('admin.history.partials.surat_observasi', [
                                                     'surat' => $surat,
                                                 ])
                                             @else
                                                 <p class="text-muted">Detail untuk jenis surat ini belum tersedia.</p>
                                             @endif
                                         </div>
+                                    </div>
+                                    <div class="mt-10 pt-5 border-top border-gray-200 d-flex justify-content-end">
+                                        @if ($pengajuan->status === 'pengajuan')
+                                            <button type="button" class="btn btn-light-danger" id="btn-reject-main">
+                                                Tolak Pengajuan (BAK)
+                                            </button>
+                                            <button type="button" class="btn btn-success ms-3" id="btn-approve-main"><i
+                                                    class="fas fa-check-circle"></i> Terima Pengajuan (BAK)
+                                            </button>
+                                        @elseif($pengajuan->status === 'diterima')
+                                            @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                                <a href="{{ route('admin.surat.view', [
+                                                    'tabel' => $pengajuan->tabel,
+                                                    'id' => $pengajuan->id_tabel_surat,
+                                                ]) }}"
+                                                    class="btn btn-light-primary" target="_blank">
+                                                    <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                </a>
+                                            @endif
+                                        @elseif($pengajuan->status === 'selesai')
+                                            @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                                <a href="{{ route('admin.surat.view', [
+                                                    'tabel' => $pengajuan->tabel,
+                                                    'id' => $pengajuan->id_tabel_surat,
+                                                ]) }}"
+                                                    class="btn btn-light-primary" target="_blank">
+                                                    <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                </a>
+                                            @endif
+                                        @else
+                                            <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
+                                                Pengajuan
+                                                sudah dikonfirmasi
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -220,6 +241,11 @@
             </div>
         </div>
     </div>
+
+    <form id="approveForm" method="POST" action="{{ route('admin.history.approve', $pengajuan->id_history) }}"
+        style="display: none;">
+        @csrf
+    </form>
 @endsection
 
 @section('js')
@@ -228,59 +254,91 @@
             const pengajuanId = {{ $pengajuan->id_history }};
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            const actionUrl = "{{ route('admin.history.action', ['id' => $pengajuan->id_history]) }}";
+            document.getElementById('btn-approve-main').addEventListener('click', function() {
+                Swal.fire({
+                    title: "Konfirmasi Persetujuan",
+                    text: "Apakah Anda yakin ingin menyetujui pengajuan ini?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, Setujui!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-light text-black"
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            text: 'Memproses persetujuan...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
 
-            const approveButtons = document.querySelectorAll('[data-action="approve"]');
-            const rejectButtons = document.querySelectorAll('[data-action="reject"]');
-
-            // HANDLER APPROVE
-            approveButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const stage = this.getAttribute('data-stage');
-                    const action = 'approve';
-                    const confirmText = stage === 'bak' ?
-                        "Apakah Anda yakin ingin menyetujui (BAK)? Status akan menjadi Proses." :
-                        "Apakah Anda yakin ingin menyetujui (Dekan)? Status akan menjadi Diterima.";
-
-                    Swal.fire({
-                        title: "Konfirmasi Persetujuan " + stage.toUpperCase(),
-                        text: confirmText,
-                        icon: "question",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya, Setujui!",
-                        cancelButtonText: "Batal",
-                        customClass: {
-                            confirmButton: "btn btn-success",
-                            cancelButton: "btn btn-light text-black"
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            performAction(action, stage);
-                        }
-                    });
+                        fetch("{{ route('admin.history.approve', ':id') }}".replace(':id',
+                                pengajuanId), {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        text: data.message,
+                                        icon: "success",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        text: data.message ||
+                                            'Terjadi kesalahan saat menyetujui.',
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn btn-danger"
+                                        }
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    text: 'Terjadi kesalahan saat menyetujui.',
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-danger"
+                                    }
+                                });
+                            });
+                    }
                 });
             });
 
-            // HANDLER REJECT
-            rejectButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const stage = this.getAttribute('data-stage');
+            // Tolak Pengajuan
+            document.getElementById('btn-reject-main').addEventListener('click', function() {
+                document.getElementById('rejectReason').value = '';
+                document.getElementById('rejectError').style.display = 'none';
 
-                    document.getElementById('btn-submit-reject').setAttribute('data-stage', stage);
-                    document.getElementById('rejectReasonModalLabel').textContent =
-                        `Catatan Penolakan (${stage.toUpperCase()})`;
-
-                    const rejectModal = new bootstrap.Modal(document.getElementById(
-                        'rejectReasonModal'));
-                    rejectModal.show();
-                });
+                const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'));
+                rejectModal.show();
             });
 
-            // SUBMIT PENOLAKAN MODAL
+            // Submit Penolakan 
             document.getElementById('btn-submit-reject').addEventListener('click', function() {
                 const reason = document.getElementById('rejectReason').value.trim();
                 const errorDiv = document.getElementById('rejectError');
-                const stage = this.getAttribute('data-stage');
 
                 if (!reason) {
                     errorDiv.textContent = 'Catatan penolakan wajib diisi.';
@@ -289,60 +347,73 @@
                 }
 
                 errorDiv.style.display = 'none';
-                performAction('reject', stage, reason);
-            });
 
-            function performAction(action, stage, reason = null) {
+                const submitBtn = this;
+                const label = submitBtn.querySelector('.indicator-label');
+                const progress = submitBtn.querySelector('.indicator-progress');
+                label.style.display = 'none';
+                progress.style.display = 'inline-block';
 
-                Swal.fire({
-                    text: `Memproses ${action === 'approve' ? 'persetujuan' : 'penolakan'}...`,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                const payload = {
-                    _token: csrfToken,
-                    action: action,
-                    stage: stage,
-                    catatan: reason
-                };
-
-                fetch(actionUrl, {
+                fetch("{{ route('admin.history.reject', ':id') }}".replace(':id', pengajuanId), {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken,
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({
+                            catatan: reason
+                        })
                     })
                     .then(response => response.json())
                     .then(data => {
-                        const rejectModalEl = document.getElementById('rejectReasonModal');
-                        if (rejectModalEl) {
-                            const rejectModal = bootstrap.Modal.getInstance(rejectModalEl);
-                            if (rejectModal) rejectModal.hide();
+                        const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
+                            'rejectReasonModal'));
+                        rejectModal.hide();
+
+                        if (data.success) {
+                            Swal.fire({
+                                text: data.message,
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                text: data.message || 'Terjadi kesalahan saat menolak.',
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            });
                         }
+                    })
+                    .catch(error => {
+                        const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
+                            'rejectReasonModal'));
+                        rejectModal.hide();
 
                         Swal.fire({
-                            text: data.message,
-                            icon: data.success ? "success" : "error",
+                            text: 'Terjadi kesalahan saat menolak.',
+                            icon: "error",
                             buttonsStyling: false,
                             confirmButtonText: "Ok, got it!",
                             customClass: {
-                                confirmButton: data.success ? "btn btn-primary" : "btn btn-danger"
-                            }
-                        }).then(() => {
-                            if (data.success) {
-                                window.location.reload();
+                                confirmButton: "btn btn-danger"
                             }
                         });
                     })
-                    .catch(error => {
-                        Swal.fire("Error!", "Terjadi kesalahan koneksi.", "error");
+                    .finally(() => {
+                        label.style.display = 'inline';
+                        progress.style.display = 'none';
                     });
-            }
+            });
         });
     </script>
 @endsection
