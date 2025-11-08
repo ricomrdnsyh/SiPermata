@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\TtdSuratConroller;
 use App\Http\Controllers\Admin\AkademikController;
 use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\PendudukController;
+use App\Http\Controllers\Admin\SuratPKLController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\BAK\BAKSuratPKLController;
@@ -98,8 +99,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-rekomendasi/data', [SuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
         Route::resource('surat-rekomendasi', SuratRekomendasiController::class)->except(['destroy']);
 
-        Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
-        Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
+        Route::get('/surat-pkl/data', [SuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
+        Route::resource('surat-pkl', SuratPKLController::class)->except(['destroy']);
 
         Route::get('/surat-observasi/data', [SuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
         Route::resource('surat-observasi', SuratObservasiController::class)->except(['destroy']);
