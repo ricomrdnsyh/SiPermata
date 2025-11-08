@@ -47,7 +47,8 @@
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Mahasiswa...</option>
                                             @foreach ($mahasiswa as $mhs)
-                                                <option value="{{ $mhs->nim }}" {{ $mhs->nim == $surat->nim ? 'selected' : '' }}>
+                                                <option value="{{ $mhs->nim }}"
+                                                    {{ $mhs->nim == $surat->nim ? 'selected' : '' }}>
                                                     {{ $mhs->nim }} - {{ $mhs->nama }}
                                                 </option>
                                             @endforeach
@@ -122,7 +123,8 @@
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Mahasiswa...</option>
                                             @foreach ($mahasiswa as $mhsw)
-                                                <option value="{{ $mhsw->nim }}" {{ $mhsw->nim == $surat->nim ? 'selected' : '' }}>
+                                                <option value="{{ $mhsw->nim }}"
+                                                    {{ $mhsw->nim == $surat->nim ? 'selected' : '' }}>
                                                     {{ $mhsw->nim }} - {{ $mhsw->nama }}
                                                 </option>
                                             @endforeach
@@ -349,7 +351,8 @@
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Mahasiswa...</option>
                                             @foreach ($mahasiswa as $mhswa)
-                                                <option value="{{ $mhswa->nim }}" {{ $mhswa->nim == $surat->nim ? 'selected' : '' }}>
+                                                <option value="{{ $mhswa->nim }}"
+                                                    {{ $mhswa->nim == $surat->nim ? 'selected' : '' }}>
                                                     {{ $mhswa->nim }} - {{ $mhswa->nama }}
                                                 </option>
                                             @endforeach
@@ -617,4 +620,31 @@
             });
         });
     </script>
+
+    @if ($message = Session::get('success'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+        </script>
+    @endif
+    @if ($message = Session::get('failed'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-danger"
+                }
+            });
+        </script>
+    @endif
 @endsection

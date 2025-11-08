@@ -18,6 +18,7 @@ use App\Http\Controllers\BAK\BAKSuratPKLController;
 use App\Http\Controllers\BAK\BAKTtdSuratController;
 use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
+use App\Http\Controllers\BAK\BAKSuratObservasiController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
 use App\Http\Controllers\BAK\BAKSuratPenelitianController;
 use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
@@ -44,6 +45,7 @@ Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verify
 Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::class, 'verifySuratPenelitian'])->name('verifikasi.surat-izin-penelitian');
 Route::get('/verifikasi/surat-rekomendasi/{id}', [VerifikasiController::class, 'verifySuratRekomendasi'])->name('verifikasi.surat-rekomendasi');
 Route::get('/verifikasi/surat-pkl/{id}', [VerifikasiController::class, 'verifySuratPKL'])->name('verifikasi.surat-pkl');
+Route::get('/verifikasi/surat-observasi/{id}', [VerifikasiController::class, 'verifySuratObservasi'])->name('verifikasi.surat-observasi');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -150,6 +152,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
+
+        Route::get('/surat-observasi/data', [BAKSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
+        Route::resource('surat-observasi', BAKSuratObservasiController::class)->except(['destroy']);
 
         Route::get('/history-pengajuan', [BAKHistoryPengajuanController::class, 'index'])->name('history.index');
         Route::get('/history/data', [BAKHistoryPengajuanController::class, 'historyData'])->name('history.data');

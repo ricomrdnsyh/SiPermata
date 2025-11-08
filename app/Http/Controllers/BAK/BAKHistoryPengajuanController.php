@@ -11,6 +11,7 @@ use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
 use App\Http\Controllers\Controller;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -107,6 +108,7 @@ class BAKHistoryPengajuanController extends Controller
         'surat_izin_penelitian' => SuratPenelitian::class,
         'surat_rekomendasi'     => SuratRekomendasi::class,
         'surat_pkl'             => SuratPKL::class,
+        'surat_observasi'       => SuratObservasi::class,
         // Tambahkan jenis surat lain di sini
     ];
 
@@ -129,7 +131,7 @@ class BAKHistoryPengajuanController extends Controller
         }
 
 
-        $jenisTabel = $pengajuan->tabel; // Ambil nilai 'surat_aktif' atau 'surat_izin_penelitian'
+        $jenisTabel   = $pengajuan->tabel; // Ambil nilai 'surat_aktif' atau 'surat_izin_penelitian'
         $idSuratUtama = $pengajuan->id_tabel_surat; // Ambil ID surat utama di tabel yang benar
 
         // A. Cek ketersediaan mapping
@@ -146,13 +148,13 @@ class BAKHistoryPengajuanController extends Controller
         }
 
         $pengajuan->update([
-            'status' => 'proses',
-            'catatan' => 'Disetujui oleh BAK',
+            'status'     => 'proses',
+            'catatan'    => 'Disetujui oleh BAK',
             'jabatan_id' => $user->penduduk->jabatan->id_jabatan
         ]);
 
         $suratUtama->update([
-            'status' => 'proses',
+            'status'  => 'proses',
             'catatan' => 'Disetujui oleh BAK',
         ]);
 
@@ -184,7 +186,7 @@ class BAKHistoryPengajuanController extends Controller
         }
 
 
-        $jenisTabel = $pengajuan->tabel; // Contoh: 'surat_aktif' atau 'surat_izin_penelitian'
+        $jenisTabel   = $pengajuan->tabel; // Contoh: 'surat_aktif' atau 'surat_izin_penelitian'
         $idSuratUtama = $pengajuan->id_tabel_surat; // ID surat di tabel utama
 
         // Cek ketersediaan mapping
@@ -203,13 +205,13 @@ class BAKHistoryPengajuanController extends Controller
         $catatanPenolakan = 'Ditolak oleh BAK: ' . $request->catatan;
 
         $pengajuan->update([
-            'status' => 'ditolak',
+            'status'  => 'ditolak',
             'catatan' => $catatanPenolakan,
             'jabatan_id' => $user->penduduk->jabatan->id_jabatan
         ]);
 
         $suratUtama->update([
-            'status' => 'ditolak',
+            'status'  => 'ditolak',
             'catatan' => $catatanPenolakan,
         ]);
 

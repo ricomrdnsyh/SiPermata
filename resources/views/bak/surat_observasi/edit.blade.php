@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Surat Rekomendasi')
+@section('title', 'Surat Permohonan Observasi')
 
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -10,7 +10,7 @@
                     <div class="card-body p-lg-17">
                         <div class="d-flex flex-column">
                             <div class="mb-13 text-center">
-                                <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Rekomendasi</h1>
+                                <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Permohonan Observasi</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
@@ -19,7 +19,7 @@
                             <div id="form-container" class="mt-2">
                                 <form id="kt_ecommerce_settings_general_form"
                                     class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
-                                    action="{{ route('bak.surat-rekomendasi.update', $surat->id_surat_rekomendasi) }}">
+                                    action="{{ route('bak.surat-observasi.update', $surat->id_surat_observasi) }}">
                                     @csrf
                                     @method('PUT')
                                     <div class="fv-row mb-7">
@@ -62,17 +62,44 @@
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Keperluan
-                                                Rekomendasi</label></label>
-                                            <textarea name="keperluan" class="form-control mb-3 mb-lg-0" rows="3">{{ old('keperluan', $surat->keperluan) }}</textarea>
-                                            @error('keperluan')
+                                            <label class="required fw-semibold fs-6 mb-2">Semester</label>
+                                            <input type="number" name="semester" class="form-control mb-3 mb-lg-0"
+                                                value="{{ $surat->semester }}" />
+                                            @error('semester')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label></label>
-                                            <textarea name="penyelenggara" class="form-control mb-3 mb-lg-0" rows="3">{{ old('penyelenggara', $surat->penyelenggara) }}</textarea>
-                                            @error('penyelenggara')
+                                            <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
+                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                                data-control="select2" data-placeholder="Pilih Tempat Observasi"
+                                                name="mitra_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                aria-hidden="true" data-kt-initialized="1">
+                                                <option value="" data-select2-id="select2-data-74-9zwr">
+                                                    Pilih Tempat Observasi...</option>
+                                                @foreach ($mitra as $mitra)
+                                                    <option value="{{ $mitra->id_mitra }}"
+                                                        {{ $surat->mitra_id == $mitra->id_mitra ? 'selected' : '' }}>
+                                                        {{ $mitra->nama_mitra }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('mitra_id')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
+                                            <input type="date" name="tgl_observasi" class="form-control mb-3 mb-lg-0"
+                                                value="{{ $surat->tgl_observasi ? $surat->tgl_observasi->format('Y-m-d') : '' }}" />
+                                            @error('tgl_observasi')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Keperluan Observasi</label>
+                                            <textarea name="keperluan" class="form-control mb-3 mb-lg-0" rows="3">{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                            @error('keperluan')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>

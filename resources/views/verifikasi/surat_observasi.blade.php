@@ -30,7 +30,7 @@
 
                 <div class="separator border-gray-200"></div>
 
-                <h5 class="my-6">Detail Surat Izin Penelitian</h5>
+                <h5 class="my-6">Detail Surat Permohonan Observasi</h5>
                 <table class="table table-bordered table-sm">
                     <tr>
                         <td>Status Verifikasi</td>
@@ -38,7 +38,7 @@
                     </tr>
                     <tr>
                         <td>Jenis Surat</td>
-                        <td>Surat Izin Penelitian</td>
+                        <td>Surat Permohonan Observasi</td>
                     </tr>
                     <tr>
                         <td>Nama Mahasiswa</td>
@@ -89,7 +89,6 @@
     </script>
     <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
-    <script src="{{ asset('assets/js/custom/authentication/sign-in/general.js') }}"></script>
 </body>
 
 </html>

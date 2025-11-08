@@ -19,26 +19,26 @@
 <body id="kt_body_custom" class="bg-body d-flex justify-content-center align-items-center min-vh-100">
     <div class="container" style="max-width: 800px;">
         <div class="card shadow-lg">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-danger text-white">
                 <h3 class="mb-0 w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;">
-                    ✅ Verifikasi Dokumen Sukses!
+                    ❌ Verifikasi Dokumen Gagal!
                 </h3>
             </div>
             <div class="card-body">
-                <p class="lead text-center">Dokumen ini telah ditandatangani secara elektronik oleh pejabat
+                <p class="lead text-center">Dokumen ini belum ditandatangani secara elektronik oleh pejabat
                     yang berwewenang. Data yang tercantum sesuai dengan data sistem.</p>
 
                 <div class="separator border-gray-200"></div>
 
-                <h5 class="my-6">Detail Surat Izin Penelitian</h5>
+                <h5 class="my-6">Detail Surat Permohonan Observasi</h5>
                 <table class="table table-bordered table-sm">
                     <tr>
                         <td>Status Verifikasi</td>
-                        <td><span class="badge bg-success">{{ $status_verifikasi }}</span></td>
+                        <td><span class="badge bg-danger">{{ $status_verifikasi }}</span></td>
                     </tr>
                     <tr>
                         <td>Jenis Surat</td>
-                        <td>Surat Izin Penelitian</td>
+                        <td>Surat Permohonan Observasi</td>
                     </tr>
                     <tr>
                         <td>Nama Mahasiswa</td>
@@ -58,20 +58,17 @@
                     </tr>
                     <tr>
                         <td>Tahun Akademik</td>
-                        <td>{{ $surat->akademik->tahun_akademik ?? '-' }}</td>
+                        <td>{{ $surat->akademik->tahun_akademik ?? '-' }} (Semester {{ $surat->semester }})</td>
                     </tr>
                     <tr>
                         <td>Penandatangan</td>
                         <td>
-                            {{ $ttd_dekan->nama_ttd ?? 'Tidak Ditemukan' }} (Dekan Fakultas
-                            {{ $surat->mahasiswa->fakultas->nama_fakultas ?? 'Tidak Diketahui' }})
-                            <br>
-                            <span class="text-primary">(Tanda tangan digital terverifikasi)</spanc>
+                            {{ $ttd_dekan->nama_ttd ?? 'Tidak Ditemukan' }}
                         </td>
                     </tr>
                     <tr>
                         <td>Waktu Persetujuan</td>
-                        <td>{{ $surat->updated_at->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                        <td>Belum disetujui</td>
                     </tr>
                 </table>
 
@@ -89,7 +86,6 @@
     </script>
     <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
-    <script src="{{ asset('assets/js/custom/authentication/sign-in/general.js') }}"></script>
 </body>
 
 </html>

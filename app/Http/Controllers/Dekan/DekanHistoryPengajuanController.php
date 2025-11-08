@@ -8,6 +8,7 @@ use App\Models\Mahasiswa;
 use App\Mail\SuratSelesai;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
@@ -102,6 +103,8 @@ class DekanHistoryPengajuanController extends Controller
                 return SuratRekomendasi::class;
             case 'surat_pkl':
                 return SuratPKL::class;
+            case 'surat_observasi':
+                return SuratObservasi::class;
             default:
                 return null;
         }
@@ -195,10 +198,10 @@ class DekanHistoryPengajuanController extends Controller
         }
 
         // Data yang akan digunakan
-        $namaDekan = $ttdDekan->nama_ttd;
-        $nidn      = $ttdDekan->nidn;
+        $namaDekan    = $ttdDekan->nama_ttd;
+        $nidn         = $ttdDekan->nidn;
         $jabatanDekan = $user->penduduk?->jabatan?->nama_jabatan ?? 'Dekan';
-        $idJabatan = $user->penduduk?->jabatan?->id_jabatan ?? null;
+        $idJabatan    = $user->penduduk?->jabatan?->id_jabatan ?? null;
 
 
         // Proses Tanda Tangan dan Update Database
@@ -214,14 +217,14 @@ class DekanHistoryPengajuanController extends Controller
             );
 
             $detailSurat->update([
-                'status' => 'diterima',
+                'status'  => 'diterima',
                 'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
                 'file_generated' => $generatedFilePath,
             ]);
 
             $pengajuan->update([
-                'status' => 'diterima',
-                'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
+                'status'     => 'diterima',
+                'catatan'    => 'Disetujui oleh Dekan: ' . $namaDekan,
                 'jabatan_id' => $idJabatan,
             ]);
 
@@ -293,14 +296,14 @@ class DekanHistoryPengajuanController extends Controller
 
             // Update status di tabel detail surat
             $detailSurat->update([
-                'status' => 'ditolak',
+                'status'  => 'ditolak',
                 'catatan' => $catatan,
             ]);
 
             // Update status di tabel HistoryPengajuan
             $pengajuan->update([
-                'status' => 'ditolak',
-                'catatan' => $catatan,
+                'status'     => 'ditolak',
+                'catatan'    => $catatan,
                 'jabatan_id' => $idJabatan,
             ]);
 
