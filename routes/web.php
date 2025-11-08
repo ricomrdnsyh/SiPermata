@@ -18,6 +18,7 @@ use App\Http\Controllers\BAK\BAKSuratPKLController;
 use App\Http\Controllers\BAK\BAKTtdSuratController;
 use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
+use App\Http\Controllers\Admin\SuratObservasiController;
 use App\Http\Controllers\Admin\SuratPenelitianController;
 use App\Http\Controllers\BAK\BAKSuratObservasiController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
@@ -99,8 +100,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
 
-        Route::get('/surat-observasi/data', [BAKSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
-        Route::resource('surat-observasi', BAKSuratObservasiController::class)->except(['destroy']);
+        Route::get('/surat-observasi/data', [SuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
+        Route::resource('surat-observasi', SuratObservasiController::class)->except(['destroy']);
 
         Route::get('/history/data', [HistoryPengajuanController::class, 'getHistory'])->name('history.data');
         Route::resource('history-pengajuan', HistoryPengajuanController::class)->only(['index', 'show', 'destroy']);

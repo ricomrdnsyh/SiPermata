@@ -197,7 +197,7 @@ class SuratAktifController extends Controller
             'jabatan_id'     => null,
         ]);
 
-        return redirect()->route('admin.surat-aktif.index')->with('success', 'Pengajuan surat berhasil dibuat!');
+        return redirect()->route('admin.surat-aktif.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
     /**

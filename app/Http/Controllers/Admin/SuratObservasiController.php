@@ -7,25 +7,25 @@ use App\Models\Template;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
-use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Services\SuratPenelitianGenerator;
+use App\Services\SuratObservasiGenerator;
 
-class SuratPenelitianController extends Controller
+class SuratObservasiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('admin.surat_penelitian.index');
+        return view('admin.surat_observasi.index');
     }
 
-    public function getSuratPenelitian()
+    public function getSuratObservasi()
     {
         $user = Auth::user();
 
@@ -33,7 +33,7 @@ class SuratPenelitianController extends Controller
             abort(403);
         }
 
-        $query = SuratPenelitian::with(['mahasiswa.prodi', 'akademik', 'mitra']);
+        $query = SuratObservasi::with(['mahasiswa.prodi', 'akademik', 'mitra']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -62,10 +62,10 @@ class SuratPenelitianController extends Controller
                 };
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.surat-izin-penelitian.show', $row->id_surat_izin_penelitian) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('admin.surat-observasi.show', $row->id_surat_observasi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('admin.surat-izin-penelitian.edit', $row->id_surat_izin_penelitian) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                $editBtn = '<a href="' . route('admin.surat-observasi.edit', $row->id_surat_observasi) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
@@ -73,7 +73,6 @@ class SuratPenelitianController extends Controller
             ->rawColumns(['nama_mahasiswa', 'prodi', 'tanggal_pengajuan', 'status', 'catatan', 'action'])
             ->make(true);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -89,13 +88,13 @@ class SuratPenelitianController extends Controller
         $akademik  = TahunAkademik::all();
         $mitra     = Mitra::all();
 
-        return view('admin.surat_penelitian.create', compact('mahasiswa', 'akademik', 'mitra'));
+        return view('admin.surat_observasi.create', compact('mahasiswa', 'akademik', 'mitra'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, SuratPenelitianGenerator $generatorService)
+    public function store(Request $request, SuratObservasiGenerator $generatorService)
     {
         $user = Auth::user();
 
@@ -106,9 +105,9 @@ class SuratPenelitianController extends Controller
         $request->validate([
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'tgl_mulai'        => 'required',
-            'tgl_selesai'      => 'required',
-            'judul_penelitian' => 'required',
+            'semester'         => 'required',
+            'tgl_observasi'    => 'required',
+            'keperluan'        => 'required',
         ]);
 
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
@@ -123,7 +122,7 @@ class SuratPenelitianController extends Controller
             return back()->with('failed', 'Fakultas Anda belum ditentukan.');
         }
 
-        $namaTemplate = 'surat_izin_penelitian';
+        $namaTemplate = 'surat_observasi';
 
         $template = Template::where('jenis_surat', $namaTemplate)
             ->where('fakultas_id', $fakultasId)
@@ -134,17 +133,17 @@ class SuratPenelitianController extends Controller
         }
 
         // Generate nomor surat
-        $noSurat = SuratPenelitian::getNextNoSurat($template->id_template);
+        $noSurat = SuratObservasi::getNextNoSurat($template->id_template);
 
-        $surat = SuratPenelitian::create([
+        $surat = SuratObservasi::create([
             'template_id'         => $template->id_template,
             'no_surat'            => $noSurat,
             'nim'                 => $mahasiswa->nim,
             'akademik_id'         => $request->akademik_id,
             'mitra_id'            => $request->mitra_id,
-            'tgl_mulai'           => $request->tgl_mulai,
-            'tgl_selesai'         => $request->tgl_selesai,
-            'judul_penelitian'    => $request->judul_penelitian,
+            'semester'            => $request->semester,
+            'tgl_observasi'       => $request->tgl_observasi,
+            'keperluan'           => $request->keperluan,
             'status'              => 'pengajuan',
             'catatan'             => 'Diajukan oleh Admin untuk mahasiswa',
             'file_generated'      => null,
@@ -164,16 +163,16 @@ class SuratPenelitianController extends Controller
         }
 
         HistoryPengajuan::create([
-            'id_tabel_surat' => $surat->id_surat_izin_penelitian,
+            'id_tabel_surat' => $surat->id_surat_observasi,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
-            'tabel'          => 'surat_izin_penelitian',
+            'tabel'          => 'surat_observasi',
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh mahasiswa',
             'jabatan_id'     => null,
         ]);
 
-        return redirect()->route('admin.surat-izin-penelitian.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
+        return redirect()->route('admin.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
     /**
@@ -187,11 +186,11 @@ class SuratPenelitianController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $surat = SuratPenelitian::with('mahasiswa')
-            ->where('id_surat_izin_penelitian', $id)
+        $surat = SuratObservasi::with('mahasiswa')
+            ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
-        return view('admin.surat_penelitian.show', compact('surat'));
+        return view('admin.surat_observasi.show', compact('surat'));
     }
 
     /**
@@ -205,21 +204,21 @@ class SuratPenelitianController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $surat = SuratPenelitian::with('mahasiswa')
-            ->where('id_surat_izin_penelitian', $id)
+        $surat = SuratObservasi::with('mahasiswa')
+            ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
         $akademik  = TahunAkademik::all();
         $mitra     = Mitra::all();
         $mahasiswa = Mahasiswa::all();
 
-        return view('admin.surat_penelitian.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('admin.surat_observasi.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id, SuratPenelitianGenerator $generatorService)
+    public function update(Request $request, string $id, SuratObservasiGenerator $generatorService)
     {
         $user = Auth::user();
 
@@ -230,12 +229,12 @@ class SuratPenelitianController extends Controller
         $request->validate([
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'tgl_mulai'        => 'required',
-            'tgl_selesai'      => 'required',
-            'judul_penelitian' => 'required',
+            'semester'         => 'required',
+            'tgl_observasi'    => 'required',
+            'keperluan'        => 'required',
         ]);
 
-        $surat = SuratPenelitian::findOrFail($id);
+        $surat = SuratObservasi::findOrFail($id);
 
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $request->nim)->firstOrFail();
@@ -244,9 +243,9 @@ class SuratPenelitianController extends Controller
             'nim'              => $request->nim,
             'akademik_id'      => $request->akademik_id,
             'mitra_id'         => $request->mitra_id,
-            'tgl_mulai'        => $request->tgl_mulai,
-            'tgl_selesai'      => $request->tgl_selesai,
-            'judul_penelitian' => $request->judul_penelitian,
+            'semester'         => $request->semester,
+            'tgl_observasi'    => $request->tgl_observasi,
+            'keperluan'        => $request->keperluan,
             'status'           => 'pengajuan',
             'catatan'          => 'Diajukan ulang oleh Admin untuk mahasiswa',
         ]);
@@ -262,10 +261,10 @@ class SuratPenelitianController extends Controller
 
             $pengajuan->update([
                 'status'  => 'pengajuan',
-                'catatan' => 'Diajukan ulang oleh BAK untuk mahasiswa'
+                'catatan' => 'Diajukan ulang oleh Admin untuk mahasiswa'
             ]);
 
-            return redirect()->route('admin.surat-izin-penelitian.index')->with('success', 'Data surat berhasil diperbarui!');
+            return redirect()->route('admin.surat-observasi.index')->with('success', 'Data surat berhasil diperbarui!');
         } catch (\Exception $e) {
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
         }
