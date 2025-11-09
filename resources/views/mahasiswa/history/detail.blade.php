@@ -64,17 +64,42 @@
                                     <div class="d-flex flex-wrap py-5">
                                         <div class="flex-equal me-5">
                                             @if ($pengajuan->tabel === 'surat_aktif')
-                                                @include('bak.history.partials.surat_aktif', [
+                                                @include('mahasiswa.history.partials.surat_aktif', [
                                                     'surat' => $surat,
                                                 ])
-                                            @elseif($pengajuan->tabel === 'surat_lulus')
-                                                @include('bak.history.partials.surat_lulus', [
+                                            @elseif($pengajuan->tabel === 'surat_izin_penelitian')
+                                                @include('mahasiswa.history.partials.surat_penelitian', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_rekomendasi')
+                                                @include('mahasiswa.history.partials.surat_rekomendasi', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_pkl')
+                                                @include('mahasiswa.history.partials.surat_pkl', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_observasi')
+                                                @include('mahasiswa.history.partials.surat_observasi', [
                                                     'surat' => $surat,
                                                 ])
                                             @else
                                                 <p class="text-muted">Detail untuk jenis surat ini belum tersedia.</p>
                                             @endif
                                         </div>
+                                    </div>
+                                    <div class="mt-10 pt-5 border-top border-gray-200 d-flex justify-content-end">
+                                        @if ($pengajuan->status === 'selesai')
+                                            @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                                <a href="{{ route('mahasiswa.surat.view', [
+                                                    'tabel' => $pengajuan->tabel,
+                                                    'id' => $pengajuan->id_tabel_surat,
+                                                ]) }}"
+                                                    class="btn btn-light-primary" target="_blank">
+                                                    <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                </a>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </div>

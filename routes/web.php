@@ -134,6 +134,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/history-pengajuan', [MahasiswaHistoryPegajuan::class, 'index'])->name('history.index');
         Route::get('/history/data', [MahasiswaHistoryPegajuan::class, 'getHistory'])->name('history.data');
         Route::get('/history/{id}/detail', [MahasiswaHistoryPegajuan::class, 'show'])->name('history.detail');
+        Route::get('surat/view/{tabel}/{id}', [MahasiswaHistoryPegajuan::class, 'viewGeneratedFile'])->name('surat.view');
     });
 
     Route::middleware(['role:DEKAN'])->prefix('dekan')->name('dekan.')->group(function () {

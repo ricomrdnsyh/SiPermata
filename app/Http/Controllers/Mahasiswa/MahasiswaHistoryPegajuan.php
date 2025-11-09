@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
+use App\Models\SuratPKL;
+use App\Models\SuratAktif;
 use Illuminate\Http\Request;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
+use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
+use App\Models\SuratRekomendasi;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Symfony\Component\HttpFoundation\Response;
 
 class MahasiswaHistoryPegajuan extends Controller
 {
@@ -67,12 +74,73 @@ class MahasiswaHistoryPegajuan extends Controller
 
         $pengajuan = HistoryPengajuan::findOrFail($id);
 
-        $surat = $pengajuan->surat;
+        $surat = null;
+        $fileGeneratedPath = null;
 
-        if (!$surat) {
-            abort(404, 'Data surat tidak ditemukan.');
+        $modelClass = $this->getModelClass($pengajuan->tabel);
+
+        if ($modelClass) {
+            $surat = $modelClass::find($pengajuan->id_tabel_surat);
+
+            if ($surat) {
+                $fileGeneratedPath = $surat->file_generated ?? null;
+            }
         }
 
-        return view('mahasiswa.history.detail', compact('pengajuan', 'surat'));
+        if (!$surat) {
+            abort(404, 'Data surat tidak ditemukan di tabel sumber.');
+        }
+
+        return view('mahasiswa.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
+    }
+
+    private function getModelClass($tableName)
+    {
+        switch ($tableName) {
+            case 'surat_aktif':
+                return SuratAktif::class;
+            case 'surat_izin_penelitian':
+                return SuratPenelitian::class;
+            case 'surat_rekomendasi':
+                return SuratRekomendasi::class;
+            case 'surat_pkl':
+                return SuratPKL::class;
+            case 'surat_observasi':
+                return SuratObservasi::class;
+            default:
+                return null;
+        }
+    }
+
+    public function viewGeneratedFile(string $tabel, int $id): Response
+    {
+        $user = Auth::user();
+        if ($user->role !== 'mahasiswa') {
+            abort(403);
+        }
+
+        $modelClass = $this->getModelClass($tabel);
+
+        if (!$modelClass) {
+            abort(404, 'Jenis surat tidak valid.');
+        }
+
+        $surat = $modelClass::find($id);
+
+        if (!$surat || empty($surat->file_generated)) {
+            abort(404, 'File surat tidak ditemukan atau belum disetujui/digenerate.');
+        }
+
+        $filePath = $surat->file_generated;
+        $disk = 'local';
+
+        // Cek keberadaan file
+        if (!Storage::disk($disk)->exists($filePath)) {
+            abort(404, 'File di server tidak ditemukan.');
+        }
+
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
+
+        return Storage::download($filePath, $fileName);
     }
 }
