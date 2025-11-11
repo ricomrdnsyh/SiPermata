@@ -101,7 +101,8 @@
                 ajax: '{{ route('bak.mitra.data') }}',
                 columns: [{
                         data: 'nama_mitra',
-                        name: 'nama_mitra'
+                        name: 'nama_mitra',
+                        searchable: true
                     },
                     {
                         data: 'action',
@@ -168,7 +169,6 @@
                                 }
                             });
                             $('#mitra-table').DataTable().ajax.reload(null, false);
-                            // reload tabel tanpa reset halaman
                         },
                         error: function(xhr) {
                             Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");

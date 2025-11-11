@@ -16,78 +16,94 @@
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
+        .filter-container {
+            margin-bottom: 2rem;
+            padding-bottom: 0 !important;
+        }
     </style>
 @endsection
 
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <!--begin::Post-->
         <div class="post d-flex flex-column-fluid" id="kt_post">
-            <!--begin::Container-->
             <div id="kt_content_container" class="container-fluid">
-                <!--begin::Card-->
                 <div class="card">
-                    <!--begin::Card header-->
                     <div class="card-header border-0 pt-6">
-                        <!--begin::Card title-->
                         <div class="card-title">
-                            <!--begin::Search-->
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Pengajuan</span>
-                                </h3>
-                            </div>
-                            <!--end::Search-->
+                            <h3 class="card-title align-items-start flex-column">
+                                <span class="card-label fw-bolder fs-3 mb-1">List Pengajuan</span>
+                            </h3>
                         </div>
-                        <!--begin::Card title-->
-                        <!--begin::Card toolbar-->
                         <div class="card-toolbar">
-                            <!--begin::Toolbar-->
-                            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <!--begin::Add user-->
-                                <!--end::Add user-->
-                            </div>
-                            <!--end::Toolbar-->
+                            {{-- Button --}}
                         </div>
-                        <!--end::Card toolbar-->
                     </div>
-                    <!--begin::Separator-->
-                    <div class="separator my-5"></div>
-                    <!--end::Separator-->
-                    <!--end::Card header-->
-                    <!--begin::Card body-->
+                    <div class="separator mt-6"></div>
+                    <div class="card-body py-4 px-8 filter-container">
+                        <div class="row g-5">
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Program Studi:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
+                                    id="filter-prodi">
+                                    <option value="">Semua Prodi</option>
+                                    @foreach ($listProdi as $prodi)
+                                        <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Nama Surat:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat"
+                                    id="filter-nama-surat">
+                                    <option value="">Semua Surat</option>
+                                    @foreach ($listNamaSurat as $tabel => $nama)
+                                        <option value="{{ $tabel }}">{{ $nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Status:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Semua Status" data-allow-clear="true" data-filter="status"
+                                    id="filter-status">
+                                    <option value="">Semua Status</option>
+                                    <option value="pengajuan">Menunggu BAK</option>
+                                    <option value="proses">Menunggu Dekan</option>
+                                    <option value="diterima">Disetujui</option>
+                                    <option value="selesai">Selesai</option>
+                                    <option value="ditolak">Ditolak</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card-body pt-0">
-                        <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
-                            <!--begin::Table head-->
-                            <thead class="">
-                                <!--begin::Table row-->
-                                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="text-center">Actions</th>
-                                    <th class="min-w-125px">Nama Mahasiswa</th>
-                                    <th class="min-w-125px">Program Studi</th>
-                                    <th class="min-w-125px">Nama Surat Pengajuan</th>
-                                    <th class="min-w-125px">Tanggal Pengajuan</th>
-                                    <th class="min-w-125px">Status Pengajuan</th>
-                                    <th class="min-w-125px">Catatan</th>
-                                </tr>
-                                <!--end::Table row-->
-                            </thead>
-                            <!--end::Table head-->
-                            <!--begin::Table body-->
-                            <tbody class="fw-bold text-gray-800">
-                            </tbody>
-                            <!--end::Table body-->
-                        </table>
-                        <!--end::Table-->
+                        <div class="table-responsive">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
+                                <thead class="">
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="text-center">Actions</th>
+                                        <th class="min-w-125px">Nama Mahasiswa</th>
+                                        <th class="min-w-125px">Program Studi</th>
+                                        <th class="min-w-125px">Nama Surat Pengajuan</th>
+                                        <th class="min-w-125px">Tanggal Pengajuan</th>
+                                        <th class="min-w-125px">Status Pengajuan</th>
+                                        <th class="min-w-125px">Catatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="fw-bold text-gray-800">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <!--end::Card body-->
                 </div>
-                <!--end::Card-->
             </div>
-            <!--end::Container-->
         </div>
-        <!--end::Post-->
     </div>
 @endsection
 
@@ -101,7 +117,14 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('bak.history.data') }}',
+                ajax: {
+                    url: '{{ route('bak.history.data') }}',
+                    data: function(d) {
+                        d.prodi_filter = $('#filter-prodi').val();
+                        d.nama_surat_filter = $('#filter-nama-surat').val();
+                        d.status_filter = $('#filter-status').val();
+                    }
+                },
                 columns: [{
                         data: 'action',
                         name: 'action',
@@ -110,15 +133,18 @@
                     },
                     {
                         data: 'nama_mahasiswa',
-                        name: 'nama_mahasiswa'
+                        name: 'nama_mahasiswa',
+                        searchable: true
                     },
                     {
                         data: 'prodi',
-                        name: 'prodi'
+                        name: 'prodi',
+                        searchable: true
                     },
                     {
                         data: 'nama_surat',
-                        name: 'nama_surat'
+                        name: 'nama_surat',
+                        searchable: true
                     },
                     {
                         data: 'tanggal_pengajuan',
@@ -147,6 +173,10 @@
 
             table.on('draw', function() {
                 $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+            });
+
+            $('[data-filter]').on('change', function() {
+                table.draw();
             });
         });
     </script>

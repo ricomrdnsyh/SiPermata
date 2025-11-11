@@ -28,18 +28,32 @@ class BAKTtdSuratController extends Controller
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
         $fakultasId = $user->penduduk?->fakultas_id;
 
-        $query = TtdSurat::whereHas('template', function ($q) use ($fakultasId) {
-            $q->where('fakultas_id', $fakultasId);
-        });
-
-        $query = $query->with('template');
+        $query = TtdSurat::with(['template.fakultas'])
+            ->whereHas('template', function ($q) use ($fakultasId) {
+                $q->where('fakultas_id', $fakultasId);
+            });
 
         return DataTables::of($query)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
+            ->filterColumn('nama_fakultas', function ($query, $keyword) {
+                $query->whereHas('template.fakultas', function ($q) use ($keyword) {
+                    $q->where('nama_fakultas', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('template', function ($query, $keyword) {
+                $query->whereHas('template', function ($q) use ($keyword) {
+                    $q->where('nama_template', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('status', function ($query, $keyword) {
+                $query->where('status', 'like', "%{$keyword}%");
+            })
             ->addColumn('nama_fakultas', function ($row) {
-                return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
+                return $row->template?->fakultas?->nama_fakultas ?? '—';
             })
             ->addColumn('template', function ($row) {
                 return $row->template ? $row->template->nama_template : '—';
@@ -55,13 +69,13 @@ class BAKTtdSuratController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('bak.ttdSurat.show', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+            data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '<a href="' . route('bak.ttdSurat.edit', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+            data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_ttd . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
+            data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })

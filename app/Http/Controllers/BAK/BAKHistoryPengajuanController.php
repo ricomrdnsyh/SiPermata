@@ -2,63 +2,121 @@
 
 namespace App\Http\Controllers\BAK;
 
+use App\Models\Prodi;
+use App\Models\Fakultas;
 use App\Models\SuratPKL;
 use App\Models\Mahasiswa;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
+use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
 use App\Http\Controllers\Controller;
-use App\Models\SuratObservasi;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class BAKHistoryPengajuanController extends Controller
 {
-    public function index()
-    {
-        return view('bak.history.index');
-    }
+    protected $listSurat = [
+        'surat_aktif' => 'Surat Keterangan Aktif',
+        'surat_izin_penelitian' => 'Surat Izin Penelitian',
+        'surat_observasi' => 'Surat Permohonan Observasi',
+        'surat_rekomendasi' => 'Surat Rekomendasi',
+        'surat_pkl' => 'Surat Permohonan PKL',
+    ];
 
-    public function historyData()
+    public function index()
     {
         $user = Auth::user();
 
-        // Pastikan user adalah BAK
         if ($user->role !== 'BAK') {
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
-        $fakultasId = $user->penduduk?->fakultas_id;
-        if (!$fakultasId) {
+        $fakultasIdUser = $user->penduduk?->fakultas_id;
+
+        $listProdi = collect();
+        if ($fakultasIdUser) {
+            $listProdi = Prodi::where('fakultas_id', $fakultasIdUser)->get();
+        }
+
+        $listNamaSurat = $this->listSurat;
+
+        return view('bak.history.index', compact('listProdi', 'listNamaSurat'));
+    }
+
+    public function historyData(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            abort(403);
+        }
+
+        $fakultasIdUser = $user->penduduk?->fakultas_id;
+
+        if (!$fakultasIdUser) {
             return DataTables::of(HistoryPengajuan::whereRaw('1=0'))->make(true);
         }
 
-        $query = HistoryPengajuan::with([])
-            ->where('fakultas_id', $fakultasId)
+        $query = HistoryPengajuan::with(['mahasiswa.prodi', 'mahasiswa.prodi.fakultas'])
+            ->where('fakultas_id', $fakultasIdUser)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
+
+        if ($request->filled('prodi_filter')) {
+            $prodiId = $request->input('prodi_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($prodiId) {
+                $q->where('prodi_id', $prodiId);
+            });
+        }
+
+        if ($request->filled('nama_surat_filter')) {
+            $query->where('tabel', $request->input('nama_surat_filter'));
+        }
+
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->input('status_filter'));
+        }
 
         return DataTables::of($query)
             ->order(function ($query) {
                 $query->orderBy('created_at', 'desc');
             })
-            ->addColumn('nama_mahasiswa', function ($row) {
-                $mahasiswa = Mahasiswa::where('nim', $row->nim)->first();
-                return $mahasiswa?->nama ?? $row->nim;
+            ->filterColumn('nama_mahasiswa', function ($query, $keyword) {
+                $query->whereHas('mahasiswa', function ($q) use ($keyword) {
+                    $q->where('nama', 'like', "%{$keyword}%");
+                });
             })
-            ->addColumn('prodi', function ($row) {
-                $mahasiswa = Mahasiswa::where('nim', $row->nim)->first();
-                return $mahasiswa?->prodi?->nama_prodi ?? $row->nim;
+            ->filterColumn('prodi', function ($query, $keyword) {
+                $query->whereHas('mahasiswa.prodi', function ($q) use ($keyword) {
+                    $q->where('nama_prodi', 'like', "%{$keyword}%");
+                });
             })
-            ->addColumn('nama_surat', function ($row) {
-                return $row->nama_surat;
+            ->filterColumn('nama_surat', function ($query, $keyword) {
+                $keyword = strtolower($keyword);
+
+                if (str_contains('aktif', $keyword)) {
+                    $query->orWhere('tabel', 'surat_aktif');
+                }
+                if (str_contains('penelitian', $keyword) || str_contains('izin', $keyword)) {
+                    $query->orWhere('tabel', 'surat_izin_penelitian');
+                }
+                if (str_contains('rekomendasi', $keyword)) {
+                    $query->orWhere('tabel', 'surat_rekomendasi');
+                }
+                if (str_contains('pkl', $keyword)) {
+                    $query->orWhere('tabel', 'surat_pkl');
+                }
+                if (str_contains('observasi', $keyword)) {
+                    $query->orWhere('tabel', 'surat_observasi');
+                }
             })
-            ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
-            })
+            ->addColumn('nama_mahasiswa', fn($row) => $row->mahasiswa?->nama ?? $row->nim)
+            ->addColumn('prodi', fn($row) => $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim)
+            ->addColumn('nama_surat', fn($row) => $row->nama_surat)
+            ->addColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—')
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
                     'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
@@ -69,16 +127,13 @@ class BAKHistoryPengajuanController extends Controller
                     default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
                 };
             })
-            ->addColumn('catatan', function ($row) {
-                return $row->catatan ?: '<em>Tidak ada catatan</em>';
-            })
+            ->addColumn('catatan', fn($row) => $row->catatan ?: '<em>Tidak ada catatan</em>')
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('bak.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
-
                 return '<div class="text-center">' . $showBtn . '</div>';
             })
-            ->rawColumns(['prodi', 'status', 'action'])
+            ->rawColumns(['prodi', 'status', 'action', 'catatan'])
             ->make(true);
     }
 

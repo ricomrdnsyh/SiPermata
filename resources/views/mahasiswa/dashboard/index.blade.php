@@ -227,7 +227,7 @@
 
                                     {{-- Ringkasan Total --}}
                                     <div
-                                        class="d-flex justify-content-between align-items-center mb-5 bg-light-secondary p-3 rounded-3">
+                                        class="d-flex justify-content-between align-items-center mb-5 bg-secondary p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-black">{{ $surat_rekomendasi['total'] }}</div>
                                     </div>

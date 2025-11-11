@@ -105,23 +105,29 @@
                 ajax: '{{ route('bak.ttdSurat.data') }}',
                 columns: [{
                         data: 'template',
-                        name: 'template_id'
+                        name: 'template',
+                        searchable: true
+
                     },
                     {
                         data: 'nama_ttd',
-                        name: 'nama_ttd'
+                        name: 'nama_ttd',
+                        searchable: true
                     },
                     {
                         data: 'nidn',
-                        name: 'nidn'
+                        name: 'nidn',
+                        searchable: true
                     },
                     {
                         data: 'nama_fakultas',
-                        name: 'fakultas.nama_fakultas'
+                        name: 'nama_fakultas'
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        searchable: true
+
                     },
                     {
                         data: 'action',
