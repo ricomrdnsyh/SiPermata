@@ -105,9 +105,10 @@
                         name: 'action',
                         orderable: false,
                         searchable: false
-                    },{
+                    }, {
                         data: 'nama_surat',
-                        name: 'nama_surat'
+                        name: 'nama_surat',
+                        searchable: true
                     },
                     {
                         data: 'tanggal_pengajuan',
@@ -120,7 +121,7 @@
                     {
                         data: 'catatan',
                         name: 'catatan'
-                    }                    
+                    }
                 ],
 
                 language: {

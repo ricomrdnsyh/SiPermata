@@ -39,6 +39,25 @@ class MahasiswaHistoryPegajuan extends Controller
             ->order(function ($query) {
                 $query->orderBy('created_at', 'desc');
             })
+            ->filterColumn('nama_surat', function ($query, $keyword) {
+                $keyword = strtolower($keyword);
+
+                if (str_contains('aktif', $keyword)) {
+                    $query->orWhere('tabel', 'surat_aktif');
+                }
+                if (str_contains('penelitian', $keyword) || str_contains('izin', $keyword)) {
+                    $query->orWhere('tabel', 'surat_izin_penelitian');
+                }
+                if (str_contains('rekomendasi', $keyword)) {
+                    $query->orWhere('tabel', 'surat_rekomendasi');
+                }
+                if (str_contains('pkl', $keyword)) {
+                    $query->orWhere('tabel', 'surat_pkl');
+                }
+                if (str_contains('observasi', $keyword)) {
+                    $query->orWhere('tabel', 'surat_observasi');
+                }
+            })
             ->addColumn('nama_surat', function ($row) {
                 return $row->nama_surat;
             })
