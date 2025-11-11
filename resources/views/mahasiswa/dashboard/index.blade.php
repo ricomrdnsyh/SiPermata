@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Dashboard Mahasiswa')
+@section('title', 'Dashboard')
 
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
