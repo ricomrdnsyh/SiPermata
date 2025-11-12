@@ -28,7 +28,12 @@ class TtdSuratConroller extends Controller
             ->addColumn('nama_fakultas', function ($row) {
                 return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
             })
-            ->addColumn('template', function ($row) {
+            ->filterColumn('nama_template', function ($query, $keyword) {
+                $query->whereHas('template', function ($q) use ($keyword) {
+                    $q->where('nama_template', 'like', "%{$keyword}%");
+                });
+            })
+            ->addColumn('nama_template', function ($row) {
                 return $row->template ? $row->template->nama_template : '—';
             })
             ->editColumn('status', function ($row) {
@@ -52,7 +57,7 @@ class TtdSuratConroller extends Controller
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
-            ->rawColumns(['nama_fakultas', 'template', 'status', 'action'])
+            ->rawColumns(['nama_fakultas', 'nama_template', 'status', 'action'])
             ->make(true);
     }
 

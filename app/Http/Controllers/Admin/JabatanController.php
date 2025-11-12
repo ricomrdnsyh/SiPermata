@@ -28,6 +28,11 @@ class JabatanController extends Controller
             ->with('penduduk', 'fakultas');
 
         return DataTables::of($data)
+            ->filterColumn('nama_penduduk', function ($query, $keyword) {
+                $query->whereHas('penduduk', function ($q) use ($keyword) {
+                    $q->where('nama_penduduk', 'like', "%{$keyword}%");
+                });
+            })
             ->editColumn('status', function ($row) {
                 if ($row->status == 'BAK') {
                     return '<span class="badge bg-warning">BAK</span>';

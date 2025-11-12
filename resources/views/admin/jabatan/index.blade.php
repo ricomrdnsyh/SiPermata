@@ -103,7 +103,8 @@
                 ajax: '{{ route('admin.jabatan.data') }}',
                 columns: [{
                         data: 'nama_penduduk',
-                        name: 'nama_penduduk'
+                        name: 'nama_penduduk',
+                        searchable: true
                     },
                     {
                         data: 'nama_fakultas',

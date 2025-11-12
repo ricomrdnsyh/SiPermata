@@ -104,8 +104,9 @@
                 responsive: true,
                 ajax: '{{ route('admin.ttdSurat.data') }}',
                 columns: [{
-                        data: 'template',
-                        name: 'template_id'
+                        data: 'nama_template',
+                        name: 'nama_template',
+                        searchable: true
                     },
                     {
                         data: 'nama_ttd',
