@@ -16,6 +16,11 @@
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
+        .filter-container {
+            margin-bottom: 2rem;
+            padding-bottom: 0 !important;
+        }
     </style>
 @endsection
 
@@ -51,9 +56,48 @@
                         </div>
                         <!--end::Card toolbar-->
                     </div>
-                    <!--begin::Separator-->
-                    <div class="separator my-5"></div>
-                    <!--end::Separator-->
+                    <div class="separator mt-6"></div>
+                    <div class="card-body py-4 px-8 filter-container">
+                        <div class="row g-5">
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Program Studi:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
+                                    id="filter-prodi">
+                                    <option value="">Semua Prodi</option>
+                                    @foreach ($listProdi as $prodi)
+                                        <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Nama Surat:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat"
+                                    id="filter-nama-surat">
+                                    <option value="">Semua Surat</option>
+                                    @foreach ($listNamaSurat as $tabel => $nama)
+                                        <option value="{{ $tabel }}">{{ $nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Status:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Semua Status" data-allow-clear="true" data-filter="status"
+                                    id="filter-status">
+                                    <option value="">Semua Status</option>
+                                    <option value="pengajuan">Menunggu BAK</option>
+                                    <option value="proses">Menunggu Dekan</option>
+                                    <option value="diterima">Disetujui</option>
+                                    <option value="selesai">Selesai</option>
+                                    <option value="ditolak">Ditolak</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <!--end::Card header-->
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
@@ -101,7 +145,14 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('admin.history.data') }}',
+                ajax: {
+                    url: '{{ route('admin.history.data') }}',
+                    data: function(d) {
+                        d.prodi_filter = $('#filter-prodi').val();
+                        d.nama_surat_filter = $('#filter-nama-surat').val();
+                        d.status_filter = $('#filter-status').val();
+                    }
+                },
                 columns: [{
                         data: 'action',
                         name: 'action',
@@ -110,15 +161,18 @@
                     },
                     {
                         data: 'nama_mahasiswa',
-                        name: 'nama_mahasiswa'
+                        name: 'nama_mahasiswa',
+                        searchable: true
                     },
                     {
                         data: 'prodi',
-                        name: 'prodi'
+                        name: 'prodi',
+                        searchable: true
                     },
                     {
                         data: 'nama_surat',
-                        name: 'nama_surat'
+                        name: 'nama_surat',
+                        searchable: true
                     },
                     {
                         data: 'tanggal_pengajuan',
@@ -147,6 +201,10 @@
 
             table.on('draw', function() {
                 $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+            });
+
+            $('[data-filter]').on('change', function() {
+                table.draw();
             });
         });
     </script>

@@ -39,42 +39,64 @@
 
                                         {{-- Form Mahasiswa --}}
                                         <div id="mahasiswaFields" class="fv-row mb-7" style="display:none;">
-                                            <label class="required fw-semibold fs-6 mb-2">Mahasiswa</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Mahasiswa"
-                                                name="reference_id" data-select2-id="select2-data-72-r5i6" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
-                                                <option value="">Pilih Mahasiswa</option>
-                                                @foreach ($mahasiswa as $m)
-                                                    <option value="{{ $m->nim }}">{{ $m->nim }} -
-                                                        {{ $m->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('reference_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
+                                            <div class="mb-7">
+                                                <label class="required fw-semibold fs-6 mb-2">Mahasiswa</label>
+                                                <select
+                                                    class="form-select form-select-solid select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Mahasiswa"
+                                                    name="reference_id" data-select2-id="select2-data-72-r5i6"
+                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1">
+                                                    <option value="">Pilih Mahasiswa</option>
+                                                    @foreach ($mahasiswa as $m)
+                                                        <option value="{{ $m->nim }}">{{ $m->nim }} -
+                                                            {{ $m->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('reference_id')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                            <div class=fv-row mb-7">
+                                                <label class="required fw-semibold fs-6 mb-2">Password</label>
+                                                <input type="password" name="password" class="form-control mb-3 mb-lg-0"
+                                                    value="{{ old('password') }}" />
+                                                @error('password')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
                                         </div>
 
                                         {{-- Form Penduduk --}}
                                         <div id="pendudukFields" class="fv-row mb-7" style="display:none;">
-                                            <label class="required fw-semibold fs-6 mb-2">Penduduk</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Penduduk" name="reference_id"
-                                                data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1">
-                                                <option value="">Pilih Penduduk</option>
-                                                @foreach ($penduduk as $p)
-                                                    <option value="{{ $p->id_penduduk }}">
-                                                        {{ $p->id_penduduk }} - {{ $p->nama_penduduk }}
-                                                        @if ($p->jabatan)
-                                                            ({{ $p->jabatan->status }})
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('reference_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
+                                            <div class="mb-7">
+                                                <label class="required fw-semibold fs-6 mb-2">Penduduk</label>
+                                                <select
+                                                    class="form-select form-select-solid select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Penduduk"
+                                                    name="reference_id" data-select2-id="select2-data-72-r5i4"
+                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1">
+                                                    <option value="">Pilih Penduduk</option>
+                                                    @foreach ($penduduk as $p)
+                                                        <option value="{{ $p->id_penduduk }}">
+                                                            {{ $p->id_penduduk }} - {{ $p->nama_penduduk }}
+                                                            @if ($p->jabatan)
+                                                                ({{ $p->jabatan->status }})
+                                                            @endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('reference_id')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                            <div class=fv-row mb-7">
+                                                <label class="required fw-semibold fs-6 mb-2">Password</label>
+                                                <input type="password" name="password" class="form-control mb-3 mb-lg-0"
+                                                    value="{{ old('password') }}" />
+                                                @error('password')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
                                         </div>
 
                                         {{-- Form Admin --}}
@@ -95,19 +117,29 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
+                                            <div class="mb-7">
+                                                <label class="required fw-semibold fs-6 mb-2">Password</label>
+                                                <input type="password" name="password" class="form-control mb-3 mb-lg-0"
+                                                    value="{{ old('password') }}" />
+                                                @error('password')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
                                             <a href="{{ route('admin.users.index') }}" class="btn btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit"
+                                                class="btn btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>
                                                 <span class="indicator-progress">
                                                     Tunggu sebentar...
-                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                    <span
+                                                        class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                                 </span>
                                             </button>
                                         </div>

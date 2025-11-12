@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Prodi;
 use App\Models\Template;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -21,10 +22,18 @@ class SuratRekomendasiController extends Controller
      */
     public function index()
     {
-        return view('admin.surat_rekomendasi.index');
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $listProdi = Prodi::all();
+
+        return view('admin.surat_rekomendasi.index', compact('listProdi'));
     }
 
-    public function getSuratRekomendasi()
+    public function getSuratRekomendasi(Request $request)
     {
         $user = Auth::user();
 
@@ -34,9 +43,30 @@ class SuratRekomendasiController extends Controller
 
         $query = SuratRekomendasi::with(['mahasiswa.prodi', 'akademik']);
 
+        if ($request->filled('prodi_filter')) {
+            $prodiId = $request->input('prodi_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($prodiId) {
+                $q->where('prodi_id', $prodiId);
+            });
+        }
+
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->input('status_filter'));
+        }
+
         return DataTables::of($query)
             ->order(function ($query) {
                 $query->orderBy('created_at', 'desc');
+            })
+            ->filterColumn('nama_mahasiswa', function ($query, $keyword) {
+                $query->whereHas('mahasiswa', function ($q) use ($keyword) {
+                    $q->where('nama', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('prodi', function ($query, $keyword) {
+                $query->whereHas('mahasiswa.prodi', function ($q) use ($keyword) {
+                    $q->where('nama_prodi', 'like', "%{$keyword}%");
+                });
             })
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;

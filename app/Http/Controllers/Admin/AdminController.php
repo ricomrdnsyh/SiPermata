@@ -68,10 +68,8 @@ class AdminController extends Controller
             'reference_id' => 'required_if:type,mahasiswa,penduduk',
             'identifier'   => 'required|unique:users,identifier',
             'nama'         => 'required|string|max:255',
+            'password'     => 'required|string|max:255',
         ]);
-
-        // Password default
-        $password = '123456';
 
         if ($request->type === 'admin') {
             // Buat admin manual
@@ -80,7 +78,7 @@ class AdminController extends Controller
                 'nama'         => $request->nama,
                 'type'         => 'admin',
                 'reference_id' => 'admin', // atau null jika kolom nullable
-                'password'     => Hash::make($password),
+                'password'     => Hash::make($request->password),
             ]);
         } elseif ($request->type === 'mahasiswa') {
             $mahasiswa = Mahasiswa::where('nim', $request->reference_id)->firstOrFail();
@@ -89,7 +87,7 @@ class AdminController extends Controller
                 'nama'         => $mahasiswa->nama,
                 'type'         => 'mahasiswa',
                 'reference_id' => $mahasiswa->nim,
-                'password'     => Hash::make($password),
+                'password'     => Hash::make($request->password),
             ]);
         } else {
             // type = penduduk
@@ -104,7 +102,7 @@ class AdminController extends Controller
                 'nama'         => $penduduk->nama_penduduk,
                 'type'         => 'penduduk',
                 'reference_id' => $penduduk->id_penduduk,
-                'password'     => Hash::make($password),
+                'password'     => Hash::make($request->password),
             ]);
         }
 

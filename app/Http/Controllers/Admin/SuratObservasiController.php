@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Mitra;
+use App\Models\Prodi;
 use App\Models\Template;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -22,10 +23,18 @@ class SuratObservasiController extends Controller
      */
     public function index()
     {
-        return view('admin.surat_observasi.index');
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $listProdi = Prodi::all();
+
+        return view('admin.surat_observasi.index', compact('listProdi'));
     }
 
-    public function getSuratObservasi()
+    public function getSuratObservasi(Request $request)
     {
         $user = Auth::user();
 
@@ -35,9 +44,30 @@ class SuratObservasiController extends Controller
 
         $query = SuratObservasi::with(['mahasiswa.prodi', 'akademik', 'mitra']);
 
+        if ($request->filled('prodi_filter')) {
+            $prodiId = $request->input('prodi_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($prodiId) {
+                $q->where('prodi_id', $prodiId);
+            });
+        }
+
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->input('status_filter'));
+        }
+
         return DataTables::of($query)
             ->order(function ($query) {
                 $query->orderBy('created_at', 'desc');
+            })
+            ->filterColumn('nama_mahasiswa', function ($query, $keyword) {
+                $query->whereHas('mahasiswa', function ($q) use ($keyword) {
+                    $q->where('nama', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('prodi', function ($query, $keyword) {
+                $query->whereHas('mahasiswa.prodi', function ($q) use ($keyword) {
+                    $q->where('nama_prodi', 'like', "%{$keyword}%");
+                });
             })
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Prodi;
+use App\Models\Fakultas;
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
 use Illuminate\Http\Request;
@@ -19,15 +21,33 @@ use Symfony\Component\HttpFoundation\Response;
 
 class HistoryPengajuanController extends Controller
 {
+    protected $listSurat = [
+        'surat_aktif' => 'Surat Keterangan Aktif',
+        'surat_izin_penelitian' => 'Surat Izin Penelitian',
+        'surat_observasi' => 'Surat Permohonan Observasi',
+        'surat_rekomendasi' => 'Surat Rekomendasi',
+        'surat_pkl' => 'Surat Permohonan PKL',
+    ];
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('admin.history.index');
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $listProdi = Prodi::all();
+
+        $listNamaSurat = $this->listSurat;
+
+        // Kirim listFakultas ke view
+        return view('admin.history.index', compact('listProdi', 'listNamaSurat'));
     }
 
-    public function getHistory()
+    public function getHistory(Request $request)
     {
         $user = Auth::user();
 
@@ -37,9 +57,53 @@ class HistoryPengajuanController extends Controller
 
         $query = HistoryPengajuan::with(['mahasiswa.prodi']);
 
+        if ($request->filled('prodi_filter')) {
+            $prodiId = $request->input('prodi_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($prodiId) {
+                $q->where('prodi_id', $prodiId);
+            });
+        }
+
+        if ($request->filled('nama_surat_filter')) {
+            $query->where('tabel', $request->input('nama_surat_filter'));
+        }
+
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->input('status_filter'));
+        }
+
         return DataTables::of($query)
             ->order(function ($query) {
                 $query->orderBy('created_at', 'desc');
+            })
+            ->filterColumn('nama_mahasiswa', function ($query, $keyword) {
+                $query->whereHas('mahasiswa', function ($q) use ($keyword) {
+                    $q->where('nama', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('prodi', function ($query, $keyword) {
+                $query->whereHas('mahasiswa.prodi', function ($q) use ($keyword) {
+                    $q->where('nama_prodi', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('nama_surat', function ($query, $keyword) {
+                $keyword = strtolower($keyword);
+
+                if (str_contains('aktif', $keyword)) {
+                    $query->orWhere('tabel', 'surat_aktif');
+                }
+                if (str_contains('penelitian', $keyword) || str_contains('izin', $keyword)) {
+                    $query->orWhere('tabel', 'surat_izin_penelitian');
+                }
+                if (str_contains('rekomendasi', $keyword)) {
+                    $query->orWhere('tabel', 'surat_rekomendasi');
+                }
+                if (str_contains('pkl', $keyword)) {
+                    $query->orWhere('tabel', 'surat_pkl');
+                }
+                if (str_contains('observasi', $keyword)) {
+                    $query->orWhere('tabel', 'surat_observasi');
+                }
             })
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;
