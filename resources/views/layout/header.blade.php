@@ -3,7 +3,7 @@
     <div class="header-brand">
         <!--begin::Logo-->
         <span class="header-logo">
-            <img alt="Logo" src="{{ asset('assets/media/logos/logo-1-dark.svg') }}" class="h-25px h-lg-25px" />
+            <img alt="Logo" src="{{ asset('assets/media/logos/sipermata.png') }}" class="h-50px h-lg-40px" />
         </span>
         <!--end::Logo-->
         <!--begin::Aside minimize-->
