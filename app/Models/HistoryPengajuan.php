@@ -51,6 +51,11 @@ class HistoryPengajuan extends Model
         return $this->belongsTo(SuratObservasi::class, 'id_tabel_surat');
     }
 
+    public function suratLulus()
+    {
+        return $this->belongsTo(SuratLulus::class, 'id_tabel_surat');
+    }
+
     protected static function booted()
     {
         static::deleted(function ($history) {
@@ -109,16 +114,28 @@ class HistoryPengajuan extends Model
                 if ($filePath) {
                     Storage::disk('local')->delete($filePath);
                 }
+            } elseif ($history->tabel === 'surat_keterangan_lulus') {
+
+                $suratLulus = $history->suratLulus;
+
+                $filePath = $suratLulus->file_generated ?? null;
+
+                $history->suratLulus()->delete();
+
+                if ($filePath) {
+                    Storage::disk('local')->delete($filePath);
+                }
             }
         });
     }
 
     protected $modelMapping = [
-        'surat_aktif'           => SuratAktif::class,
-        'surat_izin_penelitian' => SuratPenelitian::class,
-        'surat_rekomendasi'     => SuratRekomendasi::class,
-        'surat_pkl'             => SuratPKL::class,
-        'surat_observasi'       => SuratObservasi::class,
+        'surat_aktif'            => SuratAktif::class,
+        'surat_izin_penelitian'  => SuratPenelitian::class,
+        'surat_rekomendasi'      => SuratRekomendasi::class,
+        'surat_pkl'              => SuratPKL::class,
+        'surat_observasi'        => SuratObservasi::class,
+        'surat_keterangan_lulus' => SuratLulus::class,
         // tambahkan jenis surat lain di sini
     ];
 
@@ -154,6 +171,7 @@ class HistoryPengajuan extends Model
             'surat_rekomendasi'      => 'Surat Rekomendasi',
             'surat_pkl'              => 'Surat Permohonan PKL',
             'surat_observasi'        => 'Surat Permohonan Observasi',
+            'surat_keterangan_lulus' => 'Surat Keterangan Lulus',
             // 'surat_pindah'           => 'Surat Keterangan Pindah',
             default                  => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
         };

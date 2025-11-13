@@ -28,6 +28,9 @@ class TemplateControler extends Controller
             ->with('fakultas', 'prodi');
 
         return DataTables::of($data)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->addColumn('file', function ($template) {
                 if (!$template->file || !Storage::disk('local')->exists($template->file)) {
                     return '<span class="text-muted">File tidak ditemukan</span>';

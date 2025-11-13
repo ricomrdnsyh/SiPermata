@@ -57,4 +57,9 @@ class Template extends Model
     {
         return $this->hasMany(SuratObservasi::class, 'template_id');
     }
+
+    public function suratLulus()
+    {
+        return $this->hasMany(SuratLulus::class, 'template_id');
+    }
 }

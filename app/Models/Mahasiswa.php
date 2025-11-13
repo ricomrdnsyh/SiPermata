@@ -59,4 +59,9 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(SuratObservasi::class, 'nim');
     }
+
+    public function suratLulus()
+    {
+        return $this->hasMany(SuratLulus::class, 'nim');
+    }
 }
