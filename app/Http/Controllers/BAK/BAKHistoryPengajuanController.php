@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\BAK;
 
 use App\Models\Prodi;
-use App\Models\Fakultas;
 use App\Models\SuratPKL;
-use App\Models\Mahasiswa;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
@@ -25,6 +24,7 @@ class BAKHistoryPengajuanController extends Controller
         'surat_observasi' => 'Surat Permohonan Observasi',
         'surat_rekomendasi' => 'Surat Rekomendasi',
         'surat_pkl' => 'Surat Permohonan PKL',
+        'surat_keterangan_lulus' => 'Surat Keterangan Lulus',
     ];
 
     public function index()
@@ -112,6 +112,9 @@ class BAKHistoryPengajuanController extends Controller
                 if (str_contains('observasi', $keyword)) {
                     $query->orWhere('tabel', 'surat_observasi');
                 }
+                if (str_contains('lulus', $keyword)) {
+                    $query->orWhere('tabel', 'surat_keterangan_lulus');
+                }
             })
             ->addColumn('nama_mahasiswa', fn($row) => $row->mahasiswa?->nama ?? $row->nim)
             ->addColumn('prodi', fn($row) => $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim)
@@ -159,11 +162,12 @@ class BAKHistoryPengajuanController extends Controller
     }
 
     protected $suratModels = [
-        'surat_aktif'           => SuratAktif::class,
-        'surat_izin_penelitian' => SuratPenelitian::class,
-        'surat_rekomendasi'     => SuratRekomendasi::class,
-        'surat_pkl'             => SuratPKL::class,
-        'surat_observasi'       => SuratObservasi::class,
+        'surat_aktif'            => SuratAktif::class,
+        'surat_izin_penelitian'  => SuratPenelitian::class,
+        'surat_rekomendasi'      => SuratRekomendasi::class,
+        'surat_pkl'              => SuratPKL::class,
+        'surat_observasi'        => SuratObservasi::class,
+        'surat_keterangan_lulus' => SuratLulus::class,
         // Tambahkan jenis surat lain di sini
     ];
 

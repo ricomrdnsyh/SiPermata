@@ -345,23 +345,27 @@
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-success p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
-                                        <div class="fs-3 fw-bolder text-success">0</div> {{-- Total Status --}}
+                                        <div class="fs-3 fw-bolder text-success">{{ $surat_lulus['total'] }}</div>
+                                        {{-- Total Status --}}
                                     </div>
 
                                     {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
-                                            <span class="badge badge-light-warning fw-bolder p-2">0</span>
+                                            <span
+                                                class="badge badge-light-warning fw-bolder p-2">{{ $surat_lulus['proses'] }}</span>
                                             {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
-                                            <span class="badge badge-light-success fw-bolder p-2">0</span>
+                                            <span
+                                                class="badge badge-light-success fw-bolder p-2">{{ $surat_lulus['selesai'] }}</span>
                                             {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
-                                            <span class="badge badge-light-danger fw-bolder p-2">0</span>
+                                            <span
+                                                class="badge badge-light-danger fw-bolder p-2">{{ $surat_lulus['ditolak'] }}</span>
                                             {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
@@ -369,10 +373,11 @@
 
                                     {{-- Tombol Aksi --}}
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
-                                        <a href="{{ url('pengajuan/lulus') }}" class="btn btn-sm btn-success flex-fill">
+                                        <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
+                                            class="btn btn-sm btn-success flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
-                                        <a href="{{ url('riwayat/lulus') }}"
+                                        <a href="{{ route('mahasiswa.surat-keterangan-lulus.index') }}"
                                             class="btn btn-sm btn-light-success text-success flex-fill">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>

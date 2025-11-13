@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
@@ -52,6 +53,7 @@ class DashboardController extends Controller
             'surat_observasi'    => $getSuratStatus(new SuratObservasi()),
             'surat_rekomendasi'  => $getSuratStatus(new SuratRekomendasi()),
             'surat_pkl'          => $getSuratStatus(new SuratPKL()),
+            'surat_lulus'        => $getSuratStatus(new SuratLulus()),
         ];
 
         return view('mahasiswa.dashboard.index', $data);

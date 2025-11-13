@@ -49,7 +49,7 @@
                                                     <td>
                                                         @switch($pengajuan->status)
                                                             @case('pengajuan')
-                                                                <span class="badge bg-warning">Menunggu Persetujuan</span>
+                                                                <span class="badge bg-warning">Menunggu BAK</span>
                                                             @break
 
                                                             @case('proses')
@@ -97,6 +97,10 @@
                                                 ])
                                             @elseif($pengajuan->tabel === 'surat_observasi')
                                                 @include('bak.history.partials.surat_observasi', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_keterangan_lulus')
+                                                @include('bak.history.partials.surat_lulus', [
                                                     'surat' => $surat,
                                                 ])
                                             @else

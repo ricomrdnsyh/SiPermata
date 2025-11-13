@@ -22,7 +22,6 @@
                                     action="{{ route('bak.surat-observasi.update', $surat->id_surat_observasi) }}">
                                     @csrf
                                     @method('PUT')
-                                    <div class="fv-row mb-7">
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
                                             <select class="form-select form-select-solid select2-hidden-accessible w-100"

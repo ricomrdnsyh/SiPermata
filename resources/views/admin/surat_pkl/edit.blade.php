@@ -23,91 +23,90 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="fv-row mb-7">
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Mahasiswa...</option>
-                                                @foreach ($mahasiswa as $mhs)
-                                                    <option value="{{ $mhs->nim }}"
-                                                        {{ $surat->nim == $mhs->nim ? 'selected' : '' }}>
-                                                        {{ $mhs->nim }} - {{ $mhs->nama }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('nim')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
-                                                data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Akademik...</option>
-                                                @foreach ($akademik as $item)
-                                                    <option value="{{ $item->id_akademik }}"
-                                                        {{ $surat->akademik_id == $item->id_akademik ? 'selected' : '' }}>
-                                                        {{ $item->tahun_akademik }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('akademik_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Tempat PKL" name="mitra_id"
-                                                data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Tempat PKL...</option>
-                                                @foreach ($mitra as $mitra)
-                                                    <option value="{{ $mitra->id_mitra }}"
-                                                        {{ $surat->mitra_id == $mitra->id_mitra ? 'selected' : '' }}>
-                                                        {{ $mitra->nama_mitra }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('mitra_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
-                                            <input type="date" name="tgl_mulai" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '' }}" />
-                                            @error('tgl_mulai')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
-                                            <input type="date" name="tgl_selesai" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '' }}" />
-                                            @error('tgl_selesai')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="text-center mt-8">
-                                            <button type="submit" data-kt-contacts-type="submit"
-                                                class="btn btn-primary w-100 w-md-50">
-                                                <span class="indicator-label">
-                                                    Update Pengajuan
-                                                </span>
-                                                <span class="indicator-progress">
-                                                    Tunggu sebentar...
-                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                                </span>
-                                            </button>
-                                        </div>
+                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                            data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1">
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Mahasiswa...</option>
+                                            @foreach ($mahasiswa as $mhs)
+                                                <option value="{{ $mhs->nim }}"
+                                                    {{ $surat->nim == $mhs->nim ? 'selected' : '' }}>
+                                                    {{ $mhs->nim }} - {{ $mhs->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('nim')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-7">
+                                        <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
+                                            data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1">
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Akademik...</option>
+                                            @foreach ($akademik as $item)
+                                                <option value="{{ $item->id_akademik }}"
+                                                    {{ $surat->akademik_id == $item->id_akademik ? 'selected' : '' }}>
+                                                    {{ $item->tahun_akademik }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('akademik_id')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-7">
+                                        <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
+                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Tempat PKL" name="mitra_id"
+                                            data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1">
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Tempat PKL...</option>
+                                            @foreach ($mitra as $mitra)
+                                                <option value="{{ $mitra->id_mitra }}"
+                                                    {{ $surat->mitra_id == $mitra->id_mitra ? 'selected' : '' }}>
+                                                    {{ $mitra->nama_mitra }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('mitra_id')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-7">
+                                        <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
+                                        <input type="date" name="tgl_mulai" class="form-control mb-3 mb-lg-0"
+                                            value="{{ $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '' }}" />
+                                        @error('tgl_mulai')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-7">
+                                        <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
+                                        <input type="date" name="tgl_selesai" class="form-control mb-3 mb-lg-0"
+                                            value="{{ $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '' }}" />
+                                        @error('tgl_selesai')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="text-center mt-8">
+                                        <button type="submit" data-kt-contacts-type="submit"
+                                            class="btn btn-primary w-100 w-md-50">
+                                            <span class="indicator-label">
+                                                Update Pengajuan
+                                            </span>
+                                            <span class="indicator-progress">
+                                                Tunggu sebentar...
+                                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                            </span>
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

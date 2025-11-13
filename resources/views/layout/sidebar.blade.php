@@ -580,6 +580,17 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="menu-sub menu-sub-accordion menu-active-bg">
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('bak/surat-keterangan-lulus') ? 'active' : '' }}"
+                                    href="{{ route('bak.surat-keterangan-lulus.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Surat Keterangan Lulus</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="menu-item">
                         <a class="menu-link {{ Request::is('bak/history-pengajuan') ? 'active' : '' }}"

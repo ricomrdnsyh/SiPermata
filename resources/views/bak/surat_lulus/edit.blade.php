@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Surat Rekomendasi')
+@section('title', 'Surat Keterangan Lulus')
 
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -10,7 +10,7 @@
                     <div class="card-body p-lg-17">
                         <div class="d-flex flex-column">
                             <div class="mb-13 text-center">
-                                <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Rekomendasi</h1>
+                                <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Keterangan Lulus</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
@@ -19,7 +19,7 @@
                             <div id="form-container" class="mt-2">
                                 <form id="kt_ecommerce_settings_general_form"
                                     class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
-                                    action="{{ route('admin.surat-rekomendasi.update', $surat->id_surat_rekomendasi) }}">
+                                    action="{{ route('bak.surat-keterangan-lulus.update', $surat->id_surat_lulus) }}">
                                     @csrf
                                     @method('PUT')
                                     <div class="fv-row mb-7">
@@ -61,17 +61,25 @@
                                         @enderror
                                     </div>
                                     <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">Keperluan
-                                            Rekomendasi</label></label>
-                                        <textarea name="keperluan" class="form-control mb-3 mb-lg-0" rows="3">{{ old('keperluan', $surat->keperluan) }}</textarea>
-                                        @error('keperluan')
+                                        <label class="required fw-semibold fs-6 mb-2">Tempat Lahir</label>
+                                        <input type="text" name="tempat_lahir" class="form-control mb-3 mb-lg-0"
+                                            value="{{ $surat->tempat_lahir }}" />
+                                        @error('tempat_lahir')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="fv-row mb-7">
-                                        <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label></label>
-                                        <textarea name="penyelenggara" class="form-control mb-3 mb-lg-0" rows="3">{{ old('penyelenggara', $surat->penyelenggara) }}</textarea>
-                                        @error('penyelenggara')
+                                        <label class="required fw-semibold fs-6 mb-2">Tanggal Lahir</label>
+                                        <input type="date" name="tgl_lahir" class="form-control mb-3 mb-lg-0"
+                                            value="{{ $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '' }}" />
+                                        @error('tgl_lahir')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-7">
+                                        <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
+                                        <textarea name="judul_penelitian" class="form-control mb-3 mb-lg-0" rows="3">{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                        @error('judul_penelitian')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
