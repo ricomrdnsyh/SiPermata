@@ -52,7 +52,7 @@ class SuratPenelitianGenerator
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
 
         // Direktori Output
-        $outputFileName    = "SURAT_IZIN_PENELITIAN_{$surat->nim}.docx";
+        $outputFileName    = "SURAT_IZIN_PENELITIAN_{$surat->nim}_{$surat->id_surat_izin_penelitian}.docx";
         $outputFileRelatif = "surat_penelitian/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 

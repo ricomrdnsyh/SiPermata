@@ -50,7 +50,7 @@ class SuratObservasiGenerator
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
 
         // Direktori Output
-        $outputFileName    = "SURAT_IZIN_OBSERVASI_{$surat->nim}.docx";
+        $outputFileName    = "SURAT_IZIN_OBSERVASI_{$surat->nim}_{$surat->id_surat_observasi}.docx";
         $outputFileRelatif = "surat_observasi/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 

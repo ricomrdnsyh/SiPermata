@@ -61,7 +61,7 @@ class SuratAktifGenerator
         }
 
         // Direktori Output
-        $outputFileName    = "SURAT_KETERANGAN_AKTIF_{$surat->kategori}_{$surat->nim}.docx";
+        $outputFileName    = "SURAT_KETERANGAN_AKTIF_{$surat->kategori}_{$surat->nim}_{$surat->id_surat_aktif}.docx";
         $outputFileRelatif = "surat_aktif/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 

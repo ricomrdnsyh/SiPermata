@@ -10,12 +10,16 @@ class Template extends Model
 
     protected $primaryKey = 'id_template';
 
+    protected $casts = [
+        'tgl_sk' => 'datetime',
+    ];
+
     protected $fillable = [
         'nama_template',
         'jenis_surat',
         'file',
+        'tgl_sk',
         'fakultas_id',
-        'prodi_id',
     ];
 
     public function fakultas()

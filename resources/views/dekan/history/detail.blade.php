@@ -81,23 +81,27 @@
                                     <div class="d-flex flex-wrap py-5">
                                         <div class="flex-equal me-5">
                                             @if ($pengajuan->tabel === 'surat_aktif')
-                                                @include('bak.history.partials.surat_aktif', [
+                                                @include('dekan.history.partials.surat_aktif', [
                                                     'surat' => $surat,
                                                 ])
                                             @elseif($pengajuan->tabel === 'surat_izin_penelitian')
-                                                @include('bak.history.partials.surat_penelitian', [
+                                                @include('dekan.history.partials.surat_penelitian', [
                                                     'surat' => $surat,
                                                 ])
                                             @elseif($pengajuan->tabel === 'surat_rekomendasi')
-                                                @include('bak.history.partials.surat_rekomendasi', [
+                                                @include('dekan.history.partials.surat_rekomendasi', [
                                                     'surat' => $surat,
                                                 ])
                                             @elseif($pengajuan->tabel === 'surat_pkl')
-                                                @include('bak.history.partials.surat_pkl', [
+                                                @include('dekan.history.partials.surat_pkl', [
                                                     'surat' => $surat,
                                                 ])
                                             @elseif($pengajuan->tabel === 'surat_observasi')
-                                                @include('bak.history.partials.surat_observasi', [
+                                                @include('dekan.history.partials.surat_observasi', [
+                                                    'surat' => $surat,
+                                                ])
+                                            @elseif($pengajuan->tabel === 'surat_keterangan_lulus')
+                                                @include('dekan.history.partials.surat_lulus', [
                                                     'surat' => $surat,
                                                 ])
                                             @else
@@ -138,9 +142,9 @@
                                                 </a>
                                             @endif
                                         @elseif($pengajuan->status === 'pengajuan')
-                                            <button class="btn btn-warning">Menunggu BAK untuk validasi</button>
+                                            <button class="btn btn-sm btn-warning">Menunggu BAK untuk validasi</button>
                                         @else
-                                            <button class="btn btn-success"><i class="fas fa-check-circle"></i>
+                                            <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
                                                 Pengajuan
                                                 sudah dikonfirmasi</button>
                                         @endif

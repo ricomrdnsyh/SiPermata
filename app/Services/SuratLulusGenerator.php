@@ -18,6 +18,7 @@ class SuratLulusGenerator
     public function generateWord(SuratLulus $surat, Template $template)
     {
         $relativePathTemplate = $template->file;
+        $tanggal_SK = $template->tgl_sk;
 
         $templatePath = storage_path("app/{$relativePathTemplate}");
 
@@ -32,10 +33,12 @@ class SuratLulusGenerator
         $tglSuratCarbon     = Carbon::parse($surat->updated_at);
         $bulanSuratCarbon   = Carbon::parse($surat->updated_at);
         $tglLahirCarbon     = Carbon::parse($surat->tgl_lahir);
+        $tglSKCarbon        = Carbon::parse($tanggal_SK);
 
         $tglSurat   = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $tglLahir   = $tglLahirCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $bulanSurat = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
+        $tglSK      = $tglSKCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $judulPenelitianUppercase = strtoupper($surat->judul_penelitian ?? '-');
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
@@ -47,6 +50,7 @@ class SuratLulusGenerator
         $processor->setValue('TEMPAT_LAHIR', $surat->tempat_lahir ?? '-');
         $processor->setValue('TGL_LAHIR', $tglLahir ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
+        $processor->setValue('TGL_SK', $tglSK ?? '-');
         $processor->setValue('JUDUL_PENELITIAN', $judulPenelitianUppercase);
 
         // Direktori Output

@@ -52,6 +52,7 @@ Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::clas
 Route::get('/verifikasi/surat-rekomendasi/{id}', [VerifikasiController::class, 'verifySuratRekomendasi'])->name('verifikasi.surat-rekomendasi');
 Route::get('/verifikasi/surat-pkl/{id}', [VerifikasiController::class, 'verifySuratPKL'])->name('verifikasi.surat-pkl');
 Route::get('/verifikasi/surat-observasi/{id}', [VerifikasiController::class, 'verifySuratObservasi'])->name('verifikasi.surat-observasi');
+Route::get('/verifikasi/surat-keterangan-lulus/{id}', [VerifikasiController::class, 'verifySuratLulus'])->name('verifikasi.surat-keterangan-lulus');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

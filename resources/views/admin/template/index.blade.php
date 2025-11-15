@@ -69,7 +69,7 @@
                                     <th class="min-w-125px">Jenis Surat</th>
                                     <th class="min-w-125px">File</th>
                                     <th class="min-w-125px">Nama Fakultas</th>
-                                    <th class="min-w-125px">Nama Prodi</th>
+                                    <th class="min-w-125px">Tanggal SK</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
@@ -122,8 +122,8 @@
                         name: 'fakultas.nama_fakultas'
                     },
                     {
-                        data: 'nama_prodi',
-                        name: 'prodi.nama_prodi'
+                        data: 'tgl_sk',
+                        name: 'tgl_sk'
                     },
                     {
                         data: 'action',

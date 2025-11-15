@@ -6,6 +6,7 @@ use App\Models\Prodi;
 use App\Models\Fakultas;
 use App\Models\Template;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -24,7 +25,7 @@ class TemplateControler extends Controller
 
     public function getTemplate()
     {
-        $data = Template::select(['id_template', 'nama_template', 'jenis_surat', 'file', 'fakultas_id', 'prodi_id'])
+        $data = Template::select(['id_template', 'nama_template', 'jenis_surat', 'file', 'tgl_sk', 'fakultas_id', 'prodi_id'])
             ->with('fakultas', 'prodi');
 
         return DataTables::of($data)
@@ -46,11 +47,14 @@ class TemplateControler extends Controller
                     '<span class="' . $color . '">' . $icon . '</span>' .
                     '</a>';
             })
+            ->editColumn('tgl_sk', function ($row) {
+                if (empty($row->tgl_sk)) {
+                    return '—';
+                }
+                return Carbon::parse($row->tgl_sk)->locale('id')->isoFormat('D MMMM YYYY');
+            })
             ->addColumn('nama_fakultas', function ($row) {
                 return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
-            })
-            ->addColumn('nama_prodi', function ($row) {
-                return $row->prodi ? $row->prodi->nama_prodi : '—';
             })
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('admin.template.show', $row->id_template) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
@@ -64,7 +68,7 @@ class TemplateControler extends Controller
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
-            ->rawColumns(['file', 'nama_fakultas', 'nama_prodi', 'action'])
+            ->rawColumns(['file', 'tgl_sk', 'nama_fakultas', 'action'])
             ->make(true);
     }
 
@@ -135,6 +139,7 @@ class TemplateControler extends Controller
             'nama_template' => $request->nama_template,
             'jenis_surat'   => $request->jenis_surat,
             'file'          => $filePath,
+            'tgl_sk'        => $request->tgl_sk,
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,
         ]);
@@ -203,6 +208,7 @@ class TemplateControler extends Controller
             'nama_template' => $request->nama_template,
             'jenis_surat'   => $request->jenis_surat,
             'file'          => $filePath,
+            'tgl_sk'        => $request->tgl_sk,
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,
         ]);

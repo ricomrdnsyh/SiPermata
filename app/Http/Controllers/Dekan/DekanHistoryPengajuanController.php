@@ -8,6 +8,7 @@ use App\Models\TtdSurat;
 use App\Models\Mahasiswa;
 use App\Mail\SuratSelesai;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
@@ -32,6 +33,7 @@ class DekanHistoryPengajuanController extends Controller
         'surat_observasi' => 'Surat Permohonan Observasi',
         'surat_rekomendasi' => 'Surat Rekomendasi',
         'surat_pkl' => 'Surat Permohonan PKL',
+        'surat_keterangan_lulus' => 'Surat Keterangan Lulus',
     ];
 
     public function index()
@@ -122,6 +124,9 @@ class DekanHistoryPengajuanController extends Controller
                 if (str_contains('observasi', $keyword)) {
                     $query->orWhere('tabel', 'surat_observasi');
                 }
+                if (str_contains('lulus', $keyword)) {
+                    $query->orWhere('tabel', 'surat_keterangan_lulus');
+                }
             })
             ->addColumn('nama_mahasiswa', function ($row) {
                 $mahasiswa = Mahasiswa::where('nim', $row->nim)->first();
@@ -173,6 +178,8 @@ class DekanHistoryPengajuanController extends Controller
                 return SuratPKL::class;
             case 'surat_observasi':
                 return SuratObservasi::class;
+            case 'surat_keterangan_lulus':
+                return SuratLulus::class;
             default:
                 return null;
         }

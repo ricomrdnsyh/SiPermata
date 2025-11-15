@@ -73,21 +73,11 @@
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Prodi" id="prodi_id"
-                                                name="prodi_id" data-select2-id="select2-data-72-r5i5" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="2">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Prodi</option>
-                                                @foreach ($prodi as $prodi)
-                                                    <option value="{{ $prodi->id_prodi }}"
-                                                        {{ $prodi->id_prodi == $data->prodi_id ? 'selected' : '' }}>
-                                                        {{ $prodi->nama_prodi }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('prodi_id')
+                                            <label class="required fw-semibold fs-6 mb-2">Tanggal SK(Kosongkan jikan bukan
+                                                surat keterangan lulus)</label>
+                                            <input type="date" name="tgl_sk" class="form-control mb-3 mb-lg-0"
+                                                value="{{ $data->tgl_sk ? $data->tgl_sk->format('Y-m-d') : '' }}" />
+                                            @error('tgl_sk')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
@@ -118,42 +108,6 @@
 @endsection
 
 @section('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const fakultasDropdown = document.getElementById('fakultas_id');
-            const prodiDropdown = $('#prodi_id');
-
-            $('#fakultas_id').on('change', function() {
-                const fakultasId = this.value;
-
-                prodiDropdown.empty().trigger('change');
-                prodiDropdown.append('<option value="">Pilih Prodi</option>');
-
-                if (fakultasId) {
-                    fetch(`/admin/get-prodit/${fakultasId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Data prodi:', data);
-
-                            prodiDropdown.empty().append(
-                                '<option value="">-- Pilih Prodi --</option>');
-
-                            data.forEach(prodi => {
-                                const option = new Option(prodi.nama_prodi, prodi
-                                    .id_prodi,
-                                    false, false);
-                                prodiDropdown.append(option);
-                            });
-
-                            prodiDropdown.trigger('change');
-                        })
-                        .catch(err => {
-                            console.error('Gagal ambil data prodi:', err);
-                        });
-                }
-            });
-        });
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');

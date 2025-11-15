@@ -51,7 +51,7 @@ class SuratPKLGenerator
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
 
         // Direktori Output
-        $outputFileName    = "SURAT_PKL_{$surat->nim}.docx";
+        $outputFileName    = "SURAT_PKL_{$surat->nim}_{$surat->id_surat_pkl}.docx";
         $outputFileRelatif = "surat_pkl/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 

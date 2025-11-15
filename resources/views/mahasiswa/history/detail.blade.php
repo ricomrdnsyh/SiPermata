@@ -83,6 +83,10 @@
                                                 @include('mahasiswa.history.partials.surat_observasi', [
                                                     'surat' => $surat,
                                                 ])
+                                            @elseif($pengajuan->tabel === 'surat_lulus')
+                                                @include('mahasiswa.history.partials.surat_lulus', [
+                                                    'surat' => $surat,
+                                                ])
                                             @else
                                                 <p class="text-muted">Detail untuk jenis surat ini belum tersedia.</p>
                                             @endif

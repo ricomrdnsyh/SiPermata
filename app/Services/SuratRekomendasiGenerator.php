@@ -49,7 +49,7 @@ class SuratRekomendasiGenerator
         $processor->setValue('TAHUN_KEPERLUAN', $tahunKeperluan ?? '-');
 
         // Direktori Output
-        $outputFileName    = "SURAT_REKOMENDASI_{$surat->nim}.docx";
+        $outputFileName    = "SURAT_REKOMENDASI_{$surat->nim}_{$surat->id_surat_rekomendasi}.docx";
         $outputFileRelatif = "surat_rekomendasi/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
 

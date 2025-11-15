@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SuratPKL;
 use App\Models\TtdSurat;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
@@ -226,6 +227,50 @@ class VerifikasiController extends Controller
             ->first();
 
         return view('verifikasi.surat_observasi', [
+            'surat' => $surat,
+            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
+            'ttd_dekan' => $ttdDekan,
+        ]);
+    }
+
+    public function verifySuratLulus(string $id)
+    {
+        $surat = SuratLulus::where('id_surat_lulus', $id)
+            ->orWhere('no_surat', $id)
+            ->with(['mahasiswa', 'akademik'])
+            ->first();
+
+        $approvedStatuses = ['diterima', 'selesai'];
+
+        if (!$surat) {
+            // Surat tidak ditemukan sama sekali
+            return view('verifikasi.gagal', [
+                'surat' => null,
+                'status_verifikasi' => 'Surat tidak ditemukan.',
+            ]);
+        }
+
+        $isApproved = in_array($surat->status, $approvedStatuses) ||
+            in_array($surat->status_verifikasi, $approvedStatuses) ||
+            ($surat->is_diterima ?? false) === true ||
+            ($surat->is_approved ?? false) === true;
+
+        if (!$isApproved) {
+            return view('verifikasi.gagal', [
+                'surat' => $surat,
+                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
+            ]);
+        }
+
+        $fakultasId = $surat->mahasiswa->fakultas_id;
+        $templateId = $surat->template_id;
+
+        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
+            ->where('template_id', $templateId)
+            ->where('status', 'aktif')
+            ->first();
+
+        return view('verifikasi.surat_lulus', [
             'surat' => $surat,
             'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
             'ttd_dekan' => $ttdDekan,

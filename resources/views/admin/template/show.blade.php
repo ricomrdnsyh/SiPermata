@@ -62,8 +62,8 @@
                                         </div>
                                         <div class="fv-row mb-7">
                                             <label class="fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <input type="text" name="prodi_id" class="form-control mb-3 mb-lg-0" disabled
-                                                value="{{ $data->prodi ? $data->prodi->nama_prodi : '-' }}" />
+                                            <input type="text" name="tgl_sk" class="form-control mb-3 mb-lg-0" disabled
+                                                value="{{ $data->tgl_sk ? $data->tgl_sk->format('Y-m-d') : '' }}" />
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
