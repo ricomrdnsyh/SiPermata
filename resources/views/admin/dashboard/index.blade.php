@@ -42,8 +42,10 @@
                     </div>
 
                     <div class="row g-5 g-xl-8 mb-5">
+
                         <div class="col-xl-2 col-md-4">
-                            <div class="card bg-dark text-white card-xl-stretch h-md-100">
+                            <div class="card text-white card-xl-stretch h-md-100"
+                                style="background: linear-gradient(to right, #434343 0%, #000000 100%);">
                                 <div class="card-body p-5">
                                     <i class="fas fa-inbox fs-1 text-white opacity-75 mb-3"></i>
                                     <div class="text-white fw-bolder fs-3 mb-1 mt-5">
@@ -55,7 +57,8 @@
                         </div>
 
                         <div class="col-xl-2 col-md-4">
-                            <div class="card bg-warning card-xl-stretch h-md-100">
+                            <div class="card card-xl-stretch h-md-100"
+                                style="background: linear-gradient(to right, #f6d365 0%, #fda085 100%);">
                                 <div class="card-body p-5">
                                     <i class="fas fa-file-export fs-1 text-dark opacity-75 mb-3"></i>
                                     <div class="text-dark fw-bolder fs-3 mb-1 mt-5">
@@ -67,7 +70,8 @@
                         </div>
 
                         <div class="col-xl-2 col-md-4">
-                            <div class="card bg-info text-white card-xl-stretch h-md-100">
+                            <div class="card text-white card-xl-stretch h-md-100"
+                                style="background: linear-gradient(to right, #4c4a6d 0%, #9370db 100%);">
                                 <div class="card-body p-5">
                                     <i class="fas fa-user-clock fs-1 text-white opacity-75 mb-3"></i>
                                     <div class="text-white fw-bolder fs-3 mb-1 mt-5">
@@ -79,7 +83,8 @@
                         </div>
 
                         <div class="col-xl-2 col-md-4">
-                            <div class="card bg-success text-white card-xl-stretch h-md-100">
+                            <div class="card text-white card-xl-stretch h-md-100"
+                                style="background: linear-gradient(to right, #1ddf76 0%, #00bc8c 100%);">
                                 <div class="card-body p-5">
                                     <i class="fas fa-clipboard-check fs-1 text-white opacity-75 mb-3"></i>
                                     <div class="text-white fw-bolder fs-3 mb-1 mt-5">
@@ -91,7 +96,8 @@
                         </div>
 
                         <div class="col-xl-2 col-md-4">
-                            <div class="card bg-primary text-white card-xl-stretch h-md-100">
+                            <div class="card text-white card-xl-stretch h-md-100"
+                                style="background: linear-gradient(to right, #4e73df 0%, #2e59d9 100%);">
                                 <div class="card-body p-5">
                                     <i class="fas fa-download fs-1 text-white opacity-75 mb-3"></i>
                                     <div class="text-white fw-bolder fs-3 mb-1 mt-5">
@@ -103,7 +109,8 @@
                         </div>
 
                         <div class="col-xl-2 col-md-4">
-                            <div class="card bg-danger text-white card-xl-stretch h-md-100">
+                            <div class="card text-white card-xl-stretch h-md-100"
+                                style="background: linear-gradient(to right, #e74a3b 0%, #cc0000 100%);">
                                 <div class="card-body p-5">
                                     <i class="fas fa-times-circle fs-1 text-white opacity-75 mb-3"></i>
                                     <div class="text-white fw-bolder fs-3 mb-1 mt-5">

@@ -6,6 +6,7 @@ use App\Models\Prodi;
 use App\Models\Fakultas;
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
@@ -27,6 +28,7 @@ class HistoryPengajuanController extends Controller
         'surat_observasi' => 'Surat Permohonan Observasi',
         'surat_rekomendasi' => 'Surat Rekomendasi',
         'surat_pkl' => 'Surat Permohonan PKL',
+        'surat_keterangan_lulus' => 'Surat Keterangan Lulus',
     ];
     /**
      * Display a listing of the resource.
@@ -103,6 +105,9 @@ class HistoryPengajuanController extends Controller
                 }
                 if (str_contains('observasi', $keyword)) {
                     $query->orWhere('tabel', 'surat_observasi');
+                }
+                if (str_contains('lulus', $keyword)) {
+                    $query->orWhere('tabel', 'surat_keterangan_lulus');
                 }
             })
             ->addColumn('nama_mahasiswa', function ($row) {
@@ -205,11 +210,12 @@ class HistoryPengajuanController extends Controller
     }
 
     protected $suratModels = [
-        'surat_aktif'           => SuratAktif::class,
-        'surat_izin_penelitian' => SuratPenelitian::class,
-        'surat_rekomendasi'     => SuratRekomendasi::class,
-        'surat_pkl'             => SuratPKL::class,
-        'surat_observasi'       => SuratObservasi::class,
+        'surat_aktif'            => SuratAktif::class,
+        'surat_izin_penelitian'  => SuratPenelitian::class,
+        'surat_rekomendasi'      => SuratRekomendasi::class,
+        'surat_pkl'              => SuratPKL::class,
+        'surat_observasi'        => SuratObservasi::class,
+        'surat_keterangan_lulus' => SuratLulus::class,
         // Tambahkan jenis surat lain di sini
     ];
 
@@ -226,6 +232,8 @@ class HistoryPengajuanController extends Controller
                 return SuratPKL::class;
             case 'surat_observasi':
                 return SuratObservasi::class;
+            case 'surat_keterangan_lulus':
+                return SuratLulus::class;
             default:
                 return null;
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
 use App\Models\SuratObservasi;
@@ -21,6 +22,7 @@ class DashboardController extends Controller
         'Surat Permohonan Observasi'    => SuratObservasi::class,
         'Surat Rekomendasi'             => SuratRekomendasi::class,
         'Surat Permohonan PKL'          => SuratPKL::class,
+        'Surat Keterangan Lulus'        => SuratLulus::class,
     ];
 
     private $statusMapping = [
