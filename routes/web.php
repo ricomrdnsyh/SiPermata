@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\BAK\BAKSuratPKLController;
 use App\Http\Controllers\BAK\BAKTtdSuratController;
 use App\Http\Controllers\Admin\SuratAktifController;
+use App\Http\Controllers\Admin\SuratLulusController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratLulusController;
 use App\Http\Controllers\Admin\SuratObservasiController;
@@ -107,6 +108,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/surat-observasi/data', [SuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
         Route::resource('surat-observasi', SuratObservasiController::class)->except(['destroy']);
+
+        Route::get('/surat-keterangan-lulus/data', [SuratLulusController::class, 'getSuratLulus'])->name('surat-keterangan-lulus.data');
+        Route::resource('surat-keterangan-lulus', SuratLulusController::class)->except(['destroy']);
 
         Route::get('/history/data', [HistoryPengajuanController::class, 'getHistory'])->name('history.data');
         Route::resource('history-pengajuan', HistoryPengajuanController::class)->only(['index', 'show', 'destroy']);

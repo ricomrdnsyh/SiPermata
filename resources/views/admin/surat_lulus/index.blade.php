@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Surat Rekomendasi')
+@section('title', 'Surat Keterangan Lulus')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
@@ -39,7 +39,7 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Surat Rekomendasi</span>
+                                    <span class="card-label fw-bolder fs-3 mb-1">List Surat Keterangan Lulus</span>
                                 </h3>
                             </div>
                             <!--end::Search-->
@@ -50,8 +50,8 @@
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
-                                <a href="{{ route('admin.surat-rekomendasi.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i>Add Pengajuan</a>
+                                <a href="{{ route('admin.surat-keterangan-lulus.create') }}"
+                                    class="btn btn-sm btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -92,7 +92,7 @@
                     <!--begin::Card body-->
                     <div class="card-body pt-0">
                         <!--begin::Table-->
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-rekomendasi-table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-keterangan-lulus-table">
                             <!--begin::Table head-->
                             <thead class="">
                                 <!--begin::Table row-->
@@ -130,12 +130,12 @@
 
     <script>
         $(document).ready(function() {
-            let table = $('#surat-rekomendasi-table').DataTable({
+            let table = $('#surat-keterangan-lulus-table').DataTable({
                 processing: false,
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('admin.surat-rekomendasi.data') }}',
+                    url: '{{ route('admin.surat-keterangan-lulus.data') }}',
                     data: function(d) {
                         d.prodi_filter = $('#filter-prodi').val();
                         d.status_filter = $('#filter-status').val();
@@ -176,12 +176,12 @@
 
                 },
                 drawCallback: function() {
-                    $('#surat-rekomendasi-table [data-bs-toggle="tooltip"]').tooltip();
+                    $('#surat-keterangan-lulus-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
 
             table.on('draw', function() {
-                $('#surat-rekomendasi-table [data-bs-toggle="tooltip"]').tooltip();
+                $('#surat-keterangan-lulus-table [data-bs-toggle="tooltip"]').tooltip();
             });
 
             $('[data-filter]').on('change', function() {

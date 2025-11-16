@@ -11,7 +11,6 @@ class SuratLulus extends Model
     protected $primaryKey = 'id_surat_lulus';
 
     protected $casts = [
-        'tgl_sk' => 'datetime',
         'tgl_lahir' => 'datetime',
     ];
 
@@ -23,7 +22,6 @@ class SuratLulus extends Model
         'tempat_lahir',
         'tgl_lahir',
         'judul_penelitian',
-        'tgl_sk',
         'status',
         'catatan',
         'file_generated'
