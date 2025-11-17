@@ -29,8 +29,10 @@ class SuratAktifController extends Controller
         }
 
         $listProdi = Prodi::all();
+        $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
 
-        return view('admin.surat_aktif.index', compact('listProdi'));
+        return view('admin.surat_aktif.index', compact('listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getSuratAktif(Request $request)
@@ -52,6 +54,11 @@ class SuratAktifController extends Controller
 
         if ($request->filled('status_filter')) {
             $query->where('status', $request->input('status_filter'));
+        }
+
+        if ($request->filled('tahun_akademik_filter')) {
+            $akademikId = $request->input('tahun_akademik_filter');
+            $query->where('akademik_id', $akademikId);
         }
 
         return DataTables::of($query)

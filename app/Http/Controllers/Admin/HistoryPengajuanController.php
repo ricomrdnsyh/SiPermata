@@ -8,6 +8,7 @@ use App\Models\SuratPKL;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
 use Illuminate\Http\Request;
+use App\Models\TahunAkademik;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
@@ -42,11 +43,12 @@ class HistoryPengajuanController extends Controller
         }
 
         $listProdi = Prodi::all();
-
         $listNamaSurat = $this->listSurat;
+        $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
-        // Kirim listFakultas ke view
-        return view('admin.history.index', compact('listProdi', 'listNamaSurat'));
+        $currentTahunAkademik = $listTahunAkademik->first() ? $listTahunAkademik->first()->tahun_akademik : null;
+
+        return view('admin.history.index', compact('listProdi', 'listNamaSurat', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getHistory(Request $request)
@@ -58,6 +60,60 @@ class HistoryPengajuanController extends Controller
         }
 
         $query = HistoryPengajuan::with(['mahasiswa.prodi']);
+
+        $tahunAkademikFilter = $request->input('tahun_akademik_filter');
+        $tabelNames = array_keys($this->listSurat); // nama tabel surat
+
+        if (!$request->has('tahun_akademik_filter')) {
+            $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
+            if ($currentTahunAkademik) {
+                $tahunAkademikFilter = $currentTahunAkademik->id_akademik;
+            }
+        }
+
+        if (!empty($tahunAkademikFilter)) {
+            $unionQueries = [];
+            $tahunAkademikColumnName = 'akademik_id';
+
+            foreach ($tabelNames as $tabel) {
+
+                $pkColumn = match ($tabel) {
+                    'surat_aktif' => 'id_surat_aktif',
+                    'surat_izin_penelitian' => 'id_surat_izin_penelitian',
+                    'surat_observasi' => 'id_surat_observasi',
+                    'surat_rekomendasi' => 'id_surat_rekomendasi',
+                    'surat_pkl' => 'id_surat_pkl',
+                    'surat_keterangan_lulus' => 'id_surat_lulus',
+                    default => 'id',
+                };
+
+                $queryPart = DB::table($tabel)
+                    ->select(DB::raw("{$pkColumn} AS id_surat_terkait"))
+                    ->where($tahunAkademikColumnName, $tahunAkademikFilter);
+
+                $unionQueries[] = $queryPart;
+            }
+
+            if (!empty($unionQueries)) {
+                $baseQuery = array_shift($unionQueries);
+
+                foreach ($unionQueries as $nextQuery) {
+                    $baseQuery->unionAll($nextQuery);
+                }
+
+                $idSuratTerkait = $baseQuery->pluck('id_surat_terkait')->toArray();
+
+                if (!empty($idSuratTerkait)) {
+                    // Filter HistoryPengajuan berdasarkan ID surat yang match
+                    $query->whereIn('id_tabel_surat', $idSuratTerkait);
+
+                    // Filter mengambil history dari tabel yang di loop
+                    $query->whereIn('tabel', $tabelNames);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            }
+        }
 
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');
@@ -91,24 +147,26 @@ class HistoryPengajuanController extends Controller
             ->filterColumn('nama_surat', function ($query, $keyword) {
                 $keyword = strtolower($keyword);
 
-                if (str_contains('aktif', $keyword)) {
-                    $query->orWhere('tabel', 'surat_aktif');
-                }
-                if (str_contains('penelitian', $keyword) || str_contains('izin', $keyword)) {
-                    $query->orWhere('tabel', 'surat_izin_penelitian');
-                }
-                if (str_contains('rekomendasi', $keyword)) {
-                    $query->orWhere('tabel', 'surat_rekomendasi');
-                }
-                if (str_contains('pkl', $keyword)) {
-                    $query->orWhere('tabel', 'surat_pkl');
-                }
-                if (str_contains('observasi', $keyword)) {
-                    $query->orWhere('tabel', 'surat_observasi');
-                }
-                if (str_contains('lulus', $keyword)) {
-                    $query->orWhere('tabel', 'surat_keterangan_lulus');
-                }
+                $query->where(function ($q) use ($keyword) {
+                    if (str_contains('aktif', $keyword)) {
+                        $q->orWhere('tabel', 'surat_aktif');
+                    }
+                    if (str_contains('penelitian', $keyword) || str_contains('izin', $keyword)) {
+                        $q->orWhere('tabel', 'surat_izin_penelitian');
+                    }
+                    if (str_contains('rekomendasi', $keyword)) {
+                        $q->orWhere('tabel', 'surat_rekomendasi');
+                    }
+                    if (str_contains('pkl', $keyword)) {
+                        $q->orWhere('tabel', 'surat_pkl');
+                    }
+                    if (str_contains('observasi', $keyword)) {
+                        $q->orWhere('tabel', 'surat_observasi');
+                    }
+                    if (str_contains('lulus', $keyword)) {
+                        $q->orWhere('tabel', 'surat_keterangan_lulus');
+                    }
+                });
             })
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;
@@ -137,10 +195,10 @@ class HistoryPengajuanController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('admin.history-pengajuan.show', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+            data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_history . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
+            data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
                 return '<div class="text-center">' . $showBtn . ' ' . $deleteBtn . '</div>';
             })
