@@ -34,8 +34,10 @@ class BAKSuratRekomendasiController extends Controller
         if ($fakultasIdUser) {
             $listProdi = Prodi::where('fakultas_id', $fakultasIdUser)->get();
         }
+        $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
 
-        return view('bak.surat_rekomendasi.index', compact('listProdi'));
+        return view('bak.surat_rekomendasi.index', compact('listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getSuratRekomendasi(Request $request)
@@ -64,6 +66,11 @@ class BAKSuratRekomendasiController extends Controller
 
         if ($request->filled('status_filter')) {
             $query->where('status', $request->input('status_filter'));
+        }
+
+        if ($request->filled('tahun_akademik_filter')) {
+            $akademikId = $request->input('tahun_akademik_filter');
+            $query->where('akademik_id', $akademikId);
         }
 
         return DataTables::of($query)
