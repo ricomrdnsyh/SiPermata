@@ -65,10 +65,10 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Tanggal Pengajuan</th>
                                     <th class="min-w-125px">Status Pengajuan</th>
                                     <th class="min-w-125px">Catatan</th>
-                                    <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -102,6 +102,11 @@
                 responsive: true,
                 ajax: '{{ route('mahasiswa.surat-observasi.data') }}',
                 columns: [{
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }, {
                         data: 'tanggal_pengajuan',
                         name: 'created_at'
                     },
@@ -112,12 +117,6 @@
                     {
                         data: 'catatan',
                         name: 'catatan'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
                     }
                 ],
 
