@@ -10,6 +10,7 @@ use App\Mail\SuratSelesai;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
 use Illuminate\Http\Request;
+use App\Models\TahunAkademik;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
@@ -52,8 +53,10 @@ class DekanHistoryPengajuanController extends Controller
         }
 
         $listNamaSurat = $this->listSurat;
+        $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $currentTahunAkademik = $listTahunAkademik->first() ? $listTahunAkademik->first()->tahun_akademik : null;
 
-        return view('dekan.history.index', compact('listProdi', 'listNamaSurat'));
+        return view('dekan.history.index', compact('listProdi', 'listNamaSurat', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function historyData(Request $request)
@@ -76,6 +79,60 @@ class DekanHistoryPengajuanController extends Controller
         $query = HistoryPengajuan::with([])
             ->where('fakultas_id', $fakultasId)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
+
+        $tahunAkademikFilter = $request->input('tahun_akademik_filter');
+        $tabelNames = array_keys($this->listSurat); // nama tabel surat
+
+        if (!$request->has('tahun_akademik_filter')) {
+            $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
+            if ($currentTahunAkademik) {
+                $tahunAkademikFilter = $currentTahunAkademik->id_akademik;
+            }
+        }
+
+        if (!empty($tahunAkademikFilter)) {
+            $unionQueries = [];
+            $tahunAkademikColumnName = 'akademik_id';
+
+            foreach ($tabelNames as $tabel) {
+
+                $pkColumn = match ($tabel) {
+                    'surat_aktif' => 'id_surat_aktif',
+                    'surat_izin_penelitian' => 'id_surat_izin_penelitian',
+                    'surat_observasi' => 'id_surat_observasi',
+                    'surat_rekomendasi' => 'id_surat_rekomendasi',
+                    'surat_pkl' => 'id_surat_pkl',
+                    'surat_keterangan_lulus' => 'id_surat_lulus',
+                    default => 'id',
+                };
+
+                $queryPart = DB::table($tabel)
+                    ->select(DB::raw("{$pkColumn} AS id_surat_terkait"))
+                    ->where($tahunAkademikColumnName, $tahunAkademikFilter);
+
+                $unionQueries[] = $queryPart;
+            }
+
+            if (!empty($unionQueries)) {
+                $baseQuery = array_shift($unionQueries);
+
+                foreach ($unionQueries as $nextQuery) {
+                    $baseQuery->unionAll($nextQuery);
+                }
+
+                $idSuratTerkait = $baseQuery->pluck('id_surat_terkait')->toArray();
+
+                if (!empty($idSuratTerkait)) {
+                    // Filter HistoryPengajuan berdasarkan ID surat yang match
+                    $query->whereIn('id_tabel_surat', $idSuratTerkait);
+
+                    // Filter mengambil history dari tabel yang di loop
+                    $query->whereIn('tabel', $tabelNames);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            }
+        }
 
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');
