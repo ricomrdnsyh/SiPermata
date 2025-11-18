@@ -116,6 +116,16 @@
                                             <button type="button" class="btn btn-success ms-3" id="btn-approve-main"><i
                                                     class="fas fa-check-circle"></i> Terima Pengajuan
                                             </button>
+                                        @elseif ($pengajuan->status === 'selesai')
+                                            @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
+                                                <a href="{{ route('bak.surat.view', [
+                                                    'tabel' => $pengajuan->tabel,
+                                                    'id' => $pengajuan->id_tabel_surat,
+                                                ]) }}"
+                                                    class="btn btn-light-primary" target="_blank">
+                                                    <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                </a>
+                                            @endif
                                         @else
                                             <button class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i>
                                                 Pengajuan

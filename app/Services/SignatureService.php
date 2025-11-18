@@ -15,25 +15,15 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SignatureService
 {
-    /**
-     * Menyisipkan TTD QR dan data dekan ke dalam file Word.
-     * @param Model $suratModel Model surat dinamis (SuratAktif, SuratPenelitian, dll.).
-     * @param string $jabatan Jabatan penanda tangan.
-     * @param string $nama Nama penanda tangan.
-     * @param string|null $nidn NIDN penanda tangan.
-     * @return string Path relatif file Word yang sudah ditandatangani.
-     */
     public function insertSignatureWithQR(Model $suratModel, string $jabatan, string $nama, $nidn): string
     {
-        $filePath = $suratModel->file_generated;
+        $filePath          = $suratModel->file_generated;               // contoh: 'surat/aktif/surat_1.docx'
         $outputPathAbsolut = storage_path("app/{$filePath}");
 
         if (!file_exists($outputPathAbsolut)) {
             throw new \Exception("File surat tidak ditemukan: " . $outputPathAbsolut);
         }
 
-        // 1. Definisikan Data QR Code secara dinamis
-        // Tentukan route verifikasi berdasarkan jenis model yang masuk
         if ($suratModel instanceof SuratAktif) {
             $qrData = route('verifikasi.surat-aktif', ['id' => $suratModel->id_surat_aktif]);
         } elseif ($suratModel instanceof SuratPenelitian) {
@@ -47,11 +37,9 @@ class SignatureService
         } elseif ($suratModel instanceof SuratLulus) {
             $qrData = route('verifikasi.surat-keterangan-lulus', ['id' => $suratModel->id_surat_lulus]);
         } else {
-            // Jika Anda memiliki banyak jenis surat, pertimbangkan field 'tabel' di History
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
         }
 
-        // ... (Logika Generate QR Code dan Penyimpanan Sementara - IDENTIK) ...
         $qrCodeBinary = QrCode::size(100)
             ->format('png')
             ->errorCorrection('H')
@@ -59,31 +47,154 @@ class SignatureService
             ->generate($qrData);
 
         $qrTempFileName = 'temp_qr_' . time() . '.png';
-        $qrTempPath = storage_path("app/temp/{$qrTempFileName}");
+        $qrTempPath     = storage_path("app/temp/{$qrTempFileName}");
         Storage::put("temp/{$qrTempFileName}", $qrCodeBinary);
 
         try {
-            // Load file Word yang sudah ada
             $processor = new TemplateProcessor($outputPathAbsolut);
 
-            // 3. Sisipkan QR Code dan Data Dekan (IDENTIK)
             $processor->setImageValue('TTD_QR', [
-                'path' => $qrTempPath,
-                'width' => 100,
+                'path'   => $qrTempPath,
+                'width'  => 100,
                 'height' => 100,
-                'ratio' => true
+                'ratio'  => true,
             ]);
 
             $processor->setValue('JABATAN', $jabatan);
             $processor->setValue('NAMA_DEKAN', $nama);
             $processor->setValue('NIDN', $nidn);
 
-            // 4. Simpan (Overwrite) file Word yang sudah dimodifikasi
             $processor->saveAs($outputPathAbsolut);
         } finally {
             Storage::delete("temp/{$qrTempFileName}");
         }
 
         return $filePath;
+    }
+
+    /**
+     * Input:  path relatif DOC/DOCX (mis. 'surat/aktif/surat_1.docx')
+     * Output: path relatif PDF     (mis. 'surat/aktif/surat_1.pdf')
+     */
+    public function convertDocxToPdf(string $wordFilePath): string
+    {
+        // 1. path relatif -> absolut
+        // contoh: $wordFilePath = 'surat_penelitian/SURAT_IZIN_PENELITIAN_4343434343.docx'
+        $docxPath = storage_path("app/{$wordFilePath}");
+
+        if (!file_exists($docxPath)) {
+            throw new \Exception("File Word tidak ditemukan: " . $docxPath);
+        }
+
+        $outputDir = dirname($docxPath);
+        $pdfPath   = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $docxPath);
+
+        $envPath   = env('LIBREOFFICE_PATH');
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        $command   = null;
+
+        // 2. Bangun command LibreOffice
+        if ($envPath && file_exists($envPath)) {
+            if ($isWindows) {
+                $command = sprintf(
+                    '"%s" --headless --convert-to pdf --outdir "%s" "%s" 2>&1',
+                    $envPath,
+                    $outputDir,
+                    $docxPath
+                );
+            } else {
+                $command = sprintf(
+                    '%s --headless --convert-to pdf --outdir %s %s 2>&1',
+                    escapeshellcmd($envPath),
+                    escapeshellarg($outputDir),
+                    escapeshellarg($docxPath)
+                );
+            }
+        } else {
+            if ($isWindows) {
+                $librePaths = [
+                    'C:\\Program Files\\LibreOffice\\program\\soffice.exe',
+                    'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',
+                ];
+
+                if (getenv('PROGRAMFILES')) {
+                    $librePaths[] = getenv('PROGRAMFILES') . '\\LibreOffice\\program\\soffice.exe';
+                }
+                if (getenv('PROGRAMFILES(X86)')) {
+                    $librePaths[] = getenv('PROGRAMFILES(X86)') . '\\LibreOffice\\program\\soffice.exe';
+                }
+
+                $soffice = null;
+                foreach ($librePaths as $path) {
+                    if (file_exists($path)) {
+                        $soffice = $path;
+                        break;
+                    }
+                }
+
+                if (!$soffice) {
+                    throw new \Exception('LibreOffice tidak ditemukan di Windows.');
+                }
+
+                $command = sprintf(
+                    '"%s" --headless --convert-to pdf --outdir "%s" "%s" 2>&1',
+                    $soffice,
+                    $outputDir,
+                    $docxPath
+                );
+            } else {
+                $soffice = trim(shell_exec('which libreoffice') ?? '');
+                if ($soffice === '') {
+                    $soffice = trim(shell_exec('which soffice') ?? '');
+                }
+
+                if ($soffice === '') {
+                    throw new \Exception('LibreOffice/soffice tidak ditemukan di PATH.');
+                }
+
+                $command = sprintf(
+                    '%s --headless --convert-to pdf --outdir %s %s 2>&1',
+                    escapeshellcmd($soffice),
+                    escapeshellarg($outputDir),
+                    escapeshellarg($docxPath)
+                );
+            }
+        }
+
+        if (!$command) {
+            throw new \Exception('Perintah LibreOffice tidak dapat dibentuk.');
+        }
+
+        $output     = [];
+        $returnCode = 0;
+        exec($command, $output, $returnCode);
+
+        // 3. Tunggu PDF jadi
+        $maxWait       = $isWindows ? 10 : 5;
+        $waited        = 0.0;
+        $checkInterval = 0.5;
+
+        while (!file_exists($pdfPath) && $waited < $maxWait) {
+            usleep((int)($checkInterval * 1_000_000));
+            $waited += $checkInterval;
+        }
+
+        if (!file_exists($pdfPath) || filesize($pdfPath) <= 1000) {
+            throw new \Exception(
+                "Konversi DOCX ke PDF gagal. Output: \n" . implode("\n", $output)
+            );
+        }
+
+        // 4. Hapus file Word setelah PDF jadi
+        if (file_exists($docxPath)) {
+            @unlink($docxPath);
+        }
+
+        // 5. Bangun path relatif PDF dari path relatif DOCX
+        //    (INI KUNCI UTAMANYA)
+        $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
+        $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
+
+        return $relativePdfPath; // contoh: 'surat_penelitian/SURAT_IZIN_PENELITIAN_4343434343.pdf'
     }
 }

@@ -332,7 +332,7 @@ class DekanHistoryPengajuanController extends Controller
         // Data yang akan digunakan
         $namaDekan    = $ttdDekan->nama_ttd;
         $nidn         = $ttdDekan->nidn;
-        $jabatanDekan = $user->penduduk?->jabatan?->nama_jabatan ?? 'Dekan';
+        $jabatanDekan = $user->penduduk?->jabatan?->status ?? 'Dekan';
         $idJabatan    = $user->penduduk?->jabatan?->id_jabatan ?? null;
 
 
@@ -341,17 +341,19 @@ class DekanHistoryPengajuanController extends Controller
             DB::beginTransaction();
 
             // Panggil SignatureService yang universal
-            $generatedFilePath = $signatureService->insertSignatureWithQR(
+            $docxFilePath = $signatureService->insertSignatureWithQR(
                 $detailSurat,
                 $jabatanDekan,
                 $namaDekan,
                 $nidn
             );
 
+            $pdfFilePath = $signatureService->convertDocxToPdf($docxFilePath);
+
             $detailSurat->update([
                 'status'  => 'diterima',
                 'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
-                'file_generated' => $generatedFilePath,
+                'file_generated' => $pdfFilePath,
             ]);
 
             $pengajuan->update([
@@ -479,15 +481,12 @@ class DekanHistoryPengajuanController extends Controller
             abort(403, 'Anda tidak berhak melihat surat ini.');
         }
 
-        $filePath = $surat->file_generated;
-        $disk = 'local';
-
-        // Cek keberadaan file
-        if (!Storage::disk($disk)->exists($filePath)) {
+        $filePath = $surat->file_generated;      // sekarang 'surat/aktif/surat_1.pdf'
+        if (!Storage::disk('local')->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }
 
-        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
 
         return Storage::download($filePath, $fileName);
     }
@@ -513,13 +512,10 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Surat atau data mahasiswa tidak valid.'], 404);
         }
 
-        $filePath = $surat->file_generated;
-        $disk = 'local';
-
-        if (!Storage::disk($disk)->exists($filePath)) {
-            return response()->json(['success' => false, 'message' => 'File surat tidak ditemukan di server.'], 404);
+        $filePath = $surat->file_generated;      // sekarang 'surat/aktif/surat_1.pdf'
+        if (!Storage::disk('local')->exists($filePath)) {
+            abort(404, 'File di server tidak ditemukan.');
         }
-
 
         $pengajuanHistory = HistoryPengajuan::where('tabel', $tabel)
             ->where('id_tabel_surat', $id)
@@ -527,7 +523,7 @@ class DekanHistoryPengajuanController extends Controller
 
         $namaSurat = $pengajuanHistory->nama_surat;
 
-        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . $surat->nim . '.docx';
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . $surat->nim . '.pdf';
         try {
             DB::beginTransaction();
 

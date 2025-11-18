@@ -16,7 +16,9 @@ use App\Models\SuratRekomendasi;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Symfony\Component\HttpFoundation\Response;
 
 class BAKHistoryPengajuanController extends Controller
 {
@@ -202,6 +204,7 @@ class BAKHistoryPengajuanController extends Controller
     public function show($id)
     {
         $user = Auth::user();
+
         if ($user->role !== 'BAK') {
             abort(403);
         }
@@ -212,12 +215,24 @@ class BAKHistoryPengajuanController extends Controller
             abort(403, 'Surat ini bukan milik fakultas Anda.');
         }
 
-        $surat = $pengajuan->surat;
-        if (!$surat) {
-            abort(404, 'Data surat tidak ditemukan.');
+        $surat = null;
+        $fileGeneratedPath = null;
+
+        $modelClass = $this->getModelClass($pengajuan->tabel);
+
+        if ($modelClass) {
+            $surat = $modelClass::find($pengajuan->id_tabel_surat);
+
+            if ($surat) {
+                $fileGeneratedPath = $surat->file_generated ?? null;
+            }
         }
 
-        return view('bak.history.detail', compact('pengajuan', 'surat'));
+        if (!$surat) {
+            abort(404, 'Data surat tidak ditemukan di tabel sumber.');
+        }
+
+        return view('bak.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
     }
 
     protected $suratModels = [
@@ -336,5 +351,57 @@ class BAKHistoryPengajuanController extends Controller
         $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
 
         return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil ditolak!"]);
+    }
+
+    private function getModelClass($tableName)
+    {
+        switch ($tableName) {
+            case 'surat_aktif':
+                return SuratAktif::class;
+            case 'surat_izin_penelitian':
+                return SuratPenelitian::class;
+            case 'surat_rekomendasi':
+                return SuratRekomendasi::class;
+            case 'surat_pkl':
+                return SuratPKL::class;
+            case 'surat_observasi':
+                return SuratObservasi::class;
+            case 'surat_keterangan_lulus':
+                return SuratLulus::class;
+            default:
+                return null;
+        }
+    }
+
+    public function viewGeneratedFile(string $tabel, int $id): Response
+    {
+        $user = Auth::user();
+        if ($user->role !== 'BAK') {
+            abort(403);
+        }
+
+        $modelClass = $this->getModelClass($tabel);
+
+        if (!$modelClass) {
+            abort(404, 'Jenis surat tidak valid.');
+        }
+
+        $surat = $modelClass::find($id);
+
+        if (!$surat || empty($surat->file_generated)) {
+            abort(404, 'File surat tidak ditemukan atau belum disetujui/digenerate.');
+        }
+
+        $filePath = $surat->file_generated;
+        $disk = 'local';
+
+        // Cek keberadaan file
+        if (!Storage::disk($disk)->exists($filePath)) {
+            abort(404, 'File di server tidak ditemukan.');
+        }
+
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
+
+        return Storage::download($filePath, $fileName);
     }
 }

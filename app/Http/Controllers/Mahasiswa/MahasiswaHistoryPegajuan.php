@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
+use App\Models\SuratLulus;
 use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
@@ -126,6 +127,8 @@ class MahasiswaHistoryPegajuan extends Controller
                 return SuratPKL::class;
             case 'surat_observasi':
                 return SuratObservasi::class;
+            case 'surat_keterangan_lulus':
+                return SuratLulus::class;
             default:
                 return null;
         }
@@ -158,7 +161,7 @@ class MahasiswaHistoryPegajuan extends Controller
             abort(404, 'File di server tidak ditemukan.');
         }
 
-        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.docx';
+        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
 
         return Storage::download($filePath, $fileName);
     }

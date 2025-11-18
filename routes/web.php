@@ -193,5 +193,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/history/{id}/detail', [BAKHistoryPengajuanController::class, 'show'])->name('history.detail');
         Route::post('/history/{id}/approve', [BAKHistoryPengajuanController::class, 'approve'])->name('history.approve');
         Route::post('/history/{id}/reject', [BAKHistoryPengajuanController::class, 'reject'])->name('history.reject');
+        Route::get('surat/view/{tabel}/{id}', [BAKHistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
     });
 });

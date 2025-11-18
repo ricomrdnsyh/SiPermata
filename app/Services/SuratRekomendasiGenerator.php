@@ -36,6 +36,7 @@ class SuratRekomendasiGenerator
         $tglSurat       = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $bulanSurat     = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
         $tahunKeperluan = $tahunKeperluanCarbon->locale('id')->isoFormat('YYYY');
+        $penyelenggaraUppercase = strtoupper($surat->penyelenggara ?? '-');
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
         $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
@@ -44,7 +45,7 @@ class SuratRekomendasiGenerator
         $processor->setValue('PRODI', $mahasiswa?->prodi?->nama_prodi ?? '-');
         $processor->setValue('NIM', $surat->nim);
         $processor->setValue('KEPERLUAN', $surat->keperluan ?? '-');
-        $processor->setValue('PENYELENGGARA', $surat->penyelenggara ?? '-');
+        $processor->setValue('PENYELENGGARA', $penyelenggaraUppercase ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
         $processor->setValue('TAHUN_KEPERLUAN', $tahunKeperluan ?? '-');
 

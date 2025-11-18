@@ -38,6 +38,7 @@ class SuratPenelitianGenerator
         $tglMulai   = $tglMulaiCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $tglSelesai = $tglSelesaiCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $bulanSurat = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
+        $judulPenelitianUppercase = strtoupper($surat->judul_penelitian ?? '-');
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
         $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
@@ -48,7 +49,7 @@ class SuratPenelitianGenerator
         $processor->setValue('NIM', $surat->nim);
         $processor->setValue('TGL_MULAI', $tglMulai ?? '-');
         $processor->setValue('TGL_SELESAI', $tglSelesai ?? '-');
-        $processor->setValue('JUDUL_PENELITIAN', $surat->judul_penelitian ?? '-');
+        $processor->setValue('JUDUL_PENELITIAN', $judulPenelitianUppercase ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
 
         // Direktori Output
