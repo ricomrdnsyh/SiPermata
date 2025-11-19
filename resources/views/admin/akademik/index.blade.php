@@ -65,9 +65,9 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Kode Akademik</th>
                                     <th class="min-w-125px">Tahun Akademik</th>
-                                    <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -99,20 +99,39 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
+                dom: '<"row align-items-center"<"col-md-6"l>>' +
+                    '<"row mb-4 mt-2"<"col-md-6 d-flex justify-content-start"B><"col-md-6 d-flex justify-content-end"f>>' +
+                    'rt' +
+                    '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
+                buttons: [{
+                        extend: 'excelHtml5',
+                        title: 'Data Tahun Akademik',
+                        className: 'btn btn-sm me-2 btn-success fw-bold'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Data Tahun Akademik',
+                        className: 'btn btn-sm me-2 btn-danger fw-bold'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        title: 'Data Tahun Akademik',
+                        className: 'btn btn-sm btn-success fw-bold'
+                    }
+                ],
                 ajax: '{{ route('admin.akademik.data') }}',
                 columns: [{
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }, {
                         data: 'kode_akademik',
                         name: 'kode_akademik'
                     },
                     {
                         data: 'tahun_akademik',
                         name: 'tahun_akademik'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
                     }
                 ],
 

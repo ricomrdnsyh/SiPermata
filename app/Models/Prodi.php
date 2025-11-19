@@ -32,7 +32,6 @@ class Prodi extends Model
         'fakultas_id',
         'nama_prodi',
         'singkatan',
-        'gelar',
         'status',
     ];
 

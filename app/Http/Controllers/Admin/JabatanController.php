@@ -24,7 +24,7 @@ class JabatanController extends Controller
 
     public function getJabatan()
     {
-        $data = Jabatan::select(['id_jabatan', 'penduduk_id', 'status', 'urutan', 'fakultas_id'])
+        $data = Jabatan::select(['id_jabatan', 'penduduk_id', 'status', 'fakultas_id'])
             ->with('penduduk', 'fakultas');
 
         return DataTables::of($data)
@@ -87,17 +87,6 @@ class JabatanController extends Controller
             'status.required'      => 'Status harus diisi.',
         ]);
 
-        $status = $request->status;
-        $urutan = 0;
-
-        if ($status === 'BAK') {
-            $urutan = 10;
-        } elseif ($status === 'DEKAN') {
-            $urutan = 20;
-        } else {
-            $urutan = $request->input('urutan', 0);
-        }
-
         $penduduk = Penduduk::where('id_penduduk', $request->penduduk_id)->first();
         if (!$penduduk || !$penduduk->fakultas_id) {
             throw ValidationException::withMessages([
@@ -107,7 +96,6 @@ class JabatanController extends Controller
         Jabatan::create([
             'penduduk_id' => $request->penduduk_id,
             'status'      => $request->status,
-            'urutan'      => $urutan,
             'fakultas_id' => $penduduk->fakultas_id,
         ]);
 
@@ -150,17 +138,6 @@ class JabatanController extends Controller
 
         $jabatan = Jabatan::findOrFail($id);
 
-        $status = $request->status;
-        $urutan = 0;
-
-        if ($status === 'BAK') {
-            $urutan = 10;
-        } elseif ($status === 'DEKAN') {
-            $urutan = 20;
-        } else {
-            $urutan = $request->input('urutan', $jabatan->urutan);
-        }
-
         // Ambil data penduduk untuk dapatkan fakultas_id
         $penduduk = Penduduk::where('id_penduduk', $request->penduduk_id)->first();
         if (!$penduduk || !$penduduk->fakultas_id) {
@@ -172,7 +149,6 @@ class JabatanController extends Controller
         $jabatan->update([
             'penduduk_id' => $request->penduduk_id,
             'status'      => $request->status,
-            'urutan'      => $request->urutan,
             'fakultas_id' => $penduduk->fakultas_id,
         ]);
 

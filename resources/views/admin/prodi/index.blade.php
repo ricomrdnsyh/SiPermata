@@ -65,12 +65,11 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Nama Fakultas</th>
                                     <th class="min-w-125px">Nama Prodi</th>
                                     <th class="min-w-125px">Singkatan Prodi</th>
-                                    <th class="min-w-125px">Gelar</th>
                                     <th class="min-w-125px">Status</th>
-                                    <th class="text-center">Actions</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -102,8 +101,33 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
+                dom: '<"row align-items-center"<"col-md-6"l>>' +
+                    '<"row mb-4 mt-2"<"col-md-6 d-flex justify-content-start"B><"col-md-6 d-flex justify-content-end"f>>' +
+                    'rt' +
+                    '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
+                buttons: [{
+                        extend: 'excelHtml5',
+                        title: 'Data Program Studi',
+                        className: 'btn btn-sm me-2 btn-success fw-bold'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Data Program Studi',
+                        className: 'btn btn-sm me-2 btn-danger fw-bold'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        title: 'Data Program Studi',
+                        className: 'btn btn-sm btn-success fw-bold'
+                    }
+                ],
                 ajax: '{{ route('admin.prodi.data') }}',
                 columns: [{
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }, {
                         data: 'nama_fakultas',
                         name: 'fakultas.nama_fakultas'
                     },
@@ -116,19 +140,9 @@
                         name: 'prodi.singkatan'
                     },
                     {
-                        data: 'gelar',
-                        name: 'prodi.gelar'
-                    },
-                    {
                         data: 'status',
                         name: 'prodi.status',
-                        orderable: false // Jika kolom status tidak perlu diurutkan
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
+                        orderable: false
                     }
                 ],
 

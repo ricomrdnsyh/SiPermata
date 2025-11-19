@@ -57,14 +57,6 @@
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Gelar</label>
-                                            <input type="text" name="gelar" class="form-control mb-3 mb-lg-0"
-                                                value="{{ $prodi->gelar }}" />
-                                            @error('gelar')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
                                         <div class="mb-7">
                                             <label class="required fw-semibold fs-6 mb-5">Status</label>
                                             <div class="d-flex fv-col">

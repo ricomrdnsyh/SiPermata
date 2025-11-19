@@ -36,11 +36,6 @@
                                                 disabled value="{{ $prodi->singkatan }}" />
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="fw-semibold fs-6 mb-2">Gelar</label>
-                                            <input type="text" name="gelar" class="form-control mb-3 mb-lg-0" disabled
-                                                value="{{ $prodi->gelar }}" />
-                                        </div>
-                                        <div class="fv-row mb-7">
                                             <label class="fw-semibold fs-6 mb-2">Status</label>
                                             <input type="text" name="status" class="form-control mb-3 mb-lg-0" disabled
                                                 value="{{ ucfirst(strtolower($prodi->status)) }}" />

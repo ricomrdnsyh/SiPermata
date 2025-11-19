@@ -27,7 +27,6 @@ class ProdiController extends Controller
             'prodi.fakultas_id',
             'prodi.nama_prodi',
             'prodi.singkatan',
-            'prodi.gelar',
             'prodi.status'
         ])
             ->with('fakultas');
@@ -81,14 +80,12 @@ class ProdiController extends Controller
                 'fakultas_id' => 'required|exists:fakultas,id_fakultas',
                 'nama_prodi'  => 'required',
                 'singkatan'   => 'required',
-                'gelar'       => 'required',
                 'status'      => 'required',
             ],
             [
                 'fakultas_id.required' => 'Fakultas harus diisi.',
                 'nama_prodi.required'  => 'Nama Prodi harus diisi.',
                 'singkatan.required'   => 'Singkatan harus diisi.',
-                'gelar.required'       => 'Gelar harus diisi.',
                 'status.required'      => 'Status harus diisi.',
             ]
         );
@@ -97,7 +94,6 @@ class ProdiController extends Controller
             'fakultas_id' => $request->fakultas_id,
             'nama_prodi'  => $request->nama_prodi,
             'singkatan'   => $request->singkatan,
-            'gelar'       => $request->gelar,
             'status'      => $request->status,
         ]);
 
@@ -135,14 +131,12 @@ class ProdiController extends Controller
                 'fakultas_id' => 'required|exists:fakultas,id_fakultas',
                 'nama_prodi'  => 'required',
                 'singkatan'   => 'required',
-                'gelar'       => 'required',
                 'status'      => 'required',
             ],
             [
                 'fakultas_id.required' => 'Fakultas harus diisi.',
                 'nama_prodi.required'  => 'Nama Prodi harus diisi.',
                 'singkatan.required'   => 'Singkatan harus diisi.',
-                'gelar.required'       => 'Gelar harus diisi.',
                 'status.required'      => 'Status harus diisi.',
             ]
         );
@@ -152,7 +146,6 @@ class ProdiController extends Controller
             'fakultas_id' => $request->fakultas_id,
             'nama_prodi'  => $request->nama_prodi,
             'singkatan'   => $request->singkatan,
-            'gelar'       => $request->gelar,
             'status'      => $request->status,
         ]);
 
