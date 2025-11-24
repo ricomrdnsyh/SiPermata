@@ -123,7 +123,7 @@ class SuratPenelitianController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mitra     = Mitra::all();
 
         return view('admin.surat_penelitian.create', compact('mahasiswa', 'akademik', 'mitra'));
@@ -246,7 +246,7 @@ class SuratPenelitianController extends Controller
             ->where('id_surat_izin_penelitian', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mitra     = Mitra::all();
         $mahasiswa = Mahasiswa::all();
 

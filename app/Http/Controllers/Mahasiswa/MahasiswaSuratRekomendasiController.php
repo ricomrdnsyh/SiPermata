@@ -80,7 +80,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             abort(403, 'Akses ditolak');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         return view('mahasiswa.surat_rekomendasi.create', compact('akademik'));
     }
 
@@ -195,7 +195,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             return redirect()->route('mahasiswa.surat-rekomendasi.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('mahasiswa.surat_rekomendasi.edit', compact('surat', 'akademik'));
     }

@@ -81,7 +81,7 @@ class MahasiswaSuratLulusController extends Controller
             abort(403, 'Akses ditolak');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('mahasiswa.surat_lulus.create', compact('akademik'));
     }
@@ -178,7 +178,7 @@ class MahasiswaSuratLulusController extends Controller
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('mahasiswa.surat_lulus.show', compact('surat', 'akademik'));
     }

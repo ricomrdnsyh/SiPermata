@@ -139,7 +139,7 @@ class BAKSuratLulusController extends Controller
             return redirect()->route('bak.dashboard')->with('failed', 'Anda belum terhubung ke fakultas manapun.');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
         return view('bak.surat_lulus.create', compact('akademik', 'mahasiswa'));
@@ -273,7 +273,7 @@ class BAKSuratLulusController extends Controller
             ->where('id_surat_lulus', $id)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
         return view('bak.surat_lulus.edit', compact('surat', 'akademik', 'mahasiswa'));

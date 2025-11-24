@@ -150,7 +150,7 @@ class BAKSuratAktifController extends Controller
 
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('bak.surat_aktif.create', compact('mahasiswa', 'akademik'));
     }
@@ -315,7 +315,7 @@ class BAKSuratAktifController extends Controller
             ->orderBy('nama', 'asc')
             ->get();
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('bak.surat_aktif.edit', compact('surat', 'mahasiswa', 'akademik'));
     }

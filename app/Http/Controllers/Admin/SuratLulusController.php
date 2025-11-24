@@ -122,7 +122,7 @@ class SuratLulusController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('admin.surat_lulus.create', compact('mahasiswa', 'akademik'));
     }
@@ -242,7 +242,7 @@ class SuratLulusController extends Controller
             ->where('id_surat_lulus', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mahasiswa = Mahasiswa::all();
 
         return view('admin.surat_lulus.edit', compact('surat', 'akademik', 'mahasiswa'));

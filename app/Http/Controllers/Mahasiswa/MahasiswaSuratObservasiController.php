@@ -82,7 +82,7 @@ class MahasiswaSuratObservasiController extends Controller
             abort(403, 'Akses ditolak');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mitra    = Mitra::all();
         return view('mahasiswa.surat_observasi.create', compact('akademik', 'mitra'));
     }
@@ -181,10 +181,9 @@ class MahasiswaSuratObservasiController extends Controller
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::all();
         $mitra    = Mitra::all();
 
-        return view('mahasiswa.surat_observasi.show', compact('surat', 'akademik', 'mitra'));
+        return view('mahasiswa.surat_observasi.show', compact('surat', 'mitra'));
     }
 
     /**
@@ -205,7 +204,7 @@ class MahasiswaSuratObservasiController extends Controller
             return redirect()->route('mahasiswa.surat-observasi.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mitra    = Mitra::all();
 
         return view('mahasiswa.surat_observasi.edit', compact('surat', 'akademik', 'mitra'));

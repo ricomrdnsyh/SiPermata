@@ -79,7 +79,7 @@ class MahasiswaSuratAktifController extends Controller
     public function create()
     {
         $user     = Auth::user();
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         if ($user->role !== 'mahasiswa') {
             abort(403, 'Akses ditolak');
@@ -195,7 +195,7 @@ class MahasiswaSuratAktifController extends Controller
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('mahasiswa.surat_aktif.edit', compact('surat', 'akademik'));
     }

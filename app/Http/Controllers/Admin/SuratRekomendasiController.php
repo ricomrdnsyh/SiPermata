@@ -122,7 +122,7 @@ class SuratRekomendasiController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('admin.surat_rekomendasi.create', compact('mahasiswa', 'akademik'));
     }
@@ -240,7 +240,7 @@ class SuratRekomendasiController extends Controller
             ->where('id_surat_rekomendasi', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mahasiswa = Mahasiswa::all();
 
         return view('admin.surat_rekomendasi.edit', compact('surat', 'akademik', 'mahasiswa'));

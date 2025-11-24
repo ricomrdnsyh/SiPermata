@@ -122,7 +122,7 @@ class SuratObservasiController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mitra     = Mitra::all();
 
         return view('admin.surat_observasi.create', compact('mahasiswa', 'akademik', 'mitra'));
@@ -245,7 +245,7 @@ class SuratObservasiController extends Controller
             ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mitra     = Mitra::all();
         $mahasiswa = Mahasiswa::all();
 

@@ -132,7 +132,7 @@ class SuratAktifController extends Controller
             abort(403);
         }
 
-        $akademik  = TahunAkademik::all();
+        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         $url      = env('EXT_API_URL');
         $token    = env('EXT_API_TOKEN');
@@ -303,7 +303,7 @@ class SuratAktifController extends Controller
 
         $surat = SuratAktif::findOrFail($id);
         $mahasiswa = Mahasiswa::all();
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         return view('admin.surat_aktif.edit', compact('surat', 'mahasiswa', 'akademik'));
     }

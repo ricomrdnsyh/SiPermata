@@ -139,7 +139,7 @@ class BAKSuratRekomendasiController extends Controller
             return redirect()->route('bak.dashboard')->with('failed', 'Anda belum terhubung ke fakultas manapun.');
         }
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
         return view('bak.surat_rekomendasi.create', compact('akademik', 'mahasiswa'));
@@ -271,7 +271,7 @@ class BAKSuratRekomendasiController extends Controller
             ->where('id_surat_rekomendasi', $id)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::all();
+        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
         return view('bak.surat_rekomendasi.edit', compact('surat', 'akademik', 'mahasiswa'));
