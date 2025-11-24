@@ -34,11 +34,57 @@ class SuratPenelitian extends Model
         return $this->belongsTo(Template::class, 'template_id', 'id_template');
     }
 
-    public static function getNextNoSurat($templateId)
+    protected static function kodeFakultas(?string $nama): string
     {
-        $last = self::where('template_id', $templateId)->orderBy('id_surat_izin_penelitian', 'desc')->first();
-        $number = $last ? intval(substr($last->no_surat, -4)) + 1 : 1;
-        return sprintf("%04d", $number);
+        $nama = strtolower(trim($nama ?? ''));
+
+        $map = [
+            'fakultas agama islam'            => '01',
+            'fai'                             => '01',
+            'fakultas teknik'                 => '02',
+            'ft'                              => '02',
+            'fakultas kesehatan'              => '03',
+            'fkes'                            => '03',
+            'fakultas sosial dan humaniora'   => '04',
+            'soshum'                          => '04',
+        ];
+
+        return $map[$nama] ?? '00';
+    }
+
+    public static function getNextNoSurat($templateId): string
+    {
+        $template = Template::with('fakultas')->findOrFail($templateId);
+
+        $namaFakultas = $template->fakultas->nama_fakultas
+            ?? $template->fakultas->singkatan
+            ?? null;
+
+        $kodeFakultas = self::kodeFakultas($namaFakultas);
+
+        $bulan = date('m');
+        $tahun = date('Y');
+
+        $prefix = "NJ-T06/{$kodeFakultas}/";
+        $suffix = "/SP/{$bulan}.{$tahun}";
+
+        $last = self::where('template_id', $templateId)
+            ->whereYear('created_at', $tahun)
+            ->whereMonth('created_at', $bulan)
+            ->where('no_surat', 'like', $prefix . '%' . $suffix)
+            ->orderBy('id_surat_izin_penelitian', 'desc')
+            ->first();
+
+        if ($last) {
+            $parts = explode('/', $last->no_surat);
+            $urut = isset($parts[2]) ? (int) $parts[2] + 1 : 1;
+        } else {
+            $urut = 1;
+        }
+
+        $noUrut = sprintf('%04d', $urut);
+
+        return $prefix . $noUrut . $suffix;
     }
 
     public function akademik()
