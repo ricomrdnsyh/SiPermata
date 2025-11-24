@@ -20,14 +20,14 @@
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
                                         <div class="fv-row mb-7">
-                                            <label class="fw-semibold fs-6 mb-2">NIDN</label>
+                                            <label class="fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
                                             <input type="text" name="nidn" class="form-control mb-3 mb-lg-0" disabled
                                                 value="{{ $data->nidn }}" />
                                         </div>
                                         <div class="fv-row mb-7">
                                             <label class="fw-semibold fs-6 mb-2">Nama Penduduk</label>
-                                            <input type="text" name="nama_penduduk" class="form-control mb-3 mb-lg-0" disabled
-                                                value="{{ $data->nama_penduduk }}" />
+                                            <input type="text" name="nama_penduduk" class="form-control mb-3 mb-lg-0"
+                                                disabled value="{{ $data->nama_penduduk }}" />
                                         </div>
                                         <div class="fv-row mb-7">
                                             <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>

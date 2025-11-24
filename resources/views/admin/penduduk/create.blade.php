@@ -22,7 +22,7 @@
                                         action="{{ route('admin.penduduk.store') }}" method="POST">
                                         @csrf
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">NIDN</label>
+                                            <label class="required fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
                                             <input type="number" name="nidn" class="form-control mb-3 mb-lg-0"
                                                 value="{{ old('nidn') }}" />
                                             @error('nidn')

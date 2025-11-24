@@ -66,7 +66,7 @@
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="text-center">Actions</th>
-                                    <th class="min-w-125px">NIDN</th>
+                                    <th class="min-w-125px">NIDN/NUPTK</th>
                                     <th class="min-w-125px">Nama Penduduk</th>
                                     <th class="min-w-125px">Nama Fakultas</th>
                                     <th class="min-w-125px">Nama Prodi</th>

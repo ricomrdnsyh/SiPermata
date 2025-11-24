@@ -26,7 +26,7 @@ class NotifikasiStatusSurat extends Mailable
     public function build()
     {
         $statusTitle = strtoupper($this->status); // DISETUJUI / DITOLAK
-        $subject = "Status Pengajuan Surat: {$statusTitle}";
+        $subject = "Status Pengajuan Surat (Dekan): {$statusTitle}";
 
         return $this->subject($subject)
             ->view('emails.notifikasi_status_surat');
