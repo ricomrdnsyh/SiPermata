@@ -8,6 +8,7 @@ use App\Models\SuratLulus;
 use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -17,11 +18,17 @@ class SignatureService
 {
     public function insertSignatureWithQR(Model $suratModel, string $jabatan, string $nama, $nidn): string
     {
-        $filePath          = $suratModel->file_generated;               // contoh: 'surat/aktif/surat_1.docx'
+        $filePath          = $suratModel->file_generated;
         $outputPathAbsolut = storage_path("app/{$filePath}");
+        $logoPath          = public_path('assets/media/logos/unuja.png');
 
         if (!file_exists($outputPathAbsolut)) {
             throw new \Exception("File surat tidak ditemukan: " . $outputPathAbsolut);
+        }
+
+        if (!file_exists($logoPath)) {
+            Log::error("File logo untuk QR Code tidak ditemukan di: " . $logoPath);
+            $logoPath = null;
         }
 
         if ($suratModel instanceof SuratAktif) {
@@ -40,11 +47,16 @@ class SignatureService
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
         }
 
-        $qrCodeBinary = QrCode::size(100)
+        $qrCodeBuilder = QrCode::size(100)
             ->format('png')
             ->errorCorrection('H')
-            ->margin(1)
-            ->generate($qrData);
+            ->margin(1);
+
+        if ($logoPath) {
+            $qrCodeBuilder->merge($logoPath, 0.3, true);
+        }
+
+        $qrCodeBinary = $qrCodeBuilder->generate($qrData);
 
         $qrTempFileName = 'temp_qr_' . time() . '.png';
         $qrTempPath     = storage_path("app/temp/{$qrTempFileName}");
@@ -72,14 +84,8 @@ class SignatureService
         return $filePath;
     }
 
-    /**
-     * Input:  path relatif DOC/DOCX (mis. 'surat/aktif/surat_1.docx')
-     * Output: path relatif PDF     (mis. 'surat/aktif/surat_1.pdf')
-     */
     public function convertDocxToPdf(string $wordFilePath): string
     {
-        // 1. path relatif -> absolut
-        // contoh: $wordFilePath = 'surat_penelitian/SURAT_IZIN_PENELITIAN_4343434343.docx'
         $docxPath = storage_path("app/{$wordFilePath}");
 
         if (!file_exists($docxPath)) {
@@ -93,7 +99,6 @@ class SignatureService
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $command   = null;
 
-        // 2. Bangun command LibreOffice
         if ($envPath && file_exists($envPath)) {
             if ($isWindows) {
                 $command = sprintf(
@@ -169,7 +174,6 @@ class SignatureService
         $returnCode = 0;
         exec($command, $output, $returnCode);
 
-        // 3. Tunggu PDF jadi
         $maxWait       = $isWindows ? 10 : 5;
         $waited        = 0.0;
         $checkInterval = 0.5;
@@ -185,16 +189,13 @@ class SignatureService
             );
         }
 
-        // 4. Hapus file Word setelah PDF jadi
         if (file_exists($docxPath)) {
             @unlink($docxPath);
         }
 
-        // 5. Bangun path relatif PDF dari path relatif DOCX
-        //    (INI KUNCI UTAMANYA)
         $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
         $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
 
-        return $relativePdfPath; // contoh: 'surat_penelitian/SURAT_IZIN_PENELITIAN_4343434343.pdf'
+        return $relativePdfPath;
     }
 }

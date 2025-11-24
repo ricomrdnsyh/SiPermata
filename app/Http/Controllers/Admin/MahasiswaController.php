@@ -7,6 +7,7 @@ use App\Models\Fakultas;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaController extends Controller
@@ -21,40 +22,64 @@ class MahasiswaController extends Controller
         return view('admin.mahasiswa.index', compact('data'));
     }
 
-    public function getMahasiswa()
+    public function getMahasiswa(Request $request)
     {
-        $data = Mahasiswa::select(['nim', 'prodi_id', 'fakultas_id', 'nama', 'jenis_kelamin', 'email', 'no_hp'])
-            ->with('fakultas', 'prodi');
+        $url      = env('EXT_API_URL');
+        $token    = env('EXT_API_TOKEN');
+        $username = env('EXT_API_USERNAME');
+        $password = env('EXT_API_PASSWORD');
 
-        return DataTables::of($data)
-            ->editColumn('jenis_kelamin', function ($row) {
-                if ($row->jenis_kelamin == 'L') {
-                    return '<span>Laki-laki</span>';
-                } elseif ($row->jenis_kelamin == 'P') {
-                    return '<span>Perempuan</span>';
-                }
-            })
-            ->addColumn('nama_fakultas', function ($row) {
-                return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
-            })
-            ->addColumn('nama_prodi', function ($row) {
-                return $row->prodi ? $row->prodi->nama_prodi : '—';
-            })
-            ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.mahasiswa.show', $row->nim) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+        $draw   = (int) $request->input('draw');
+        $start  = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 10);
 
-                $editBtn = '<a href="' . route('admin.mahasiswa.edit', $row->nim) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+        if ($length <= 0) {
+            $length = 10;
+        }
 
-                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->nim . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
+        $page = intval($start / $length) + 1;
 
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
-            })
-            ->rawColumns(['jenis_kelamin', 'nama_fakultas', 'nama_prodi', 'action'])
-            ->make(true);
+        $response = Http::withHeaders([
+            'X-Token'    => $token,
+            'X-Username' => $username,
+            'X-Password' => $password,
+        ])->post($url . '?page=' . $page, [
+            'kategori' => 'mahasiswa',
+            'page' => $length,
+        ]);
+
+        if ($response->failed()) {
+            return response()->json([
+                'draw'            => $draw,
+                'recordsTotal'    => 0,
+                'recordsFiltered' => 0,
+                'data'            => [],
+            ]);
+        }
+
+        $json    = $response->json();
+        $wrapper = $json['data'] ?? [];
+        $rows    = $wrapper['data'] ?? [];
+        $total   = (int) ($wrapper['total'] ?? count($rows));
+
+        // opsional: mapping L/P → span
+        foreach ($rows as &$row) {
+            if (($row['jenis_kelamin'] ?? null) === 'L') {
+                $row['jenis_kelamin'] = '<span>Laki-laki</span>';
+            } elseif (($row['jenis_kelamin'] ?? null) === 'P') {
+                $row['jenis_kelamin'] = '<span>Perempuan</span>';
+            }
+        }
+        unset($row);
+
+        return response()->json([
+            'draw'            => $draw,
+            'recordsTotal'    => $total,
+            'recordsFiltered' => $total,
+            'data'            => $rows,
+        ]);
     }
+
 
     public function getProdi($fakultas_id)
     {

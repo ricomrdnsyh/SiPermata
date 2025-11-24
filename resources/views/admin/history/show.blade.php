@@ -44,7 +44,7 @@
                                             <tbody class="fw-bold text-gray-800">
                                                 <tr>
                                                     <td>{{ $pengajuan->nama_surat }}</td>
-                                                    <td>{{ $pengajuan->created_at?->locale('id')->isoFormat('D MMMM YYYY') }}
+                                                    <td>{{ $pengajuan->created_at?->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—' }}
                                                     </td>
                                                     <td>
                                                         @switch($pengajuan->status)

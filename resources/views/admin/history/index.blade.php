@@ -125,6 +125,7 @@
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="text-center">Actions</th>
+                                    <th class="min-w-125px">NIM</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
                                     <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Nama Surat Pengajuan</th>
@@ -198,6 +199,11 @@
                         searchable: false,
                         exportable: false
                     },
+                    {
+                        data: 'nim',
+                        name: 'nim',
+                        searchable: true
+                    }, 
                     {
                         data: 'nama_mahasiswa',
                         name: 'nama_mahasiswa',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\BAK;
 
 use App\Models\Prodi;
 use App\Models\SuratPKL;
+use App\Models\Mahasiswa;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
 use Illuminate\Http\Request;
@@ -13,9 +14,12 @@ use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
+use App\Mail\NotifikasiStatusBak;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Symfony\Component\HttpFoundation\Response;
@@ -180,7 +184,7 @@ class BAKHistoryPengajuanController extends Controller
             ->addColumn('nama_mahasiswa', fn($row) => $row->mahasiswa?->nama ?? $row->nim)
             ->addColumn('prodi', fn($row) => $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim)
             ->addColumn('nama_surat', fn($row) => $row->nama_surat)
-            ->addColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—')
+            ->addColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—')
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
                     'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
@@ -263,13 +267,14 @@ class BAKHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
         }
 
+        $jenisTabel   = $pengajuan->tabel;         // contoh: 'surat_aktif'
+        $idSuratUtama = $pengajuan->id_tabel_surat;
 
-        $jenisTabel   = $pengajuan->tabel; // Ambil nilai 'surat_aktif' atau 'surat_izin_penelitian'
-        $idSuratUtama = $pengajuan->id_tabel_surat; // Ambil ID surat utama di tabel yang benar
-
-        // A. Cek ketersediaan mapping
         if (!isset($this->suratModels[$jenisTabel])) {
-            return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
+            return response()->json([
+                'success' => false,
+                'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."
+            ], 400);
         }
 
         $ModelSurat = $this->suratModels[$jenisTabel];
@@ -277,7 +282,10 @@ class BAKHistoryPengajuanController extends Controller
         $suratUtama = $ModelSurat::find($idSuratUtama);
 
         if (!$suratUtama) {
-            return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
+            return response()->json([
+                'success' => false,
+                'message' => "Data surat utama tidak ditemukan."
+            ], 404);
         }
 
         $pengajuan->update([
@@ -293,8 +301,32 @@ class BAKHistoryPengajuanController extends Controller
 
         $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
 
-        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil disetujui!"]);
+        try {
+            $mahasiswa = Mahasiswa::where('nim', $suratUtama->nim)
+                ->with('fakultas')
+                ->first();
+
+            if ($mahasiswa && $mahasiswa->email) {
+                Mail::to($mahasiswa->email)->send(
+                    new NotifikasiStatusBak(
+                        $mahasiswa,
+                        $pengajuan,
+                        'disetujui',
+                        $namaSurat,
+                        'Pengajuan Anda telah disetujui oleh BAK dan akan diproses oleh Dekan.'
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Gagal mengirim email notifikasi BAK (approve) untuk pengajuan {$pengajuan->id_history}: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Pengajuan Surat {$namaSurat} berhasil disetujui!"
+        ]);
     }
+
 
     public function reject(Request $request, $id)
     {
@@ -318,13 +350,14 @@ class BAKHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
         }
 
+        $jenisTabel   = $pengajuan->tabel;
+        $idSuratUtama = $pengajuan->id_tabel_surat;
 
-        $jenisTabel   = $pengajuan->tabel; // Contoh: 'surat_aktif' atau 'surat_izin_penelitian'
-        $idSuratUtama = $pengajuan->id_tabel_surat; // ID surat di tabel utama
-
-        // Cek ketersediaan mapping
         if (!isset($this->suratModels[$jenisTabel])) {
-            return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
+            return response()->json([
+                'success' => false,
+                'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."
+            ], 400);
         }
 
         $ModelSurat = $this->suratModels[$jenisTabel];
@@ -332,14 +365,17 @@ class BAKHistoryPengajuanController extends Controller
         $suratUtama = $ModelSurat::find($idSuratUtama);
 
         if (!$suratUtama) {
-            return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
+            return response()->json([
+                'success' => false,
+                'message' => "Data surat utama tidak ditemukan."
+            ], 404);
         }
 
         $catatanPenolakan = 'Ditolak oleh BAK: ' . $request->catatan;
 
         $pengajuan->update([
-            'status'  => 'ditolak',
-            'catatan' => $catatanPenolakan,
+            'status'     => 'ditolak',
+            'catatan'    => $catatanPenolakan,
             'jabatan_id' => $user->penduduk->jabatan->id_jabatan
         ]);
 
@@ -350,8 +386,32 @@ class BAKHistoryPengajuanController extends Controller
 
         $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
 
-        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil ditolak!"]);
+        try {
+            $mahasiswa = Mahasiswa::where('nim', $suratUtama->nim)
+                ->with('fakultas')
+                ->first();
+
+            if ($mahasiswa && $mahasiswa->email) {
+                Mail::to($mahasiswa->email)->send(
+                    new NotifikasiStatusBak(
+                        $mahasiswa,
+                        $pengajuan,
+                        'ditolak',
+                        $namaSurat,
+                        $request->catatan
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Gagal mengirim email notifikasi BAK (reject) untuk pengajuan {$pengajuan->id_history}: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Pengajuan Surat {$namaSurat} berhasil ditolak!"
+        ]);
     }
+
 
     private function getModelClass($tableName)
     {

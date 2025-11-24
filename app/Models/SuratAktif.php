@@ -10,6 +10,10 @@ class SuratAktif extends Model
 
     protected $primaryKey = 'id_surat_aktif';
 
+    protected $casts = [
+        'tmt' => 'datetime',
+    ];
+
     protected $fillable = [
         'template_id',
         'no_surat',

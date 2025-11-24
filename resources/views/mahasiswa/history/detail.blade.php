@@ -44,7 +44,7 @@
                                             <tbody class="fw-bold text-gray-800">
                                                 <tr>
                                                     <td>{{ $pengajuan->nama_surat }}</td>
-                                                    <td>{{ $pengajuan->created_at?->locale('id')->isoFormat('D MMMM YYYY') }}
+                                                    <td>{{ $pengajuan->created_at?->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') }}
                                                     </td>
                                                     <td>
                                                         @switch($pengajuan->status)
@@ -83,7 +83,7 @@
                                                 @include('mahasiswa.history.partials.surat_observasi', [
                                                     'surat' => $surat,
                                                 ])
-                                            @elseif($pengajuan->tabel === 'surat_lulus')
+                                            @elseif($pengajuan->tabel === 'surat_keterangan_lulus')
                                                 @include('mahasiswa.history.partials.surat_lulus', [
                                                     'surat' => $surat,
                                                 ])
@@ -131,7 +131,7 @@
                                             <img alt="Pic" src="{{ asset('assets/media/avatars/profile.png') }}" />
                                         </div>
                                         <div class="d-flex flex-column">
-                                            <span class="fs-4 fw-bolder text-gray-900 text-hover-primary me-2">
+                                            <span class="fs-4 fw-bolder text-gray-900 text-hover-primary me-2 text-break">
                                                 {{ $mahasiswa?->nama ?? '-' }}
                                             </span>
                                             <span class="fw-bold text-gray-600 text-hover-primary text-break">
@@ -149,17 +149,17 @@
                                         </tr>
                                         <tr>
                                             <td class="text-gray-400">Nama</td>
-                                            <td class="text-gray-800">{{ $mahasiswa?->nama ?? '-' }}</td>
+                                            <td class="text-gray-800 text-break">{{ $mahasiswa?->nama ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <td class="text-gray-400">Fakultas</td>
-                                            <td class="text-gray-800">
+                                            <td class="text-gray-800 text-break">
                                                 {{ $fakultas?->nama_fakultas ?? '-' }}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-gray-400">Prodi</td>
-                                            <td class="text-gray-800">
+                                            <td class="text-gray-800 text-break">
                                                 {{ $mahasiswa?->prodi->nama_prodi ?? '-' }}
                                             </td>
                                         </tr>

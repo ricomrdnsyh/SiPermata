@@ -25,10 +25,7 @@
     <!--begin::Row-->
     <tr>
         <td class="text-gray-400">Tahun Akademik</td>
-        <td class="text-gray-800">@php
-            $akademik = \App\Models\TahunAkademik::find($surat->akademik_id);
-        @endphp
-            {{ $akademik?->tahun_akademik ?? '-' }}</td>
+        <td class="text-gray-800">{{ $surat->akademik->tahun_akademik }}</td>
     </tr>
     <!--end::Row-->
     <!--begin::Row-->

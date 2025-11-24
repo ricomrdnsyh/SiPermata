@@ -3,16 +3,106 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratPKL;
-use App\Models\TtdSurat;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
-use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VerifikasiController extends Controller
 {
+    /**
+     * Helper untuk view gagal.
+     */
+    protected function gagal($surat, string $message)
+    {
+        return view('verifikasi.gagal', [
+            'surat' => $surat,
+            'status_verifikasi' => $message,
+        ]);
+    }
+
+    /**
+     * Helper untuk cek status approve.
+     */
+    protected function isSuratApproved($surat): bool
+    {
+        $approvedStatuses = ['diterima', 'selesai'];
+
+        return in_array($surat->status, $approvedStatuses, true) ||
+            in_array($surat->status_verifikasi, $approvedStatuses, true) ||
+            ($surat->is_diterima ?? false) === true ||
+            ($surat->is_approved ?? false) === true;
+    }
+
+    /**
+     * Helper: cek file_generated dan keberadaan file di disk local.
+     */
+    protected function validateFileGenerated($surat)
+    {
+        if (empty($surat->file_generated)) {
+            return 'File surat belum digenerate.';
+        }
+
+        // GANTI missing() -> exists()
+        if (! Storage::disk('local')->exists($surat->file_generated)) {
+            return 'File surat tidak ditemukan di server.';
+        }
+
+        return null; // null = tidak ada error
+    }
+
+    /**
+     * Route umum untuk stream PDF dari disk local.
+     * Dipanggil oleh iframe di view lihat_pdf.
+     */
+    public function streamPdf(string $jenis, string $id)
+    {
+        switch ($jenis) {
+            case 'aktif':
+                $surat = SuratAktif::where('id_surat_aktif', $id)->first();
+                break;
+            case 'penelitian':
+                $surat = SuratPenelitian::where('id_surat_izin_penelitian', $id)->first();
+                break;
+            case 'rekomendasi':
+                $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)->first();
+                break;
+            case 'pkl':
+                $surat = SuratPKL::where('id_surat_pkl', $id)->first();
+                break;
+            case 'observasi':
+                $surat = SuratObservasi::where('id_surat_observasi', $id)->first();
+                break;
+            case 'lulus':
+                $surat = SuratLulus::where('id_surat_lulus', $id)->first();
+                break;
+            default:
+                abort(404);
+        }
+
+        if (
+            ! $surat ||
+            empty($surat->file_generated) ||
+            ! Storage::disk('local')->exists($surat->file_generated)
+        ) {
+            abort(404);
+        }
+
+        $fullPath = Storage::disk('local')->path($surat->file_generated);
+
+        return response()->file($fullPath, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    /**
+     * ---- VERIFIKASI TIAP JENIS SURAT ----
+     * Kalau sukses -> view lihat_pdf (iframe full-screen)
+     */
+
     public function verifySuratAktif(string $id)
     {
         $surat = SuratAktif::where('id_surat_aktif', $id)
@@ -20,40 +110,25 @@ class VerifikasiController extends Controller
             ->with(['mahasiswa', 'akademik'])
             ->first();
 
-        $approvedStatuses = ['diterima', 'selesai'];
-
-        if (!$surat) {
-            // Surat tidak ditemukan sama sekali
-            return view('verifikasi.gagal', [
-                'surat' => null,
-                'status_verifikasi' => 'Surat tidak ditemukan.',
-            ]);
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        $isApproved = in_array($surat->status, $approvedStatuses) ||
-            in_array($surat->status_verifikasi, $approvedStatuses) ||
-            ($surat->is_diterima ?? false) === true ||
-            ($surat->is_approved ?? false) === true;
-
-        if (!$isApproved) {
-            return view('verifikasi.gagal', [
-                'surat' => $surat,
-                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
-            ]);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fakultasId = $surat->mahasiswa->fakultas_id;
-        $templateId = $surat->template_id;
+        if ($msg = $this->validateFileGenerated($surat)) {
+            return $this->gagal($surat, $msg);
+        }
 
-        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
-            ->where('template_id', $templateId)
-            ->where('status', 'aktif')
-            ->first();
+        $pdfUrl = route('verifikasi.streamPdf', [
+            'jenis' => 'aktif',
+            'id'    => $surat->id_surat_aktif,
+        ]);
 
-        return view('verifikasi.surat_aktif', [
-            'surat' => $surat,
-            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan,
+        return view('verifikasi.lihat_pdf', [
+            'pdf_url' => $pdfUrl,
         ]);
     }
 
@@ -64,40 +139,25 @@ class VerifikasiController extends Controller
             ->with(['mahasiswa', 'akademik'])
             ->first();
 
-        $approvedStatuses = ['diterima', 'selesai'];
-
-        if (!$surat) {
-            // Surat tidak ditemukan sama sekali
-            return view('verifikasi.gagal', [
-                'surat' => null,
-                'status_verifikasi' => 'Surat tidak ditemukan.',
-            ]);
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        $isApproved = in_array($surat->status, $approvedStatuses) ||
-            in_array($surat->status_verifikasi, $approvedStatuses) ||
-            ($surat->is_diterima ?? false) === true ||
-            ($surat->is_approved ?? false) === true;
-
-        if (!$isApproved) {
-            return view('verifikasi.gagal', [
-                'surat' => $surat,
-                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
-            ]);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fakultasId = $surat->mahasiswa->fakultas_id;
-        $templateId = $surat->template_id;
+        if ($msg = $this->validateFileGenerated($surat)) {
+            return $this->gagal($surat, $msg);
+        }
 
-        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
-            ->where('template_id', $templateId)
-            ->where('status', 'aktif')
-            ->first();
+        $pdfUrl = route('verifikasi.streamPdf', [
+            'jenis' => 'penelitian',
+            'id'    => $surat->id_surat_izin_penelitian,
+        ]);
 
-        return view('verifikasi.surat_penelitian', [
-            'surat' => $surat,
-            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan,
+        return view('verifikasi.lihat_pdf', [
+            'pdf_url' => $pdfUrl,
         ]);
     }
 
@@ -108,40 +168,25 @@ class VerifikasiController extends Controller
             ->with(['mahasiswa', 'akademik'])
             ->first();
 
-        $approvedStatuses = ['diterima', 'selesai'];
-
-        if (!$surat) {
-            // Surat tidak ditemukan sama sekali
-            return view('verifikasi.gagal', [
-                'surat' => null,
-                'status_verifikasi' => 'Surat tidak ditemukan.',
-            ]);
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        $isApproved = in_array($surat->status, $approvedStatuses) ||
-            in_array($surat->status_verifikasi, $approvedStatuses) ||
-            ($surat->is_diterima ?? false) === true ||
-            ($surat->is_approved ?? false) === true;
-
-        if (!$isApproved) {
-            return view('verifikasi.gagal', [
-                'surat' => $surat,
-                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
-            ]);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fakultasId = $surat->mahasiswa->fakultas_id;
-        $templateId = $surat->template_id;
+        if ($msg = $this->validateFileGenerated($surat)) {
+            return $this->gagal($surat, $msg);
+        }
 
-        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
-            ->where('template_id', $templateId)
-            ->where('status', 'aktif')
-            ->first();
+        $pdfUrl = route('verifikasi.streamPdf', [
+            'jenis' => 'rekomendasi',
+            'id'    => $surat->id_surat_rekomendasi,
+        ]);
 
-        return view('verifikasi.surat_rekomendasi', [
-            'surat' => $surat,
-            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan,
+        return view('verifikasi.lihat_pdf', [
+            'pdf_url' => $pdfUrl,
         ]);
     }
 
@@ -152,40 +197,25 @@ class VerifikasiController extends Controller
             ->with(['mahasiswa', 'akademik'])
             ->first();
 
-        $approvedStatuses = ['diterima', 'selesai'];
-
-        if (!$surat) {
-            // Surat tidak ditemukan sama sekali
-            return view('verifikasi.gagal', [
-                'surat' => null,
-                'status_verifikasi' => 'Surat tidak ditemukan.',
-            ]);
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        $isApproved = in_array($surat->status, $approvedStatuses) ||
-            in_array($surat->status_verifikasi, $approvedStatuses) ||
-            ($surat->is_diterima ?? false) === true ||
-            ($surat->is_approved ?? false) === true;
-
-        if (!$isApproved) {
-            return view('verifikasi.gagal', [
-                'surat' => $surat,
-                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
-            ]);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fakultasId = $surat->mahasiswa->fakultas_id;
-        $templateId = $surat->template_id;
+        if ($msg = $this->validateFileGenerated($surat)) {
+            return $this->gagal($surat, $msg);
+        }
 
-        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
-            ->where('template_id', $templateId)
-            ->where('status', 'aktif')
-            ->first();
+        $pdfUrl = route('verifikasi.streamPdf', [
+            'jenis' => 'pkl',
+            'id'    => $surat->id_surat_pkl,
+        ]);
 
-        return view('verifikasi.surat_pkl', [
-            'surat' => $surat,
-            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan,
+        return view('verifikasi.lihat_pdf', [
+            'pdf_url' => $pdfUrl,
         ]);
     }
 
@@ -196,40 +226,25 @@ class VerifikasiController extends Controller
             ->with(['mahasiswa', 'akademik'])
             ->first();
 
-        $approvedStatuses = ['diterima', 'selesai'];
-
-        if (!$surat) {
-            // Surat tidak ditemukan sama sekali
-            return view('verifikasi.gagal', [
-                'surat' => null,
-                'status_verifikasi' => 'Surat tidak ditemukan.',
-            ]);
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        $isApproved = in_array($surat->status, $approvedStatuses) ||
-            in_array($surat->status_verifikasi, $approvedStatuses) ||
-            ($surat->is_diterima ?? false) === true ||
-            ($surat->is_approved ?? false) === true;
-
-        if (!$isApproved) {
-            return view('verifikasi.gagal', [
-                'surat' => $surat,
-                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
-            ]);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fakultasId = $surat->mahasiswa->fakultas_id;
-        $templateId = $surat->template_id;
+        if ($msg = $this->validateFileGenerated($surat)) {
+            return $this->gagal($surat, $msg);
+        }
 
-        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
-            ->where('template_id', $templateId)
-            ->where('status', 'aktif')
-            ->first();
+        $pdfUrl = route('verifikasi.streamPdf', [
+            'jenis' => 'observasi',
+            'id'    => $surat->id_surat_observasi,
+        ]);
 
-        return view('verifikasi.surat_observasi', [
-            'surat' => $surat,
-            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan,
+        return view('verifikasi.lihat_pdf', [
+            'pdf_url' => $pdfUrl,
         ]);
     }
 
@@ -240,40 +255,25 @@ class VerifikasiController extends Controller
             ->with(['mahasiswa', 'akademik'])
             ->first();
 
-        $approvedStatuses = ['diterima', 'selesai'];
-
-        if (!$surat) {
-            // Surat tidak ditemukan sama sekali
-            return view('verifikasi.gagal', [
-                'surat' => null,
-                'status_verifikasi' => 'Surat tidak ditemukan.',
-            ]);
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        $isApproved = in_array($surat->status, $approvedStatuses) ||
-            in_array($surat->status_verifikasi, $approvedStatuses) ||
-            ($surat->is_diterima ?? false) === true ||
-            ($surat->is_approved ?? false) === true;
-
-        if (!$isApproved) {
-            return view('verifikasi.gagal', [
-                'surat' => $surat,
-                'status_verifikasi' => 'Surat belum disetujui atau masih dalam proses.',
-            ]);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fakultasId = $surat->mahasiswa->fakultas_id;
-        $templateId = $surat->template_id;
+        if ($msg = $this->validateFileGenerated($surat)) {
+            return $this->gagal($surat, $msg);
+        }
 
-        $ttdDekan = TtdSurat::where('fakultas_id', $fakultasId)
-            ->where('template_id', $templateId)
-            ->where('status', 'aktif')
-            ->first();
+        $pdfUrl = route('verifikasi.streamPdf', [
+            'jenis' => 'lulus',
+            'id'    => $surat->id_surat_lulus,
+        ]);
 
-        return view('verifikasi.surat_lulus', [
-            'surat' => $surat,
-            'status_verifikasi' => 'Disetujui dan Ditandatangani oleh Dekan',
-            'ttd_dekan' => $ttdDekan,
+        return view('verifikasi.lihat_pdf', [
+            'pdf_url' => $pdfUrl,
         ]);
     }
 }

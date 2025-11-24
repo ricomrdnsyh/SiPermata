@@ -82,7 +82,7 @@ class SuratRekomendasiController extends Controller
                 return $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim;
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
+                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
             })
             ->addColumn('catatan', function ($row) {
                 return $row->catatan ?: '<em>Tidak ada catatan</em>';

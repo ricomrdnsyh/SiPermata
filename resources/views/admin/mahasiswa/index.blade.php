@@ -65,12 +65,10 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="text-center">Actions</th>
                                     <th class="min-w-125px">NIM</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
+                                    <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Jenis Kelamin</th>
-                                    <th class="min-w-125px">Nama Fakultas</th>
-                                    <th class="min-w-125px">Nama Prodi</th>
                                     <th class="min-w-125px">Email</th>
                                     <th class="min-w-125px">No Telepon</th>
                                 </tr>
@@ -124,14 +122,15 @@
                         className: 'btn btn-sm btn-success fw-bold'
                     }
                 ],
-                ajax: '{{ route('admin.mahasiswa.data') }}',
+                ajax: {
+                    url: '{{ route('admin.mahasiswa.data') }}',
+                    type: 'POST',
+                    data: function(d) {
+                        d._token = '{{ csrf_token() }}'; // wajib untuk POST
+                        d.kategori = 'mahasiswa'; // dikirim ke controller
+                    }
+                },
                 columns: [{
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        exportable: false
-                    }, {
 
                         data: 'nim',
                         name: 'nim'
@@ -139,18 +138,13 @@
                     {
                         data: 'nama',
                         name: 'nama'
+                    }, {
+                        data: 'prodi',
+                        name: 'prodi'
                     },
                     {
                         data: 'jenis_kelamin',
                         name: 'jenis_kelamin'
-                    },
-                    {
-                        data: 'nama_fakultas',
-                        name: 'fakultas.nama_fakultas'
-                    },
-                    {
-                        data: 'nama_prodi',
-                        name: 'prodi.nama_prodi'
                     },
                     {
                         data: 'email',

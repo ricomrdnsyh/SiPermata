@@ -178,7 +178,7 @@ class HistoryPengajuanController extends Controller
                 return $row->nama_surat;
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
+                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {

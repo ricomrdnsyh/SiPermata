@@ -18,6 +18,7 @@ use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
 use App\Services\SignatureService;
 use Illuminate\Support\Facades\DB;
+use App\Mail\NotifikasiStatusSurat;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -63,19 +64,16 @@ class DekanHistoryPengajuanController extends Controller
     {
         $user = Auth::user();
 
-        // Pastikan user adalah DEKAN
         if ($user->role !== 'DEKAN') {
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
         $fakultasId = $user->penduduk?->fakultas_id;
 
         if (!$fakultasId) {
             return DataTables::of(HistoryPengajuan::whereRaw('1=0'))->make(true);
         }
 
-        // Ambil semua pengajuan di fakultas ini yang statusnya 'pengajuan'
         $query = HistoryPengajuan::with([])
             ->where('fakultas_id', $fakultasId)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
@@ -197,7 +195,7 @@ class DekanHistoryPengajuanController extends Controller
                 return $row->nama_surat;
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
+                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
@@ -276,7 +274,7 @@ class DekanHistoryPengajuanController extends Controller
         return view('dekan.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
     }
 
-    public function approve($id, SignatureService $signatureService) // Injeksi SignatureService
+    public function approve($id, SignatureService $signatureService)
     {
         $user = Auth::user();
 
@@ -298,7 +296,6 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Akses ditolak: Fakultas tidak cocok.'], 403);
         }
 
-        // Detail Surat Secara Dinamis
         $modelClass = $this->getModelClass($pengajuan->tabel);
 
         if (!$modelClass) {
@@ -311,12 +308,10 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Detail surat (tabel ' . $pengajuan->tabel . ') tidak ditemukan.'], 404);
         }
 
-        // Pengecekan Ketersediaan File
         if (empty($detailSurat->file_generated)) {
             return response()->json(['success' => false, 'message' => 'File surat belum tersedia untuk ditandatangani.'], 400);
         }
 
-        // Dapatkan Data TTD
         $fakultasId = $pengajuan->fakultas_id;
         $templateId = $detailSurat->template_id;
 
@@ -329,18 +324,14 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Data penanda tangan (TTD Dekan) untuk fakultas dan template ini tidak ditemukan atau tidak aktif.'], 404);
         }
 
-        // Data yang akan digunakan
         $namaDekan    = $ttdDekan->nama_ttd;
         $nidn         = $ttdDekan->nidn;
         $jabatanDekan = $user->penduduk?->jabatan?->status ?? 'Dekan';
         $idJabatan    = $user->penduduk?->jabatan?->id_jabatan ?? null;
 
-
-        // Proses Tanda Tangan dan Update Database
         try {
             DB::beginTransaction();
 
-            // Panggil SignatureService yang universal
             $docxFilePath = $signatureService->insertSignatureWithQR(
                 $detailSurat,
                 $jabatanDekan,
@@ -351,8 +342,8 @@ class DekanHistoryPengajuanController extends Controller
             $pdfFilePath = $signatureService->convertDocxToPdf($docxFilePath);
 
             $detailSurat->update([
-                'status'  => 'diterima',
-                'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
+                'status'        => 'diterima',
+                'catatan'       => "Disetujui oleh Dekan: {$namaDekan}",
                 'file_generated' => $pdfFilePath,
             ]);
 
@@ -363,8 +354,6 @@ class DekanHistoryPengajuanController extends Controller
             ]);
 
             DB::commit();
-
-            return response()->json(['success' => true, 'message' => 'Pengajuan berhasil disetujui dan TTD QR berhasil ditambahkan!'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Gagal menambahkan TTD QR pada pengajuan {$pengajuan->id_history}: " . $e->getMessage());
@@ -374,7 +363,30 @@ class DekanHistoryPengajuanController extends Controller
                 'message' => 'Gagal memproses TTD QR. Silakan cek log server untuk detail lebih lanjut.'
             ], 500);
         }
+
+        try {
+            $mahasiswa = Mahasiswa::where('nim', $detailSurat->nim)->first();
+
+            if ($mahasiswa && $mahasiswa->email) {
+                Mail::to($mahasiswa->email)->send(
+                    new NotifikasiStatusSurat(
+                        $mahasiswa,
+                        $pengajuan,
+                        'disetujui',
+                        "Disetujui oleh Dekan: {$namaDekan}"
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Gagal mengirim email notifikasi approve untuk pengajuan {$pengajuan->id_history}: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan berhasil disetujui dan notifikasi email telah dikirim!'
+        ], 200);
     }
+
 
     public function reject(Request $request, $id)
     {
@@ -384,30 +396,24 @@ class DekanHistoryPengajuanController extends Controller
             'catatan' => 'required|string|max:500'
         ]);
 
-        // Pengecekan Akses
         if ($user->role !== 'DEKAN') {
             return response()->json(['success' => false, 'message' => 'Akses ditolak: Hanya Dekan yang diizinkan.'], 403);
         }
 
-        // Cari History Pengajuan
         $pengajuan = HistoryPengajuan::find($id);
 
         if (!$pengajuan) {
             return response()->json(['success' => false, 'message' => 'Pengajuan tidak ditemukan.'], 404);
         }
 
-        // Pengecekan status pengajuan
         if ($pengajuan->status !== 'proses') {
             return response()->json(['success' => false, 'message' => 'Surat ini sudah diproses atau ditolak sebelumnya.'], 400);
         }
 
-        // Pengecekan Fakultas
         if (!isset($user->penduduk->fakultas_id) || $pengajuan->fakultas_id !== $user->penduduk->fakultas_id) {
             return response()->json(['success' => false, 'message' => 'Akses ditolak: Fakultas tidak cocok.'], 403);
         }
 
-
-        // Mengakses Detail Surat Secara Dinamis
         $modelClass = $this->getModelClass($pengajuan->tabel);
 
         if (!$modelClass) {
@@ -420,21 +426,17 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Detail surat (tabel ' . $pengajuan->tabel . ') tidak ditemukan.'], 404);
         }
 
-
-        // Proses Penolakan (Transaksi Database)
         try {
             DB::beginTransaction();
 
-            $catatan = 'Ditolak oleh Dekan: ' . $validated['catatan'];
+            $catatan   = 'Ditolak oleh Dekan: ' . $validated['catatan'];
             $idJabatan = $user->penduduk?->jabatan?->id_jabatan ?? null;
 
-            // Update status di tabel detail surat
             $detailSurat->update([
                 'status'  => 'ditolak',
                 'catatan' => $catatan,
             ]);
 
-            // Update status di tabel HistoryPengajuan
             $pengajuan->update([
                 'status'     => 'ditolak',
                 'catatan'    => $catatan,
@@ -442,11 +444,6 @@ class DekanHistoryPengajuanController extends Controller
             ]);
 
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Pengajuan berhasil ditolak.'
-            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Gagal menolak pengajuan (ID History: {$id}): " . $e->getMessage());
@@ -456,7 +453,30 @@ class DekanHistoryPengajuanController extends Controller
                 'message' => 'Gagal memproses penolakan. Silakan cek log server.'
             ], 500);
         }
+
+        try {
+            $mahasiswa = Mahasiswa::where('nim', $detailSurat->nim)->first();
+
+            if ($mahasiswa && $mahasiswa->email) {
+                Mail::to($mahasiswa->email)->send(
+                    new NotifikasiStatusSurat(
+                        $mahasiswa,
+                        $pengajuan,
+                        'ditolak',
+                        $validated['catatan']
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Gagal mengirim email notifikasi reject untuk pengajuan {$pengajuan->id_history}: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan berhasil ditolak dan email notifikasi telah dikirim!.'
+        ], 200);
     }
+
 
     public function viewGeneratedFile(string $tabel, int $id): Response
     {

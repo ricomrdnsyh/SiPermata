@@ -121,7 +121,8 @@
                                             <div class="fv-row mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control"
-                                                    value="{{ $surat->tmt }}" disabled />
+                                                    value="{{ $surat->tmt?->locale('id')->isoFormat('D MMMM YYYY') }}"
+                                                    disabled />
                                             </div>
                                             <div class="fv-row mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
@@ -203,7 +204,8 @@
                                             <div class="fv-row mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control"
-                                                    value="{{ $surat->tmt }}" disabled />
+                                                    value="{{ $surat->tmt?->locale('id')->isoFormat('D MMMM YYYY') }}"
+                                                    disabled />
                                             </div>
                                             <div class="fv-row mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>

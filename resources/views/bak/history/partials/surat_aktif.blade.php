@@ -51,7 +51,9 @@
         </tr>
         <tr>
             <td class="text-gray-400">Tahun Mulai Tugas</td>
-            <td class="text-gray-800">{{ $surat->tmt ?? '-' }}</td>
+            <td class="text-gray-800">
+                {{ $surat->tmt->locale('id')->isoFormat('D MMMM YYYY') ?? '-' }}
+            </td>
         </tr>
         <tr>
             <td class="text-gray-400">Unit Kerja</td>

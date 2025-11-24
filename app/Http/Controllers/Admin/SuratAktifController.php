@@ -10,8 +10,10 @@ use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Services\SuratAktifGenerator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -91,7 +93,7 @@ class SuratAktifController extends Controller
                 }
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->locale('id')->isoFormat('D MMMM YYYY') ?? '—';
+                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
             })
             ->addColumn('catatan', function ($row) {
                 return $row->catatan ?: '<em>Tidak ada catatan</em>';
@@ -130,8 +132,41 @@ class SuratAktifController extends Controller
             abort(403);
         }
 
-        $mahasiswa = Mahasiswa::all();
         $akademik  = TahunAkademik::all();
+
+        $url      = env('EXT_API_URL');
+        $token    = env('EXT_API_TOKEN');
+        $username = env('EXT_API_USERNAME');
+        $password = env('EXT_API_PASSWORD');
+
+        $mahasiswa = collect(); // default kosong kalau API bermasalah
+
+        try {
+            $response = Http::timeout(10)          // max 10 detik
+                ->connectTimeout(5)               // max 5 detik buat connect
+                // ->withoutVerifying()           // HANYA untuk dev kalau SSL bermasalah
+                ->withHeaders([
+                    'X-Token'    => $token,
+                    'X-Username' => $username,
+                    'X-Password' => $password,
+                ])->post($url . '?page=1', [
+                    'kategori' => 'mahasiswa',
+                ]);
+
+            if ($response->successful()) {
+                $json    = $response->json();
+                $wrapper = $json['data'] ?? [];
+                $rows    = $wrapper['data'] ?? [];
+
+                // biar di blade bisa pakai $mhs->nim, $mhs->nama
+                $mahasiswa = collect($rows)->map(fn($row) => (object) $row);
+            } else {
+                Log::error('API mahasiswa gagal: ' . $response->status());
+            }
+        } catch (\Throwable $e) {
+            Log::error('Error call API mahasiswa: ' . $e->getMessage());
+            // jangan dd() di sini, biarkan view tetap jalan tapi dropdown kosong
+        }
 
         return view('admin.surat_aktif.create', compact('mahasiswa', 'akademik'));
     }

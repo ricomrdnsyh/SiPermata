@@ -48,12 +48,27 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])->name('verifikasi.surat-aktif');
-Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::class, 'verifySuratPenelitian'])->name('verifikasi.surat-izin-penelitian');
-Route::get('/verifikasi/surat-rekomendasi/{id}', [VerifikasiController::class, 'verifySuratRekomendasi'])->name('verifikasi.surat-rekomendasi');
-Route::get('/verifikasi/surat-pkl/{id}', [VerifikasiController::class, 'verifySuratPKL'])->name('verifikasi.surat-pkl');
-Route::get('/verifikasi/surat-observasi/{id}', [VerifikasiController::class, 'verifySuratObservasi'])->name('verifikasi.surat-observasi');
-Route::get('/verifikasi/surat-keterangan-lulus/{id}', [VerifikasiController::class, 'verifySuratLulus'])->name('verifikasi.surat-keterangan-lulus');
+
+Route::get('/verifikasi/pdf/{jenis}/{id}', [VerifikasiController::class, 'streamPdf'])
+    ->name('verifikasi.streamPdf');
+
+Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])
+    ->name('verifikasi.surat-aktif');
+
+Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::class, 'verifySuratPenelitian'])
+    ->name('verifikasi.surat-izin-penelitian');
+
+Route::get('/verifikasi/surat-rekomendasi/{id}', [VerifikasiController::class, 'verifySuratRekomendasi'])
+    ->name('verifikasi.surat-rekomendasi');
+
+Route::get('/verifikasi/surat-pkl/{id}', [VerifikasiController::class, 'verifySuratPKL'])
+    ->name('verifikasi.surat-pkl');
+
+Route::get('/verifikasi/surat-observasi/{id}', [VerifikasiController::class, 'verifySuratObservasi'])
+    ->name('verifikasi.surat-observasi');
+
+Route::get('/verifikasi/surat-keterangan-lulus/{id}', [VerifikasiController::class, 'verifySuratLulus'])
+    ->name('verifikasi.surat-keterangan-lulus');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -75,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mitra/data', [MitraController::class, 'getMitra'])->name('mitra.data');
         Route::resource('mitra', MitraController::class);
 
-        Route::get('/mahasiswa/data', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswa.data');
+        Route::post('/mahasiswa/data', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswa.data');
         Route::get('/get-prodim/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
         Route::resource('mahasiswa', MahasiswaController::class);
 
