@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
+use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\SuratLulusGenerator;
@@ -196,7 +197,7 @@ class SuratLulusController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
-        HistoryPengajuan::create([
+        $pengajuan = HistoryPengajuan::create([
             'id_tabel_surat' => $surat->id_surat_lulus,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
@@ -204,6 +205,14 @@ class SuratLulusController extends Controller
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh Admin untuk mahasiswa',
             'jabatan_id'     => null,
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'pengajuan',
+            'user_role'  => 'Admin',
+            'user_id'    => $user->id,
+            'catatan'    => 'Diajukan oleh Admin untuk mahasiswa',
         ]);
 
         return redirect()->route('admin.surat-keterangan-lulus.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
@@ -293,6 +302,14 @@ class SuratLulusController extends Controller
             $pengajuan->update([
                 'status'  => 'pengajuan',
                 'catatan' => 'Diajukan ulang oleh Admin untuk mahasiswa'
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'pengajuan',
+                'user_role'  => 'Admin',
+                'user_id'    => $user->id,
+                'catatan'    => 'Diajukan ulang oleh Admin untuk mahasiswa',
             ]);
 
             return redirect()->route('admin.surat-keterangan-lulus.index')->with('success', 'Data surat berhasil diperbarui!');

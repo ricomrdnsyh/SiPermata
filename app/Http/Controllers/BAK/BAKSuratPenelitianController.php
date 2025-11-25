@@ -11,6 +11,7 @@ use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
+use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -219,14 +220,22 @@ class BAKSuratPenelitianController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
-        HistoryPengajuan::create([
+        $pengajuan = HistoryPengajuan::create([
             'id_tabel_surat' => $surat->id_surat_izin_penelitian,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
             'tabel'          => 'surat_izin_penelitian',
             'status'         => 'pengajuan',
-            'catatan'        => 'Diajukan oleh mahasiswa',
+            'catatan'        => 'Diajukan oleh BAK Fakultas untuk mahasiswa',
             'jabatan_id'     => null,
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'pengajuan',
+            'user_role'  => 'BAK',
+            'user_id'    => $userBak->id,
+            'catatan'    => 'Diajukan oleh BAK Fakultas untuk mahasiswa',
         ]);
 
         return redirect()->route('bak.surat-izin-penelitian.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
@@ -337,6 +346,14 @@ class BAKSuratPenelitianController extends Controller
             $pengajuan->update([
                 'status'  => 'pengajuan',
                 'catatan' => 'Diajukan ulang oleh BAK untuk mahasiswa'
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'pengajuan',
+                'user_role'  => 'BAK',
+                'user_id'    => $userBak->id,
+                'catatan'    => 'Diajukan ulang oleh BAK Fakultas untuk mahasiswa',
             ]);
 
             return redirect()->route('bak.surat-izin-penelitian.index')->with('success', 'Data surat berhasil diperbarui!');

@@ -92,7 +92,7 @@ class MahasiswaHistoryPegajuan extends Controller
             abort(403);
         }
 
-        $pengajuan = HistoryPengajuan::findOrFail($id);
+        $pengajuan = HistoryPengajuan::with('statusLogs')->findOrFail($id);
 
         $surat = null;
         $fileGeneratedPath = null;
@@ -111,7 +111,18 @@ class MahasiswaHistoryPegajuan extends Controller
             abort(404, 'Data surat tidak ditemukan di tabel sumber.');
         }
 
-        return view('mahasiswa.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
+        $jumlahPengajuan = $pengajuan->statusLogs->where('status', 'pengajuan')->count();
+        $jumlahDitolak   = $pengajuan->statusLogs->where('status', 'ditolak')->count();
+        $jumlahDiterima  = $pengajuan->statusLogs->where('status', 'diterima')->count();
+
+        return view('mahasiswa.history.detail', compact(
+            'pengajuan',
+            'surat',
+            'fileGeneratedPath',
+            'jumlahPengajuan',
+            'jumlahDitolak',
+            'jumlahDiterima'
+        ));
     }
 
     private function getModelClass($tableName)

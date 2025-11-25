@@ -11,6 +11,7 @@ use App\Models\TahunAkademik;
 use App\Models\SuratObservasi;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
+use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -199,7 +200,7 @@ class SuratObservasiController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
-        HistoryPengajuan::create([
+        $pengajuan = HistoryPengajuan::create([
             'id_tabel_surat' => $surat->id_surat_observasi,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
@@ -207,6 +208,14 @@ class SuratObservasiController extends Controller
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh mahasiswa',
             'jabatan_id'     => null,
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'pengajuan',
+            'user_role'  => 'Admin',
+            'user_id'    => $user->id,
+            'catatan'    => 'Diajukan oleh Admin untuk mahasiswa',
         ]);
 
         return redirect()->route('admin.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
@@ -299,6 +308,14 @@ class SuratObservasiController extends Controller
             $pengajuan->update([
                 'status'  => 'pengajuan',
                 'catatan' => 'Diajukan ulang oleh Admin untuk mahasiswa'
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'pengajuan',
+                'user_role'  => 'Admin',
+                'user_id'    => $user->id,
+                'catatan'    => 'Diajukan ulang oleh Admin untuk mahasiswa',
             ]);
 
             return redirect()->route('admin.surat-observasi.index')->with('success', 'Data surat berhasil diperbarui!');

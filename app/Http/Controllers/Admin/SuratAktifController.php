@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
+use App\Models\PengajuanStatusLog;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -259,7 +260,7 @@ class SuratAktifController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen. Error: ' . $e->getMessage());
         }
 
-        HistoryPengajuan::create([
+        $pengajuan = HistoryPengajuan::create([
             'id_tabel_surat' => $surat->id_surat_aktif,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
@@ -267,6 +268,14 @@ class SuratAktifController extends Controller
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh Admin untuk mahasiswa',
             'jabatan_id'     => null,
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'pengajuan',
+            'user_role'  => 'Admin',
+            'user_id'    => $user->id,
+            'catatan'    => 'Diajukan oleh Admin untuk mahasiswa',
         ]);
 
         return redirect()->route('admin.surat-aktif.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
@@ -367,6 +376,14 @@ class SuratAktifController extends Controller
             $pengajuan->update([
                 'status'  => 'pengajuan',
                 'catatan' => 'Diajukan ulang oleh Admin untuk mahasiswa'
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'pengajuan',
+                'user_role'  => 'Admin',
+                'user_id'    => $user->id,
+                'catatan'    => 'Diajukan ulang oleh Admin untuk mahasiswa',
             ]);
 
             return redirect()->route('admin.surat-aktif.index')->with('success', 'Data surat berhasil diperbarui!');

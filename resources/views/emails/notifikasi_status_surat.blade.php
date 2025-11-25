@@ -200,7 +200,7 @@
 
                             <p style="margin-top: 25px;">
                                 Salam hormat,<br>
-                                <b>Dekan {{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
+                                <b>{{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
                             </p>
                         </td>
                     </tr>

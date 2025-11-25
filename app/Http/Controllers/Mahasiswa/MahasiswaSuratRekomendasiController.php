@@ -8,6 +8,7 @@ use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
+use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -147,7 +148,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
-        HistoryPengajuan::create([
+        $pengajuan = HistoryPengajuan::create([
             'id_tabel_surat' => $surat->id_surat_rekomendasi,
             'nim'            => $mahasiswa->nim,
             'fakultas_id'    => $mahasiswa->fakultas_id,
@@ -155,6 +156,14 @@ class MahasiswaSuratRekomendasiController extends Controller
             'status'         => 'pengajuan',
             'catatan'        => 'Diajukan oleh mahasiswa',
             'jabatan_id'     => null,
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'pengajuan',
+            'user_role'  => 'Mahasiswa',
+            'user_id'    => $user->id,
+            'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
         ]);
 
         return redirect()->route('mahasiswa.surat-rekomendasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
@@ -237,6 +246,14 @@ class MahasiswaSuratRekomendasiController extends Controller
             $pengajuan->update([
                 'status'  => 'pengajuan',
                 'catatan' => 'Diajukan ulang oleh mahasiswa'
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'pengajuan',
+                'user_role'  => 'Mahasiswa',
+                'user_id'    => $user->id,
+                'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
             ]);
 
             return redirect()->route('mahasiswa.surat-rekomendasi.index')

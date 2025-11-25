@@ -56,6 +56,12 @@ class HistoryPengajuan extends Model
         return $this->belongsTo(SuratLulus::class, 'id_tabel_surat');
     }
 
+    public function statusLogs()
+    {
+        return $this->hasMany(PengajuanStatusLog::class, 'history_id', 'id_history')
+            ->orderBy('created_at');
+    }
+
     protected static function booted()
     {
         static::deleted(function ($history) {

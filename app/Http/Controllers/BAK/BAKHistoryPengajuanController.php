@@ -15,6 +15,7 @@ use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
 use App\Mail\NotifikasiStatusBak;
+use App\Models\PengajuanStatusLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -213,7 +214,7 @@ class BAKHistoryPengajuanController extends Controller
             abort(403);
         }
 
-        $pengajuan = HistoryPengajuan::findOrFail($id);
+        $pengajuan = HistoryPengajuan::with('statusLogs')->findOrFail($id);
 
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
             abort(403, 'Surat ini bukan milik fakultas Anda.');
@@ -236,7 +237,18 @@ class BAKHistoryPengajuanController extends Controller
             abort(404, 'Data surat tidak ditemukan di tabel sumber.');
         }
 
-        return view('bak.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
+        $jumlahPengajuan = $pengajuan->statusLogs->where('status', 'pengajuan')->count();
+        $jumlahDitolak   = $pengajuan->statusLogs->where('status', 'ditolak')->count();
+        $jumlahDiterima  = $pengajuan->statusLogs->where('status', 'diterima')->count();
+
+        return view('bak.history.detail', compact(
+            'pengajuan',
+            'surat',
+            'fileGeneratedPath',
+            'jumlahPengajuan',
+            'jumlahDitolak',
+            'jumlahDiterima'
+        ));
     }
 
     protected $suratModels = [
@@ -297,6 +309,14 @@ class BAKHistoryPengajuanController extends Controller
         $suratUtama->update([
             'status'  => 'proses',
             'catatan' => 'Disetujui oleh BAK',
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'proses',
+            'user_role'  => 'BAK',
+            'user_id'    => $user->id,
+            'catatan'    => 'Disetujui oleh BAK',
         ]);
 
         $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
@@ -382,6 +402,14 @@ class BAKHistoryPengajuanController extends Controller
         $suratUtama->update([
             'status'  => 'ditolak',
             'catatan' => $catatanPenolakan,
+        ]);
+
+        PengajuanStatusLog::create([
+            'history_id' => $pengajuan->id_history,
+            'status'     => 'ditolak',
+            'user_role'  => 'BAK',
+            'user_id'    => $user->id,
+            'catatan'    => $catatanPenolakan,
         ]);
 
         $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));

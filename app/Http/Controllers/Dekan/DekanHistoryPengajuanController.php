@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
+use App\Models\PengajuanStatusLog;
 use App\Services\SignatureService;
 use Illuminate\Support\Facades\DB;
 use App\Mail\NotifikasiStatusSurat;
@@ -248,7 +249,7 @@ class DekanHistoryPengajuanController extends Controller
             abort(403);
         }
 
-        $pengajuan = HistoryPengajuan::findOrFail($id);
+        $pengajuan = HistoryPengajuan::with('statusLogs')->findOrFail($id);
 
         if ($pengajuan->fakultas_id !== $user->penduduk?->fakultas_id) {
             abort(403, 'Surat ini bukan milik fakultas Anda.');
@@ -271,7 +272,18 @@ class DekanHistoryPengajuanController extends Controller
             abort(404, 'Data surat tidak ditemukan di tabel sumber.');
         }
 
-        return view('dekan.history.detail', compact('pengajuan', 'surat', 'fileGeneratedPath'));
+        $jumlahPengajuan = $pengajuan->statusLogs->where('status', 'pengajuan')->count();
+        $jumlahDitolak   = $pengajuan->statusLogs->where('status', 'ditolak')->count();
+        $jumlahDiterima  = $pengajuan->statusLogs->where('status', 'diterima')->count();
+
+        return view('dekan.history.detail', compact(
+            'pengajuan',
+            'surat',
+            'fileGeneratedPath',
+            'jumlahPengajuan',
+            'jumlahDitolak',
+            'jumlahDiterima'
+        ));
     }
 
     public function approve($id, SignatureService $signatureService)
@@ -351,6 +363,14 @@ class DekanHistoryPengajuanController extends Controller
                 'status'     => 'diterima',
                 'catatan'    => 'Disetujui oleh Dekan: ' . $namaDekan,
                 'jabatan_id' => $idJabatan,
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'diterima',
+                'user_role'  => 'DEKAN',
+                'user_id'    => $user->id,
+                'catatan'    => 'Disetujui oleh Dekan: ' . $namaDekan,
             ]);
 
             DB::commit();
@@ -441,6 +461,14 @@ class DekanHistoryPengajuanController extends Controller
                 'status'     => 'ditolak',
                 'catatan'    => $catatan,
                 'jabatan_id' => $idJabatan,
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'ditolak',
+                'user_role'  => 'DEKAN',
+                'user_id'    => $user->id,
+                'catatan'    => $validated['catatan'],
             ]);
 
             DB::commit();
@@ -560,6 +588,14 @@ class DekanHistoryPengajuanController extends Controller
                     'updated_at' => now(),
                 ]);
             }
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuanHistory->id_history,
+                'status'     => 'selesai',
+                'user_role'  => 'DEKAN',
+                'user_id'    => $user->id,
+                'catatan'    => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
+            ]);
 
             DB::commit();
 

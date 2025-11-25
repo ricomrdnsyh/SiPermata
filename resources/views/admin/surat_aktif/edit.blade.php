@@ -294,7 +294,8 @@
                                             <div class="fv-row mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control"
-                                                    value="{{ $surat->tmt }}" required />
+                                                    value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
+                                                    required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -309,7 +310,6 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Alamat tetap full width -->
                                             <div class="fv-row mb-7 col-12">
                                                 <label class="required fw-semibold fs-6 mb-2">Alamat</label>
                                                 <textarea name="alamat" class="form-control" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
@@ -332,7 +332,7 @@
                                     </div>
                                 </form>
 
-                                <!-- Form PPPK (sama seperti PNS) -->
+                                <!-- Form PPPK -->
                                 <form id="form-pppk" class="form-section" method="POST"
                                     action="{{ route('admin.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
@@ -521,7 +521,8 @@
                                             <div class="fv-row mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control"
-                                                    value="{{ $surat->tmt }}" required />
+                                                    value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
+                                                    required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -536,7 +537,6 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Alamat tetap full width -->
                                             <div class="fv-row mb-7 col-12">
                                                 <label class="required fw-semibold fs-6 mb-2">Alamat</label>
                                                 <textarea name="alamat" class="form-control" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
