@@ -67,6 +67,7 @@
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Tanggal Pengajuan</th>
+                                    <th class="min-w-125px">Tahun Akademik</th>
                                     <th class="min-w-125px">Status Pengajuan</th>
                                     <th class="min-w-125px">Catatan</th>
                                 </tr>
@@ -109,6 +110,10 @@
                     }, {
                         data: 'tanggal_pengajuan',
                         name: 'created_at'
+                    },
+                    {
+                        data: 'akademik',
+                        name: 'akademik'
                     },
                     {
                         data: 'status',

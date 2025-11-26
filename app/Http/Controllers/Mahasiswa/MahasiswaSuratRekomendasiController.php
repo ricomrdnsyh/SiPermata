@@ -43,6 +43,9 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->addColumn('tanggal_pengajuan', function ($row) {
                 return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
             })
+            ->addColumn('akademik', function ($row) {
+                return $row?->akademik?->tahun_akademik ?? "-";
+            })
             ->addColumn('catatan', function ($row) {
                 return $row->catatan ?: '<em>Tidak ada catatan</em>';
             })
@@ -67,7 +70,7 @@ class MahasiswaSuratRekomendasiController extends Controller
 
                 return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })
-            ->rawColumns(['status', 'catatan', 'action'])
+            ->rawColumns(['status', 'akademik', 'catatan', 'action'])
             ->make(true);
     }
     /**
