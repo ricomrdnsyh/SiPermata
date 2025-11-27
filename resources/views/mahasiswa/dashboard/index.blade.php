@@ -25,7 +25,7 @@
                                             <br>
                                             Selamat datang di <span
                                                 class="position-relative d-inline-block text-danger">Sistem Pengajuan Surat
-                                                Terpadu</span>
+                                                Mahasiswa Terpadu</span>
                                             <br>
                                             Cek status pengajuanmu atau segera buat pengajuan surat baru!
                                         </div>
