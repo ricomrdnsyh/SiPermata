@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use chillerlan\QRCode\Output\QROutputInterface;
+
 
 class SignatureService
 {
@@ -24,11 +27,6 @@ class SignatureService
 
         if (!file_exists($outputPathAbsolut)) {
             throw new \Exception("File surat tidak ditemukan: " . $outputPathAbsolut);
-        }
-
-        if (!file_exists($logoPath)) {
-            Log::error("File logo untuk QR Code tidak ditemukan di: " . $logoPath);
-            $logoPath = null;
         }
 
         if ($suratModel instanceof SuratAktif) {
@@ -47,16 +45,98 @@ class SignatureService
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
         }
 
-        $qrCodeBuilder = QrCode::size(100)
-            ->format('png')
-            ->errorCorrection('H')
-            ->margin(1);
+        $options = new QROptions([
+            'outputType'     => QROutputInterface::GDIMAGE_PNG,
+            'eccLevel'       => QRCode::ECC_H,
+            'scale'          => 6,
+            'outputBase64'   => false,
+            'returnResource' => true,
+            'addQuietzone'   => false,
+        ]);
 
-        if ($logoPath) {
-            $qrCodeBuilder->merge($logoPath, 0.3, true);
+        $qrImage = (new QRCode($options))->render($qrData);
+
+        $qrWidth  = imagesx($qrImage);
+        $qrHeight = imagesy($qrImage);
+
+        if ($logoPath && file_exists($logoPath)) {
+            $logo = imagecreatefrompng($logoPath);
+
+            $logoSrcW = imagesx($logo);
+            $logoSrcH = imagesy($logo);
+
+            $logoMaxW = (int)($qrWidth * 0.30);
+            $logoMaxH = (int)($qrHeight * 0.30);
+
+            $ratio = min($logoMaxW / $logoSrcW, $logoMaxH / $logoSrcH);
+            $logoW = (int)($logoSrcW * $ratio);
+            $logoH = (int)($logoSrcH * $ratio);
+
+            $logoResized = imagecreatetruecolor($logoW, $logoH);
+            imagealphablending($logoResized, false);
+            imagesavealpha($logoResized, true);
+            $transparent = imagecolorallocatealpha($logoResized, 0, 0, 0, 127);
+            imagefill($logoResized, 0, 0, $transparent);
+
+            imagecopyresampled(
+                $logoResized,
+                $logo,
+                0,
+                0,
+                0,
+                0,
+                $logoW,
+                $logoH,
+                $logoSrcW,
+                $logoSrcH
+            );
+
+            $dstX = (int)(($qrWidth - $logoW) / 2);
+            $dstY = (int)(($qrHeight - $logoH) / 2);
+
+            imagecopy(
+                $qrImage,
+                $logoResized,
+                $dstX,
+                $dstY,
+                0,
+                0,
+                $logoW,
+                $logoH
+            );
+
+            imagedestroy($logoResized);
+            imagedestroy($logo);
         }
 
-        $qrCodeBinary = $qrCodeBuilder->generate($qrData);
+        $marginTop    = 10;
+        $marginBottom = 10;
+
+        $finalWidth  = $qrWidth;
+        $finalHeight = $qrHeight + $marginTop + $marginBottom;
+
+        $finalImage = imagecreatetruecolor($finalWidth, $finalHeight);
+
+        $white = imagecolorallocate($finalImage, 255, 255, 255);
+        imagefill($finalImage, 0, 0, $white);
+
+        imagecopy(
+            $finalImage,
+            $qrImage,
+            0,
+            $marginTop,
+            0,
+            0,
+            $qrWidth,
+            $qrHeight
+        );
+
+        ob_start();
+        imagepng($finalImage);
+        $qrCodeBinary = ob_get_clean();
+
+        imagedestroy($qrImage);
+        imagedestroy($finalImage);
 
         $qrTempFileName = 'temp_qr_' . time() . '.png';
         $qrTempPath     = storage_path("app/temp/{$qrTempFileName}");

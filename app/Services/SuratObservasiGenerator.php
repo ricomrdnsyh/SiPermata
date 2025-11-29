@@ -36,6 +36,7 @@ class SuratObservasiGenerator
         $tglSurat       = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $tglObservasi   = $tglObservasiCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $bulanSurat     = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
+        $keperluanTitleCase = ucwords(strtolower($surat->keperluan));
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
         $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
@@ -45,7 +46,7 @@ class SuratObservasiGenerator
         $processor->setValue('PRODI', $mahasiswa?->prodi?->nama_prodi ?? '-');
         $processor->setValue('NIM', $surat->nim);
         $processor->setValue('TGL_OBSERVASI', $tglObservasi ?? '-');
-        $processor->setValue('KEPERLUAN', $surat->keperluan ?? '-');
+        $processor->setValue('KEPERLUAN', $keperluanTitleCase ?? '-');
         $processor->setValue('SEMESTER', $surat->semester ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
 

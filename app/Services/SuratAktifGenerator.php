@@ -33,6 +33,7 @@ class SuratAktifGenerator
         $tmtCarbon = Carbon::parse($surat->tmt);
         $tglSuratCarbon = Carbon::parse($surat->updated_at);
         $bulanSuratCarbon = Carbon::parse($surat->updated_at);
+        $alamatTitleCase = ucwords(strtolower($surat->alamat));
 
         $tmtOrtu = $tmtCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $tglSurat = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
@@ -46,7 +47,7 @@ class SuratAktifGenerator
         $processor->setValue('NIM', $surat->nim);
         $processor->setValue('SEMESTER', $surat->semester ?? '-');
         $processor->setValue('TAHUN_AKADEMIK', $surat->akademik->tahun_akademik ?? '-');
-        $processor->setValue('ALAMAT', $surat->alamat ?? '-');
+        $processor->setValue('ALAMAT', $alamatTitleCase ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
 
         // Data Khusus (Hanya diisi jika kategori PNS/PPPK)
