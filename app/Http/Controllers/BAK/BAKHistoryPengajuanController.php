@@ -488,7 +488,7 @@ class BAKHistoryPengajuanController extends Controller
             abort(404, 'File di server tidak ditemukan.');
         }
 
-        $fileName = ucfirst(str_replace('_', ' ', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
+        $fileName = strtoupper(str_replace(' ', '_', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
 
         return Storage::download($filePath, $fileName);
     }
