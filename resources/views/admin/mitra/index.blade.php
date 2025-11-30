@@ -98,6 +98,10 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
                 dom: '<"row align-items-center"<"col-md-6"l>>' +
                     '<"row mb-4 mt-2"<"col-md-6 d-flex justify-content-start"B><"col-md-6 d-flex justify-content-end"f>>' +
                     'rt' +
@@ -120,15 +124,14 @@
                 ],
                 ajax: '{{ route('admin.mitra.data') }}',
                 columns: [{
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },{
-                        data: 'nama_mitra',
-                        name: 'nama_mitra'
-                    }                    
-                ],
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }, {
+                    data: 'nama_mitra',
+                    name: 'nama_mitra'
+                }],
 
                 language: {
                     search: "Search :_INPUT_",

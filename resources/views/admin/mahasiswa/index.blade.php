@@ -102,6 +102,10 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
                 dom: '<"row align-items-center"<"col-md-6"l>>' +
                     '<"row mb-4 mt-2"<"col-md-6 d-flex justify-content-start"B><"col-md-6 d-flex justify-content-end"f>>' +
                     'rt' +
@@ -126,12 +130,11 @@
                     url: '{{ route('admin.mahasiswa.data') }}',
                     type: 'POST',
                     data: function(d) {
-                        d._token = '{{ csrf_token() }}'; // wajib untuk POST
-                        d.kategori = 'mahasiswa'; // dikirim ke controller
+                        d._token = '{{ csrf_token() }}';
+                        d.kategori = 'mahasiswa';
                     }
                 },
                 columns: [{
-
                         data: 'nim',
                         name: 'nim'
                     },
