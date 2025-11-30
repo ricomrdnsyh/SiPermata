@@ -42,6 +42,13 @@ use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 
+use App\Http\Controllers\SsoController;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
+
+Route::get('/sso', [SsoController::class, 'sso']);
+Route::get('/sso/logout/{sessionId}', [SsoController::class, 'logout']);
+Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login-proses', [LoginController::class, 'login'])->name('login-proses');
