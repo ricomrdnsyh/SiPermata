@@ -3,6 +3,18 @@
 @section('title', 'Dashboard')
 
 @section('content')
+    <style>
+        .btn-light-primary-hover-white:hover,
+        .btn-light-warning-hover-white:hover,
+        .btn-light-info-hover-white:hover,
+        .btn-light-secondary-hover-white:hover,
+        .btn-light-danger-hover-white:hover,
+        .btn-light-success-hover-white:hover,
+        .btn-light-dark-hover-white:hover {
+            color: #ffffff !important;
+        }
+    </style>
+
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
@@ -39,9 +51,9 @@
                     </div>
                     <div class="row g-5 g-xl-8">
 
-                        {{-- SURAT KETERANGAN AKTIF --}}
                         <div class="col-xl-4 col-md-6 mb-5">
-                            <div class="card card-xxl-stretch border-hover-dashed h-100">
+                            <div
+                                class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-primary">
                                 <div class="card-body p-5">
 
                                     <div class="d-flex align-items-center mb-5">
@@ -52,31 +64,26 @@
                                         </div>
                                     </div>
 
-                                    {{-- Ringkasan Total --}}
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-primary p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-primary">{{ $surat_aktif['total'] }}</div>
                                     </div>
 
-                                    {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_aktif['proses'] }}</span>
-                                            {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_aktif['selesai'] }}</span>
-                                            {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_aktif['ditolak'] }}</span>
-                                            {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
@@ -87,7 +94,7 @@
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-aktif.index') }}"
-                                            class="btn btn-sm btn-light-primary text-primary flex-fill">
+                                            class="btn btn-sm btn-light-primary text-primary flex-fill btn-light-primary-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -96,9 +103,9 @@
                             </div>
                         </div>
 
-                        {{-- SURAT IZIN PENELITIAN --}}
                         <div class="col-xl-4 col-md-6 mb-5">
-                            <div class="card card-xxl-stretch border-hover-dashed h-100">
+                            <div
+                                class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-warning">
                                 <div class="card-body p-5">
 
                                     <div class="d-flex align-items-center mb-5">
@@ -109,31 +116,26 @@
                                         </div>
                                     </div>
 
-                                    {{-- Ringkasan Total --}}
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-warning p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-warning">{{ $surat_penelitian['total'] }}</div>
                                     </div>
 
-                                    {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_penelitian['proses'] }}</span>
-                                            {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_penelitian['selesai'] }}</span>
-                                            {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_penelitian['ditolak'] }}</span>
-                                            {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
@@ -144,7 +146,7 @@
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-izin-penelitian.index') }}"
-                                            class="btn btn-sm btn-light-warning text-warning flex-fill">
+                                            class="btn btn-sm btn-light-warning text-warning flex-fill btn-light-warning-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -153,9 +155,8 @@
                             </div>
                         </div>
 
-                        {{-- SURAT PERMOHONAN OBSERVASI --}}
                         <div class="col-xl-4 col-md-6 mb-5">
-                            <div class="card card-xxl-stretch border-hover-dashed h-100">
+                            <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-info">
                                 <div class="card-body p-5">
 
                                     <div class="d-flex align-items-center mb-5">
@@ -167,31 +168,26 @@
                                         </div>
                                     </div>
 
-                                    {{-- Ringkasan Total --}}
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-info p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-info">{{ $surat_observasi['total'] }}</div>
                                     </div>
 
-                                    {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_observasi['proses'] }}</span>
-                                            {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_observasi['selesai'] }}</span>
-                                            {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_observasi['ditolak'] }}</span>
-                                            {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
@@ -202,7 +198,7 @@
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-observasi.index') }}"
-                                            class="btn btn-sm btn-light-info text-info flex-fill">
+                                            class="btn btn-sm btn-light-info text-info flex-fill btn-light-info-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -211,13 +207,12 @@
                             </div>
                         </div>
 
-                        {{-- SURAT REKOMENDASI --}}
                         <div class="col-xl-4 col-md-6 mb-5">
-                            <div class="card card-xxl-stretch border-hover-dashed h-100">
+                            <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-dark">
                                 <div class="card-body p-5">
 
                                     <div class="d-flex align-items-center mb-5">
-                                        <i class="fas fa-thumbs-up fs-2x me-3 text-secondary"></i>
+                                        <i class="fas fa-thumbs-up fs-2x me-3 text-dark"></i>
                                         <div class="d-flex flex-column">
                                             <span class="fs-4 fw-bolder text-gray-800">Surat Rekomendasi</span>
                                             <span class="text-muted fs-7">Pengajuan surat rekomendasi
@@ -225,42 +220,37 @@
                                         </div>
                                     </div>
 
-                                    {{-- Ringkasan Total --}}
                                     <div
-                                        class="d-flex justify-content-between align-items-center mb-5 bg-secondary p-3 rounded-3">
+                                        class="d-flex justify-content-between align-items-center mb-5 bg-light-dark p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
-                                        <div class="fs-3 fw-bolder text-black">{{ $surat_rekomendasi['total'] }}</div>
+                                        <div class="fs-3 fw-bolder text-dark">{{ $surat_rekomendasi['total'] }}</div>
                                     </div>
 
-                                    {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_rekomendasi['proses'] }}</span>
-                                            {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_rekomendasi['selesai'] }}</span>
-                                            {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_rekomendasi['ditolak'] }}</span>
-                                            {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-rekomendasi.create') }}"
-                                            class="btn btn-sm btn-secondary flex-fill">
+                                            class="btn btn-sm btn-dark flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-rekomendasi.index') }}"
-                                            class="btn btn-sm btn-light-secondary text-black flex-fill">
+                                            class="btn btn-sm btn-light-dark text-dark flex-fill btn-light-dark-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -269,9 +259,9 @@
                             </div>
                         </div>
 
-                        {{-- SURAT PERMOHONAN PKL --}}
                         <div class="col-xl-4 col-md-6 mb-5">
-                            <div class="card card-xxl-stretch border-hover-dashed h-100">
+                            <div
+                                class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-danger">
                                 <div class="card-body p-5">
 
                                     <div class="d-flex align-items-center mb-5">
@@ -282,44 +272,37 @@
                                         </div>
                                     </div>
 
-                                    {{-- Ringkasan Total --}}
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-danger p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-danger">{{ $surat_pkl['total'] }}</div>
-                                        {{-- Total Status --}}
                                     </div>
 
-                                    {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_pkl['proses'] }}</span>
-                                            {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_pkl['selesai'] }}</span>
-                                            {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_pkl['ditolak'] }}</span>
-                                            {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
-                                    {{-- Tombol Aksi --}}
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-pkl.create') }}"
                                             class="btn btn-sm btn-danger flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-pkl.index') }}"
-                                            class="btn btn-sm btn-light-danger text-danger flex-fill">
+                                            class="btn btn-sm btn-light-danger text-danger flex-fill btn-light-danger-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -328,9 +311,9 @@
                             </div>
                         </div>
 
-                        {{-- SURAT KETERANGAN LULUS --}}
                         <div class="col-xl-4 col-md-6 mb-5">
-                            <div class="card card-xxl-stretch border-hover-dashed h-100">
+                            <div
+                                class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-success">
                                 <div class="card-body p-5">
 
                                     <div class="d-flex align-items-center mb-5">
@@ -341,44 +324,37 @@
                                         </div>
                                     </div>
 
-                                    {{-- Ringkasan Total --}}
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-success p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-success">{{ $surat_lulus['total'] }}</div>
-                                        {{-- Total Status --}}
                                     </div>
 
-                                    {{-- Status Detail Ringkas --}}
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_lulus['proses'] }}</span>
-                                            {{-- Proses --}}
                                             <div class="text-muted fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_lulus['selesai'] }}</span>
-                                            {{-- Selesai/Diterima --}}
                                             <div class="text-muted fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_lulus['ditolak'] }}</span>
-                                            {{-- Ditolak --}}
                                             <div class="text-muted fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
-                                    {{-- Tombol Aksi --}}
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
                                             class="btn btn-sm btn-success flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-keterangan-lulus.index') }}"
-                                            class="btn btn-sm btn-light-success text-success flex-fill">
+                                            class="btn btn-sm btn-light-success text-success flex-fill btn-light-success-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -388,8 +364,6 @@
                         </div>
 
                     </div>
-                    {{-- END: STATUS SURAT PER JENIS --}}
-
                 </div>
             </div>
         </div>

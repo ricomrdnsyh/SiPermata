@@ -27,7 +27,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
                                             data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Mahasiswa...</option>
                                             @foreach ($mahasiswa as $mhs)
@@ -46,7 +46,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Akademik...</option>
                                             @foreach ($akademik as $item)
@@ -63,7 +63,7 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Tempat Lahir</label>
                                         <input type="text" name="tempat_lahir" class="form-control mb-3 mb-lg-0"
-                                            value="{{ $surat->tempat_lahir }}" />
+                                            value="{{ $surat->tempat_lahir }}" required />
                                         @error('tempat_lahir')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -71,14 +71,15 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Tanggal Lahir</label>
                                         <input type="date" name="tgl_lahir" class="form-control mb-3 mb-lg-0"
-                                            value="{{ $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '' }}" />
+                                            value="{{ $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '' }}"
+                                            required />
                                         @error('tgl_lahir')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
-                                        <textarea name="judul_penelitian" class="form-control mb-3 mb-lg-0" rows="3">{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                        <textarea name="judul_penelitian" class="form-control mb-3 mb-lg-0" rows="3" required>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                         @error('judul_penelitian')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror

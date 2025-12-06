@@ -31,7 +31,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Akademik...</option>
                                             @foreach ($akademik as $item)
@@ -47,7 +47,7 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Keperluan Rekomendasi</label>
                                         <textarea name="keperluan" placeholder="Penerima Beasiswa GenBi, MBKM Santri, dll" class="form-control mb-3 mb-lg-0"
-                                            rows="3"></textarea>
+                                            rows="3" required></textarea>
                                         @error('keperluan')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -55,7 +55,7 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label>
                                         <textarea name="penyelenggara" placeholder="Bank Indonesia, LP3M Universitas Nurul Jadid, dll"
-                                            class="form-control mb-3 mb-lg-0" rows="3"></textarea>
+                                            class="form-control mb-3 mb-lg-0" rows="3" required></textarea>
                                         @error('penyelenggara')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror

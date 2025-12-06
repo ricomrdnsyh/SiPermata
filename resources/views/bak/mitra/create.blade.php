@@ -24,7 +24,7 @@
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Mitra</label>
                                             <input type="text" name="nama_mitra" class="form-control mb-3 mb-lg-0"
-                                                value="{{ old('nama_mitra') }}" />
+                                                value="{{ old('nama_mitra') }}" required />
                                             @error('nama_mitra')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror

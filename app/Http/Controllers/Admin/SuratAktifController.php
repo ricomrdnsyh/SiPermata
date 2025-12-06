@@ -133,41 +133,8 @@ class SuratAktifController extends Controller
             abort(403);
         }
 
+        $mahasiswa = Mahasiswa::all();
         $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
-
-        $url      = env('EXT_API_URL');
-        $token    = env('EXT_API_TOKEN');
-        $username = env('EXT_API_USERNAME');
-        $password = env('EXT_API_PASSWORD');
-
-        $mahasiswa = collect(); // default kosong kalau API bermasalah
-
-        try {
-            $response = Http::timeout(10)          // max 10 detik
-                ->connectTimeout(5)               // max 5 detik buat connect
-                // ->withoutVerifying()           // HANYA untuk dev kalau SSL bermasalah
-                ->withHeaders([
-                    'X-Token'    => $token,
-                    'X-Username' => $username,
-                    'X-Password' => $password,
-                ])->post($url . '?page=1', [
-                    'kategori' => 'mahasiswa',
-                ]);
-
-            if ($response->successful()) {
-                $json    = $response->json();
-                $wrapper = $json['data'] ?? [];
-                $rows    = $wrapper['data'] ?? [];
-
-                // biar di blade bisa pakai $mhs->nim, $mhs->nama
-                $mahasiswa = collect($rows)->map(fn($row) => (object) $row);
-            } else {
-                Log::error('API mahasiswa gagal: ' . $response->status());
-            }
-        } catch (\Throwable $e) {
-            Log::error('Error call API mahasiswa: ' . $e->getMessage());
-            // jangan dd() di sini, biarkan view tetap jalan tapi dropdown kosong
-        }
 
         return view('admin.surat_aktif.create', compact('mahasiswa', 'akademik'));
     }

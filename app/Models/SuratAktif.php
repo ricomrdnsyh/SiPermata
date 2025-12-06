@@ -44,14 +44,16 @@ class SuratAktif extends Model
         $nama = strtolower(trim($nama ?? ''));
 
         $map = [
-            'fakultas agama islam'            => '01',
-            'fai'                             => '01',
-            'fakultas teknik'                 => '02',
-            'ft'                              => '02',
-            'fakultas kesehatan'              => '03',
-            'fkes'                            => '03',
-            'fakultas sosial dan humaniora'   => '04',
-            'soshum'                          => '04',
+            'agama islam'            => '01',
+            'fai'                    => '01',
+            'teknik'                 => '02',
+            'ft'                     => '02',
+            'kesehatan'              => '03',
+            'fkes'                   => '03',
+            'sosial dan humaniora'   => '04',
+            'soshum'                 => '04',
+            'pascasarjana'           => '05',
+            'pasca'                  => '05',
         ];
 
         return $map[$nama] ?? '00';

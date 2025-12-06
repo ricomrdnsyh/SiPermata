@@ -31,7 +31,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Akademik...</option>
                                             @foreach ($akademik as $item)
@@ -46,7 +46,7 @@
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester" class="form-control mb-3 mb-lg-0" />
+                                        <input type="number" name="semester" class="form-control mb-3 mb-lg-0" required />
                                         @error('semester')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -56,7 +56,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Tempat Observasi" name="mitra_id"
                                             data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Tempat Observasi...</option>
                                             @foreach ($mitra as $mitra)
@@ -71,7 +71,8 @@
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
-                                        <input type="date" name="tgl_observasi" class="form-control mb-3 mb-lg-0" />
+                                        <input type="date" name="tgl_observasi"
+                                            class="form-control mb-3 mb-lg-0"required />
                                         @error('tgl_observasi')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -79,7 +80,7 @@
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Keperluan Observasi</label>
                                         <textarea name="keperluan" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll" class="form-control mb-3 mb-lg-0"
-                                            rows="3"></textarea>
+                                            rows="3" required></textarea>
                                         @error('keperluan')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror

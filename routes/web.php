@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SsoController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\Admin\AdminController;
@@ -21,7 +22,9 @@ use App\Http\Controllers\Admin\SuratAktifController;
 use App\Http\Controllers\Admin\SuratLulusController;
 use App\Http\Controllers\BAK\BAKSuratAktifController;
 use App\Http\Controllers\BAK\BAKSuratLulusController;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\Admin\SuratObservasiController;
+use App\Http\Controllers\Admin\SSOSinkronisasiController;
 use App\Http\Controllers\Admin\SuratPenelitianController;
 use App\Http\Controllers\BAK\BAKSuratObservasiController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
@@ -42,12 +45,9 @@ use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 
-use App\Http\Controllers\SsoController;
-use Rap2hpoutre\LaravelLogViewer\LogViewerController;
-
 Route::get('/sso', [SsoController::class, 'sso']);
 Route::get('/sso/logout/{sessionId}', [SsoController::class, 'logout']);
-Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
+// Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -82,14 +82,19 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/sso-sinkronisasi', [SSOSinkronisasiController::class, 'index'])->name('sso.sinkronisasi');
+        Route::post('/sso/refresh-token', [SSOSinkronisasiController::class, 'refresh'])->name('sso.refresh-token');
+
         Route::get('/admin/data', [AdminController::class, 'getAdmin'])->name('admin.data');
         Route::resource('users', AdminController::class)->only(['index', 'create', 'store', 'destroy']);
 
         Route::get('/fakultas/data', [FakultasController::class, 'getFakultas'])->name('fakultas.data');
-        Route::resource('fakultas', FakultasController::class);
+        Route::resource('fakultas', FakultasController::class)->only(['index', 'show']);
+        Route::post('/fakultas/sync', [FakultasController::class, 'syncFromApi'])->name('fakultas.sync');
 
         Route::get('/prodi/data', [ProdiController::class, 'getProdi'])->name('prodi.data');
-        Route::resource('prodi', ProdiController::class);
+        Route::resource('prodi', ProdiController::class)->only(['index', 'show']);
+        Route::post('/prodi/sync',  [ProdiController::class, 'syncFromApi'])->name('prodi.sync');
 
         Route::get('/akademik/data', [AkademikController::class, 'getAkademik'])->name('akademik.data');
         Route::resource('akademik', AkademikController::class);
@@ -98,15 +103,14 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('mitra', MitraController::class);
 
         Route::post('/mahasiswa/data', [MahasiswaController::class, 'getMahasiswa'])->name('mahasiswa.data');
-        Route::get('/get-prodim/{fakultas_id}', [MahasiswaController::class, 'getProdi'])->name('getProdi');
-        Route::resource('mahasiswa', MahasiswaController::class);
+        Route::resource('mahasiswa', MahasiswaController::class)->only(['index', 'show']);
+        Route::post('/mahasiswa/sync', [MahasiswaController::class, 'syncFromApi'])->name('mahasiswa.sync');
 
         Route::get('/penduduk/data', [PendudukController::class, 'getPenduduk'])->name('penduduk.data');
-        Route::get('/get-prodip/{fakultas_id}', [PendudukController::class, 'getProdi'])->name('getProdi');
-        Route::resource('penduduk', PendudukController::class);
+        Route::resource('penduduk', PendudukController::class)->only(['index', 'show']);
+        Route::post('/penduduk/sync', [PendudukController::class, 'syncFromApi'])->name('penduduk.sync');
 
         Route::get('/template/data', [TemplateControler::class, 'getTemplate'])->name('template.data');
-        Route::get('/get-prodit/{fakultas_id}', [TemplateControler::class, 'getProdi'])->name('getProdi');
         Route::resource('template', TemplateControler::class);
         Route::get('template/download/{id}', [TemplateControler::class, 'downloadTemplate'])->name('template.download');
 

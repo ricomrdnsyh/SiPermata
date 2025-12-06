@@ -5,9 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Universitas Nurul Jadid</title>
-    <meta name="description"
-          content="SiPermata Universitas Nurul Jadid">
+    <title>Sipermata Universitas Nurul Jadid</title>
+    <meta name="description" content="SiPermata Universitas Nurul Jadid">
     <meta name="author" content="Universitas Nurul Jadid">
     <meta name="publisher" content="Pusat Data & Sistem Informasi Universitas Nurul Jadid">
     <meta name="language" content="Indonesian">
@@ -16,7 +15,7 @@
     <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="slurp" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="duckduckbot" content="noindex, nofollow, noarchive, nosnippet">
-    <link rel="icon" href="{{ asset('assets/media/logos/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/media/logos//unuja.png') }}" type="image/x-icon">
     <link rel="canonical" href="https://sipermata.unuja.ac.id/">
 
     <style>
@@ -137,12 +136,12 @@
 </head>
 
 <body
-        style="background-color: #f1f4f8; background-image: linear-gradient(to right, rgba(206,206,206,0.31) 1px, transparent 1px),  linear-gradient(to bottom, rgba(206,206,206,0.31) 1px, transparent 1px); background-size: 25px 25px; position: relative;">
-<div class="container">
-    <div class="error-code" id="error-code">@yield('code') - @yield('title')</div>
-    <div class="error-message" id="error-message">@yield('message')</div>
-    <a href="/" class="home-btn">Kembali ke Beranda</a>
-</div>
+    style="background-color: #f1f4f8; background-image: linear-gradient(to right, rgba(206,206,206,0.31) 1px, transparent 1px),  linear-gradient(to bottom, rgba(206,206,206,0.31) 1px, transparent 1px); background-size: 25px 25px; position: relative;">
+    <div class="container">
+        <div class="error-code" id="error-code">@yield('code') - @yield('title')</div>
+        <div class="error-message" id="error-message">@yield('message')</div>
+        <a href="/" class="home-btn">Kembali ke Beranda</a>
+    </div>
 </body>
 
 </html>

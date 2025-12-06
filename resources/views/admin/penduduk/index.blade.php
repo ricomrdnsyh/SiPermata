@@ -44,10 +44,19 @@
                         <div class="card-toolbar">
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <!--begin::Add user-->
-                                <a href="{{ route('admin.penduduk.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Penduduk</a>
-                                <!--end::Add user-->
+                                <form id="sinkron_data" action="{{ route('admin.penduduk.sync') }}" method="POST"
+                                    class="me-2">
+                                    @csrf
+                                    <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
+                                        <span class="indicator-label">
+                                            <i class="fas fa-sync-alt"></i> Sinkron Data Penduduk
+                                        </span>
+                                        <span class="indicator-progress">
+                                            <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                                            Sinkron Data Penduduk...
+                                        </span>
+                                    </button>
+                                </form>
                             </div>
                             <!--end::Toolbar-->
                         </div>
@@ -68,8 +77,8 @@
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">NIDN/NUPTK</th>
                                     <th class="min-w-125px">Nama Penduduk</th>
-                                    <th class="min-w-125px">Nama Fakultas</th>
-                                    <th class="min-w-125px">Nama Prodi</th>
+                                    <th class="min-w-125px">Fakultas</th>
+                                    <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Email</th>
                                     <th class="min-w-125px">No Telepon</th>
                                 </tr>
@@ -269,4 +278,20 @@
             });
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('sinkron_data');
+            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    return;
+                }
+                submitButton.disabled = true;
+                submitButton.querySelector('.indicator-label').style.display = 'none';
+                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+            });
+        });
+    </script>
 @endsection

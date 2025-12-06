@@ -98,7 +98,7 @@
 
                     <tr>
                         <td class="content">
-                            <p>Halo, <b>{{ $mahasiswa->nama }}</b> (NIM: {{ $mahasiswa->nim }}),</p>
+                            <p>Halo, <b>{{ $mahasiswa->nama }}</b> NIM: <b>{{ $mahasiswa->nim }}</b>,</p>
 
                             <p>
                                 Kami sangat senang untuk mengabarkan bahwa proses pengajuan surat Anda, yaitu
@@ -147,7 +147,7 @@
 
                             <p style="margin-top: 30px;">
                                 Salam Hormat,<br>
-                                <b>{{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
+                                <b>Fakultas {{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
                             </p>
                         </td>
                     </tr>

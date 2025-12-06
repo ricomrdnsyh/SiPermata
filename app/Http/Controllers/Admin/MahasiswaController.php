@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Prodi;
 use App\Models\Fakultas;
 use App\Models\Mahasiswa;
+use App\Services\SSOClient;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -22,126 +23,87 @@ class MahasiswaController extends Controller
         return view('admin.mahasiswa.index', compact('data'));
     }
 
-    public function getMahasiswa(Request $request)
+    public function getMahasiswa()
     {
-        $url      = env('EXT_API_URL');
-        $token    = env('EXT_API_TOKEN');
-        $username = env('EXT_API_USERNAME');
-        $password = env('EXT_API_PASSWORD');
+        $data = Mahasiswa::select(['nim', 'fakultas_id', 'prodi_id', 'nama', 'jenis_kelamin', 'email', 'no_hp'])
+            ->with('fakultas', 'prodi');
 
-        $draw   = (int) $request->input('draw');
-        $start  = (int) $request->input('start', 0);
-        $length = (int) $request->input('length', 10);
+        return DataTables::of($data)
+            ->addColumn('nama_fakultas', function ($row) {
+                return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
+            })
+            ->addColumn('nama_prodi', function ($row) {
+                return $row->prodi ? $row->prodi->nama_prodi : '—';
+            })
+            ->editColumn('jenis_kelamin', function ($row) {
+                if ($row->jenis_kelamin == 'L') {
+                    return '<span>Laki-laki</span>';
+                } else {
+                    return '<span>Perempuan</span>';
+                }
+            })
+            ->addColumn('action', function ($row) {
+                $showBtn = '<a href="' . route('admin.mahasiswa.show', $row->nim) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-        if ($length <= 0) {
-            $length = 10;
-        }
+                return '<div class="text-center">' . $showBtn . '</div>';
+            })
+            ->rawColumns(['nama_fakultas', 'nama_prodi', 'jenis_kelamin', 'action'])
+            ->make(true);
+    }
 
-        $page = intval($start / $length) + 1;
+    public function syncFromApi(SSOClient $client)
+    {
+        try {
+            $items = $client->getMahasiswa();
 
-        $response = Http::withHeaders([
-            'X-Token'    => $token,
-            'X-Username' => $username,
-            'X-Password' => $password,
-        ])->post($url . '?page=' . $page, [
-            'kategori' => 'mahasiswa',
-            'page' => $length,
-        ]);
+            $created   = 0;
+            $updated   = 0;
+            $unchanged = 0;
+            $totalApi  = count($items);
 
-        if ($response->failed()) {
-            return response()->json([
-                'draw'            => $draw,
-                'recordsTotal'    => 0,
-                'recordsFiltered' => 0,
-                'data'            => [],
-            ]);
-        }
+            foreach ($items as $mhs) {
+                $data = [
+                    'prodi_id'      => $mhs['id_sms']        ?? null,
+                    'fakultas_id'   => $mhs['id_fakultas']   ?? null,
+                    'nama'          => $mhs['nama']          ?? null,
+                    'jenis_kelamin' => $mhs['jenis_kelamin'] ?? null,
+                    'email'         => $mhs['email']         ?? null,
+                    'no_hp'         => $mhs['no_hp']         ?? null,
+                ];
 
-        $json    = $response->json();
-        $wrapper = $json['data'] ?? [];
-        $rows    = $wrapper['data'] ?? [];
-        $total   = (int) ($wrapper['total'] ?? count($rows));
+                $mahasiswa = Mahasiswa::where('nim', $mhs['nim'])->first();
 
-        // opsional: mapping L/P → span
-        foreach ($rows as &$row) {
-            if (($row['jenis_kelamin'] ?? null) === 'L') {
-                $row['jenis_kelamin'] = '<span>Laki-laki</span>';
-            } elseif (($row['jenis_kelamin'] ?? null) === 'P') {
-                $row['jenis_kelamin'] = '<span>Perempuan</span>';
+                if (! $mahasiswa) {
+                    Mahasiswa::create(array_merge([
+                        'nim' => $mhs['nim'],
+                    ], $data));
+
+                    $created++;
+                } else {
+                    $mahasiswa->fill($data);
+
+                    if ($mahasiswa->isDirty()) {
+                        $mahasiswa->save();
+                        $updated++;
+                    } else {
+                        $unchanged++;
+                    }
+                }
             }
+
+            $message = "Sinkron data mahasiswa selesai. "
+                . "Baru: {$created}, diupdate: {$updated}, tidak berubah: {$unchanged}. "
+                . "Total data dari API: {$totalApi} mahasiswa.";
+
+            return redirect()->route('admin.mahasiswa.index')->with('success', $message);
+        } catch (\Throwable $e) {
+            report($e);
+            return redirect()->route('admin.mahasiswa.index')->with('failed', 'Sinkron data mahasiswa gagal: ' . $e->getMessage());
         }
-        unset($row);
-
-        return response()->json([
-            'draw'            => $draw,
-            'recordsTotal'    => $total,
-            'recordsFiltered' => $total,
-            'data'            => $rows,
-        ]);
     }
 
 
-    public function getProdi($fakultas_id)
-    {
-        $prodi = Prodi::where('fakultas_id', $fakultas_id)->get();
-
-        return response()->json($prodi);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $fakultas = Fakultas::all();
-        $prodi    = Prodi::all();
-
-        return view('admin.mahasiswa.create', compact('fakultas', 'prodi'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate(
-            [
-                'nim'           => 'required|unique:mahasiswa,nim',
-                'nama'          => 'required',
-                'jenis_kelamin' => 'required',
-                'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
-                'prodi_id'      => 'required|exists:prodi,id_prodi',
-                'email'         => 'required|email|unique:mahasiswa,email',
-                'no_hp'         => 'nullable',
-            ],
-            [
-                'nim.required'           => 'NIM wajib diisi.',
-                'nim.unique'             => 'NIM sudah terdaftar.',
-                'nama.required'          => 'Nama wajib diisi.',
-                'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
-                'fakultas_id.required'   => 'Fakultas wajib dipilih.',
-                'prodi_id.required'      => 'Prodi wajib dipilih.',
-                'email.required'         => 'Email wajib diisi.',
-                'email.unique'           => 'Email sudah terdaftar.',
-            ]
-        );
-
-        Mahasiswa::create([
-            'nim'           => $request->nim,
-            'nama'          => $request->nama,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'fakultas_id'   => $request->fakultas_id,
-            'prodi_id'      => $request->prodi_id,
-            'email'         => $request->email,
-            'no_hp'         => $request->no_hp,
-        ]);
-
-        return redirect()->route('admin.mahasiswa.index')->with('success', 'Data berhasil ditambahkan!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $data     = Mahasiswa::findOrFail($id);
@@ -149,67 +111,5 @@ class MahasiswaController extends Controller
         $prodi    = Prodi::all();
 
         return view('admin.mahasiswa.show', compact('data', 'fakultas', 'prodi'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $data     = Mahasiswa::findOrFail($id);
-        $fakultas = Fakultas::all();
-        $prodi    = Prodi::all();
-
-        return view('admin.mahasiswa.edit', compact('data', 'fakultas', 'prodi'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $request->validate(
-            [
-                'nim'           => 'required',
-                'nama'          => 'required',
-                'jenis_kelamin' => 'required',
-                'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
-                'prodi_id'      => 'required|exists:prodi,id_prodi',
-                'email'         => 'required',
-                'no_hp'         => 'nullable',
-            ],
-            [
-                'nim.required'           => 'NIM wajib diisi.',
-                'nama.required'          => 'Nama wajib diisi.',
-                'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
-                'fakultas_id.required'   => 'Fakultas wajib dipilih.',
-                'prodi_id.required'      => 'Prodi wajib dipilih.',
-                'email.required'         => 'Email wajib diisi.',
-            ]
-        );
-
-        $data = Mahasiswa::findOrFail($id);
-        $data->update([
-            'nim'           => $request->nim,
-            'nama'          => $request->nama,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'fakultas_id'   => $request->fakultas_id,
-            'prodi_id'      => $request->prodi_id,
-            'email'         => $request->email,
-            'no_hp'         => $request->no_hp,
-        ]);
-
-        return redirect()->route('admin.mahasiswa.index')->with('success', 'Data berhasil diupdate!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $data = Mahasiswa::findOrFail($id);
-        $data->delete();
-
-        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus!']);
     }
 }

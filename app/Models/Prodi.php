@@ -17,18 +17,8 @@ class Prodi extends Model
 
     protected $keyType = 'string';
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->id_prodi)) {
-                $model->id_prodi = Str::uuid()->toString();
-            }
-        });
-    }
-
     protected $fillable = [
+        'id_prodi',
         'fakultas_id',
         'nama_prodi',
         'singkatan',

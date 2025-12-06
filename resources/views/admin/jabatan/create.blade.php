@@ -31,7 +31,8 @@
                                                     Pilih Penduduk...</option>
                                                 @foreach ($penduduk as $penduduk)
                                                     <option value="{{ $penduduk->id_penduduk }}">
-                                                        {{ $penduduk->nidn }} - {{ $penduduk->nama_penduduk }}
+                                                        {{ $penduduk->fakultas->nama_fakultas }} -
+                                                        {{ $penduduk->nama_penduduk }}
                                                     </option>
                                                 @endforeach
                                             </select>

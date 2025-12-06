@@ -44,10 +44,19 @@
                         <div class="card-toolbar">
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <!--begin::Add user-->
-                                <a href="{{ route('admin.mahasiswa.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add Mahasiswa</a>
-                                <!--end::Add user-->
+                                <form id="sinkron_data" action="{{ route('admin.mahasiswa.sync') }}" method="POST"
+                                    class="me-2">
+                                    @csrf
+                                    <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
+                                        <span class="indicator-label">
+                                            <i class="fas fa-sync-alt"></i> Sinkron Data Mahasiswa
+                                        </span>
+                                        <span class="indicator-progress">
+                                            <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                                            Sinkron Data Mahasiswa...
+                                        </span>
+                                    </button>
+                                </form>
                             </div>
                             <!--end::Toolbar-->
                         </div>
@@ -65,8 +74,10 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center">Actions</th>
                                     <th class="min-w-125px">NIM</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
+                                    <th class="min-w-125px">Fakultas</th>
                                     <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Jenis Kelamin</th>
                                     <th class="min-w-125px">Email</th>
@@ -135,15 +146,25 @@
                     }
                 },
                 columns: [{
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }, {
                         data: 'nim',
                         name: 'nim'
                     },
                     {
                         data: 'nama',
                         name: 'nama'
-                    }, {
-                        data: 'prodi',
-                        name: 'prodi'
+                    },
+                    {
+                        data: 'nama_fakultas',
+                        name: 'nama_fakultas'
+                    },
+                    {
+                        data: 'nama_prodi',
+                        name: 'nama_prodi'
                     },
                     {
                         data: 'jenis_kelamin',
@@ -252,4 +273,20 @@
             });
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('sinkron_data');
+            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    return;
+                }
+                submitButton.disabled = true;
+                submitButton.querySelector('.indicator-label').style.display = 'none';
+                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+            });
+        });
+    </script>
 @endsection

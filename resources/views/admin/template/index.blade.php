@@ -216,7 +216,7 @@
                         },
                         success: function(response) {
                             Swal.fire({
-                                text: response.message,
+                                text: response.success,
                                 icon: "success",
                                 buttonsStyling: false,
                                 confirmButtonText: "Ok, got it!",

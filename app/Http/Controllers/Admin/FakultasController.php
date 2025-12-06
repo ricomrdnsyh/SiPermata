@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Fakultas;
+use App\Services\SSOClient;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -37,107 +38,73 @@ class FakultasController extends Controller
                 $showBtn = '<a href="' . route('admin.fakultas.show', $row->id_fakultas) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('admin.fakultas.edit', $row->id_fakultas) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
-
-                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_fakultas . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
-
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="text-center">' . $showBtn . '</div>';
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function syncFromApi(SSOClient $client)
     {
+        try {
+            $items = $client->getFakultasFromApi();
 
-        return view('admin.fakultas.create');
+            $created   = 0;
+            $updated   = 0;
+            $unchanged = 0;
+
+            foreach ($items as $item) {
+                $status = $item['status'] ?? 'active';
+
+                if ($status === 'active') {
+                    $status = 'aktif';
+                } elseif ($status === 'inactive') {
+                    $status = 'nonaktif';
+                }
+
+                $data = [
+                    'nama_fakultas' => $item['fakultas'],
+                    'singkatan'     => $item['singkatan'] ?? null,
+                    'status'        => $status,
+                ];
+
+                $fakultas = Fakultas::where('id_fakultas', $item['id_fakultas'])->first();
+
+                if (! $fakultas) {
+                    Fakultas::create(array_merge([
+                        'id_fakultas' => $item['id_fakultas'],
+                    ], $data));
+
+                    $created++;
+                } else {
+                    $fakultas->fill($data);
+
+                    if ($fakultas->isDirty()) {
+                        $fakultas->save();
+                        $updated++;
+                    } else {
+                        $unchanged++;
+                    }
+                }
+            }
+
+            $totalApi = count($items);
+
+            $message = "Sinkron data fakultas selesai. "
+                . "Baru: {$created}, diupdate: {$updated}, tidak berubah: {$unchanged}. "
+                . "Total data dari API: {$totalApi}.";
+
+            return redirect()->route('admin.fakultas.index')->with('success', $message);
+        } catch (\Throwable $e) {
+            report($e);
+            return redirect()->route('admin.fakultas.index')->with('failed', 'Sinkron data fakultas gagal: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_fakultas' => 'required',
-            'singkatan'     => 'required',
-            'status'        => 'required|in:aktif,nonaktif',
-        ], [
-            'nama_fakultas.required' => 'Nama Fakultas wajib diisi.',
-            'singkatan.required'     => 'Singkatan wajib diisi.',
-            'status.required'        => 'Status wajib diisi.',
-        ]);
-
-        Fakultas::create([
-            'nama_fakultas' => $request->nama_fakultas,
-            'singkatan'     => $request->singkatan,
-            'status'        => $request->status,
-        ]);
-
-        return redirect()->route('admin.fakultas.index')->with('success', 'Data berhasil ditambahkan!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $data = Fakultas::findOrFail($id);
 
         return view('admin.fakultas.show', compact('data'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $data = Fakultas::findOrFail($id);
-
-        return view('admin.fakultas.edit', compact('data'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'nama_fakultas' => 'required',
-            'singkatan'     => 'required',
-            'status'        => 'required|in:aktif,nonaktif',
-        ], [
-            'nama_fakultas.required' => 'Nama Fakultas wajib diisi.',
-            'singkatan.required'     => 'Singkatan wajib diisi.',
-            'status.required'        => 'Status wajib diisi.',
-        ]);
-
-        $data = Fakultas::findOrFail($id);
-        $data->update([
-            'nama_fakultas' => $request->nama_fakultas,
-            'singkatan'     => $request->singkatan,
-            'status'        => $request->status,
-        ]);
-
-        return redirect()->route('admin.fakultas.index')->with('success', 'Data berhasil diupdate!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $data = Fakultas::findOrFail($id);
-        $data->delete();
-
-        return response()->json([
-            'status'    => 'success',
-            'message'   => 'Data berhasil dihapus.'
-        ]);
     }
 }

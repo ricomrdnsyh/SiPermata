@@ -65,7 +65,7 @@
                                             @enderror
                                         </div>
                                         <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Tanggal SK(Kosongkan jikan bukan
+                                            <label class="fw-semibold fs-6 mb-2">Tanggal SK(Kosongkan jikan bukan
                                                 surat keterangan lulus)</label>
                                             <input type="date" name="tgl_sk" class="form-control mb-3 mb-lg-0"
                                                 value="{{ old('tgl_sk') }}" />

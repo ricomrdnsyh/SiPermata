@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Prodi;
 use App\Models\Fakultas;
+use App\Services\SSOClient;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -48,121 +49,79 @@ class ProdiController extends Controller
                 $showBtn = '<a href="' . route('admin.prodi.show', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('admin.prodi.edit', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
-
-                $deleteBtn = '<a href="javascript:void(0)" data-id="' . $row->id_prodi . '" class="btn btn-sm btn-light btn-active-light-danger text-center delete-btn" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
-
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="text-center">' . $showBtn . '</div>';
             })
             ->rawColumns(['status', 'nama_fakultas', 'action'])
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function syncFromApi(SSOClient $client)
     {
-        $data = Fakultas::all();
+        try {
+            $created   = 0;
+            $updated   = 0;
+            $unchanged = 0;
+            $totalApi  = 0;
 
-        return view('admin.prodi.create', compact('data'));
+            $fakultasList = Fakultas::orderBy('id_fakultas')->get();
+
+            foreach ($fakultasList as $fak) {
+                $items = $client->getProdiByFakultas($fak->id_fakultas);
+                $totalApi += count($items);
+
+                foreach ($items as $item) {
+                    $status = $item['status'] ?? 'active';
+
+                    if ($status === 'active') {
+                        $status = 'aktif';
+                    } elseif ($status === 'inactive') {
+                        $status = 'nonaktif';
+                    }
+
+                    $data = [
+                        'fakultas_id' => $item['id_fakultas'],
+                        'nama_prodi'  => $item['prodi'],
+                        'singkatan'   => $item['singkatan'] ?? null,
+                        'status'      => $status,
+                    ];
+
+                    $prodi = Prodi::where('id_prodi', $item['id_sms'])->first();
+
+                    if (! $prodi) {
+                        Prodi::create(array_merge([
+                            'id_prodi' => $item['id_sms'],
+                        ], $data));
+
+                        $created++;
+                    } else {
+                        $prodi->fill($data);
+
+                        if ($prodi->isDirty()) {
+                            $prodi->save();
+                            $updated++;
+                        } else {
+                            $unchanged++;
+                        }
+                    }
+                }
+            }
+
+            $message = "Sinkron data program studi selesai. "
+                . "Baru: {$created}, diupdate: {$updated}, tidak berubah: {$unchanged}. "
+                . "Total data dari API: {$totalApi} prodi.";
+
+            return redirect()->route('admin.prodi.index')->with('success', $message);
+        } catch (\Throwable $e) {
+            report($e);
+            return redirect()->route('admin.prodi.index')->with('failed', 'Sinkron data program studi gagal: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate(
-            [
-                'fakultas_id' => 'required|exists:fakultas,id_fakultas',
-                'nama_prodi'  => 'required',
-                'singkatan'   => 'required',
-                'status'      => 'required',
-            ],
-            [
-                'fakultas_id.required' => 'Fakultas harus diisi.',
-                'nama_prodi.required'  => 'Nama Prodi harus diisi.',
-                'singkatan.required'   => 'Singkatan harus diisi.',
-                'status.required'      => 'Status harus diisi.',
-            ]
-        );
 
-        Prodi::create([
-            'fakultas_id' => $request->fakultas_id,
-            'nama_prodi'  => $request->nama_prodi,
-            'singkatan'   => $request->singkatan,
-            'status'      => $request->status,
-        ]);
-
-        return redirect()->route('admin.prodi.index')->with('success', 'Data berhasil ditambahkan!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $prodi = Prodi::with('fakultas')->findOrFail($id);
 
         return view('admin.prodi.show', compact('prodi'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $prodi = Prodi::findOrFail($id);
-        $fakultas = Fakultas::all();
-
-        return view('admin.prodi.edit', compact('prodi', 'fakultas'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $request->validate(
-            [
-                'fakultas_id' => 'required|exists:fakultas,id_fakultas',
-                'nama_prodi'  => 'required',
-                'singkatan'   => 'required',
-                'status'      => 'required',
-            ],
-            [
-                'fakultas_id.required' => 'Fakultas harus diisi.',
-                'nama_prodi.required'  => 'Nama Prodi harus diisi.',
-                'singkatan.required'   => 'Singkatan harus diisi.',
-                'status.required'      => 'Status harus diisi.',
-            ]
-        );
-
-        $prodi = Prodi::findOrFail($id);
-        $prodi->update([
-            'fakultas_id' => $request->fakultas_id,
-            'nama_prodi'  => $request->nama_prodi,
-            'singkatan'   => $request->singkatan,
-            'status'      => $request->status,
-        ]);
-
-        return redirect()->route('admin.prodi.index')->with('success', 'Data berhasil diupdate!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $data = Prodi::findOrFail($id);
-        $data->delete();
-
-        return response()->json([
-            'status'    => 'success',
-            'message'   => 'Data berhasil dihapus!'
-        ]);
     }
 }

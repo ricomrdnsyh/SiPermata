@@ -73,7 +73,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Akademik...</option>
                                             @foreach ($akademik as $item)
@@ -88,14 +88,14 @@
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester" class="form-control mb-3 mb-lg-0" />
+                                        <input type="number" name="semester" class="form-control mb-3 mb-lg-0" required />
                                         @error('semester')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="fv-row mb-7">
                                         <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                                        <textarea name="alamat" class="form-control mb-3 mb-lg-0" rows="3"></textarea>
+                                        <textarea name="alamat" class="form-control mb-3 mb-lg-0" rows="3" required></textarea>
                                         @error('alamat')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -127,7 +127,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
                                             data-select2-id="select2-data-72-r5i9" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Mahasiswa...</option>
                                             @foreach ($mahasiswa as $mhsw)
@@ -288,7 +288,7 @@
                                         <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
                                             data-select2-id="select2-data-72-r5i1" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
+                                            data-kt-initialized="1" required>
                                             <option value="" data-select2-id="select2-data-74-9zwr">
                                                 Pilih Mahasiswa...</option>
                                             @foreach ($mahasiswa as $mhswa)

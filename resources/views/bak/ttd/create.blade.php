@@ -26,7 +26,7 @@
                                             <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Template" name="template_id"
                                                 id="template_id" data-select2-id="select2-data-72-r5i3" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
+                                                aria-hidden="true" data-kt-initialized="1" required>
                                                 <option value="" data-select2-id="select2-data-74-9zwr">
                                                     Pilih Template...</option>
                                                 @foreach ($template as $tmp)
@@ -42,7 +42,7 @@
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama TTD Surat</label>
                                             <input type="text" name="nama_ttd" class="form-control mb-3 mb-lg-0"
-                                                value="{{ old('nama_ttd') }}" />
+                                                value="{{ old('nama_ttd') }}" required />
                                             @error('nama_ttd')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
@@ -50,7 +50,7 @@
                                         <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
                                             <input type="text" name="nidn" class="form-control mb-3 mb-lg-0"
-                                                value="{{ old('nidn') }}" />
+                                                value="{{ old('nidn') }}" required />
                                             @error('nidn')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
@@ -60,7 +60,7 @@
                                             <select class="form-select form-select-solid select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
                                                 id="fakultas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
+                                                aria-hidden="true" data-kt-initialized="1" required>
                                                 <option value="" data-select2-id="select2-data-74-9zwr">
                                                     Pilih Fakultas...</option>
                                                 @foreach ($fakultas as $fakultas)
@@ -78,14 +78,14 @@
                                             <div class="d-flex fv-col">
                                                 <div class="form-check form-check-custom form-check-solid mx-4">
                                                     <input class="form-check-input" name="status" type="radio"
-                                                        value="aktif" id="aktif" />
+                                                        value="aktif" id="aktif" required />
                                                     <label class="form-check-label" for="aktif">
                                                         <div class="fw-bold text-gray-800">Aktif</div>
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-custom form-check-solid mx-4">
                                                     <input class="form-check-input" name="status" type="radio"
-                                                        value="nonaktif" id="nonaktif" Label-->
+                                                        value="nonaktif" required id="nonaktif" Label-->
                                                     <label class="form-check-label" for="nonaktif">
                                                         <div class="fw-bold text-gray-800">Nonaktif</div>
                                                     </label>

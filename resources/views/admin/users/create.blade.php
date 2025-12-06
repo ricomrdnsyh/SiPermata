@@ -28,9 +28,12 @@
                                                 id="userType" data-select2-id="select2-data-72-r5i3" tabindex="-1"
                                                 aria-hidden="true" data-kt-initialized="1">
                                                 <option value="">Pilih Role</option>
-                                                <option value="admin">Admin</option>
-                                                <option value="penduduk">Penduduk</option>
-                                                <option value="mahasiswa">Mahasiswa</option>
+                                                <option value="admin" {{ old('type') == 'admin' ? 'selected' : '' }}>Admin
+                                                </option>
+                                                <option value="penduduk" {{ old('type') == 'penduduk' ? 'selected' : '' }}>
+                                                    Penduduk</option>
+                                                <option value="mahasiswa"
+                                                    {{ old('type') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
                                             </select>
                                             @error('type')
                                                 <small class="text-danger">{{ $message }}</small>
@@ -44,7 +47,7 @@
                                                 <select
                                                     class="form-select form-select-solid select2-hidden-accessible w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa"
-                                                    name="reference_id" data-select2-id="select2-data-72-r5i6"
+                                                    name="m_reference_id" data-select2-id="select2-data-72-r5i6"
                                                     tabindex="-1" aria-hidden="true" data-kt-initialized="1">
                                                     <option value="">Pilih Mahasiswa</option>
                                                     @foreach ($mahasiswa as $m)
@@ -52,15 +55,15 @@
                                                             {{ $m->nama }}</option>
                                                     @endforeach
                                                 </select>
-                                                @error('reference_id')
+                                                @error('m_reference_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-                                            <div class=fv-row mb-7">
+                                            <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Password</label>
-                                                <input type="password" name="password" class="form-control mb-3 mb-lg-0"
-                                                    value="{{ old('password') }}" />
-                                                @error('password')
+                                                <input type="password" name="m_password" class="form-control mb-3 mb-lg-0"
+                                                    minlength="6" />
+                                                @error('m_password')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
@@ -73,27 +76,27 @@
                                                 <select
                                                     class="form-select form-select-solid select2-hidden-accessible w-100"
                                                     data-control="select2" data-placeholder="Pilih Penduduk"
-                                                    name="reference_id" data-select2-id="select2-data-72-r5i4"
+                                                    name="p_reference_id" data-select2-id="select2-data-72-r5i4"
                                                     tabindex="-1" aria-hidden="true" data-kt-initialized="1">
                                                     <option value="">Pilih Penduduk</option>
                                                     @foreach ($penduduk as $p)
                                                         <option value="{{ $p->id_penduduk }}">
-                                                            {{ $p->id_penduduk }} - {{ $p->nama_penduduk }}
+                                                            {{ $p->fakultas->nama_fakultas }} - {{ $p->nama_penduduk }}
                                                             @if ($p->jabatan)
                                                                 ({{ $p->jabatan->status }})
                                                             @endif
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                @error('reference_id')
+                                                @error('p_reference_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-                                            <div class=fv-row mb-7">
+                                            <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Password</label>
-                                                <input type="password" name="password" class="form-control mb-3 mb-lg-0"
-                                                    value="{{ old('password') }}" />
-                                                @error('password')
+                                                <input type="password" name="p_password" class="form-control mb-3 mb-lg-0"
+                                                    minlength="6" />
+                                                @error('p_password')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
@@ -120,7 +123,7 @@
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Password</label>
                                                 <input type="password" name="password" class="form-control mb-3 mb-lg-0"
-                                                    value="{{ old('password') }}" />
+                                                    minlength="6" />
                                                 @error('password')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -155,6 +158,32 @@
 @endsection
 
 @section('js')
+    @if ($message = Session::get('success'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+        </script>
+    @endif
+    @if ($message = Session::get('failed'))
+        <script>
+            Swal.fire({
+                text: "{{ $message }}",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-danger"
+                }
+            });
+        </script>
+    @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             $('#userType').on('change', function() {
