@@ -35,11 +35,18 @@
                     </div>
                 </div>
 
-                <form action="{{ route('admin.sso.refresh-token') }}" method="POST" class="ms-md-4">
+                <form id="sinkron_sso" action="{{ route('admin.sso.refresh-token') }}" method="POST" class="ms-md-4">
                     @csrf
-                    <button type="submit" class="btn btn-primary px-6 py-3 d-flex align-items-center">
-                        <i class="fas fa-sync me-2"></i>
-                        <span class="fw-bold">Refresh Token Sekarang</span>
+                    <button type="submit" data-kt-contacts-type="submit"
+                        class="btn btn-primary px-6 py-3 d-flex align-items-center">
+                        <span class="indicator-label">
+                            <i class="fas fa-sync me-2"></i>
+                            <span class="fw-bold">Refresh Token Sekarang</span>
+                        </span>
+                        <span class="indicator-progress">
+                            <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                            Refresh Token Sekarang...
+                        </span>
                     </button>
                     @if ($hasAuth && $createdAt)
                         <div class="text-muted fs-8 mt-2 text-end">
@@ -66,16 +73,22 @@
                         <div>
                             <h3 class="fw-bold mb-1">Belum ada token SSO di cache</h3>
                             <div class="text-muted fs-7">
-                                Klik <strong>Refresh Token Sekarang</strong> untuk melakukan authorize pertama kali dan
+                                Klik <strong>Generate Token Sekarang</strong> untuk melakukan authorize pertama kali dan
                                 mendapatkan <code>X-Token</code> dari SSO.
                             </div>
                         </div>
                     </div>
-                    <form action="{{ route('admin.sso.refresh-token') }}" method="POST">
+                    <form id="sinkron_sso" action="{{ route('admin.sso.refresh-token') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-primary px-6">
-                            <i class="fas fa-fingerprint"></i>
-                            Generate Token
+                        <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary px-6">
+                            <span class="indicator-label">
+                                <i class="fas fa-cog"></i>
+                                <span class="fw-bold">Generate Token</span>
+                            </span>
+                            <span class="indicator-progress">
+                                <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                                Generate Token...
+                            </span>
                         </button>
                     </form>
                 </div>
@@ -336,6 +349,22 @@
                         }
                     });
                 });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('sinkron_sso');
+            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    return;
+                }
+                submitButton.disabled = true;
+                submitButton.querySelector('.indicator-label').style.display = 'none';
+                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
             });
         });
     </script>
