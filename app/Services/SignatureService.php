@@ -5,15 +5,16 @@ namespace App\Services;
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
+use chillerlan\QRCode\QRCode;
 use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QROutputInterface;
 
 
@@ -30,20 +31,27 @@ class SignatureService
         }
 
         if ($suratModel instanceof SuratAktif) {
-            $qrData = route('verifikasi.surat-aktif', ['id' => $suratModel->id_surat_aktif]);
+            $token = Crypt::encryptString((string) $suratModel->id_surat_aktif);
+            $qrData = route('verifikasi.surat-aktif', ['id' => $token]);
         } elseif ($suratModel instanceof SuratPenelitian) {
-            $qrData = route('verifikasi.surat-izin-penelitian', ['id' => $suratModel->id_surat_izin_penelitian]);
+            $token = Crypt::encryptString((string) $suratModel->id_surat_izin_penelitian);
+            $qrData = route('verifikasi.surat-izin-penelitian', ['id' => $token]);
         } elseif ($suratModel instanceof SuratRekomendasi) {
-            $qrData = route('verifikasi.surat-rekomendasi', ['id' => $suratModel->id_surat_rekomendasi]);
+            $token = Crypt::encryptString((string) $suratModel->id_surat_rekomendasi);
+            $qrData = route('verifikasi.surat-rekomendasi', ['id' => $token]);
         } elseif ($suratModel instanceof SuratPKL) {
-            $qrData = route('verifikasi.surat-pkl', ['id' => $suratModel->id_surat_pkl]);
+            $token = Crypt::encryptString((string) $suratModel->id_surat_pkl);
+            $qrData = route('verifikasi.surat-pkl', ['id' => $token]);
         } elseif ($suratModel instanceof SuratObservasi) {
-            $qrData = route('verifikasi.surat-observasi', ['id' => $suratModel->id_surat_observasi]);
+            $token = Crypt::encryptString((string) $suratModel->id_surat_observasi);
+            $qrData = route('verifikasi.surat-observasi', ['id' => $token]);
         } elseif ($suratModel instanceof SuratLulus) {
-            $qrData = route('verifikasi.surat-keterangan-lulus', ['id' => $suratModel->id_surat_lulus]);
+            $token = Crypt::encryptString((string) $suratModel->id_surat_lulus);
+            $qrData = route('verifikasi.surat-keterangan-lulus', ['id' => $token]);
         } else {
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
         }
+
 
         $options = new QROptions([
             'outputType'     => QROutputInterface::GDIMAGE_PNG,
@@ -172,25 +180,68 @@ class SignatureService
             throw new \Exception("File Word tidak ditemukan: " . $docxPath);
         }
 
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $outputDir = dirname($docxPath);
         $pdfPath   = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $docxPath);
 
+        // Pakai filter Writer dan minta embed font standar agar layout lebih konsisten.
+        $pdfFilter = 'pdf:writer_pdf_Export:EmbedStandardFonts=true;SelectPdfVersion=1;Quality=100';
+
+        $command = $this->buildLibreOfficeCommand($pdfFilter, $outputDir, $docxPath);
+
+        $output     = [];
+        $returnCode = 0;
+        exec($command, $output, $returnCode);
+
+        $maxWait       = $isWindows ? 10 : 5;
+        $waited        = 0.0;
+        $checkInterval = 0.5;
+
+        while (!file_exists($pdfPath) && $waited < $maxWait) {
+            usleep((int)($checkInterval * 1_000_000));
+            $waited += $checkInterval;
+            clearstatcache();
+        }
+
+        if (!file_exists($pdfPath) || filesize($pdfPath) <= 1000) {
+            throw new \Exception(
+                "Konversi DOCX ke PDF gagal (exit: {$returnCode}). Output: \n" . implode("\n", $output)
+            );
+        }
+
+        $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
+        $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
+
+        return $relativePdfPath;
+    }
+
+    /**
+     * Bangun perintah LibreOffice headless dengan opsi yang lebih stabil.
+     */
+    private function buildLibreOfficeCommand(string $pdfFilter, string $outputDir, string $docxPath): string
+    {
         $envPath   = env('LIBREOFFICE_PATH');
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $command   = null;
 
+        $baseFlags = '--headless --nologo --nofirststartwizard --nodefault --norestore --nolockcheck';
+
         if ($envPath && file_exists($envPath)) {
             if ($isWindows) {
                 $command = sprintf(
-                    '"%s" --headless --convert-to pdf --outdir "%s" "%s" 2>&1',
+                    '"%s" %s --convert-to "%s" --outdir "%s" "%s" 2>&1',
                     $envPath,
+                    $baseFlags,
+                    $pdfFilter,
                     $outputDir,
                     $docxPath
                 );
             } else {
                 $command = sprintf(
-                    '%s --headless --convert-to pdf --outdir %s %s 2>&1',
+                    '%s %s --convert-to %s --outdir %s %s 2>&1',
                     escapeshellcmd($envPath),
+                    $baseFlags,
+                    escapeshellarg($pdfFilter),
                     escapeshellarg($outputDir),
                     escapeshellarg($docxPath)
                 );
@@ -222,8 +273,10 @@ class SignatureService
                 }
 
                 $command = sprintf(
-                    '"%s" --headless --convert-to pdf --outdir "%s" "%s" 2>&1',
+                    '"%s" %s --convert-to "%s" --outdir "%s" "%s" 2>&1',
                     $soffice,
+                    $baseFlags,
+                    $pdfFilter,
                     $outputDir,
                     $docxPath
                 );
@@ -238,8 +291,10 @@ class SignatureService
                 }
 
                 $command = sprintf(
-                    '%s --headless --convert-to pdf --outdir %s %s 2>&1',
+                    '%s %s --convert-to %s --outdir %s %s 2>&1',
                     escapeshellcmd($soffice),
+                    $baseFlags,
+                    escapeshellarg($pdfFilter),
                     escapeshellarg($outputDir),
                     escapeshellarg($docxPath)
                 );
@@ -250,32 +305,6 @@ class SignatureService
             throw new \Exception('Perintah LibreOffice tidak dapat dibentuk.');
         }
 
-        $output     = [];
-        $returnCode = 0;
-        exec($command, $output, $returnCode);
-
-        $maxWait       = $isWindows ? 10 : 5;
-        $waited        = 0.0;
-        $checkInterval = 0.5;
-
-        while (!file_exists($pdfPath) && $waited < $maxWait) {
-            usleep((int)($checkInterval * 1_000_000));
-            $waited += $checkInterval;
-        }
-
-        if (!file_exists($pdfPath) || filesize($pdfPath) <= 1000) {
-            throw new \Exception(
-                "Konversi DOCX ke PDF gagal. Output: \n" . implode("\n", $output)
-            );
-        }
-
-        if (file_exists($docxPath)) {
-            @unlink($docxPath);
-        }
-
-        $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
-        $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
-
-        return $relativePdfPath;
+        return $command;
     }
 }

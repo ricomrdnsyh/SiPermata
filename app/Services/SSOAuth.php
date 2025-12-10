@@ -9,7 +9,7 @@ class SSOAuth
 {
     protected string $cacheKey = 'sso_auth';
 
-    private string $authUrl    = 'https://sso.unuja.ac.id/portal/data/authorize';
+    private string $authUrl    = 'http://sso.unuja.ac.id:8080/portal/data/authorize';
     private string $idLembaga  = '7';
     private string $idStruktur = '84';
 
@@ -51,6 +51,17 @@ class SSOAuth
         if (! $dataUrl || empty($tokenHeader['X-Token'])) {
             throw new \Exception('Data URL atau X-Token tidak ditemukan di response authorize.');
         }
+
+	$newBase = 'http://sso.unuja.ac.id:8080/portal/data/data';
+
+	$path      = parse_url($dataUrl, PHP_URL_PATH);
+	$tokenPart = $path ? basename($path) : null;
+
+	if ($tokenPart) {
+    		$dataUrl = rtrim($newBase, '/') . '/' . $tokenPart;
+	} else {
+    		$dataUrl = $newBase;
+	}
 
         $createdAt = now();
         $expiredAt = now()->addHours(6);

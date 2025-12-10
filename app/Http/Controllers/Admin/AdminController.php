@@ -117,7 +117,7 @@ class AdminController extends Controller
                     return back()->withInput()->withErrors(['p_reference_id' => 'Penduduk dengan ID tersebut tidak ditemukan.']);
                 }
 
-                $identifier = $penduduk->email ?: $penduduk->id_penduduk;
+                $identifier = $penduduk->id_penduduk;
 
                 if (! $identifier) {
                     return back()->withInput()->withErrors(['p_reference_id' => 'Penduduk ini tidak memiliki NIDN atau email.']);

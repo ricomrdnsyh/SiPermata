@@ -155,7 +155,7 @@
 
                             <p>
                                 Pengajuan surat Anda:
-                                <b>Surat {{ $namaSurat ?? ($pengajuan->nama_surat ?? 'Surat Pengajuan') }}</b>
+                                <b>SURAT {{ $namaSurat ?? ($pengajuan->nama_surat ?? 'Surat Pengajuan') }}</b>
                                 @if ($isApproved)
                                     telah <b>DISETUJUI</b> oleh BAK fakultas Anda.
                                 @else

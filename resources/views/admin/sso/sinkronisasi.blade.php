@@ -78,7 +78,7 @@
                             </div>
                         </div>
                     </div>
-                    <form id="sinkron_sso" action="{{ route('admin.sso.refresh-token') }}" method="POST">
+                    <form id="generate_token" action="{{ route('admin.sso.refresh-token') }}" method="POST">
                         @csrf
                         <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary px-6">
                             <span class="indicator-label">
@@ -356,6 +356,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('sinkron_sso');
+            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    return;
+                }
+                submitButton.disabled = true;
+                submitButton.querySelector('.indicator-label').style.display = 'none';
+                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('generate_token');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
 
             form.addEventListener('submit', function(event) {

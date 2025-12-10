@@ -81,7 +81,7 @@
                                                     <option value="">Pilih Penduduk</option>
                                                     @foreach ($penduduk as $p)
                                                         <option value="{{ $p->id_penduduk }}">
-                                                            {{ $p->fakultas->nama_fakultas }} - {{ $p->nama_penduduk }}
+                                                            {{ $p->id_penduduk }} - {{ $p->nama_penduduk }}
                                                             @if ($p->jabatan)
                                                                 ({{ $p->jabatan->status }})
                                                             @endif

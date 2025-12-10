@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Prodi;
 use App\Models\Fakultas;
 use App\Models\SuratPKL;
+use App\Models\Mahasiswa;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
 use Illuminate\Http\Request;
@@ -14,10 +15,13 @@ use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
 use App\Models\HistoryPengajuan;
 use App\Models\SuratRekomendasi;
+use App\Mail\NotifikasiStatusBak;
 use App\Models\PengajuanStatusLog;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,48 +77,47 @@ class HistoryPengajuanController extends Controller
         }
 
         if (!empty($tahunAkademikFilter)) {
-            $unionQueries = [];
+
             $tahunAkademikColumnName = 'akademik_id';
+            $idsPerTable = [];
 
             foreach ($tabelNames as $tabel) {
 
                 $pkColumn = match ($tabel) {
-                    'surat_aktif' => 'id_surat_aktif',
-                    'surat_izin_penelitian' => 'id_surat_izin_penelitian',
-                    'surat_observasi' => 'id_surat_observasi',
-                    'surat_rekomendasi' => 'id_surat_rekomendasi',
-                    'surat_pkl' => 'id_surat_pkl',
+                    'surat_aktif'            => 'id_surat_aktif',
+                    'surat_izin_penelitian'  => 'id_surat_izin_penelitian',
+                    'surat_observasi'        => 'id_surat_observasi',
+                    'surat_rekomendasi'      => 'id_surat_rekomendasi',
+                    'surat_pkl'              => 'id_surat_pkl',
                     'surat_keterangan_lulus' => 'id_surat_lulus',
-                    default => 'id',
+                    default                  => 'id',
                 };
 
-                $queryPart = DB::table($tabel)
-                    ->select(DB::raw("{$pkColumn} AS id_surat_terkait"))
-                    ->where($tahunAkademikColumnName, $tahunAkademikFilter);
+                $ids = DB::table($tabel)
+                    ->where($tahunAkademikColumnName, $tahunAkademikFilter)
+                    ->pluck($pkColumn)
+                    ->toArray();
 
-                $unionQueries[] = $queryPart;
+                if (!empty($ids)) {
+                    $idsPerTable[$tabel] = $ids;
+                }
             }
 
-            if (!empty($unionQueries)) {
-                $baseQuery = array_shift($unionQueries);
+            if (!empty($idsPerTable)) {
 
-                foreach ($unionQueries as $nextQuery) {
-                    $baseQuery->unionAll($nextQuery);
-                }
-
-                $idSuratTerkait = $baseQuery->pluck('id_surat_terkait')->toArray();
-
-                if (!empty($idSuratTerkait)) {
-                    // Filter HistoryPengajuan berdasarkan ID surat yang match
-                    $query->whereIn('id_tabel_surat', $idSuratTerkait);
-
-                    // Filter mengambil history dari tabel yang di loop
-                    $query->whereIn('tabel', $tabelNames);
-                } else {
-                    $query->whereRaw('1 = 0');
-                }
+                $query->where(function ($q) use ($idsPerTable) {
+                    foreach ($idsPerTable as $tabel => $ids) {
+                        $q->orWhere(function ($sub) use ($tabel, $ids) {
+                            $sub->where('tabel', $tabel)
+                                ->whereIn('id_tabel_surat', $ids);
+                        });
+                    }
+                });
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
+
 
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');
@@ -358,9 +361,32 @@ class HistoryPengajuanController extends Controller
             'catatan'    => 'Disetujui oleh Admin',
         ]);
 
-        $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
+        $namaSurat = strtoupper(ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel)));
 
-        return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil disetujui!"]);
+        try {
+            $mahasiswa = Mahasiswa::where('nim', $suratUtama->nim)
+                ->with('fakultas')
+                ->first();
+
+            if ($mahasiswa && $mahasiswa->email) {
+                Mail::to($mahasiswa->email)->send(
+                    new NotifikasiStatusBak(
+                        $mahasiswa,
+                        $pengajuan,
+                        'disetujui',
+                        $namaSurat,
+                        'Pengajuan Anda telah disetujui oleh BAK dan akan diproses oleh Dekan.'
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Gagal mengirim email notifikasi BAK (approve) untuk pengajuan {$pengajuan->id_history}: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Pengajuan SURAT {$namaSurat} berhasil disetujui!"
+        ]);
     }
 
     public function reject(Request $request, $id)

@@ -47,7 +47,7 @@ use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardCont
 
 Route::get('/sso', [SsoController::class, 'sso']);
 Route::get('/sso/logout/{sessionId}', [SsoController::class, 'logout']);
-// Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
+Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
