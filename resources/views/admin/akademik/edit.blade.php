@@ -23,17 +23,17 @@
                                         method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Kode Akademik</label>
-                                            <input type="text" name="kode_akademik" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="kode_akademik" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 value="{{ $akademik->kode_akademik }}" />
                                             @error('kode_akademik')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                            <input type="text" name="tahun_akademik" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="tahun_akademik" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 value="{{ $akademik->tahun_akademik }}" />
                                             @error('tahun_akademik')
                                                 <small class="text-danger">{{ $message }}</small>
@@ -41,10 +41,10 @@
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.akademik.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.akademik.index') }}" class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Update
                                                 </span>

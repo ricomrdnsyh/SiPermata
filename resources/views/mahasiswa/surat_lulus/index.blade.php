@@ -46,7 +46,7 @@
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <!--begin::Add user-->
                                 <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
-                                    class="btn btn-sm btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
+                                    class="btn btn-sm  btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
                                 <!--end::Add user-->
                             </div>
                             <!--end::Toolbar-->
@@ -62,9 +62,9 @@
                         <!--begin::Table-->
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-keterangan-lulus-table">
                             <!--begin::Table head-->
-                            <thead class="">
+                            <thead  class="table table-sm table-row-dashed table-row-gray-900 align-middle gs-0 gy-2 dt-responsive nowrap" style="width:100%;">
                                 <!--begin::Table row-->
-                                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                <tr class="text-start text-muted fs-sm-8 fs-lg-6 text-uppercase">
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Tanggal Pengajuan</th>
                                     <th class="min-w-125px">Tahun Akademik</th>
@@ -75,7 +75,7 @@
                             </thead>
                             <!--end::Table head-->
                             <!--begin::Table body-->
-                            <tbody class="fw-bold text-gray-800">
+                            <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
                             </tbody>
                             <!--end::Table body-->
                         </table>

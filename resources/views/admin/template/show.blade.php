@@ -19,17 +19,17 @@
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Template</label>
-                                            <input type="text" name="nama_template" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nama_template" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->nama_template }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Jenis Surat</label>
-                                            <input type="text" name="jenis_surat" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="jenis_surat" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->jenis_surat }}" />
                                         </div>
-                                        <div class="fv-row mb-7"> <label class="fw-semibold fs-6 mb-2">File Template</label>
+                                        <div class="fv-row mb-3"> <label class="fw-semibold fs-6 mb-2">File Template</label>
                                             @if ($data->file)
                                                 @php
                                                     $ext = strtolower(pathinfo($data->file, PATHINFO_EXTENSION));
@@ -47,27 +47,27 @@
                                                             class="fas {{ $icon }} {{ $color }}"></i> </span>
                                                     <a href="{{ route('admin.template.download', $data->id_template) }}"
                                                         target="_blank"
-                                                        class="form-control text-decoration-none d-flex align-items-center"
+                                                        class="form-control form-control-sm text-decoration-none d-flex align-items-center"
                                                         style="background-color: #f8f9fa; border: 1px solid #ced4da; cursor: pointer;">
                                                         {{ basename($data->file) }} </a>
                                                 </div>
                                             @else
-                                                <input type="text" class="form-control" value="Tidak ada file" readonly>
+                                                <input type="text" class="form-control form-control-sm" value="Tidak ada file" readonly>
                                             @endif
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <input type="text" name="fakultas_id" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="fakultas_id" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->fakultas->nama_fakultas }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <input type="text" name="tgl_sk" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="tgl_sk" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ $data->tgl_sk ? $data->tgl_sk->format('Y-m-d') : '' }}" />
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.template.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.template.index') }}" class="btn btn-sm btn-light me-3">
                                                 Kembali
                                             </a>
                                         </div>

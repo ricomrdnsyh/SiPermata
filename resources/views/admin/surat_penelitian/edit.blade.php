@@ -7,9 +7,9 @@
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
                 <div class="card">
-                    <div class="card-body p-lg-17">
+                    <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
-                            <div class="mb-13 text-center">
+                            <div class="mb-6 text-center">
                                 <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Izin Penelitian</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
                             </div>
@@ -22,9 +22,9 @@
                                     action="{{ route('admin.surat-izin-penelitian.update', $surat->id_surat_izin_penelitian) }}">
                                     @csrf
                                     @method('PUT')
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
                                             data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
                                             data-kt-initialized="1">
@@ -41,9 +41,9 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
                                             data-kt-initialized="1">
@@ -60,9 +60,9 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tempat Penelitian</label>
-                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Tempat Penelitian"
                                             name="mitra_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
                                             aria-hidden="true" data-kt-initialized="1">
@@ -79,32 +79,32 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
-                                        <input type="date" name="tgl_mulai" class="form-control mb-3 mb-lg-0"
+                                        <input type="date" name="tgl_mulai" class="form-control form-control-sm mb-3 mb-lg-0"
                                             value="{{ $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '' }}" />
                                         @error('tgl_mulai')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
-                                        <input type="date" name="tgl_selesai" class="form-control mb-3 mb-lg-0"
+                                        <input type="date" name="tgl_selesai" class="form-control form-control-sm mb-3 mb-lg-0"
                                             value="{{ $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '' }}" />
                                         @error('tgl_selesai')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
-                                        <textarea name="judul_penelitian" class="form-control mb-3 mb-lg-0" rows="3">{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                        <textarea name="judul_penelitian" class="form-control form-control-sm mb-3 mb-lg-0" rows="3">{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                         @error('judul_penelitian')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="text-center mt-8">
+                                    <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-primary w-100 w-md-50">
+                                            class="btn btn-sm btn-primary w-250px">
                                             <span class="indicator-label">
                                                 Update Pengajuan
                                             </span>

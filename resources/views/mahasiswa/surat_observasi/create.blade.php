@@ -7,9 +7,9 @@
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
                 <div class="card">
-                    <div class="card-body p-lg-17">
+                    <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
-                            <div class="mb-13 text-center">
+                            <div class="mb-6 text-center">
                                 <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Observasi</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Mohon untuk mengisi semua data dengan benar.</div>
                             </div>
@@ -21,14 +21,14 @@
                                     class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
                                     action="{{ route('mahasiswa.surat-observasi.store') }}">
                                     @csrf
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
+                                        <input type="text" name="nim" class="form-control form-control-sm mb-3 mb-lg-0"
                                             value="{{ auth()->user()->reference_id }}" disabled required />
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
                                             data-kt-initialized="1" required>
@@ -44,16 +44,16 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester" class="form-control mb-3 mb-lg-0" required />
+                                        <input type="number" name="semester" class="form-control form-control-sm mb-3 mb-lg-0" required />
                                         @error('semester')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
-                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Tempat Observasi" name="mitra_id"
                                             data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
                                             data-kt-initialized="1" required>
@@ -69,25 +69,25 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
                                         <input type="date" name="tgl_observasi"
-                                            class="form-control mb-3 mb-lg-0"required />
+                                            class="form-control form-control-sm mb-3 mb-lg-0"required />
                                         @error('tgl_observasi')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Keperluan Observasi</label>
-                                        <textarea name="keperluan" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll" class="form-control mb-3 mb-lg-0"
+                                        <textarea name="keperluan" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll" class="form-control form-control-sm mb-3 mb-lg-0"
                                             rows="3" required></textarea>
                                         @error('keperluan')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="text-center mt-8">
+                                    <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-primary w-100 w-md-50">
+                                            class="btn btn-sm btn-primary w-250px">
                                             <span class="indicator-label">
                                                 Buat Pengajuan
                                             </span>

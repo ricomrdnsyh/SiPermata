@@ -71,11 +71,11 @@
             font-size: 0.95rem;
         }
 
-        .auth-card .form-control.form-control-lg {
+        .auth-card .form-control form-control-sm.form-control form-control-sm-lg {
             border-radius: 0.75rem;
         }
 
-        .auth-card .input-group .form-control.form-control-lg {
+        .auth-card .input-group .form-control form-control-sm.form-control form-control-sm-lg {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
@@ -111,9 +111,9 @@
                             <h1 class="text-dark mb-2 auth-title">Selamat Datang Kembali</h1>
                             <p class="text-muted auth-subtitle">Silakan masuk untuk mengakses dashboard Anda.</p>
                         </div>
-                        <div class="fv-row mb-7">
+                        <div class="fv-row mb-3">
                             <label class="form-label fs-6 fw-bolder text-dark">Username</label>
-                            <input class="form-control form-control-lg" type="text" name="identifier"
+                            <input class="form-control form-control-sm form-control form-control-sm-lg" type="text" name="identifier"
                                 value="{{ old('identifier') }}" required autofocus />
                         </div>
                         <div class="fv-row mb-5">
@@ -121,7 +121,7 @@
                                 <label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
                             </div>
                             <div class="input-group">
-                                <input class="form-control form-control-lg" type="password" id="password"
+                                <input class="form-control form-control-sm form-control form-control-sm-lg" type="password" id="password"
                                     name="password" autocomplete="off" required />
                                 <span class="input-group-text bg-transparent" id="togglePassword"
                                     style="cursor: pointer;">
@@ -130,7 +130,7 @@
                             </div>
                         </div>
                         <div class="text-center mt-5">
-                            <button type="submit" class="btn btn-lg btn-primary w-100 mb-3">
+                            <button type="submit" class="btn btn-sm btn-lg btn-primary w-100 mb-3">
                                 Login
                             </button>
                             <div class="text-muted auth-footer-text">

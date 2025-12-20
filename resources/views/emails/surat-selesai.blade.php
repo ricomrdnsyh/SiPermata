@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Anda Telah Selesai Diproses! 🎉</title>
+    <title>Surat Anda Telah Selesai Diproses! ??</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -89,7 +89,7 @@
                 <table class="container" cellpadding="0" cellspacing="0" border="0" role="presentation">
                     <tr>
                         <td class="header">
-                            <h1 style="margin: 0;">🎉 Berita Baik! Surat Anda Sudah Siap!</h1>
+                            <h1 style="margin: 0;">?? Berita Baik! Surat Anda Sudah Siap!</h1>
                             <p style="margin-top: 5px; font-size: 16px;">
                                 Sistem Informasi Pengajuan Surat Mahasiswa Terpadu
                             </p>

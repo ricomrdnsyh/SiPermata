@@ -38,7 +38,7 @@
                 <form id="sinkron_sso" action="{{ route('admin.sso.refresh-token') }}" method="POST" class="ms-md-4">
                     @csrf
                     <button type="submit" data-kt-contacts-type="submit"
-                        class="btn btn-primary px-6 py-3 d-flex align-items-center">
+                        class="btn btn-sm btn-primary px-6 py-3 d-flex align-items-center">
                         <span class="indicator-label">
                             <i class="fas fa-sync me-2"></i>
                             <span class="fw-bold">Refresh Token Sekarang</span>
@@ -80,7 +80,7 @@
                     </div>
                     <form id="generate_token" action="{{ route('admin.sso.refresh-token') }}" method="POST">
                         @csrf
-                        <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary px-6">
+                        <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary px-6">
                             <span class="indicator-label">
                                 <i class="fas fa-cog"></i>
                                 <span class="fw-bold">Generate Token</span>
@@ -197,7 +197,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <button type="button" class="btn btn-sm btn-light-info copy-btn"
+                                <button type="button" class="btn btn-sm  btn-light-info copy-btn"
                                     data-copy="{{ $fullToken }}">
                                     <i class="fas fa-copy"></i>
                                     Salin X-Token
@@ -261,7 +261,7 @@
                                         </a>
                                     </div>
 
-                                    <button type="button" class="btn btn-sm btn-light-primary copy-btn"
+                                    <button type="button" class="btn btn-sm  btn-light-primary copy-btn"
                                         data-copy="{{ $dataUrl }}">
                                         <i class="fas fa-copy"></i>
                                         Salin URL Data

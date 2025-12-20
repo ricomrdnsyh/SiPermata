@@ -68,7 +68,7 @@
                                                     <th class="min-w-200px">Catatan</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="fw-bold text-gray-800">
+                                            <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
                                                 <tr>
                                                     <td>{{ $pengajuan->nama_surat }}</td>
                                                     <td>
@@ -143,10 +143,10 @@
 
                                 <div class="pt-5 border-top border-gray-200 d-flex justify-content-end">
                                     @if ($pengajuan->status === 'proses')
-                                        <button type="button" class="btn btn-light-danger" id="btn-reject-main">
+                                        <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
                                             Tolak Pengajuan
                                         </button>
-                                        <button type="button" class="btn btn-success ms-3" id="btn-approve-main">
+                                        <button type="button" class="btn btn-sm btn-success ms-3" id="btn-approve-main">
                                             <i class="fas fa-check-circle"></i>
                                             Terima Pengajuan
                                         </button>
@@ -156,10 +156,10 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-light-primary" target="_blank">
+                                                class="btn btn-sm btn-light-primary" target="_blank">
                                                 <i class="fas fa-cloud-download-alt"></i> Lihat Surat
                                             </a>
-                                            <button type="button" class="btn btn-success ms-3" id="btn-kirim-surat">
+                                            <button type="button" class="btn btn-sm btn-success ms-3" id="btn-kirim-surat">
                                                 <i class="fas fa-external-link-alt"></i> Kirim Surat ke Mahasiswa
                                             </button>
                                         @endif
@@ -169,16 +169,16 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-light-primary" target="_blank">
+                                                class="btn btn-sm btn-light-primary" target="_blank">
                                                 <i class="fas fa-cloud-download-alt"></i> Lihat Surat
                                             </a>
                                         @endif
                                     @elseif($pengajuan->status === 'pengajuan')
-                                        <button class="btn btn-sm btn-warning">
+                                        <button class="btn btn-sm  btn-warning">
                                             Menunggu BAK untuk validasi
                                         </button>
                                     @else
-                                        <button class="btn btn-sm btn-success">
+                                        <button class="btn btn-sm  btn-success">
                                             <i class="fas fa-check-circle"></i>
                                             Pengajuan sudah dikonfirmasi
                                         </button>
@@ -206,7 +206,7 @@
                                                 <th class="min-w-200px">Catatan</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="fw-bold text-gray-800">
+                                        <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
                                             @forelse($pengajuan->statusLogs ?? [] as $log)
                                                 <tr>
                                                     <td>
@@ -339,15 +339,15 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="rejectReason" class="required form-label">Catatan Penolakan</label>
-                            <textarea class="form-control" name="catatan" id="rejectReason" rows="4" required
+                            <textarea class="form-control form-control-sm" name="catatan" id="rejectReason" rows="4" required
                                 placeholder="Jelaskan alasan penolakan secara rinci..."></textarea>
                             <div id="rejectError" class="text-danger mt-2" style="display: none;"></div>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-danger" id="btn-submit-reject" data-stage="">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-sm btn-danger" id="btn-submit-reject" data-stage="">
                             <span class="indicator-label">Tolak Pengajuan</span>
                             <span class="indicator-progress" style="display: none;">
                                 Memproses...

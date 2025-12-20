@@ -19,30 +19,30 @@
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <input type="text" name="fakultas_id" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="fakultas_id" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled
                                                 value="{{ $prodi->fakultas ? $prodi->fakultas->nama_fakultas : 'Tidak Ada Fakultas' }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <input type="text" name="nama_prodi" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nama_prodi" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $prodi->nama_prodi }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Singkatan Prodi</label>
-                                            <input type="text" name="singkatan" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="singkatan" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $prodi->singkatan }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Status</label>
-                                            <input type="text" name="status" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="status" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ ucfirst(strtolower($prodi->status)) }}" />
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.prodi.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.prodi.index') }}" class="btn btn-sm btn-light me-3">
                                                 Kembali
                                             </a>
                                         </div>

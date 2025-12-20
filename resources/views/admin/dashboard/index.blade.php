@@ -9,9 +9,9 @@
                 <div class="container-fluid">
                     <div class="card card-flush mb-8">
                         <div
-                            class="card-header py-5 gap-2 gap-md-5 
-                            d-flex flex-column flex-md-row 
-                            align-items-center justify-content-center 
+                            class="card-header py-5 gap-2 gap-md-5
+                            d-flex flex-column flex-md-row
+                            align-items-center justify-content-center
                             justify-content-md-between align-items-md-center">
                             <div class="card-title order-1 order-md-1">
                                 <h2 class="d-flex flex-column flex-md-row align-items-center">
@@ -24,11 +24,11 @@
                                 </h2>
                             </div>
                             <div
-                                class="card-toolbar flex-row-fluid 
-                                justify-content-center justify-content-md-end gap-5 
+                                class="card-toolbar flex-row-fluid
+                                justify-content-center justify-content-md-end gap-5
                                 order-2 order-md-2 mt-3 mt-md-0">
                                 <div class="w-200px">
-                                    <select class="form-select form-select-solid" data-control="select2"
+                                    <select class="form-select form-select-sm" data-control="select2"
                                         data-hide-search="true" data-placeholder="Tahun Akademik" id="filter_akademik_id">
                                         @foreach ($tahunAkademikList as $id => $tahun)
                                             <option value="{{ $id }}"

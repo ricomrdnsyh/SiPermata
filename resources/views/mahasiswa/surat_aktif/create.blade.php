@@ -19,9 +19,9 @@
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
                 <div class="card">
-                    <div class="card-body p-lg-17">
+                    <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
-                            <div class="mb-13 text-center">
+                            <div class="mb-6 text-center">
                                 <h1 class="fs-2hx fw-bolder mb-5">Pilih Kategori Surat Keterangan Aktif</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Silakan pilih kategori Anda untuk melanjutkan
                                     pengisian formulir.</div>
@@ -30,13 +30,13 @@
                             <!-- Nav Group -->
                             <div class="nav-group nav-group-outline mx-auto mb-15" data-kt-buttons="true">
                                 <a href="javascript:void(0)"
-                                    class="btn btn-color-gray-400 btn-active btn-active-primary px-6 py-3 me-2 active"
+                                    class="btn btn-sm btn-color-gray-400 btn-active btn-active-primary px-6 py-3 me-2 active"
                                     data-category="umum">Umum</a>
                                 <a href="javascript:void(0)"
-                                    class="btn btn-color-gray-400 btn-active btn-active-primary px-6 py-3 me-2"
+                                    class="btn btn-sm btn-color-gray-400 btn-active btn-active-primary px-6 py-3 me-2"
                                     data-category="pns">PNS</a>
                                 <a href="javascript:void(0)"
-                                    class="btn btn-color-gray-400 btn-active btn-active-primary px-6 py-3"
+                                    class="btn btn-sm btn-color-gray-400 btn-active btn-active-primary px-6 py-3"
                                     data-category="pppk">PPPK</a>
                             </div>
 
@@ -50,14 +50,14 @@
 
                                     <h3 class="mb-5 text-center">Pengajuan Surat Keterangan Aktif Umum</h3>
 
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control mb-3 mb-lg-0"
+                                        <input type="text" name="nim" class="form-control form-control-sm mb-3 mb-lg-0"
                                             value="{{ auth()->user()->reference_id }}" disabled required />
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                             data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
                                             data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
                                             data-kt-initialized="1" required>
@@ -73,23 +73,23 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester" class="form-control mb-3 mb-lg-0" required />
+                                        <input type="number" name="semester" class="form-control form-control-sm mb-3 mb-lg-0" required />
                                         @error('semester')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                                        <textarea name="alamat" class="form-control mb-3 mb-lg-0" rows="3" required></textarea>
+                                        <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required></textarea>
                                         @error('alamat')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="text-center mt-8">
+                                    <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-primary w-100 w-md-50">
+                                            class="btn btn-sm btn-primary w-250px">
                                             <span class="indicator-label">
                                                 Buat Pengajuan
                                             </span>
@@ -109,18 +109,18 @@
 
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PNS</h3>
 
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control"
+                                        <input type="text" name="nim" class="form-control form-control-sm"
                                             value="{{ auth()->user()->reference_id }}" disabled required />
                                     </div>
 
                                     <div class="row">
                                         <!-- Kolom Kiri -->
                                         <div class="col-md-6">
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <select class="form-select form-select-solid" data-control="select2"
+                                                <select class="form-select form-select-sm" data-control="select2"
                                                     name="akademik_id" required>
                                                     <option value="">Pilih Akademik...</option>
                                                     @foreach ($akademik as $akd)
@@ -133,34 +133,34 @@
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester" class="form-control" required />
+                                                <input type="number" name="semester" class="form-control form-control-sm" required />
                                                 @error('semester')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
-                                                <input type="number" name="nip" class="form-control" required />
+                                                <input type="number" name="nip" class="form-control form-control-sm" required />
                                                 @error('nip')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
-                                                <input type="text" name="nama_ortu" class="form-control" required />
+                                                <input type="text" name="nama_ortu" class="form-control form-control-sm" required />
                                                 @error('nama_ortu')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
                                                     Tua</label>
-                                                <select class="form-select form-select-solid" data-control="select2"
+                                                <select class="form-select form-select-sm" data-control="select2"
                                                     name="pendidikan_terakhir" required>
                                                     <option value="">Pilih Pendidikan Terakhir</option>
                                                     <option value="Tidak sekolah">Tidak sekolah</option>
@@ -195,40 +195,40 @@
 
                                         <!-- Kolom Kanan -->
                                         <div class="col-md-6">
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
-                                                <input type="text" name="pangkat" class="form-control" required />
+                                                <input type="text" name="pangkat" class="form-control form-control-sm" required />
                                                 @error('pangkat')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Golongan</label>
-                                                <input type="text" name="golongan" class="form-control" required />
+                                                <input type="text" name="golongan" class="form-control form-control-sm" required />
                                                 @error('golongan')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control" required />
+                                                <input type="date" name="tmt" class="form-control form-control-sm" required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                <input type="text" name="unit_kerja" class="form-control" required />
+                                                <input type="text" name="unit_kerja" class="form-control form-control-sm" required />
                                                 @error('unit_kerja')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-7 col-12">
                                                 <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                                                <textarea name="alamat" class="form-control" rows="3" required></textarea>
+                                                <textarea name="alamat" class="form-control form-control-sm" rows="3" required></textarea>
                                                 @error('alamat')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -236,9 +236,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-center mt-8">
+                                    <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-primary w-100 w-md-50">
+                                            class="btn btn-sm btn-primary w-250px">
                                             <span class="indicator-label">Buat Pengajuan</span>
                                             <span class="indicator-progress" style="display: none;">
                                                 Tunggu sebentar...
@@ -256,18 +256,18 @@
 
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PPPK</h3>
 
-                                    <div class="fv-row mb-7">
+                                    <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control"
+                                        <input type="text" name="nim" class="form-control form-control-sm"
                                             value="{{ auth()->user()->reference_id }}" disabled required />
                                     </div>
 
                                     <div class="row">
                                         <!-- Kolom Kiri -->
                                         <div class="col-md-6">
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <select class="form-select form-select-solid" data-control="select2"
+                                                <select class="form-select form-select-sm" data-control="select2"
                                                     name="akademik_id" required>
                                                     <option value="">Pilih Akademik...</option>
                                                     @foreach ($akademik as $akdm)
@@ -280,34 +280,34 @@
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester" class="form-control" required />
+                                                <input type="number" name="semester" class="form-control form-control-sm" required />
                                                 @error('semester')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
-                                                <input type="number" name="nip" class="form-control" required />
+                                                <input type="number" name="nip" class="form-control form-control-sm" required />
                                                 @error('nip')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
-                                                <input type="text" name="nama_ortu" class="form-control" required />
+                                                <input type="text" name="nama_ortu" class="form-control form-control-sm" required />
                                                 @error('nama_ortu')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
                                                     Tua</label>
-                                                <select class="form-select form-select-solid" data-control="select2"
+                                                <select class="form-select form-select-sm" data-control="select2"
                                                     name="pendidikan_terakhir" required>
                                                     <option value="">Pilih Pendidikan Terakhir</option>
                                                     <option value="Tidak sekolah">Tidak sekolah</option>
@@ -342,33 +342,33 @@
 
                                         <!-- Kolom Kanan -->
                                         <div class="col-md-6">
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
-                                                <input type="text" name="pangkat" class="form-control" required />
+                                                <input type="text" name="pangkat" class="form-control form-control-sm" required />
                                                 @error('pangkat')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Golongan</label>
-                                                <input type="text" name="golongan" class="form-control" required />
+                                                <input type="text" name="golongan" class="form-control form-control-sm" required />
                                                 @error('golongan')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control" required />
+                                                <input type="date" name="tmt" class="form-control form-control-sm" required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
-                                            <div class="fv-row mb-7">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                <input type="text" name="unit_kerja" class="form-control" required />
+                                                <input type="text" name="unit_kerja" class="form-control form-control-sm" required />
                                                 @error('unit_kerja')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -376,7 +376,7 @@
 
                                             <div class="fv-row mb-7 col-12">
                                                 <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                                                <textarea name="alamat" class="form-control" rows="3" required></textarea>
+                                                <textarea name="alamat" class="form-control form-control-sm" rows="3" required></textarea>
                                                 @error('alamat')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -384,9 +384,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-center mt-8">
+                                    <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-primary w-100 w-md-50">
+                                            class="btn btn-sm btn-primary w-250px">
                                             <span class="indicator-label">Buat Pengajuan</span>
                                             <span class="indicator-progress" style="display: none;">
                                                 Tunggu sebentar...

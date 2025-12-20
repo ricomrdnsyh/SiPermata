@@ -19,39 +19,39 @@
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
-                                            <input type="text" name="nidn" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="nidn" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ $data->nidn }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Penduduk</label>
-                                            <input type="text" name="nama_penduduk" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nama_penduduk" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->nama_penduduk }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <input type="text" name="fakultas_id" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="fakultas_id" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->fakultas->nama_fakultas }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <input type="text" name="prodi_id" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="prodi_id" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ $data->prodi ? $data->prodi->nama_prodi : 'Tidak Ada Prodi' }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Email</label>
-                                            <input type="text" name="email" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="email" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ $data->email }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">No Telepon</label>
-                                            <input type="text" name="no_hp" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="no_hp" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ $data->no_hp }}" />
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.penduduk.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.penduduk.index') }}" class="btn btn-sm btn-light me-3">
                                                 Kembali
                                             </a>
                                         </div>

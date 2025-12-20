@@ -74,27 +74,27 @@
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_aktif['proses'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Proses</div>
+                                            <div class="text-dark fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_aktif['selesai'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Selesai</div>
+                                            <div class="text-dark fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_aktif['ditolak'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Ditolak</div>
+                                            <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-aktif.create') }}"
-                                            class="btn btn-sm btn-primary flex-fill">
+                                            class="btn btn-sm  btn-primary flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-aktif.index') }}"
-                                            class="btn btn-sm btn-light-primary text-primary flex-fill btn-light-primary-hover-white">
+                                            class="btn btn-sm  btn-light-primary text-primary flex-fill btn-light-primary-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -126,27 +126,27 @@
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_penelitian['proses'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Proses</div>
+                                            <div class="text-dark fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_penelitian['selesai'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Selesai</div>
+                                            <div class="text-dark fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_penelitian['ditolak'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Ditolak</div>
+                                            <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-izin-penelitian.create') }}"
-                                            class="btn btn-sm btn-warning flex-fill">
+                                            class="btn btn-sm  btn-warning flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-izin-penelitian.index') }}"
-                                            class="btn btn-sm btn-light-warning text-warning flex-fill btn-light-warning-hover-white">
+                                            class="btn btn-sm  btn-light-warning text-warning flex-fill btn-light-warning-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -178,27 +178,27 @@
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_observasi['proses'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Proses</div>
+                                            <div class="text-dark fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_observasi['selesai'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Selesai</div>
+                                            <div class="text-dark fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_observasi['ditolak'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Ditolak</div>
+                                            <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-observasi.create') }}"
-                                            class="btn btn-sm btn-info flex-fill">
+                                            class="btn btn-sm  btn-info flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-observasi.index') }}"
-                                            class="btn btn-sm btn-light-info text-info flex-fill btn-light-info-hover-white">
+                                            class="btn btn-sm  btn-light-info text-info flex-fill btn-light-info-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -230,27 +230,27 @@
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_rekomendasi['proses'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Proses</div>
+                                            <div class="text-dark fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_rekomendasi['selesai'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Selesai</div>
+                                            <div class="text-dark fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_rekomendasi['ditolak'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Ditolak</div>
+                                            <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-rekomendasi.create') }}"
-                                            class="btn btn-sm btn-dark flex-fill">
+                                            class="btn btn-sm  btn-dark flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-rekomendasi.index') }}"
-                                            class="btn btn-sm btn-light-dark text-dark flex-fill btn-light-dark-hover-white">
+                                            class="btn btn-sm  btn-light-dark text-dark flex-fill btn-light-dark-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -282,27 +282,27 @@
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_pkl['proses'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Proses</div>
+                                            <div class="text-dark fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_pkl['selesai'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Selesai</div>
+                                            <div class="text-dark fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_pkl['ditolak'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Ditolak</div>
+                                            <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-pkl.create') }}"
-                                            class="btn btn-sm btn-danger flex-fill">
+                                            class="btn btn-sm  btn-danger flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-pkl.index') }}"
-                                            class="btn btn-sm btn-light-danger text-danger flex-fill btn-light-danger-hover-white">
+                                            class="btn btn-sm  btn-light-danger text-danger flex-fill btn-light-danger-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
@@ -334,27 +334,27 @@
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-warning fw-bolder p-2">{{ $surat_lulus['proses'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Proses</div>
+                                            <div class="text-dark fs-8 mt-1">Proses</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-success fw-bolder p-2">{{ $surat_lulus['selesai'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Selesai</div>
+                                            <div class="text-dark fs-8 mt-1">Selesai</div>
                                         </div>
                                         <div class="col-4 text-center">
                                             <span
                                                 class="badge badge-light-danger fw-bolder p-2">{{ $surat_lulus['ditolak'] }}</span>
-                                            <div class="text-muted fs-8 mt-1">Ditolak</div>
+                                            <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
-                                            class="btn btn-sm btn-success flex-fill">
+                                            class="btn btn-sm  btn-success flex-fill">
                                             <i class="fas fa-plus me-2"></i> Ajukan Sekarang
                                         </a>
                                         <a href="{{ route('mahasiswa.surat-keterangan-lulus.index') }}"
-                                            class="btn btn-sm btn-light-success text-success flex-fill btn-light-success-hover-white">
+                                            class="btn btn-sm  btn-light-success text-success flex-fill btn-light-success-hover-white">
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>

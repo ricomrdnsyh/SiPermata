@@ -19,19 +19,19 @@
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Kode Akademik</label>
-                                            <input type="text" name="kode_akademik" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="kode_akademik" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $akademik->kode_akademik }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                            <input type="text" name="tahun_akademik" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="tahun_akademik" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $akademik->tahun_akademik }}" />
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.akademik.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.akademik.index') }}" class="btn btn-sm btn-light me-3">
                                                 Kembali
                                             </a>
                                         </div>

@@ -68,7 +68,7 @@
                                                     <th class="min-w-200px">Catatan</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="fw-bold text-gray-800">
+                                            <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
                                                 <tr>
                                                     <td>{{ $pengajuan->nama_surat }}</td>
                                                     <td>
@@ -153,12 +153,12 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-light-primary" target="_blank">
+                                                class="btn btn-sm btn-light-primary" target="_blank">
                                                 <i class="fas fa-cloud-download-alt"></i> Lihat Surat
                                             </a>
                                         @endif
                                     @else
-                                        <button class="btn btn-sm btn-light">
+                                        <button class="btn btn-sm  btn-light">
                                             Surat belum selesai diproses
                                         </button>
                                     @endif
@@ -184,7 +184,7 @@
                                                 <th class="min-w-200px">Catatan</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="fw-bold text-gray-800">
+                                        <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
                                             @forelse($pengajuan->statusLogs ?? [] as $log)
                                                 <tr>
                                                     <td>

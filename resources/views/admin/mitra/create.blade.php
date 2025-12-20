@@ -21,9 +21,9 @@
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework"
                                         action="{{ route('admin.mitra.store') }}" method="POST">
                                         @csrf
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Mitra</label>
-                                            <input type="text" name="nama_mitra" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nama_mitra" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 value="{{ old('nama_mitra') }}" />
                                             @error('nama_mitra')
                                                 <small class="text-danger">{{ $message }}</small>
@@ -31,10 +31,10 @@
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.mitra.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.mitra.index') }}" class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>

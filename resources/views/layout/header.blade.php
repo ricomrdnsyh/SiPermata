@@ -7,7 +7,7 @@
         </span>
         <!--end::Logo-->
         <!--begin::Aside minimize-->
-        <div id="kt_aside_toggle" class="btn btn-icon w-auto px-0 btn-active-color-primary aside-minimize"
+        <div id="kt_aside_toggle" class="btn btn-sm btn-icon w-auto px-0 btn-active-color-primary aside-minimize"
             data-kt-toggle="true" data-kt-toggle-state="active" data-kt-toggle-target="body"
             data-kt-toggle-name="aside-minimize">
             <!--begin::Svg Icon | path: icons/duotune/arrows/arr092.svg-->
@@ -43,7 +43,7 @@
         <!--end::Aside minimize-->
         <!--begin::Aside toggle-->
         <div class="d-flex align-items-center d-lg-none ms-n3 me-1" title="Show aside menu">
-            <div class="btn btn-icon btn-active-color-primary w-30px h-30px" id="kt_aside_mobile_toggle">
+            <div class="btn btn-sm btn-icon btn-active-color-primary w-30px h-30px" id="kt_aside_mobile_toggle">
                 <!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
                 <span class="svg-icon svg-icon-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"

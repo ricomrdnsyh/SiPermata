@@ -21,9 +21,9 @@
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework"
                                         action="{{ route('admin.jabatan.store') }}" method="POST">
                                         @csrf
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Penduduk</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Penduduk" name="penduduk_id"
                                                 id="penduduk_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
                                                 aria-hidden="true" data-kt-initialized="1">
@@ -64,10 +64,10 @@
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.jabatan.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.jabatan.index') }}" class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>

@@ -19,24 +19,24 @@
                                 <div class="card-body pt-5">
                                     <form id="kt_ecommerce_settings_general_form"
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework">
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Penduduk</label>
-                                            <input type="text" name="nama_penduduk" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nama_penduduk" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->penduduk->nama_penduduk }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <input type="text" name="fakultas_id" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="fakultas_id" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 disabled value="{{ $data->fakultas->nama_fakultas }}" />
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="fw-semibold fs-6 mb-2">Status Jabatan</label>
-                                            <input type="text" name="status" class="form-control mb-3 mb-lg-0" disabled
+                                            <input type="text" name="status" class="form-control form-control-sm mb-3 mb-lg-0" disabled
                                                 value="{{ $data->status }}" />
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.jabatan.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('admin.jabatan.index') }}" class="btn btn-sm btn-light me-3">
                                                 Kembali
                                             </a>
                                         </div>

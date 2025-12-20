@@ -124,7 +124,7 @@
 
     @php
         $isApproved = $status === 'disetujui';
-        $judulStatus = $isApproved ? 'Pengajuan Surat Anda Disetujui BAK ✅' : 'Pengajuan Surat Anda Ditolak BAK ❌';
+        $judulStatus = $isApproved ? 'Pengajuan Surat Anda Disetujui BAK ?' : 'Pengajuan Surat Anda Ditolak BAK ?';
     @endphp
 
     <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
@@ -185,7 +185,7 @@
                             @if (!empty($catatan))
                                 <div class="note-box">
                                     <b>Catatan dari BAK:</b><br>
-                                    “{{ $catatan }}”
+                                    �{{ $catatan }}�
                                 </div>
                             @endif
 

@@ -21,9 +21,9 @@
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework"
                                         action="{{ route('bak.ttdSurat.store') }}" method="POST">
                                         @csrf
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Template</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Template" name="template_id"
                                                 id="template_id" data-select2-id="select2-data-72-r5i3" tabindex="-1"
                                                 aria-hidden="true" data-kt-initialized="1" required>
@@ -39,25 +39,25 @@
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama TTD Surat</label>
-                                            <input type="text" name="nama_ttd" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nama_ttd" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 value="{{ old('nama_ttd') }}" required />
                                             @error('nama_ttd')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
-                                            <input type="text" name="nidn" class="form-control mb-3 mb-lg-0"
+                                            <input type="text" name="nidn" class="form-control form-control-sm mb-3 mb-lg-0"
                                                 value="{{ old('nidn') }}" required />
                                             @error('nidn')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        <div class="fv-row mb-7">
+                                        <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <select class="form-select form-select-solid select2-hidden-accessible w-100"
+                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
                                                 id="fakultas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
                                                 aria-hidden="true" data-kt-initialized="1" required>
@@ -97,10 +97,10 @@
                                         </div>
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('bak.ttdSurat.index') }}" class="btn btn-light me-3">
+                                            <a href="{{ route('bak.ttdSurat.index') }}" class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>
