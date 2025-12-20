@@ -49,6 +49,10 @@ Route::get('/sso', [SsoController::class, 'sso']);
 Route::get('/sso/logout/{sessionId}', [SsoController::class, 'logout']);
 Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
 
+Route::get('/', function () {
+    return view('landingpage');
+});
+
 Route::middleware('guest')->group(function () {
     // Route::get('/login', function () {
     //     return redirect()->away('https://sso.unuja.ac.id');
