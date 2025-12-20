@@ -109,7 +109,7 @@
                             <div class="highlight-box">
                                 <p style="margin: 0; font-weight: bold; color: #007bff;">
                                     Surat ini telah diverifikasi dan ditandatangani secara elektronik oleh Dekan
-                                    {{ $mahasiswa->fakultas->nama_fakultas }}.
+                                    Fakultas {{ $mahasiswa->fakultas->nama_fakultas }}.
                                     Surat resmi Anda tersedia sebagai lampiran pada email ini.
                                 </p>
                             </div>

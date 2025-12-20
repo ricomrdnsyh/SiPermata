@@ -20,7 +20,7 @@ class SSOClient
 
         $payload = [
             'filter' => 'fakultas',
-	    'pagination' => 'off',
+            'pagination' => 'off',
         ];
 
         $response = Http::withHeaders($headers)

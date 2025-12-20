@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\Fakultas;
+use App\Models\Penduduk;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+
+class Prodi extends Model
+{
+    protected $table = 'prodi';
+
+    protected $primaryKey = 'id_prodi';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'id_prodi',
+        'fakultas_id',
+        'nama_prodi',
+        'singkatan',
+        'status',
+    ];
+
+    public function fakultas()
+    {
+        return $this->belongsTo(Fakultas::class, 'fakultas_id');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->hasMany(Mahasiswa::class, 'prodi_id');
+    }
+
+    public function penduduk()
+    {
+        return $this->hasMany(Penduduk::class, 'prodi_id');
+    }
+
+    public function template()
+    {
+        return $this->hasMany(Template::class, 'prodi_id');
+    }
+}

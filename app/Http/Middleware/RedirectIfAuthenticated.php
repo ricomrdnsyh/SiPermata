@@ -20,10 +20,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                /** @var \App\Models\User $user */
                 $user = Auth::user();
-
-                // Menggunakan accessor 'role' yang sudah Anda buat di model User
                 $role = $user->role;
 
                 switch ($role) {
@@ -36,7 +33,6 @@ class RedirectIfAuthenticated
                     case 'DEKAN':
                         return redirect()->route('dekan.dashboard');
                     default:
-                        // Pengalihan default jika role tidak dikenali atau '-'
                         return redirect('/');
                 }
             }

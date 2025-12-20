@@ -168,7 +168,7 @@
                                     <p>
                                         Status pengajuan Anda sekarang adalah
                                         <b>MENUNGGU DEKAN</b>. Pengajuan ini akan diteruskan ke
-                                        <b>Dekan {{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
+                                        <b>Dekan Fakultas {{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
                                         untuk proses persetujuan dan penandatanganan akhir.
                                     </p>
                                 </div>

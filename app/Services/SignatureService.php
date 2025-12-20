@@ -31,35 +31,35 @@ class SignatureService
         }
 
         if ($suratModel instanceof SuratAktif) {
-            $token = Crypt::encryptString((string) $suratModel->id_surat_aktif);
+            $token  = Crypt::encryptString((string) $suratModel->id_surat_aktif);
             $qrData = route('verifikasi.surat-aktif', ['id' => $token]);
         } elseif ($suratModel instanceof SuratPenelitian) {
-            $token = Crypt::encryptString((string) $suratModel->id_surat_izin_penelitian);
+            $token  = Crypt::encryptString((string) $suratModel->id_surat_izin_penelitian);
             $qrData = route('verifikasi.surat-izin-penelitian', ['id' => $token]);
         } elseif ($suratModel instanceof SuratRekomendasi) {
-            $token = Crypt::encryptString((string) $suratModel->id_surat_rekomendasi);
+            $token  = Crypt::encryptString((string) $suratModel->id_surat_rekomendasi);
             $qrData = route('verifikasi.surat-rekomendasi', ['id' => $token]);
         } elseif ($suratModel instanceof SuratPKL) {
-            $token = Crypt::encryptString((string) $suratModel->id_surat_pkl);
+            $token  = Crypt::encryptString((string) $suratModel->id_surat_pkl);
             $qrData = route('verifikasi.surat-pkl', ['id' => $token]);
         } elseif ($suratModel instanceof SuratObservasi) {
-            $token = Crypt::encryptString((string) $suratModel->id_surat_observasi);
+            $token  = Crypt::encryptString((string) $suratModel->id_surat_observasi);
             $qrData = route('verifikasi.surat-observasi', ['id' => $token]);
         } elseif ($suratModel instanceof SuratLulus) {
-            $token = Crypt::encryptString((string) $suratModel->id_surat_lulus);
+            $token  = Crypt::encryptString((string) $suratModel->id_surat_lulus);
             $qrData = route('verifikasi.surat-keterangan-lulus', ['id' => $token]);
         } else {
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");
         }
 
-
         $options = new QROptions([
             'outputType'     => QROutputInterface::GDIMAGE_PNG,
             'eccLevel'       => QRCode::ECC_H,
-            'scale'          => 6,
+            'scale'          => 16,
             'outputBase64'   => false,
             'returnResource' => true,
             'addQuietzone'   => false,
+            'quietzoneSize'  => 0,
         ]);
 
         $qrImage = (new QRCode($options))->render($qrData);
@@ -117,8 +117,8 @@ class SignatureService
             imagedestroy($logo);
         }
 
-        $marginTop    = 10;
-        $marginBottom = 10;
+        $marginTop    = 5;
+        $marginBottom = 5;
 
         $finalWidth  = $qrWidth;
         $finalHeight = $qrHeight + $marginTop + $marginBottom;
@@ -155,8 +155,8 @@ class SignatureService
 
             $processor->setImageValue('TTD_QR', [
                 'path'   => $qrTempPath,
-                'width'  => 100,
-                'height' => 100,
+                'width'  => 140,
+                'height' => 140,
                 'ratio'  => true,
             ]);
 
@@ -171,6 +171,8 @@ class SignatureService
 
         return $filePath;
     }
+
+
 
     public function convertDocxToPdf(string $wordFilePath): string
     {

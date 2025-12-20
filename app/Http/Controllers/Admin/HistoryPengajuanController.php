@@ -201,10 +201,7 @@ class HistoryPengajuanController extends Controller
                 $showBtn = '<a href="' . route('admin.history-pengajuan.show', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
             data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_history . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-            data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
-
-                return '<div class="text-center">' . $showBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="text-center">' . $showBtn . '</div>';
             })
             ->rawColumns(['nama_mahasiswa', 'prodi', 'status', 'action'])
             ->make(true);
