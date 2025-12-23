@@ -22,88 +22,87 @@
                                     action="{{ route('bak.surat-pkl.store') }}">
                                     @csrf
                                     <div class="fv-row mb-3">
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1" required>
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Mahasiswa...</option>
-                                                @foreach ($mahasiswa as $mhs)
-                                                    <option value="{{ $mhs->nim }}">
-                                                        {{ $mhs->nim }} - {{ $mhs->nama }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('nim')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
-                                                data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1" required>
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Akademik...</option>
-                                                @foreach ($akademik as $item)
-                                                    <option value="{{ $item->id_akademik }}">
-                                                        {{ $item->tahun_akademik }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('akademik_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Tempat PKL" name="mitra_id"
-                                                data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
-                                                data-kt-initialized="1" required>
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Tempat PKL...</option>
-                                                @foreach ($mitra as $mitra)
-                                                    <option value="{{ $mitra->id_mitra }}">
-                                                        {{ $mitra->nama_mitra }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('mitra_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
-                                            <input type="date" name="tgl_mulai" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                required />
-                                            @error('tgl_mulai')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
-                                            <input type="date" name="tgl_selesai" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                required />
-                                            @error('tgl_selesai')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="text-center mt-4">
-                                            <button type="submit" data-kt-contacts-type="submit"
-                                                class="btn btn-sm btn-primary w-250px">
-                                                <span class="indicator-label">
-                                                    Buat Pengajuan
-                                                </span>
-                                                <span class="indicator-progress">
-                                                    Tunggu sebentar...
-                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                                </span>
-                                            </button>
-                                        </div>
+                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                            data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1" required>
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Mahasiswa...</option>
+                                            @foreach ($mahasiswa as $mhs)
+                                                <option value="{{ $mhs->nim }}">
+                                                    {{ $mhs->nim }} - {{ $mhs->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('nim')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-3">
+                                        <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
+                                            data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1" required>
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Akademik...</option>
+                                            @foreach ($akademik as $item)
+                                                <option value="{{ $item->id_akademik }}">
+                                                    {{ $item->tahun_akademik }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('akademik_id')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-3">
+                                        <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
+                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                            data-control="select2" data-placeholder="Pilih Tempat PKL" name="mitra_id"
+                                            data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
+                                            data-kt-initialized="1" required>
+                                            <option value="" data-select2-id="select2-data-74-9zwr">
+                                                Pilih Tempat PKL...</option>
+                                            @foreach ($mitra as $mitra)
+                                                <option value="{{ $mitra->id_mitra }}">
+                                                    {{ $mitra->nama_mitra }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('mitra_id')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-3">
+                                        <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
+                                        <input type="date" name="tgl_mulai"
+                                            class="form-control form-control-sm mb-3 mb-lg-0" required />
+                                        @error('tgl_mulai')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-3">
+                                        <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
+                                        <input type="date" name="tgl_selesai"
+                                            class="form-control form-control-sm mb-3 mb-lg-0" required />
+                                        @error('tgl_selesai')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button type="submit" data-kt-contacts-type="submit"
+                                            class="btn btn-sm btn-primary w-250px">
+                                            <span class="indicator-label">
+                                                Buat Pengajuan
+                                            </span>
+                                            <span class="indicator-progress">
+                                                Tunggu sebentar...
+                                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                            </span>
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

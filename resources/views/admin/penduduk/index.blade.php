@@ -122,19 +122,21 @@
                     'rt' +
                     '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
                 buttons: [{
-                        extend: 'excelHtml5',
+                        extend: 'excel',
+                        titleAttr: 'Excel',
                         title: 'Data Penduduk',
-                        className: 'btn btn-sm me-2 btn-success fw-bold'
+                        action: newexportaction,
+                        className: 'btn btn-sm me-2 btn-primary rounded-2 fw-bold'
                     },
                     {
                         extend: 'pdfHtml5',
                         title: 'Data Penduduk',
-                        className: 'btn btn-sm me-2 btn-danger fw-bold'
+                        className: 'btn btn-sm me-2 btn-primary rounded-2 fw-bold'
                     },
                     {
                         extend: 'csvHtml5',
                         title: 'Data Penduduk',
-                        className: 'btn btn-sm btn-success fw-bold'
+                        className: 'btn btn-sm btn-primary rounded-2 fw-bold'
                     }
                 ],
                 ajax: '{{ route('admin.penduduk.data') }}',

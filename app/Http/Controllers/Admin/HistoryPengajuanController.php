@@ -67,7 +67,7 @@ class HistoryPengajuanController extends Controller
         $query = HistoryPengajuan::with(['mahasiswa.prodi']);
 
         $tahunAkademikFilter = $request->input('tahun_akademik_filter');
-        $tabelNames = array_keys($this->listSurat); // nama tabel surat
+        $tabelNames = array_keys($this->listSurat);
 
         if (!$request->has('tahun_akademik_filter')) {
             $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
@@ -172,6 +172,8 @@ class HistoryPengajuanController extends Controller
                     }
                 });
             })
+            ->addColumn('id_history', fn($row) => (string) $row->id_history)
+            ->addColumn('status_raw', fn($row) => (string) $row->status)
             ->addColumn('nama_mahasiswa', function ($row) {
                 return $row->mahasiswa?->nama ?? $row->nim;
             })
@@ -324,10 +326,9 @@ class HistoryPengajuanController extends Controller
         }
 
 
-        $jenisTabel   = $pengajuan->tabel; // Ambil nilai 'surat_aktif' atau 'surat_izin_penelitian'
-        $idSuratUtama = $pengajuan->id_tabel_surat; // Ambil ID surat utama di tabel yang benar
+        $jenisTabel   = $pengajuan->tabel;
+        $idSuratUtama = $pengajuan->id_tabel_surat;
 
-        // A. Cek ketersediaan mapping
         if (!isset($this->suratModels[$jenisTabel])) {
             return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
         }
@@ -342,12 +343,12 @@ class HistoryPengajuanController extends Controller
 
         $pengajuan->update([
             'status'     => 'proses',
-            'catatan'    => 'Disetujui oleh BAK'
+            'catatan'    => 'Disetujui oleh Admin'
         ]);
 
         $suratUtama->update([
             'status'  => 'proses',
-            'catatan' => 'Disetujui oleh BAK',
+            'catatan' => 'Disetujui oleh Admin',
         ]);
 
         PengajuanStatusLog::create([
@@ -372,7 +373,7 @@ class HistoryPengajuanController extends Controller
                         $pengajuan,
                         'disetujui',
                         $namaSurat,
-                        'Pengajuan Anda telah disetujui oleh BAK dan akan diproses oleh Dekan.'
+                        'Pengajuan Anda telah disetujui oleh Admin dan akan diproses oleh Dekan.'
                     )
                 );
             }
@@ -385,6 +386,104 @@ class HistoryPengajuanController extends Controller
             'message' => "Pengajuan SURAT {$namaSurat} berhasil disetujui!"
         ]);
     }
+
+    public function bulkApprove(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak'], 403);
+        }
+
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer'],
+        ]);
+
+        $ids = $data['ids'];
+
+        $success = 0;
+        $failed = [];
+
+        foreach ($ids as $id) {
+            try {
+                DB::beginTransaction();
+
+                $pengajuan = HistoryPengajuan::lockForUpdate()->find($id);
+                if (!$pengajuan || $pengajuan->status !== 'pengajuan') {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $jenisTabel = $pengajuan->tabel;
+                $idSuratUtama = $pengajuan->id_tabel_surat;
+
+                if (!isset($this->suratModels[$jenisTabel])) {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $ModelSurat = $this->suratModels[$jenisTabel];
+                $suratUtama = $ModelSurat::find($idSuratUtama);
+
+                if (!$suratUtama) {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $pengajuan->update([
+                    'status'  => 'proses',
+                    'catatan' => 'Disetujui oleh Admin',
+                ]);
+
+                $suratUtama->update([
+                    'status'  => 'proses',
+                    'catatan' => 'Disetujui oleh Admin',
+                ]);
+
+                PengajuanStatusLog::create([
+                    'history_id' => $pengajuan->id_history,
+                    'status'     => 'proses',
+                    'user_role'  => 'Admin',
+                    'user_id'    => $user->id,
+                    'catatan'    => 'Disetujui oleh Admin',
+                ]);
+
+                DB::commit();
+                $success++;
+
+                try {
+                    $namaSurat = strtoupper(ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel)));
+                    $mahasiswa = Mahasiswa::where('nim', $suratUtama->nim)->with('fakultas')->first();
+
+                    if ($mahasiswa && $mahasiswa->email) {
+                        Mail::to($mahasiswa->email)->send(
+                            new NotifikasiStatusBak(
+                                $mahasiswa,
+                                $pengajuan,
+                                'disetujui',
+                                $namaSurat,
+                                'Pengajuan Anda telah disetujui oleh Admin dan akan diproses oleh Dekan.'
+                            )
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    Log::error("Bulk approve Admin email gagal (history {$pengajuan->id_history}): " . $e->getMessage());
+                }
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                Log::error("Bulk approve Admin gagal (id {$id}): " . $e->getMessage());
+                $failed[] = $id;
+            }
+        }
+
+        $msg = "Berhasil approve {$success} pengajuan.";
+        if (count($failed)) $msg .= " Gagal: " . count($failed) . ".";
+        return response()->json(['success' => true, 'message' => $msg]);
+    }
+
 
     public function reject(Request $request, $id)
     {

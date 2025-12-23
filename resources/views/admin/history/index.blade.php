@@ -45,16 +45,13 @@
                             <!--end::Search-->
                         </div>
                         <!--begin::Card title-->
-                        <!--begin::Card toolbar-->
                         <div class="card-toolbar">
-                            <!--begin::Toolbar-->
-                            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <!--begin::Add user-->
-                                <!--end::Add user-->
-                            </div>
-                            <!--end::Toolbar-->
+                            <button type="button" class="btn btn-sm btn-success fw-bold" id="btn-bulk-approve" disabled>
+                                <i class="fas fa-check-circle"></i> Terima Pengajuan Terpilih (<span
+                                    id="selected-count">0</span>)
+                            </button>
                         </div>
-                        <!--end::Card toolbar-->
+
                     </div>
                     <div class="separator mt-6"></div>
                     <div class="card-body py-4 px-8 filter-container">
@@ -124,6 +121,12 @@
                             <thead class="">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center" style="width:40px;">
+                                        <div
+                                            class="form-check form-check-sm form-check-custom form-check-solid d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" id="select-all">
+                                        </div>
+                                    </th>
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">NIM</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
@@ -159,6 +162,21 @@
 
     <script>
         $(document).ready(function() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let selectedIds = new Set();
+
+            function refreshBulkUI() {
+                const count = selectedIds.size;
+                $('#selected-count').text(count);
+                $('#btn-bulk-approve').prop('disabled', count === 0);
+            }
+
+            function clearSelection() {
+                selectedIds.clear();
+                $('#select-all').prop('checked', false);
+                refreshBulkUI();
+            }
+
             let table = $('#history-table').DataTable({
                 processing: false,
                 serverSide: true,
@@ -198,6 +216,24 @@
                     }
                 },
                 columns: [{
+                        data: 'id_history',
+                        name: 'id_history',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            const disabled = (row.status_raw !== 'pengajuan') ? 'disabled' : '';
+                            return `
+                        <div class="form-check form-check-sm form-check-custom form-check-solid d-flex justify-content-center">
+                            <input class="form-check-input row-check"
+                                   type="checkbox"
+                                   value="${data}"
+                                   data-status="${row.status_raw}"
+                                   ${disabled}>
+                        </div>
+                    `;
+                        }
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: false,
@@ -246,47 +282,107 @@
                         previous: "Previous",
                         next: "Next"
                     }
-
                 },
+
                 drawCallback: function() {
                     $('#history-table [data-bs-toggle="tooltip"]').tooltip();
-                }
-            });
+                    $('#history-table .row-check').each(function() {
+                        const id = $(this).val();
+                        $(this).prop('checked', selectedIds.has(id));
+                    });
 
-            table.on('draw', function() {
-                $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+                    const $checks = $('#history-table .row-check:not(:disabled)');
+                    const checkedCount = $checks.filter(':checked').length;
+                    $('#select-all').prop('checked', $checks.length > 0 && checkedCount === $checks
+                        .length);
+
+                    refreshBulkUI();
+                }
             });
 
             $('[data-filter]').on('change', function() {
+                clearSelection();
                 table.draw();
+            });
+
+            $('#history-table').on('change', '.row-check', function() {
+                const id = $(this).val();
+
+                if ($(this).is(':checked')) selectedIds.add(id);
+                else selectedIds.delete(id);
+
+                const $checks = $('#history-table .row-check:not(:disabled)');
+                const checkedCount = $checks.filter(':checked').length;
+                $('#select-all').prop('checked', $checks.length > 0 && checkedCount === $checks.length);
+
+                refreshBulkUI();
+            });
+
+            $('#select-all').on('change', function() {
+                const isChecked = $(this).is(':checked');
+
+                $('#history-table .row-check:not(:disabled)').each(function() {
+                    const id = $(this).val();
+                    $(this).prop('checked', isChecked);
+
+                    if (isChecked) selectedIds.add(id);
+                    else selectedIds.delete(id);
+                });
+
+                refreshBulkUI();
+            });
+
+            $('#btn-bulk-approve').on('click', function() {
+                const ids = Array.from(selectedIds);
+
+                Swal.fire({
+                    title: "Konfirmasi Pengajuan",
+                    text: `Terima ${ids.length} pengajuan terpilih?`,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, Terima Pengajuan!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-secondary text-black"
+                    }
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    Swal.fire({
+                        icon: "info",
+                        title: 'Mohon tunggu...',
+                        text: 'Memproses pengajuan...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+
+                    fetch("{{ route('admin.history.bulkApprove') }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                ids
+                            })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("Berhasil!", data.message, "success").then(() => {
+                                    clearSelection();
+                                    table.ajax.reload(null, false);
+                                });
+                            } else {
+                                Swal.fire("Gagal!", data.message || "Bulk approve gagal.",
+                                    "error");
+                            }
+                        })
+                        .catch(() => Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
+                            "error"));
+                });
             });
         });
     </script>
-
-    @if ($message = Session::get('success'))
-        <script>
-            Swal.fire({
-                text: "{{ $message }}",
-                icon: "success",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-primary"
-                }
-            });
-        </script>
-    @endif
-    @if ($message = Session::get('failed'))
-        <script>
-            Swal.fire({
-                text: "{{ $message }}",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-danger"
-                }
-            });
-        </script>
-    @endif
 @endsection

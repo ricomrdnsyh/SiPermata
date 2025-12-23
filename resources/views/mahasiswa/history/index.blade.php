@@ -99,6 +99,7 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
+                pagingType: "simple_numbers",
                 ajax: '{{ route('mahasiswa.history.data') }}',
                 columns: [{
                         data: 'action',
@@ -128,6 +129,10 @@
                     search: "Search :_INPUT_",
                     searchPlaceholder: "Search...",
                     lengthMenu: "Show _MENU_ entries",
+                    paginate: {
+                        previous: "Previous",
+                        next: "Next"
+                    }
 
                 },
                 drawCallback: function() {

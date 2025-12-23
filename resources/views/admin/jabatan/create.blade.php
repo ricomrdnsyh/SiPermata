@@ -29,12 +29,13 @@
                                                 aria-hidden="true" data-kt-initialized="1">
                                                 <option value="" data-select2-id="select2-data-74-9zwr">
                                                     Pilih Penduduk...</option>
-                                                @foreach ($penduduk as $penduduk)
-                                                    <option value="{{ $penduduk->id_penduduk }}">
-                                                        {{ $penduduk->fakultas->nama_fakultas }} -
-                                                        {{ $penduduk->nama_penduduk }}
+                                                @foreach ($penduduk as $item)
+                                                    <option value="{{ $item->id_penduduk }}">
+                                                        {{ $item->fakultas?->nama_fakultas ?? 'Fakultas belum diisi' }} -
+                                                        {{ $item->nama_penduduk }}
                                                     </option>
                                                 @endforeach
+
                                             </select>
                                             @error('penduduk_id')
                                                 <small class="text-danger">{{ $message }}</small>
@@ -67,7 +68,8 @@
                                             <a href="{{ route('admin.jabatan.index') }}" class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit"
+                                                class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>

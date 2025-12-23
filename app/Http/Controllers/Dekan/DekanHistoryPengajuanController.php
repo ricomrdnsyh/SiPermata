@@ -183,6 +183,11 @@ class DekanHistoryPengajuanController extends Controller
                     $query->orWhere('tabel', 'surat_keterangan_lulus');
                 }
             })
+            ->addColumn('id_history', fn($row) => (string) $row->id_history)
+            ->addColumn('status_raw', fn($row) => (string) $row->status)
+            ->addColumn('tabel_raw', fn($row) => (string) $row->tabel)
+            ->addColumn('id_tabel_surat_raw', fn($row) => (int) $row->id_tabel_surat)
+
             ->addColumn('nama_mahasiswa', function ($row) {
                 $mahasiswa = Mahasiswa::where('nim', $row->nim)->first();
                 return $mahasiswa?->nama ?? $row->nim;
@@ -406,7 +411,6 @@ class DekanHistoryPengajuanController extends Controller
         ], 200);
     }
 
-
     public function reject(Request $request, $id)
     {
         $user = Auth::user();
@@ -504,6 +508,236 @@ class DekanHistoryPengajuanController extends Controller
         ], 200);
     }
 
+    public function bulkApprove(Request $request, SignatureService $signatureService)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'DEKAN') {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
+        }
+
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1', 'max:20'],
+            'ids.*' => ['integer'],
+        ]);
+
+        $ids = $data['ids'];
+        $fakultasId = $user->penduduk?->fakultas_id;
+
+        $success = 0;
+        $failed = [];
+
+        foreach ($ids as $id) {
+            try {
+                DB::beginTransaction();
+
+                $pengajuan = HistoryPengajuan::lockForUpdate()->find($id);
+                if (!$pengajuan || $pengajuan->fakultas_id !== $fakultasId || $pengajuan->status !== 'proses') {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $modelClass = $this->getModelClass($pengajuan->tabel);
+                if (!$modelClass) {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $detailSurat = $modelClass::find($pengajuan->id_tabel_surat);
+                if (!$detailSurat || empty($detailSurat->file_generated)) {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $ttdDekan = TtdSurat::where('fakultas_id', $pengajuan->fakultas_id)
+                    ->where('template_id', $detailSurat->template_id)
+                    ->where('status', 'aktif')
+                    ->first();
+
+                if (!$ttdDekan) {
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                $namaDekan = $ttdDekan->nama_ttd;
+                $nidn = $ttdDekan->nidn;
+                $jabatanDekan = $user->penduduk?->jabatan?->status ?? 'Dekan';
+                $idJabatan = $user->penduduk?->jabatan?->id_jabatan ?? null;
+
+                $docxFilePath = $signatureService->insertSignatureWithQR($detailSurat, $jabatanDekan, $namaDekan, $nidn);
+                $pdfFilePath  = $signatureService->convertDocxToPdf($docxFilePath);
+
+                $detailSurat->update([
+                    'status' => 'diterima',
+                    'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
+                    'file_generated' => $pdfFilePath,
+                ]);
+
+                $pengajuan->update([
+                    'status' => 'diterima',
+                    'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
+                    'jabatan_id' => $idJabatan,
+                ]);
+
+                PengajuanStatusLog::create([
+                    'history_id' => $pengajuan->id_history,
+                    'status' => 'diterima',
+                    'user_role' => 'DEKAN',
+                    'user_id' => $user->id,
+                    'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
+                ]);
+
+                DB::commit();
+                $success++;
+
+                try {
+                    $mahasiswa = Mahasiswa::where('nim', $detailSurat->nim)->first();
+                    if ($mahasiswa && $mahasiswa->email) {
+                        Mail::to($mahasiswa->email)->send(
+                            new NotifikasiStatusSurat($mahasiswa, $pengajuan, 'disetujui', "Disetujui oleh Dekan: {$namaDekan}")
+                        );
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Bulk approve email gagal (history {$pengajuan->id_history}): " . $e->getMessage());
+                }
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                Log::error("Bulk approve gagal (id {$id}): " . $e->getMessage());
+                $failed[] = $id;
+            }
+        }
+
+        $msg = "Berhasil approve {$success} pengajuan.";
+        if (count($failed) > 0) {
+            $msg .= " Gagal: " . count($failed) . " (cek log / data tidak valid).";
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $msg,
+            'success_count' => $success,
+            'failed_count' => count($failed),
+            'failed_ids' => $failed,
+        ]);
+    }
+
+    public function bulkSend(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'DEKAN') {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
+        }
+
+        $data = $request->validate([
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.tabel' => ['required', 'string'],
+            'items.*.id_surat' => ['required', 'integer'],
+            'items.*.status_raw' => ['required', 'string'],
+        ]);
+
+        $fakultasId = $user->penduduk?->fakultas_id;
+
+        $success = 0;
+        $failed = [];
+
+        foreach ($data['items'] as $item) {
+            if ($item['status_raw'] !== 'diterima') {
+                $failed[] = $item;
+                continue;
+            }
+
+            try {
+
+                $modelClass = $this->getModelClass($item['tabel']);
+                if (!$modelClass) {
+                    $failed[] = $item;
+                    continue;
+                }
+
+                $surat = $modelClass::find($item['id_surat']);
+                if (!$surat || empty($surat->file_generated)) {
+                    $failed[] = $item;
+                    continue;
+                }
+
+                if ($surat->mahasiswa->fakultas_id !== $fakultasId) {
+                    $failed[] = $item;
+                    continue;
+                }
+
+                $mahasiswa = Mahasiswa::where('nim', $surat->nim)->first();
+                if (!$mahasiswa || !$mahasiswa->email) {
+                    $failed[] = $item;
+                    continue;
+                }
+
+                $filePath = $surat->file_generated;
+                if (!Storage::disk('local')->exists($filePath)) {
+                    $failed[] = $item;
+                    continue;
+                }
+
+                $pengajuanHistory = HistoryPengajuan::where('tabel', $item['tabel'])
+                    ->where('id_tabel_surat', $item['id_surat'])
+                    ->first();
+
+                if (!$pengajuanHistory || $pengajuanHistory->status !== 'diterima') {
+                    $failed[] = $item;
+                    continue;
+                }
+
+                $namaSurat = $pengajuanHistory->nama_surat;
+                $fileName = strtoupper(str_replace(' ', '_', $item['tabel'])) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
+
+                DB::beginTransaction();
+
+                Mail::to($mahasiswa->email)->send(
+                    new SuratSelesai($mahasiswa, $surat, $filePath, $fileName, $namaSurat)
+                );
+
+                $surat->update([
+                    'status' => 'selesai',
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
+                ]);
+
+                $pengajuanHistory->update([
+                    'status' => 'selesai',
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
+                    'updated_at' => now(),
+                ]);
+
+                PengajuanStatusLog::create([
+                    'history_id' => $pengajuanHistory->id_history,
+                    'status' => 'selesai',
+                    'user_role' => 'DEKAN',
+                    'user_id' => $user->id,
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
+                ]);
+
+                DB::commit();
+                $success++;
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                Log::error("Bulk send gagal: tabel={$item['tabel']}, id={$item['id_surat']}, err=" . $e->getMessage());
+                $failed[] = $item;
+            }
+        }
+
+        $msg = "Berhasil mengirim {$success} surat.";
+        if (count($failed) > 0) {
+            $msg .= " Gagal: " . count($failed) . " (cek log / data tidak valid).";
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $msg,
+            'success_count' => $success,
+            'failed_count' => count($failed),
+        ]);
+    }
 
     public function viewGeneratedFile(string $tabel, int $id): Response
     {

@@ -62,7 +62,9 @@
                         <!--begin::Table-->
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-izin-penelitian-table">
                             <!--begin::Table head-->
-                            <thead  class="table table-sm table-row-dashed table-row-gray-900 align-middle gs-0 gy-2 dt-responsive nowrap" style="width:100%;">
+                            <thead
+                                class="table table-sm table-row-dashed table-row-gray-900 align-middle gs-0 gy-2 dt-responsive nowrap"
+                                style="width:100%;">
                                 <!--begin::Table row-->
                                 <tr class="text-start text-muted fs-sm-8 fs-lg-6 text-uppercase">
                                     <th class="text-center">Actions</th>
@@ -101,6 +103,7 @@
                 processing: false,
                 serverSide: true,
                 responsive: true,
+                pagingType: "simple_numbers",
                 ajax: '{{ route('mahasiswa.surat-izin-penelitian.data') }}',
                 columns: [{
                         data: 'action',
@@ -129,6 +132,10 @@
                     search: "Search :_INPUT_",
                     searchPlaceholder: "Search...",
                     lengthMenu: "Show _MENU_ entries",
+                    paginate: {
+                        previous: "Previous",
+                        next: "Next"
+                    }
 
                 },
                 drawCallback: function() {

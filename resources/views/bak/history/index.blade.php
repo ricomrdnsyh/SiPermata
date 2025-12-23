@@ -36,7 +36,11 @@
                             </h3>
                         </div>
                         <div class="card-toolbar">
-                            {{-- Button --}}
+                            <button type="button" class="btn btn-sm btn-success fw-bold" id="btn-approve-selected"
+                                disabled>
+                                <i class="fas fa-check-circle"></i>
+                                Terima Pengajuan Terpilih (<span id="selected-count">0</span>)
+                            </button>
                         </div>
                     </div>
                     <div class="separator mt-6"></div>
@@ -104,6 +108,13 @@
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
                                 <thead class="">
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="text-center" style="width:40px;">
+                                            <div
+                                                class="form-check form-check-sm form-check-custom form-check-solid d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" id="select-all">
+                                            </div>
+                                        </th>
+
                                         <th class="text-center">Actions</th>
                                         <th class="min-w-125px">NIM</th>
                                         <th class="min-w-125px">Nama Mahasiswa</th>
@@ -131,6 +142,24 @@
 
     <script>
         $(document).ready(function() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let selectedIds = new Set();
+
+            const $btnApproveSelected = $('#btn-approve-selected');
+            const $selectedCount = $('#selected-count');
+
+            function refreshSelectedUI() {
+                const count = selectedIds.size;
+                $selectedCount.text(count);
+                $btnApproveSelected.prop('disabled', count === 0);
+            }
+
+            function clearSelection() {
+                selectedIds.clear();
+                $('#select-all').prop('checked', false);
+                refreshSelectedUI();
+            }
+
             let table = $('#history-table').DataTable({
                 processing: false,
                 serverSide: true,
@@ -147,17 +176,17 @@
                 buttons: [{
                         extend: 'excelHtml5',
                         title: 'Data Pengajuan Mahasiswa',
-                        className: 'btn btn-sm me-2 btn-success fw-bold'
+                        className: 'btn btn-sm me-2 btn-dark rounded-2 fw-bold'
                     },
                     {
                         extend: 'pdfHtml5',
                         title: 'Data Pengajuan Mahasiswa',
-                        className: 'btn btn-sm me-2 btn-danger fw-bold'
+                        className: 'btn btn-sm me-2 btn-dark rounded-2 fw-bold'
                     },
                     {
                         extend: 'csvHtml5',
                         title: 'Data Pengajuan Mahasiswa',
-                        className: 'btn btn-sm btn-success fw-bold'
+                        className: 'btn btn-sm btn-dark rounded-2 fw-bold'
                     }
                 ],
                 ajax: {
@@ -170,17 +199,32 @@
                     }
                 },
                 columns: [{
+                        data: 'id_history',
+                        name: 'id_history',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            const disabled = (row.status_raw !== 'pengajuan') ? 'disabled' : '';
+                            return `<div class="form-check form-check-sm form-check-custom form-check-solid d-flex justify-content-center">
+                            <input class="form-check-input row-check" type="checkbox" value="${data}" ${disabled}>
+                            </div>
+                            `;
+                        }
+
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        exportable: false,
+                        exportable: false
                     },
                     {
                         data: 'nim',
                         name: 'nim',
                         searchable: true
-                    }, {
+                    },
+                    {
                         data: 'nama_mahasiswa',
                         name: 'nama_mahasiswa',
                         searchable: true
@@ -208,7 +252,6 @@
                         name: 'catatan'
                     }
                 ],
-
                 language: {
                     search: "Search :_INPUT_",
                     searchPlaceholder: "Search...",
@@ -217,19 +260,126 @@
                         previous: "Previous",
                         next: "Next"
                     }
-
                 },
                 drawCallback: function() {
                     $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+
+                    $('#history-table .row-check').each(function() {
+                        const id = $(this).val();
+                        $(this).prop('checked', selectedIds.has(id));
+                    });
+
+                    const $checks = $('#history-table .row-check:not(:disabled)');
+                    const checkedCount = $checks.filter(':checked').length;
+                    $('#select-all').prop('checked', $checks.length > 0 && checkedCount === $checks
+                        .length);
+
+                    refreshSelectedUI();
                 }
             });
 
-            table.on('draw', function() {
-                $('#history-table [data-bs-toggle="tooltip"]').tooltip();
+            $('[data-filter]').on('change', function() {
+                clearSelection();
+                table.draw();
             });
 
-            $('[data-filter]').on('change', function() {
-                table.draw();
+            $('#history-table').on('change', '.row-check', function() {
+                const id = $(this).val();
+                if ($(this).is(':checked')) selectedIds.add(id);
+                else selectedIds.delete(id);
+
+                const $checks = $('#history-table .row-check:not(:disabled)');
+                const checkedCount = $checks.filter(':checked').length;
+                $('#select-all').prop('checked', $checks.length > 0 && checkedCount === $checks.length);
+
+                refreshSelectedUI();
+            });
+
+            $('#select-all').on('change', function() {
+                const isChecked = $(this).is(':checked');
+                $('#history-table .row-check:not(:disabled)').each(function() {
+                    const id = $(this).val();
+                    $(this).prop('checked', isChecked);
+                    if (isChecked) selectedIds.add(id);
+                    else selectedIds.delete(id);
+                });
+                refreshSelectedUI();
+            });
+
+            $('#btn-approve-selected').on('click', function() {
+                const ids = Array.from(selectedIds);
+
+                Swal.fire({
+                    title: "Konfirmasi Pengajuan",
+                    text: `Terima ${ids.length} pengajuan terpilih?`,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, Terima Pengajuan!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-secondary text-black"
+                    }
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    Swal.fire({
+                        icon: "info",
+                        title: 'Mohon tunggu...',
+                        text: 'Memproses pengajuan...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+
+                    fetch("{{ route('bak.history.bulkApprove') }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                ids
+                            })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    text: data.message,
+                                    icon: "success",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "OK",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                }).then(() => {
+                                    clearSelection();
+                                    table.ajax.reload(null, false);
+                                });
+                            } else {
+                                Swal.fire({
+                                    text: data.message || 'Gagal approve bulk.',
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "OK",
+                                    customClass: {
+                                        confirmButton: "btn btn-danger"
+                                    }
+                                });
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire({
+                                text: 'Terjadi kesalahan saat approve bulk.',
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "OK",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            });
+                        });
+                });
             });
         });
     </script>

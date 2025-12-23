@@ -21,7 +21,6 @@
                                     class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
                                     action="{{ route('bak.surat-izin-penelitian.store') }}">
                                     @csrf
-                                    <div class="fv-row mb-3">
                                         <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
                                             <select class="form-select form-select-sm select2-hidden-accessible w-100"

@@ -126,7 +126,6 @@ class BAKHistoryPengajuanController extends Controller
                     }
                 });
             } else {
-                // tidak ada surat di tahun akademik tsb
                 $query->whereRaw('1 = 0');
             }
         }
@@ -183,6 +182,8 @@ class BAKHistoryPengajuanController extends Controller
                     $query->orWhere('tabel', 'surat_keterangan_lulus');
                 }
             })
+            ->addColumn('id_history', fn($row) => (string) $row->id_history)
+            ->addColumn('status_raw', fn($row) => (string) $row->status)
             ->addColumn('nama_mahasiswa', fn($row) => $row->mahasiswa?->nama ?? $row->nim)
             ->addColumn('prodi', fn($row) => $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim)
             ->addColumn('nama_surat', fn($row) => $row->nama_surat)
@@ -359,6 +360,118 @@ class BAKHistoryPengajuanController extends Controller
         ]);
     }
 
+    public function bulkApprove(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak'], 403);
+        }
+
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer'],
+        ]);
+
+        $ids = $data['ids'];
+        $fakultasIdUser = $user->penduduk?->fakultas_id;
+
+        DB::beginTransaction();
+        try {
+            $pengajuans = HistoryPengajuan::whereIn('id_history', $ids)
+                ->where('fakultas_id', $fakultasIdUser)
+                ->where('status', 'pengajuan')
+                ->lockForUpdate()
+                ->get();
+
+            $approvedCount = 0;
+
+            foreach ($pengajuans as $pengajuan) {
+                $jenisTabel   = $pengajuan->tabel;
+                $idSuratUtama = $pengajuan->id_tabel_surat;
+
+                if (!isset($this->suratModels[$jenisTabel])) {
+                    continue;
+                }
+
+                $ModelSurat = $this->suratModels[$jenisTabel];
+                $suratUtama = $ModelSurat::find($idSuratUtama);
+
+                if (!$suratUtama) {
+                    continue;
+                }
+
+                $pengajuan->update([
+                    'status'     => 'proses',
+                    'catatan'    => 'Disetujui oleh BAK',
+                    'jabatan_id' => $user->penduduk->jabatan->id_jabatan
+                ]);
+
+                $suratUtama->update([
+                    'status'  => 'proses',
+                    'catatan' => 'Disetujui oleh BAK',
+                ]);
+
+                PengajuanStatusLog::create([
+                    'history_id' => $pengajuan->id_history,
+                    'status'     => 'proses',
+                    'user_role'  => 'BAK',
+                    'user_id'    => $user->id,
+                    'catatan'    => 'Disetujui oleh BAK',
+                ]);
+
+                $namaSurat = strtoupper(ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel)));
+
+                try {
+                    $mahasiswa = Mahasiswa::where('nim', $suratUtama->nim)->with('fakultas')->first();
+
+                    if ($mahasiswa && $mahasiswa->email) {
+                        Mail::to($mahasiswa->email)->send(
+                            new NotifikasiStatusBak(
+                                $mahasiswa,
+                                $pengajuan,
+                                'disetujui',
+                                $namaSurat,
+                                'Pengajuan Anda telah disetujui oleh BAK dan akan diproses oleh Dekan.'
+                            )
+                        );
+                    }
+
+                    if ($mahasiswa) {
+                        $urlDetail = 'https://sso.unuja.ac.id';
+
+                        NotifikasiDekanService::kirimMenungguDekan(
+                            $mahasiswa,
+                            $pengajuan,
+                            $namaSurat,
+                            $urlDetail
+                        );
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Bulk approve: gagal notifikasi untuk {$pengajuan->id_history}: " . $e->getMessage());
+                }
+
+                $approvedCount++;
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Berhasil approve {$approvedCount} pengajuan.",
+                'approved_count' => $approvedCount
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error("Bulk approve gagal: " . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal approve bulk.'
+            ], 500);
+        }
+    }
+
 
     public function reject(Request $request, $id)
     {
@@ -451,7 +564,6 @@ class BAKHistoryPengajuanController extends Controller
             'message' => "Pengajuan SURAT {$namaSurat} berhasil ditolak!"
         ]);
     }
-
 
     private function getModelClass($tableName)
     {

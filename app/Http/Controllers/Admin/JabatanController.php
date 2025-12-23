@@ -69,7 +69,7 @@ class JabatanController extends Controller
      */
     public function create()
     {
-        $penduduk = Penduduk::all();
+        $penduduk = Penduduk::with('fakultas')->get();
 
         return view('admin.jabatan.create', compact('penduduk'));
     }

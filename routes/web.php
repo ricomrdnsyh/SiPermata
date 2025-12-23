@@ -150,6 +150,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/history/{id}/approve', [HistoryPengajuanController::class, 'approve'])->name('history.approve');
         Route::post('/history/{id}/reject', [HistoryPengajuanController::class, 'reject'])->name('history.reject');
         Route::get('surat/view/{tabel}/{id}', [HistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
+
+        Route::post('/history/bulk-approve', [HistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
@@ -191,6 +193,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/history/{id}/reject', [DekanHistoryPengajuanController::class, 'reject'])->name('history.reject');
         Route::get('surat/view/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
         Route::post('surat/kirim/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'sendEmailMahasiswa'])->name('surat.send');
+
+        Route::post('/dekan/history/bulk-approve', [DekanHistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
+        Route::post('/dekan/history/bulk-send', [DekanHistoryPengajuanController::class, 'bulkSend'])->name('history.bulkSend');
     });
 
     Route::middleware(['role:BAK'])->prefix('bak')->name('bak.')->group(function () {
@@ -227,5 +232,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/history/{id}/approve', [BAKHistoryPengajuanController::class, 'approve'])->name('history.approve');
         Route::post('/history/{id}/reject', [BAKHistoryPengajuanController::class, 'reject'])->name('history.reject');
         Route::get('surat/view/{tabel}/{id}', [BAKHistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
+
+        Route::post('/bak/history/bulk-approve', [BAKHistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
     });
 });
