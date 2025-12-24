@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id" dir="ltr">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -17,7 +16,6 @@
     <meta name="duckduckbot" content="noindex, nofollow, noarchive, nosnippet">
     <link rel="icon" href="{{ asset('assets/media/logos//unuja.png') }}" type="image/x-icon">
     <link rel="canonical" href="https://sipermata.unuja.ac.id/">
-
     <style>
         * {
             margin: 0;
@@ -25,7 +23,6 @@
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
         }
-
         body {
             height: 100vh;
             display: flex;
@@ -34,7 +31,6 @@
             text-align: center;
             padding: 1rem;
         }
-
         .container {
             padding: 1.5rem;
             background: rgba(255, 255, 255, 0.1);
@@ -42,19 +38,16 @@
             max-width: 90%;
             border-radius: 10px;
         }
-
         .error-code {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 0.8rem;
             animation: bounce 5s infinite;
         }
-
         .error-message {
             font-size: 1rem;
             margin-bottom: 1rem;
         }
-
         .home-btn {
             background: linear-gradient(135deg, #6171ff 0%, #2b4bff 100%);
             border: none;
@@ -68,26 +61,21 @@
             display: inline-block;
             transition: all 0.3s ease;
         }
-
         .home-btn:hover {
             box-shadow: 0 5px 15px rgba(64, 43, 255, 0.5);
             transform: translateY(-2px);
         }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translateY(-20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
         @keyframes bounce {
-
             0%,
             20%,
             50%,
@@ -95,36 +83,29 @@
             100% {
                 transform: translateY(0);
             }
-
             40% {
                 transform: translateY(-15px);
             }
-
             60% {
                 transform: translateY(-8px);
             }
         }
-
         @media (max-width: 600px) {
             .container {
                 padding: 1rem;
                 max-width: 95%;
             }
-
             .error-code {
                 font-size: 1.8rem;
             }
-
             .error-message {
                 font-size: 0.9rem;
             }
-
             .home-btn {
                 padding: 0.5rem 1.2rem;
                 font-size: 0.8rem;
             }
         }
-
         footer {
             position: absolute;
             bottom: 0;
@@ -134,7 +115,6 @@
         }
     </style>
 </head>
-
 <body
     style="background-color: #f1f4f8; background-image: linear-gradient(to right, rgba(206,206,206,0.31) 1px, transparent 1px),  linear-gradient(to bottom, rgba(206,206,206,0.31) 1px, transparent 1px); background-size: 25px 25px; position: relative;">
     <div class="container">
@@ -143,5 +123,4 @@
         <a href="/" class="home-btn">Kembali ke Beranda</a>
     </div>
 </body>
-
 </html>

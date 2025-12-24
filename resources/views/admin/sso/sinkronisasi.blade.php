@@ -1,10 +1,7 @@
 @extends('layout.main')
-
 @section('title', 'SSO Sinkronisasi')
-
 @section('content')
     <div class="container-fluid py-4 mb-8">
-
         <div class="card card-flush my-6 border-dashed border-2 rounded-3 border-gray-300 shadow-sm">
             <div
                 class="card-body p-8 p-lg-7 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center bg-white">
@@ -27,14 +24,12 @@
                             </span>
                         @endif
                     </div>
-
                     <h1 class="text-dark fw-bolder fs-2 mb-2">Debug & Sinkronisasi SSO</h1>
                     <div class="text-muted fs-7">
                         Monitor status token, endpoint, dan lakukan refresh token untuk menjaga integrasi
                         <strong>SiPermata</strong> dengan SSO tetap stabil.
                     </div>
                 </div>
-
                 <form id="sinkron_sso" action="{{ route('admin.sso.refresh-token') }}" method="POST" class="ms-md-4">
                     @csrf
                     <button type="submit" data-kt-contacts-type="submit"
@@ -59,7 +54,6 @@
                 </form>
             </div>
         </div>
-
         @if (!$hasAuth)
             <div class="card mb-6 border-dashed border-2 rounded-3 border-gray-300">
                 <div
@@ -95,7 +89,6 @@
             </div>
         @else
             <div class="row g-6 g-xl-8">
-
                 <div class="col-xl-4 col-md-6">
                     <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-success">
                         <div class="card-header border-0 pb-0">
@@ -135,13 +128,11 @@
                                     @endif
                                 </div>
                             </div>
-
                             @if (!is_null($remainingMinutes))
                                 @php
                                     $hours = intdiv($remainingMinutes, 60);
                                     $mins = abs($remainingMinutes % 60);
                                 @endphp
-
                                 <div class="mb-4">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-muted fs-8">Sisa waktu token</span>
@@ -164,7 +155,6 @@
                                     </div>
                                 </div>
                             @endif
-
                             <div class="border rounded px-3 py-2 bg-light">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-circle-info fs-3 text-success me-2"></i>
@@ -177,7 +167,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-xl-4 col-md-6">
                     <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-info">
                         <div class="card-header border-0 pb-0">
@@ -195,7 +184,6 @@
                                     {{ $maskedToken ?? '-' }}
                                 </div>
                             </div>
-
                             <div class="mb-3">
                                 <button type="button" class="btn btn-sm  btn-light-info copy-btn"
                                     data-copy="{{ $fullToken }}">
@@ -203,7 +191,6 @@
                                     Salin X-Token
                                 </button>
                             </div>
-
                             <div class="border rounded p-3 bg-light">
                                 <code class="fs-8 d-block text-wrap">
                                     X-Token: {{ $fullToken ?? '-' }}<br>
@@ -215,7 +202,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-xl-4 col-md-12">
                     <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-primary">
                         <div class="card-header border-0 pb-0">
@@ -236,7 +222,6 @@
                                     {{ $createdAt ? $createdAt->format('d-m-Y H:i') : '-' }}
                                 </div>
                             </div>
-
                             <div class="mb-4">
                                 <div class="d-flex align-items-center mb-2">
                                     <span class="bullet bullet-dot bg-danger me-2"></span>
@@ -246,13 +231,11 @@
                                     {{ $expiredAt ? $expiredAt->format('d-m-Y H:i') : '-' }}
                                 </div>
                             </div>
-
                             <div class="mb-3">
                                 <div class="d-flex align-items-center mb-2">
                                     <span class="bullet bullet-dot bg-success me-2"></span>
                                     <span class="text-muted fs-8">URL Data</span>
                                 </div>
-
                                 @if ($dataUrl)
                                     <div class="mb-2">
                                         <a href="{{ $dataUrl }}" target="_blank"
@@ -260,7 +243,6 @@
                                             {{ $shortUrl }}
                                         </a>
                                     </div>
-
                                     <button type="button" class="btn btn-sm  btn-light-primary copy-btn"
                                         data-copy="{{ $dataUrl }}">
                                         <i class="fas fa-copy"></i>
@@ -270,7 +252,6 @@
                                     <div class="fw-semibold fs-7 text-muted">-</div>
                                 @endif
                             </div>
-
                             <div class="border rounded px-3 py-2 bg-light mt-3">
                                 <div class="d-flex">
                                     <i class="fas fa-gears"></i>
@@ -283,17 +264,13 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
             </div>
         @endif
-
     </div>
 @endsection
-
 @section('js')
     @if ($message = Session::get('success'))
         <script>
@@ -321,13 +298,11 @@
             });
         </script>
     @endif
-
     <script>
         document.querySelectorAll('.copy-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 const value = this.getAttribute('data-copy') || '';
                 if (!value) return;
-
                 navigator.clipboard.writeText(value).then(() => {
                     Swal.fire({
                         text: 'Berhasil disalin ke clipboard.',
@@ -352,12 +327,10 @@
             });
         });
     </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('sinkron_sso');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;
@@ -368,12 +341,10 @@
             });
         });
     </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('generate_token');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

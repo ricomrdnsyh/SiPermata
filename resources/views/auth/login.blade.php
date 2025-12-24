@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <base href="../../../">
     <title>Login SiPermata</title>
@@ -30,11 +29,9 @@
             background-size: 25px 25px;
             position: relative;
         }
-
         .auth-wrapper {
             min-height: 100vh;
         }
-
         .auth-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
@@ -46,7 +43,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .auth-card::before {
             content: "";
             position: absolute;
@@ -56,39 +52,31 @@
             opacity: 0.9;
             pointer-events: none;
         }
-
         .auth-card-inner {
             position: relative;
             z-index: 1;
         }
-
         .auth-title {
             font-weight: 600;
             letter-spacing: 0.02em;
         }
-
         .auth-subtitle {
             font-size: 0.95rem;
         }
-
         .auth-card .form-control form-control-sm.form-control form-control-sm-lg {
             border-radius: 0.75rem;
         }
-
         .auth-card .input-group .form-control form-control-sm.form-control form-control-sm-lg {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
-
         .auth-card .input-group-text {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
         }
-
         .auth-footer-text {
             font-size: 0.8rem;
         }
-
         @media (max-width: 576px) {
             .auth-card {
                 padding: 2rem 1.5rem;
@@ -96,7 +84,6 @@
         }
     </style>
 </head>
-
 <body id="kt_body" class="bg-body bg-grid">
     <div class="d-flex flex-column flex-root auth-wrapper">
         <div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
@@ -162,7 +149,6 @@
             });
         });
     </script>
-
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({
@@ -189,11 +175,9 @@
             });
         </script>
     @endif
-
     <script>
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#password');
-
         togglePassword.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
@@ -202,7 +186,5 @@
                 : '<i class="fas fa-eye-slash"></i>';
         });
     </script>
-
 </body>
-
 </html>

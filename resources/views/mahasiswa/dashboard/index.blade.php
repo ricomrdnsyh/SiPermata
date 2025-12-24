@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Dashboard')
-
 @section('content')
     <style>
         .btn-light-primary-hover-white:hover,
@@ -14,7 +12,6 @@
             color: #ffffff !important;
         }
     </style>
-
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
@@ -50,12 +47,10 @@
                         </div>
                     </div>
                     <div class="row g-5 g-xl-8">
-
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div
                                 class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-primary">
                                 <div class="card-body p-5">
-
                                     <div class="d-flex align-items-center mb-5">
                                         <i class="fas fa-file-alt fs-2x me-3 text-primary"></i>
                                         <div class="d-flex flex-column">
@@ -63,13 +58,11 @@
                                             <span class="text-muted fs-7">Pengajuan status aktif mahasiswa.</span>
                                         </div>
                                     </div>
-
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-primary p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-primary">{{ $surat_aktif['total'] }}</div>
                                     </div>
-
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
@@ -87,7 +80,6 @@
                                             <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
-
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-aktif.create') }}"
                                             class="btn btn-sm  btn-primary flex-fill">
@@ -98,16 +90,13 @@
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div
                                 class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-warning">
                                 <div class="card-body p-5">
-
                                     <div class="d-flex align-items-center mb-5">
                                         <i class="fas fa-flask fs-2x me-3 text-warning"></i>
                                         <div class="d-flex flex-column">
@@ -115,13 +104,11 @@
                                             <span class="text-muted fs-7">Pengajuan surat izin penelitian mahasiswa.</span>
                                         </div>
                                     </div>
-
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-warning p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-warning">{{ $surat_penelitian['total'] }}</div>
                                     </div>
-
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
@@ -139,7 +126,6 @@
                                             <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
-
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-izin-penelitian.create') }}"
                                             class="btn btn-sm  btn-warning flex-fill">
@@ -150,15 +136,12 @@
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-info">
                                 <div class="card-body p-5">
-
                                     <div class="d-flex align-items-center mb-5">
                                         <i class="fas fa-eye fs-2x me-3 text-info"></i>
                                         <div class="d-flex flex-column">
@@ -167,13 +150,11 @@
                                                 mahasiswa.</span>
                                         </div>
                                     </div>
-
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-info p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-info">{{ $surat_observasi['total'] }}</div>
                                     </div>
-
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
@@ -191,7 +172,6 @@
                                             <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
-
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-observasi.create') }}"
                                             class="btn btn-sm  btn-info flex-fill">
@@ -202,15 +182,12 @@
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-dark">
                                 <div class="card-body p-5">
-
                                     <div class="d-flex align-items-center mb-5">
                                         <i class="fas fa-thumbs-up fs-2x me-3 text-dark"></i>
                                         <div class="d-flex flex-column">
@@ -219,13 +196,11 @@
                                                 mahasiswa.</span>
                                         </div>
                                     </div>
-
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-dark p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-dark">{{ $surat_rekomendasi['total'] }}</div>
                                     </div>
-
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
@@ -243,7 +218,6 @@
                                             <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
-
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-rekomendasi.create') }}"
                                             class="btn btn-sm  btn-dark flex-fill">
@@ -254,16 +228,13 @@
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div
                                 class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-danger">
                                 <div class="card-body p-5">
-
                                     <div class="d-flex align-items-center mb-5">
                                         <i class="fas fa-briefcase fs-2x me-3 text-danger"></i>
                                         <div class="d-flex flex-column">
@@ -271,13 +242,11 @@
                                             <span class="text-muted fs-7">Pengantar untuk keperluan PKL.</span>
                                         </div>
                                     </div>
-
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-danger p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-danger">{{ $surat_pkl['total'] }}</div>
                                     </div>
-
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
@@ -295,7 +264,6 @@
                                             <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
-
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-pkl.create') }}"
                                             class="btn btn-sm  btn-danger flex-fill">
@@ -306,16 +274,13 @@
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div
                                 class="card card-flush h-100 shadow-sm hover-elevate-up border-top border-3 border-success">
                                 <div class="card-body p-5">
-
                                     <div class="d-flex align-items-center mb-5">
                                         <i class="fas fa-graduation-cap fs-2x me-3 text-success"></i>
                                         <div class="d-flex flex-column">
@@ -323,13 +288,11 @@
                                             <span class="text-muted fs-7">Diperlukan untuk ijazah, beasiswa, dll.</span>
                                         </div>
                                     </div>
-
                                     <div
                                         class="d-flex justify-content-between align-items-center mb-5 bg-light-success p-3 rounded-3">
                                         <div class="fw-semibold text-gray-700">Total Pengajuan Anda:</div>
                                         <div class="fs-3 fw-bolder text-success">{{ $surat_lulus['total'] }}</div>
                                     </div>
-
                                     <div class="row g-2 mb-7">
                                         <div class="col-4 text-center">
                                             <span
@@ -347,7 +310,6 @@
                                             <div class="text-dark fs-8 mt-1">Ditolak</div>
                                         </div>
                                     </div>
-
                                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                                         <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
                                             class="btn btn-sm  btn-success flex-fill">
@@ -358,11 +320,9 @@
                                             <i class="fas fa-history me-2"></i> Riwayat
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

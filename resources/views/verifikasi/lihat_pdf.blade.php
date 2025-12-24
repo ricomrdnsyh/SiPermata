@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <title>SiPermata Universitas Nurul Jadid</title>
@@ -25,7 +24,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         html,
         body {
             height: 100%;
@@ -33,14 +31,12 @@
             background: #f5f7fa;
             overflow: hidden;
         }
-
         .page {
             display: flex;
             flex-direction: column;
             height: 100vh;
             position: relative;
         }
-
         .header {
             background: linear-gradient(135deg, #1e5086 0%, #2d6ba8 100%);
             color: #ffffff;
@@ -49,7 +45,6 @@
             position: relative;
             z-index: 10;
         }
-
         .header::after {
             content: '';
             position: absolute;
@@ -59,7 +54,6 @@
             height: 3px;
             background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
         }
-
         .header-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -67,7 +61,6 @@
             align-items: center;
             gap: 20px;
         }
-
         .logo-container {
             flex-shrink: 0;
             width: 60px;
@@ -80,24 +73,20 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
-
         .logo-container img {
             width: 40px;
             height: 40px;
             object-fit: contain;
         }
-
         .logo-placeholder {
             width: 40px;
             height: 40px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 8px;
         }
-
         .header-text {
             flex: 1;
         }
-
         .header-title {
             font-size: 22px;
             font-weight: 700;
@@ -105,14 +94,12 @@
             margin-bottom: 4px;
             letter-spacing: -0.3px;
         }
-
         .header-subtitle {
             font-size: 15px;
             font-weight: 500;
             opacity: 0.95;
             letter-spacing: 0.3px;
         }
-
         .pdf-container {
             flex: 1;
             display: flex;
@@ -121,21 +108,18 @@
             background: #ffffff;
             position: relative;
         }
-
         .pdf-wrapper {
             flex: 1;
             position: relative;
             background: #e8edf3;
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
         }
-
         .pdf-wrapper iframe {
             width: 100%;
             height: 100%;
             border: none;
             display: block;
         }
-
         .loading-overlay {
             position: absolute;
             top: 0;
@@ -150,7 +134,6 @@
             gap: 16px;
             z-index: 5;
         }
-
         .loading-spinner {
             width: 48px;
             height: 48px;
@@ -159,13 +142,11 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         .loading-text {
             color: #64748b;
             font-size: 14px;
             font-weight: 500;
         }
-
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -174,7 +155,6 @@
                 transform: rotate(360deg);
             }
         }
-
         .error-message {
             display: none;
             padding: 16px;
@@ -185,83 +165,67 @@
             border-radius: 8px;
             font-size: 14px;
         }
-
         .error-message.show {
             display: block;
         }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .header {
                 padding: 16px 20px;
             }
-
             .header-content {
                 gap: 14px;
             }
-
             .logo-container {
                 width: 48px;
                 height: 48px;
             }
-
             .logo-container img,
             .logo-placeholder {
                 width: 32px;
                 height: 32px;
             }
-
             .header-title {
                 font-size: 16px;
             }
-
             .header-subtitle {
                 font-size: 13px;
             }
         }
-
         @media (max-width: 480px) {
             .header {
                 padding: 14px 16px;
             }
-
             .header-content {
                 gap: 12px;
             }
-
             .logo-container {
                 width: 44px;
                 height: 44px;
             }
-
             .logo-container img,
             .logo-placeholder {
                 width: 28px;
                 height: 28px;
             }
-
             .header-title {
                 font-size: 14px;
             }
-
             .header-subtitle {
                 font-size: 12px;
             }
         }
-
         /* Print Styles */
         @media print {
             .header {
                 display: none;
             }
-
             .pdf-container {
                 height: 100vh;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="page">
         <header class="header">
@@ -276,18 +240,15 @@
                 </div>
             </div>
         </header>
-
         <main class="pdf-container">
             <div class="error-message" id="errorMessage">
                 Gagal memuat dokumen. Silakan refresh halaman atau hubungi administrator.
             </div>
-            
             <div class="pdf-wrapper">
                 <div class="loading-overlay" id="loadingOverlay">
                     <div class="loading-spinner"></div>
                     <p class="loading-text">Memuat dokumen...</p>
                 </div>
-                
                 <iframe 
                     src="{{ $pdf_url }}" 
                     title="Pratinjau Dokumen PDF"
@@ -299,32 +260,26 @@
             </div>
         </main>
     </div>
-
     <script>
         const pdfFrame = document.getElementById('pdfFrame');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const errorMessage = document.getElementById('errorMessage');
-        
         let loadTimeout;
-
         pdfFrame.addEventListener('load', function() {
             clearTimeout(loadTimeout);
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
             }, 300);
         });
-
         pdfFrame.addEventListener('error', function() {
             clearTimeout(loadTimeout);
             loadingOverlay.style.display = 'none';
             errorMessage.classList.add('show');
         });
-
         // Timeout fallback jika loading terlalu lama
         loadTimeout = setTimeout(() => {
             loadingOverlay.style.display = 'none';
         }, 10000);
     </script>
 </body>
-
 </html>

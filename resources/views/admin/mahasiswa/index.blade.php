@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Mahasiswa')
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
         type="text/css" />
@@ -11,38 +9,37 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
-
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+        .dt-buttons .btn-export-primary,
+        .dt-buttons .btn-export-primary:focus,
+        .dt-buttons .btn-export-primary:hover,
+        .dt-buttons .btn-export-primary:active {
+            background: #004289 !important;
+            border-color: #004289 !important;
+            color: #fff !important;
+        }
+        .dt-buttons .btn-export-primary:focus {
+            box-shadow: none !important;
+        }
     </style>
 @endsection
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <!--begin::Post-->
         <div class="post d-flex flex-column-fluid" id="kt_post">
-            <!--begin::Container-->
             <div id="kt_content_container" class="container-fluid">
-                <!--begin::Card-->
                 <div class="card">
-                    <!--begin::Card header-->
                     <div class="card-header border-0 pt-6">
-                        <!--begin::Card title-->
                         <div class="card-title">
-                            <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <h3 class="card-title align-items-start flex-column">
                                     <span class="card-label fw-bolder fs-3 mb-1">List Mahasiswa</span>
                                 </h3>
                             </div>
-                            <!--end::Search-->
                         </div>
-                        <!--begin::Card title-->
-                        <!--begin::Card toolbar-->
                         <div class="card-toolbar">
-                            <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <form id="sinkron_data" action="{{ route('admin.mahasiswa.sync') }}" method="POST"
                                     class="me-2">
@@ -58,21 +55,12 @@
                                     </button>
                                 </form>
                             </div>
-                            <!--end::Toolbar-->
                         </div>
-                        <!--end::Card toolbar-->
                     </div>
-                    <!--begin::Separator-->
                     <div class="separator my-5"></div>
-                    <!--end::Separator-->
-                    <!--end::Card header-->
-                    <!--begin::Card body-->
                     <div class="card-body pt-0">
-                        <!--begin::Table-->
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="mahasiswa-table">
-                            <!--begin::Table head-->
                             <thead class="">
-                                <!--begin::Table row-->
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">NIM</th>
@@ -83,30 +71,19 @@
                                     <th class="min-w-125px">Email</th>
                                     <th class="min-w-125px">No Telepon</th>
                                 </tr>
-                                <!--end::Table row-->
                             </thead>
-                            <!--end::Table head-->
-                            <!--begin::Table body-->
                             <tbody class="fw-bold text-gray-800">
                             </tbody>
-                            <!--end::Table body-->
                         </table>
-                        <!--end::Table-->
                     </div>
-                    <!--end::Card body-->
                 </div>
-                <!--end::Card-->
             </div>
-            <!--end::Container-->
         </div>
-        <!--end::Post-->
     </div>
 @endsection
-
 @section('js')
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
-
     <script>
         $(document).ready(function() {
             let table = $('#mahasiswa-table').DataTable({
@@ -123,19 +100,18 @@
                     'rt' +
                     '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
                 buttons: [{
+                        extend: 'colvis',
+                        text: 'Column Visibility',
+                        className: 'btn btn-sm me-2 rounded-2 btn-export-primary fw-bold'
+                    }, {
                         extend: 'excelHtml5',
-                        title: 'Data Mahasiswa',
-                        className: 'btn btn-sm me-2 btn-success fw-bold'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        title: 'Data Mahasiswa',
-                        className: 'btn btn-sm me-2 btn-danger fw-bold'
+                        title: 'SiPermata Universitas Nurul Jadid',
+                        className: 'btn btn-sm me-2 rounded-2 btn-export-primary fw-bold'
                     },
                     {
                         extend: 'csvHtml5',
-                        title: 'Data Mahasiswa',
-                        className: 'btn btn-sm btn-success fw-bold'
+                        title: 'SiPermata Universitas Nurul Jadid',
+                        className: 'btn btn-sm rounded-2 btn-export-primary fw-bold'
                     }
                 ],
                 ajax: {
@@ -180,7 +156,6 @@
                         name: 'no_hp'
                     }
                 ],
-
                 language: {
                     search: "Search :_INPUT_",
                     searchPlaceholder: "Search...",
@@ -189,13 +164,11 @@
                         previous: "Previous",
                         next: "Next"
                     }
-
                 },
                 drawCallback: function() {
                     $('#mahasiswa-table [data-bs-toggle="tooltip"]').tooltip();
                 }
             });
-
             table.on('draw', function() {
                 $('#mahasiswa-table [data-bs-toggle="tooltip"]').tooltip();
             });
@@ -251,7 +224,6 @@
             })
         }
     </script>
-
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({
@@ -278,12 +250,10 @@
             });
         </script>
     @endif
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('sinkron_data');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

@@ -1,18 +1,14 @@
 @extends('layout.main')
-
 @section('title', 'Detail Surat Pengajuan')
-
 @section('css')
     <style>
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
-
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
-
         .summary-pill {
             padding: 0.65rem 1.2rem;
             border-radius: 999px;
@@ -20,13 +16,11 @@
         }
     </style>
 @endsection
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
                 <div class="d-flex flex-column flex-lg-row">
-
                     <div class="flex-lg-row-fluid me-lg-15 order-2 order-lg-1 mb-10 mb-lg-0">
                         <div class="card card-flush pt-3 mb-5 mb-xl-10">
                             <div class="card-header">
@@ -34,9 +28,7 @@
                                     <h2 class="fw-bolder mb-0">Detail Surat Pengajuan</h2>
                                 </div>
                             </div>
-
                             <div class="separator my-2"></div>
-
                             <div class="card-body pt-5">
                                 @isset($jumlahPengajuan)
                                     <div class="mb-10">
@@ -54,7 +46,6 @@
                                         </div>
                                     </div>
                                 @endisset
-
                                 <div class="mb-10">
                                     <h5 class="mb-4">Informasi Pengajuan</h5>
                                     <div class="table-responsive">
@@ -79,23 +70,18 @@
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
-
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui Dekan</span>
                                                             @break
-
                                                             @case('proses')
                                                                 <span class="badge bg-info">Diproses</span>
                                                             @break
-
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Menunggu Verifikasi</span>
                                                             @break
-
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
-
                                                             @default
                                                                 <span class="badge bg-secondary">
                                                                     {{ ucfirst($pengajuan->status) }}
@@ -108,7 +94,6 @@
                                         </table>
                                     </div>
                                 </div>
-
                                 <div class="mb-10">
                                     <h5 class="mb-4">Detail Surat</h5>
                                     <div class="d-flex flex-wrap py-5">
@@ -145,7 +130,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="pt-5 border-top border-gray-200 d-flex justify-content-end">
                                     @if ($pengajuan->status === 'selesai')
                                         @if (!empty($fileGeneratedPath) && $pengajuan->id_tabel_surat)
@@ -165,14 +149,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="card card-flush mb-6">
                             <div class="card-header">
                                 <div class="card-title">
                                     <h2 class="mt-8 mb-0">Riwayat Perubahan Status</h2>
                                 </div>
                             </div>
-
                             <div class="card-body pt-5">
                                 <div class="table-responsive">
                                     <table class="table align-middle table-row-dashed fs-6 gy-4 mb-0">
@@ -195,23 +177,18 @@
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Diajukan</span>
                                                             @break
-
                                                             @case('proses')
                                                                 <span class="badge bg-info">Diproses</span>
                                                             @break
-
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui Dekan</span>
                                                             @break
-
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
-
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
-
                                                             @default
                                                                 <span class="badge bg-secondary">
                                                                     {{ ucfirst($log->status) }}
@@ -232,9 +209,7 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                         <div
                             class="flex-column flex-lg-row-auto w-lg-250px w-xl-300px mb-10 order-1 order-lg-2 position-lg-sticky top-0">
                             <div class="card card-flush mb-0">
@@ -250,7 +225,6 @@
                                             ? \App\Models\Fakultas::find($mahasiswa->fakultas_id)
                                             : null;
                                     @endphp
-
                                     <div class="mb-7">
                                         <div class="d-flex align-items-center">
                                             <div class="symbol symbol-60px symbol-circle me-3">
@@ -266,9 +240,7 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="separator separator-dashed mb-7"></div>
-
                                     <div class="mb-10">
                                         <table class="table fs-6 fw-bold gs-0 gy-2 gx-2">
                                             <tr>
@@ -293,11 +265,9 @@
                                             </tr>
                                         </table>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

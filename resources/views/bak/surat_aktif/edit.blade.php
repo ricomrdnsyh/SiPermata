@@ -1,19 +1,15 @@
 @extends('layout.main')
-
 @section('title', 'Edit Surat Keterangan Aktif')
-
 @section('css')
     <style>
         .form-section {
             display: none;
         }
-
         .form-section.active {
             display: block;
         }
     </style>
 @endsection
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
@@ -26,18 +22,13 @@
                                 <div class="text-gray-400 fw-bold fs-5">Silakan edit pengajuan Anda untuk melanjutkan
                                     pengajuan!</div>
                             </div>
-
-                            <!-- Form Container -->
                             <div id="form-container" class="mt-2">
-                                <!-- Form Umum -->
                                 <form id="form-umum" class="form-section active" method="POST"
                                     action="{{ route('bak.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
-
                                     <h3 class="mb-5 text-center">Pengajuan Surat Keterangan Aktif Umum</h3>
-
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
                                         <select class="form-select form-select-sm select2-hidden-accessible w-100"
@@ -104,16 +95,12 @@
                                         </button>
                                     </div>
                                 </form>
-
-                                <!-- Form PNS -->
                                 <form id="form-pns" class="form-section" method="POST"
                                     action="{{ route('bak.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
-
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PNS</h3>
-
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
                                         <select class="form-select form-select-sm select2-hidden-accessible w-100"
@@ -133,9 +120,7 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-
                                     <div class="row">
-                                        <!-- Kolom Kiri -->
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
@@ -153,7 +138,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
                                                 <input type="number" name="semester" class="form-control form-control-sm"
@@ -162,7 +146,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
                                                 <input type="number" name="nip" class="form-control form-control-sm"
@@ -171,7 +154,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
                                                 <input type="text" name="nama_ortu" class="form-control form-control-sm"
@@ -180,7 +162,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
                                                     Tua</label>
@@ -270,8 +251,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-
-                                        <!-- Kolom Kanan -->
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
@@ -281,7 +260,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Golongan</label>
                                                 <input type="text" name="golongan" class="form-control form-control-sm"
@@ -290,7 +268,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control form-control-sm"
@@ -299,7 +276,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
                                                 <input type="text" name="unit_kerja" class="form-control form-control-sm"
@@ -308,8 +284,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
-                                            <!-- Alamat tetap full width -->
                                             <div class="fv-row mb-7 col-12">
                                                 <label class="required fw-semibold fs-6 mb-2">Alamat</label>
                                                 <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
@@ -319,7 +293,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
                                             class="btn btn-sm btn-primary w-250px">
@@ -331,17 +304,12 @@
                                         </button>
                                     </div>
                                 </form>
-
-                                <!-- Form PPPK (sama seperti PNS) -->
                                 <form id="form-pppk" class="form-section" method="POST"
                                     action="{{ route('bak.surat-aktif.update', $surat->id_surat_aktif) }}">
                                     @csrf
                                     @method('PUT')
-
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
-
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PPPK</h3>
-
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
                                         <select class="form-select form-select-sm select2-hidden-accessible w-100"
@@ -361,9 +329,7 @@
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
-
                                     <div class="row">
-                                        <!-- Kolom Kiri -->
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
@@ -380,7 +346,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
                                                 <input type="number" name="semester" class="form-control form-control-sm"
@@ -389,7 +354,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
                                                 <input type="number" name="nip" class="form-control form-control-sm"
@@ -398,7 +362,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
                                                 <input type="text" name="nama_ortu" class="form-control form-control-sm"
@@ -407,7 +370,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
                                                     Tua</label>
@@ -497,8 +459,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-
-                                        <!-- Kolom Kanan -->
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
@@ -508,7 +468,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Golongan</label>
                                                 <input type="text" name="golongan" class="form-control form-control-sm"
@@ -517,7 +476,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control form-control-sm"
@@ -526,7 +484,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
                                                 <input type="text" name="unit_kerja" class="form-control form-control-sm"
@@ -535,8 +492,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-
-                                            <!-- Alamat tetap full width -->
                                             <div class="fv-row mb-7 col-12">
                                                 <label class="required fw-semibold fs-6 mb-2">Alamat</label>
                                                 <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
@@ -546,7 +501,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
                                             class="btn btn-sm btn-primary w-250px">
@@ -566,53 +520,42 @@
         </div>
     </div>
 @endsection
-
 @section('js')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const kategori = "{{ $surat->kategori }}";
-
             const formMap = {
                 'UMUM': 'form-umum',
                 'PNS': 'form-pns',
                 'PPPK': 'form-pppk'
             };
-
             const activeFormId = formMap[kategori] || 'form-umum';
-
             const allForms = [
                 document.getElementById('form-umum'),
                 document.getElementById('form-pns'),
                 document.getElementById('form-pppk')
             ];
-
             allForms.forEach(form => {
                 if (form) form.classList.remove('active');
             });
-
             const activeForm = document.getElementById(activeFormId);
             if (activeForm) {
                 activeForm.classList.add('active');
             }
-
             function attachSpinnerToForm(form) {
                 const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
                 if (!submitButton) return;
-
                 form.addEventListener('submit', function(event) {
                     if (!form.checkValidity()) {
                         return;
                     }
-
                     submitButton.disabled = true;
                     const label = submitButton.querySelector('.indicator-label');
                     const progress = submitButton.querySelector('.indicator-progress');
-
                     if (label) label.style.display = 'none';
                     if (progress) progress.style.display = 'inline-block';
                 });
             }
-
             allForms.forEach(form => {
                 if (form) {
                     attachSpinnerToForm(form);
@@ -620,7 +563,6 @@
             });
         });
     </script>
-
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({

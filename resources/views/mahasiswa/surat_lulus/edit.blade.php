@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Surat Keterangan Lulus')
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
@@ -14,8 +12,6 @@
                                 <div class="text-gray-400 fw-bold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
-
-                            <!-- Form Container -->
                             <div id="form-container" class="mt-2">
                                 <form id="kt_ecommerce_settings_general_form"
                                     class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
@@ -91,13 +87,11 @@
         </div>
     </div>
 @endsection
-
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;
@@ -108,7 +102,6 @@
             });
         });
     </script>
-
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({

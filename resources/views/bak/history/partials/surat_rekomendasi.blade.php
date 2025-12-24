@@ -15,5 +15,4 @@
         <td class="text-gray-400">Penyelenggara</td>
         <td class="text-gray-800">{{ $surat->penyelenggara }}</td>
     </tr>
-
 </table>

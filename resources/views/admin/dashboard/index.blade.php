@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Dashboard')
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
@@ -40,9 +38,7 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row g-5 g-xl-8 mb-8">
-
                         <div class="col-xl-2 col-md-4">
                             <a href="{{ route('admin.history-pengajuan.index') }}"
                                 class="card text-white card-xl-stretch h-md-100 text-decoration-none"
@@ -56,7 +52,6 @@
                                 </div>
                             </a>
                         </div>
-
                         <div class="col-xl-2 col-md-4">
                             <a href="{{ route('admin.history-pengajuan.index') }}"
                                 class="card card-xl-stretch h-md-100 text-decoration-none"
@@ -70,7 +65,6 @@
                                 </div>
                             </a>
                         </div>
-
                         <div class="col-xl-2 col-md-4">
                             <a href="{{ route('admin.history-pengajuan.index') }}"
                                 class="card text-white card-xl-stretch h-md-100 text-decoration-none"
@@ -84,7 +78,6 @@
                                 </div>
                             </a>
                         </div>
-
                         <div class="col-xl-2 col-md-4">
                             <a href="{{ route('admin.history-pengajuan.index') }}"
                                 class="card text-white card-xl-stretch h-md-100 text-decoration-none"
@@ -98,7 +91,6 @@
                                 </div>
                             </a>
                         </div>
-
                         <div class="col-xl-2 col-md-4">
                             <a href="{{ route('admin.history-pengajuan.index') }}"
                                 class="card text-white card-xl-stretch h-md-100 text-decoration-none"
@@ -112,7 +104,6 @@
                                 </div>
                             </a>
                         </div>
-
                         <div class="col-xl-2 col-md-4">
                             <a href="{{ route('admin.history-pengajuan.index') }}"
                                 class="card text-white card-xl-stretch h-md-100 text-decoration-none"
@@ -126,9 +117,7 @@
                                 </div>
                             </a>
                         </div>
-
                     </div>
-
                     <div class="card card-xl-stretch mb-8">
                         <div class="card-header border-0 pt-5">
                             <h3 class="card-title align-items-start flex-column">
@@ -143,7 +132,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="card card-xl-stretch mb-5">
                         <div class="card-header border-0 pt-5">
                             <h3 class="card-title align-items-start flex-column">
@@ -209,14 +197,12 @@
         </div>
     </div>
 @endsection
-
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Ambil data dari Controller
         const chartData = @json($chartData);
         const chartColors = @json($chartColors);
-
         // Konfigurasi Chart
         const ctx = document.getElementById('suratChart').getContext('2d');
         const suratChart = new Chart(ctx, {
@@ -254,7 +240,6 @@
                 }
             }
         });
-
         // Filter Tahun Akademik
         $('#filter_akademik_id').on('change', function() {
             const selectedId = $(this).val();

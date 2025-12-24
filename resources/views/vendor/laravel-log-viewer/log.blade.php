@@ -1,7 +1,6 @@
 @php use Illuminate\Support\Facades\Crypt; @endphp
 <!DOCTYPE html>
 <html lang="en" class="dark">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -49,10 +48,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 </head>
-
 <body class="bg-surface dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all">
     <div class="min-h-screen flex flex-col md:flex-row">
-        <!-- Sidebar Responsif -->
         <aside
             class="w-full md:w-64 lg:w-72 bg-surface dark:bg-gray-800 border-r border-border dark:border-gray-700 flex flex-col">
             <div class="p-4 border-b border-border dark:border-gray-700 flex items-center justify-between">
@@ -66,7 +63,6 @@
                     <i class="fas fa-sun dark:hidden"></i>
                 </button>
             </div>
-
             <div class="flex-1 overflow-y-auto p-2 space-y-1">
                 @foreach ($folders as $folder)
                     <div class="group relative">
@@ -102,10 +98,7 @@
                 @endforeach
             </div>
         </aside>
-
-        <!-- Konten Utama -->
         <main class="flex-1 flex flex-col overflow-hidden">
-            <!-- Header -->
             <div
                 class="p-4 border-b border-border dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="min-w-0">
@@ -144,8 +137,6 @@
                     @endif
                 </div>
             </div>
-
-            <!-- Tabel Log -->
             @if ($logs === null)
                 <div class="p-4 text-error">
                     Log file over 50MB, please
@@ -203,15 +194,12 @@
                     </div>
                 </div>
             @endif
-
-            <!-- Loading Overlay -->
             <div id="loading"
                 class="fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm flex items-center justify-center hidden transition-opacity">
                 <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
             </div>
         </main>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
@@ -240,20 +228,17 @@
                 searchPlaceholder: 'Search logs...'
             }
         });
-
         // Manajemen Tema
         function toggleTheme() {
             const html = document.documentElement;
             const isDark = html.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
-
         // Inisialisasi tema awal
         (function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.classList.toggle('dark', savedTheme === 'dark');
         })();
-
         // Fungsi Stack Toggle
         function toggleStack(id) {
             const stack = document.getElementById(id);
@@ -267,18 +252,15 @@
                 btn.querySelector('i').classList.toggle('fa-chevron-up');
             }
         }
-
         // Fungsi Aksi File
         const fileActions = {
             showLoading: () => document.getElementById('loading').classList.remove('hidden'),
             hideLoading: () => document.getElementById('loading').classList.add('hidden'),
-
             downloadLog: () => {
                 fileActions.showLoading();
                 window.location.href =
                     `?dl={{ Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . Crypt::encrypt($current_folder) : '' }}`;
             },
-
             cleanLog: () => {
                 if (confirm('Are you sure you want to clean this log file?')) {
                     fileActions.showLoading();
@@ -286,7 +268,6 @@
                         `?clean={{ Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . Crypt::encrypt($current_folder) : '' }}`;
                 }
             },
-
             deleteLog: () => {
                 if (confirm('Are you sure you want to delete this log file?')) {
                     fileActions.showLoading();
@@ -294,7 +275,6 @@
                         `?del={{ Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . Crypt::encrypt($current_folder) : '' }}`;
                 }
             },
-
             deleteAllLogs: () => {
                 if (confirm('Are you sure you want to delete ALL log files?')) {
                     fileActions.showLoading();
@@ -303,7 +283,6 @@
                 }
             }
         };
-
         // Ekspos fungsi ke global
         window.downloadLog = fileActions.downloadLog;
         window.cleanLog = fileActions.cleanLog;
@@ -311,5 +290,4 @@
         window.deleteAllLogs = fileActions.deleteAllLogs;
     </script>
 </body>
-
 </html>

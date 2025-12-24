@@ -6,15 +6,12 @@
                 @case('UMUM')
                     Surat Keterangan Aktif Umum
                 @break
-
                 @case('PNS')
                     Surat Keterangan Aktif PNS
                 @break
-
                 @case('PPPK')
                     Surat Keterangan Aktif PPPK
                 @break
-
                 @default
                     {{ $surat->kategori }}
             @endswitch

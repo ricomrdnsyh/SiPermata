@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Edit Jabatan')
-
 @section('content')
     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
         <div class="d-flex flex-column flex-column-fluid">
@@ -90,13 +88,11 @@
         </div>
     </div>
 @endsection
-
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

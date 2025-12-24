@@ -1,18 +1,14 @@
 @extends('layout.main')
-
 @section('title', 'Detail Surat Pengajuan')
-
 @section('css')
     <style>
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
-
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
-
         .summary-pill {
             padding: 0.65rem 1.2rem;
             border-radius: 999px;
@@ -20,23 +16,19 @@
         }
     </style>
 @endsection
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
                 <div class="d-flex flex-column flex-lg-row">
                     <div class="flex-lg-row-fluid me-lg-15 order-2 order-lg-1 mb-10 mb-lg-0">
-
                         <div class="card card-flush pt-3 mb-5 mb-xl-10">
                             <div class="card-header">
                                 <div class="card-title">
                                     <h2 class="fw-bolder mb-0">Detail Surat Pengajuan</h2>
                                 </div>
                             </div>
-
                             <div class="separator my-2"></div>
-
                             <div class="card-body pt-5">
                                 <div class="mb-10">
                                     <h5 class="mb-4">Ringkasan Riwayat</h5>
@@ -52,7 +44,6 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="mb-10">
                                     <h5 class="mb-4">Informasi Pengajuan</h5>
                                     <div class="table-responsive">
@@ -77,19 +68,15 @@
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Menunggu BAK</span>
                                                             @break
-
                                                             @case('proses')
                                                                 <span class="badge bg-info">Menunggu Dekan</span>
                                                             @break
-
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui</span>
                                                             @break
-
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
-
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
@@ -101,7 +88,6 @@
                                         </table>
                                     </div>
                                 </div>
-
                                 <div class="mb-10">
                                     <h5 class="mb-4">Detail Surat</h5>
                                     <div class="d-flex flex-wrap py-5">
@@ -138,7 +124,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="pt-5 border-top border-gray-200 d-flex justify-content-end">
                                     @if ($pengajuan->status === 'pengajuan')
                                         <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
@@ -176,14 +161,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="card card-flush mb-6">
                             <div class="card-header">
                                 <div class="card-title">
                                     <h2 class="mt-8">Riwayat Perubahan Status</h2>
                                 </div>
                             </div>
-
                             <div class="card-body pt-5">
                                 <div class="table-responsive">
                                     <table class="table align-middle table-row-dashed fs-6 gy-4 mb-0">
@@ -207,23 +190,18 @@
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Menunggu BAK</span>
                                                             @break
-
                                                             @case('proses')
                                                                 <span class="badge bg-info">Menunggu Dekan</span>
                                                             @break
-
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui</span>
                                                             @break
-
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
-
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
-
                                                             @default
                                                                 <span class="badge bg-secondary">
                                                                     {{ ucfirst($log->status) }}
@@ -246,7 +224,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div
                             class="flex-column flex-lg-row-auto w-lg-250px w-xl-300px mb-10 order-1 order-lg-2 position-lg-sticky top-0">
                             <div class="card card-flush mb-0">
@@ -262,7 +239,6 @@
                                             ? \App\Models\Fakultas::find($mahasiswa->fakultas_id)
                                             : null;
                                     @endphp
-
                                     <div class="mb-7">
                                         <div class="d-flex align-items-center">
                                             <div class="symbol symbol-60px symbol-circle me-3">
@@ -278,9 +254,7 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="separator separator-dashed mb-7"></div>
-
                                     <div class="mb-10">
                                         <table class="table fs-6 fw-bold gs-0 gy-2 gx-2">
                                             <tr>
@@ -308,23 +282,18 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-
-        {{-- Modal Penolakan --}}
         <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-
                     <div class="modal-header">
                         <h5 class="modal-title" id="rejectReasonModalLabel">Catatan Penolakan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="rejectReason" class="required form-label">Catatan Penolakan</label>
@@ -333,7 +302,6 @@
                             <div id="rejectError" class="text-danger mt-2" style="display: none;"></div>
                         </div>
                     </div>
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-sm btn-danger" id="btn-submit-reject" data-stage="">
@@ -344,23 +312,19 @@
                             </span>
                         </button>
                     </div>
-
                 </div>
             </div>
         </div>
-
         <form id="approveForm" method="POST" action="{{ route('bak.history.approve', $pengajuan->id_history) }}"
             style="display: none;">
             @csrf
         </form>
     @endsection
-
     @section('js')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const pengajuanId = {{ $pengajuan->id_history }};
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
                 // Approve
                 const btnApprove = document.getElementById('btn-approve-main');
                 if (btnApprove) {
@@ -385,7 +349,6 @@
                                         Swal.showLoading();
                                     }
                                 });
-
                                 fetch("{{ route('bak.history.approve', ':id') }}".replace(':id',
                                         pengajuanId), {
                                         method: 'POST',
@@ -436,38 +399,31 @@
                         });
                     });
                 }
-
                 // Buka modal reject
                 const btnReject = document.getElementById('btn-reject-main');
                 if (btnReject) {
                     btnReject.addEventListener('click', function() {
                         document.getElementById('rejectReason').value = '';
                         document.getElementById('rejectError').style.display = 'none';
-
                         const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'));
                         rejectModal.show();
                     });
                 }
-
                 // Submit reject
                 document.getElementById('btn-submit-reject').addEventListener('click', function() {
                     const reason = document.getElementById('rejectReason').value.trim();
                     const errorDiv = document.getElementById('rejectError');
-
                     if (!reason) {
                         errorDiv.textContent = 'Catatan penolakan wajib diisi.';
                         errorDiv.style.display = 'block';
                         return;
                     }
-
                     errorDiv.style.display = 'none';
-
                     const submitBtn = this;
                     const label = submitBtn.querySelector('.indicator-label');
                     const progress = submitBtn.querySelector('.indicator-progress');
                     label.style.display = 'none';
                     progress.style.display = 'inline-block';
-
                     fetch("{{ route('bak.history.reject', ':id') }}".replace(':id', pengajuanId), {
                             method: 'POST',
                             headers: {
@@ -483,7 +439,6 @@
                             const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
                                 'rejectReasonModal'));
                             rejectModal.hide();
-
                             if (data.success) {
                                 Swal.fire({
                                     text: data.message,
@@ -512,7 +467,6 @@
                             const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
                                 'rejectReasonModal'));
                             rejectModal.hide();
-
                             Swal.fire({
                                 text: 'Terjadi kesalahan saat menolak.',
                                 icon: "error",

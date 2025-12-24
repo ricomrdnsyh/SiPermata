@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,15 +13,12 @@
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
         }
-
         table {
             border-collapse: collapse;
         }
-
         td {
             padding: 0;
         }
-
         .container {
             width: 100%;
             max-width: 600px;
@@ -32,26 +28,22 @@
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
-
         .header {
             background-color: #0e345c;
             color: #ffffff;
             padding: 30px 25px;
             text-align: center;
         }
-
         .header h1 {
             margin: 0;
             font-size: 26px;
             font-weight: 600;
         }
-
         .content {
             padding: 25px 35px;
             color: #444444;
             line-height: 1.7;
         }
-
         .highlight-box {
             background-color: #e6f7ff;
             border-left: 5px solid #007bff;
@@ -59,7 +51,6 @@
             margin: 25px 0;
             border-radius: 4px;
         }
-
         .attachment-info {
             background-color: #d4edda;
             color: #155724;
@@ -70,7 +61,6 @@
             text-align: center;
             font-weight: bold;
         }
-
         .footer {
             background-color: #f0f3f6;
             padding: 20px 25px;
@@ -80,9 +70,7 @@
         }
     </style>
 </head>
-
 <body>
-
     <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
             <td align="center" style="padding: 20px 0;">
@@ -95,17 +83,14 @@
                             </p>
                         </td>
                     </tr>
-
                     <tr>
                         <td class="content">
                             <p>Halo, <b>{{ $mahasiswa->nama }}</b> NIM: <b>{{ $mahasiswa->nim }}</b>,</p>
-
                             <p>
                                 Kami sangat senang untuk mengabarkan bahwa proses pengajuan surat Anda, yaitu
                                 <b>{{ $namaSurat ?? 'Surat Pengajuan' }}</b>
                                 telah <b>SELESAI</b> diproses.
                             </p>
-
                             <div class="highlight-box">
                                 <p style="margin: 0; font-weight: bold; color: #007bff;">
                                     Surat ini telah diverifikasi dan ditandatangani secara elektronik oleh Dekan
@@ -113,9 +98,7 @@
                                     Surat resmi Anda tersedia sebagai lampiran pada email ini.
                                 </p>
                             </div>
-
                             <p>Berikut adalah rincian singkat:</p>
-
                             <table width="100%" cellpadding="5" cellspacing="0" border="0" role="presentation"
                                 style="margin: 15px 0; font-size: 14px;">
                                 <tr>
@@ -134,24 +117,20 @@
                                     </td>
                                 </tr>
                             </table>
-
                             <div class="attachment-info">
                                 Mohon periksa bagian lampiran (attachment) email ini untuk melihat dokumen:
                                 <br>{{ $fileName }}.
                             </div>
-
                             <p>
                                 Silakan gunakan surat tersebut sebagaimana mestinya. Jika ada pertanyaan,
                                 jangan ragu untuk menghubungi kami.
                             </p>
-
                             <p style="margin-top: 30px;">
                                 Salam Hormat,<br>
                                 <b>Fakultas {{ $mahasiswa->fakultas->nama_fakultas ?? '' }}</b>
                             </p>
                         </td>
                     </tr>
-
                     <tr>
                         <td class="footer">
                             <p style="margin: 0;">&copy; {{ date('Y') }} PDSI Universitas Nurul Jadid.</p>
@@ -160,12 +139,9 @@
                             </p>
                         </td>
                     </tr>
-
                 </table>
             </td>
         </tr>
     </table>
-
 </body>
-
 </html>

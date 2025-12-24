@@ -1,16 +1,11 @@
 <div id="kt_header" style="" class="header align-items-stretch">
-    <!--begin::Brand-->
     <div class="header-brand">
-        <!--begin::Logo-->
         <span class="header-logo">
             <img alt="Logo" src="{{ asset('assets/media/logos/sipermata.png') }}" class="h-50px h-lg-40px" />
         </span>
-        <!--end::Logo-->
-        <!--begin::Aside minimize-->
         <div id="kt_aside_toggle" class="btn btn-sm btn-icon w-auto px-0 btn-active-color-primary aside-minimize"
             data-kt-toggle="true" data-kt-toggle-state="active" data-kt-toggle-target="body"
             data-kt-toggle-name="aside-minimize">
-            <!--begin::Svg Icon | path: icons/duotune/arrows/arr092.svg-->
             <span class="svg-icon svg-icon-1 me-n1 minimize-default">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none">
@@ -23,8 +18,6 @@
                         fill="black" />
                 </svg>
             </span>
-            <!--end::Svg Icon-->
-            <!--begin::Svg Icon | path: icons/duotune/arrows/arr076.svg-->
             <span class="svg-icon svg-icon-1 minimize-active">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none">
@@ -38,13 +31,9 @@
                         fill="#C4C4C4" />
                 </svg>
             </span>
-            <!--end::Svg Icon-->
         </div>
-        <!--end::Aside minimize-->
-        <!--begin::Aside toggle-->
         <div class="d-flex align-items-center d-lg-none ms-n3 me-1" title="Show aside menu">
             <div class="btn btn-sm btn-icon btn-active-color-primary w-30px h-30px" id="kt_aside_mobile_toggle">
-                <!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
                 <span class="svg-icon svg-icon-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none">
@@ -55,24 +44,15 @@
                             fill="black" />
                     </svg>
                 </span>
-                <!--end::Svg Icon-->
             </div>
         </div>
-        <!--end::Aside toggle-->
     </div>
-    <!--end::Brand-->
     <div class="toolbar">
-        <!--begin::Toolbar-->
         <div
             class="container-fluid py-6 py-lg-0 d-flex flex-column flex-lg-row align-items-lg-stretch justify-content-lg-between">
-            <!--begin::Page title-->
             <div class="page-title d-flex flex-column me-5">
-                <!--begin::Title-->
                 <h1 class="d-flex flex-column text-dark fw-bolder fs-3 mb-0">@yield('title')</h1>
-                <!--end::Title-->
-                <!--begin::Breadcrumb-->
                 <ul class="breadcrumb breadcrumb-separatorless fw-bold fs-7 pt-1">
-                    <!--begin::Item-->
                     <li class="breadcrumb-item text-muted text-hover-primary">
                         @if (Auth::user()->role == 'admin')
                             <span>Admin</span>
@@ -85,10 +65,7 @@
                         @endif
                     </li>
                 </ul>
-                <!--end::Breadcrumb-->
             </div>
-            <!--end::Page title-->
         </div>
-        <!--end::Toolbar-->
     </div>
 </div>

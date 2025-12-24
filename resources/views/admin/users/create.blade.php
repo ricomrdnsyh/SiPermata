@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Tambah User')
-
 @section('content')
     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
         <div class="d-flex flex-column flex-column-fluid">
@@ -39,8 +37,6 @@
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-
-                                        {{-- Form Mahasiswa --}}
                                         <div id="mahasiswaFields" class="fv-row mb-3" style="display:none;">
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Mahasiswa</label>
@@ -68,8 +64,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-
-                                        {{-- Form Penduduk --}}
                                         <div id="pendudukFields" class="fv-row mb-3" style="display:none;">
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Penduduk</label>
@@ -101,8 +95,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-
-                                        {{-- Form Admin --}}
                                         <div id="adminFields" class="fv-row mb-3" style="display:none;">
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Username</label>
@@ -156,7 +148,6 @@
         </div>
     </div>
 @endsection
-
 @section('js')
     @if ($message = Session::get('success'))
         <script>
@@ -188,11 +179,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             $('#userType').on('change', function() {
                 const value = $(this).val();
-
                 document.getElementById('mahasiswaFields').style.display = 'none';
                 document.getElementById('pendudukFields').style.display = 'none';
                 document.getElementById('adminFields').style.display = 'none';
-
                 if (value === 'mahasiswa') {
                     document.getElementById('mahasiswaFields').style.display = 'block';
                 } else if (value === 'penduduk') {
@@ -207,7 +196,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

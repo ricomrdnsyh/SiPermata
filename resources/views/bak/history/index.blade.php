@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Pengajuan Surat Mahasiswa')
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
         type="text/css" />
@@ -11,19 +9,27 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
-
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
-
         .filter-container {
             margin-bottom: 2rem;
             padding-bottom: 0 !important;
         }
+        .dt-buttons .btn-export-primary,
+        .dt-buttons .btn-export-primary:focus,
+        .dt-buttons .btn-export-primary:hover,
+        .dt-buttons .btn-export-primary:active {
+            background: #004289 !important;
+            border-color: #004289 !important;
+            color: #fff !important;
+        }
+        .dt-buttons .btn-export-primary:focus {
+            box-shadow: none !important;
+        }
     </style>
 @endsection
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
@@ -46,7 +52,6 @@
                     <div class="separator mt-6"></div>
                     <div class="card-body py-4 px-8 filter-container">
                         <div class="row g-5">
-
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Program Studi:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
@@ -58,7 +63,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Nama Surat:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
@@ -70,7 +74,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Status:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
@@ -84,7 +87,6 @@
                                     <option value="ditolak">Ditolak</option>
                                 </select>
                             </div>
-
                             <div class="col-lg-6 col-md-6 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
@@ -99,10 +101,8 @@
                                     @endforeach
                                 </select>
                             </div>
-
                         </div>
                     </div>
-
                     <div class="card-body pt-0">
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
@@ -114,7 +114,6 @@
                                                 <input class="form-check-input" type="checkbox" id="select-all">
                                             </div>
                                         </th>
-
                                         <th class="text-center">Actions</th>
                                         <th class="min-w-125px">NIM</th>
                                         <th class="min-w-125px">Nama Mahasiswa</th>
@@ -135,31 +134,25 @@
         </div>
     </div>
 @endsection
-
 @section('js')
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
-
     <script>
         $(document).ready(function() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let selectedIds = new Set();
-
             const $btnApproveSelected = $('#btn-approve-selected');
             const $selectedCount = $('#selected-count');
-
             function refreshSelectedUI() {
                 const count = selectedIds.size;
                 $selectedCount.text(count);
                 $btnApproveSelected.prop('disabled', count === 0);
             }
-
             function clearSelection() {
                 selectedIds.clear();
                 $('#select-all').prop('checked', false);
                 refreshSelectedUI();
             }
-
             let table = $('#history-table').DataTable({
                 processing: false,
                 serverSide: true,
@@ -174,19 +167,18 @@
                     'rt' +
                     '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
                 buttons: [{
+                        extend: 'colvis',
+                        text: 'Column Visibility',
+                        className: 'btn btn-sm me-2 rounded-2 btn-export-primary fw-bold'
+                    }, {
                         extend: 'excelHtml5',
-                        title: 'Data Pengajuan Mahasiswa',
-                        className: 'btn btn-sm me-2 btn-dark rounded-2 fw-bold'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        title: 'Data Pengajuan Mahasiswa',
-                        className: 'btn btn-sm me-2 btn-dark rounded-2 fw-bold'
+                        title: 'SiPermata Universitas Nurul Jadid',
+                        className: 'btn btn-sm me-2 rounded-2 btn-export-primary fw-bold'
                     },
                     {
                         extend: 'csvHtml5',
-                        title: 'Data Pengajuan Mahasiswa',
-                        className: 'btn btn-sm btn-dark rounded-2 fw-bold'
+                        title: 'SiPermata Universitas Nurul Jadid',
+                        className: 'btn btn-sm rounded-2 btn-export-primary fw-bold'
                     }
                 ],
                 ajax: {
@@ -210,7 +202,6 @@
                             </div>
                             `;
                         }
-
                     },
                     {
                         data: 'action',
@@ -263,38 +254,30 @@
                 },
                 drawCallback: function() {
                     $('#history-table [data-bs-toggle="tooltip"]').tooltip();
-
                     $('#history-table .row-check').each(function() {
                         const id = $(this).val();
                         $(this).prop('checked', selectedIds.has(id));
                     });
-
                     const $checks = $('#history-table .row-check:not(:disabled)');
                     const checkedCount = $checks.filter(':checked').length;
                     $('#select-all').prop('checked', $checks.length > 0 && checkedCount === $checks
                         .length);
-
                     refreshSelectedUI();
                 }
             });
-
             $('[data-filter]').on('change', function() {
                 clearSelection();
                 table.draw();
             });
-
             $('#history-table').on('change', '.row-check', function() {
                 const id = $(this).val();
                 if ($(this).is(':checked')) selectedIds.add(id);
                 else selectedIds.delete(id);
-
                 const $checks = $('#history-table .row-check:not(:disabled)');
                 const checkedCount = $checks.filter(':checked').length;
                 $('#select-all').prop('checked', $checks.length > 0 && checkedCount === $checks.length);
-
                 refreshSelectedUI();
             });
-
             $('#select-all').on('change', function() {
                 const isChecked = $(this).is(':checked');
                 $('#history-table .row-check:not(:disabled)').each(function() {
@@ -305,10 +288,8 @@
                 });
                 refreshSelectedUI();
             });
-
             $('#btn-approve-selected').on('click', function() {
                 const ids = Array.from(selectedIds);
-
                 Swal.fire({
                     title: "Konfirmasi Pengajuan",
                     text: `Terima ${ids.length} pengajuan terpilih?`,
@@ -322,7 +303,6 @@
                     }
                 }).then((result) => {
                     if (!result.isConfirmed) return;
-
                     Swal.fire({
                         icon: "info",
                         title: 'Mohon tunggu...',
@@ -330,7 +310,6 @@
                         allowOutsideClick: false,
                         didOpen: () => Swal.showLoading()
                     });
-
                     fetch("{{ route('bak.history.bulkApprove') }}", {
                             method: 'POST',
                             headers: {

@@ -1,7 +1,5 @@
 @extends('layout.main')
-
 @section('title', 'Surat Pemohonan PKL')
-
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
@@ -14,8 +12,6 @@
                                 <div class="text-gray-400 fw-bold fs-5">Silakan lihat detail pengajuan Anda !</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
-
-                            <!-- Form Container -->
                             <div id="form-container" class="mt-2">
                                 <form id="kt_ecommerce_settings_general_form"
                                     class="form fv-plugins-bootstrap5 fv-plugins-framework">
