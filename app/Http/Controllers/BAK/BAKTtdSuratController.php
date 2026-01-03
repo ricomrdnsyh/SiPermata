@@ -74,10 +74,7 @@ class BAKTtdSuratController extends Controller
                 $editBtn = '<a href="' . route('bak.ttdSurat.edit', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
             data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
-                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_ttd . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-            data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
-
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })
             ->rawColumns(['nama_fakultas', 'template', 'status', 'action'])
             ->make(true);
@@ -226,25 +223,5 @@ class BAKTtdSuratController extends Controller
         ]);
 
         return redirect()->route('bak.ttdSurat.index')->with('success', 'Data berhasil diperbarui!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $user = Auth::user();
-
-        if ($user->role !== 'BAK') {
-            abort(403);
-        }
-
-        $ttd = TtdSurat::findOrFail($id);
-        $ttd->delete();
-
-        return response()->json([
-            'status'    => 'success',
-            'message'   => 'Data berhasil dihapus!'
-        ]);
     }
 }

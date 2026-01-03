@@ -311,7 +311,7 @@
                             <span
                                 class="w-12 h-12 rounded-2xl bg-primary.soft text-primary font-bold flex items-center justify-center">SO</span>
                             <div>
-                                <p class="font-semibold text-lg">Surat Observasi</p>
+                                <p class="font-semibold text-lg">Surat Permohonan Observasi</p>
                                 <p class="text-muted text-sm">Observasi lapangan/studi awal.</p>
                             </div>
                         </div>
@@ -472,7 +472,7 @@
                         </div>
 
                         <p class="text-xs text-muted mt-4 px-2">
-                            &copy; PDSI Universitas Nurul Jadid
+                            2025 &copy; PDSI Universitas Nurul Jadid
                         </p>
                     </div>
                 </div>

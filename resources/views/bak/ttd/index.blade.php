@@ -9,10 +9,12 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
+
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
         .dt-buttons .btn-export-primary,
         .dt-buttons .btn-export-primary:focus,
         .dt-buttons .btn-export-primary:hover,
@@ -21,6 +23,7 @@
             border-color: #004289 !important;
             color: #fff !important;
         }
+
         .dt-buttons .btn-export-primary:focus {
             box-shadow: none !important;
         }
@@ -149,57 +152,6 @@
                 $('#ttdSurat-table [data-bs-toggle="tooltip"]').tooltip();
             });
         });
-    </script>
-    <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: "Apakah Anda yakin?",
-                text: "Data akan dihapus permanen.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Ya, hapus!",
-                cancelButtonText: "Batal",
-                customClass: {
-                    confirmButton: "btn btn-danger",
-                    cancelButton: 'btn btn-light text-black'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/bak/ttdSurat/' + id,
-                        type: 'DELETE',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        beforeSend: function() {
-                            Swal.fire({
-                                text: 'Mohon tunggu sebentar...',
-                                allowOutsideClick: false,
-                                didOpen: () => {
-                                    Swal.showLoading()
-                                }
-                            });
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                text: response.message,
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            });
-                            $('#ttdSurat-table').DataTable().ajax.reload(null, false);
-                            // reload tabel tanpa reset halaman
-                        },
-                        error: function(xhr) {
-                            Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
-                        }
-                    });
-                }
-            })
-        }
     </script>
     @if ($message = Session::get('success'))
         <script>

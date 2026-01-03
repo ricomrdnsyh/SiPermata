@@ -203,10 +203,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [BAKDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/mitra/data', [BAKMitraController::class, 'getMitra'])->name('mitra.data');
-        Route::resource('mitra', BAKMitraController::class);
+        Route::resource('mitra', BAKMitraController::class)->except(['destroy']);
 
         Route::get('/ttdSurat/data', [BAKTtdSuratController::class, 'getTtdSurat'])->name('ttdSurat.data');
-        Route::resource('ttdSurat', BAKTtdSuratController::class);
+        Route::resource('ttdSurat', BAKTtdSuratController::class)->except(['destroy']);
 
         Route::get('/surat-aktif/data', [BAKSuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', BAKSuratAktifController::class)->except(['destroy']);

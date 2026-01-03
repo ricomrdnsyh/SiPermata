@@ -31,10 +31,7 @@ class MitraController extends Controller
                 $editBtn = '<a href="' . route('bak.mitra.edit', $row->id_mitra) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
 
-                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_mitra . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
-
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -109,16 +106,5 @@ class MitraController extends Controller
         ]);
 
         return redirect()->route('bak.mitra.index')->with('success', 'Data berhasil diupdate!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $mitra = Mitra::findOrFail($id);
-        $mitra->delete();
-
-        return response()->json(['success' => 'Data berhasil dihapus!']);
     }
 }
