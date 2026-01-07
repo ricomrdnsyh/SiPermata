@@ -8,7 +8,7 @@
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
-                                <h1 class="fs-2hx fw-bolder mb-5">Surat Permohonan Permohonan Observasi</h1>
+                                <h1 class="fs-2hx fw-bolder mb-3">Surat Permohonan Observasi</h1>
                                 <div class="text-gray-400 fw-bold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
@@ -18,86 +18,115 @@
                                     action="{{ route('bak.surat-observasi.update', $surat->id_surat_observasi) }}">
                                     @csrf
                                     @method('PUT')
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                            data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1" required>
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Mahasiswa...</option>
-                                            @foreach ($mahasiswa as $mhs)
-                                                <option value="{{ $mhs->nim }}"
-                                                    {{ $surat->nim == $mhs->nim ? 'selected' : '' }}>
-                                                    {{ $mhs->nim }} - {{ $mhs->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('nim')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
-                                            data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1" required>
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Akademik...</option>
-                                            @foreach ($akademik as $item)
-                                                <option value="{{ $item->id_akademik }}"
-                                                    {{ $surat->akademik_id == $item->id_akademik ? 'selected' : '' }}>
-                                                    {{ $item->tahun_akademik }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('akademik_id')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester" class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ $surat->semester }}" required />
-                                        @error('semester')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Tempat Observasi" name="mitra_id"
-                                            data-select2-id="select2-data-72-r5i4" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1" required>
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Tempat Observasi...</option>
-                                            @foreach ($mitra as $mitra)
-                                                <option value="{{ $mitra->id_mitra }}"
-                                                    {{ $surat->mitra_id == $mitra->id_mitra ? 'selected' : '' }}>
-                                                    {{ $mitra->nama_mitra }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('mitra_id')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
-                                        <input type="date" name="tgl_observasi" class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ $surat->tgl_observasi ? $surat->tgl_observasi->format('Y-m-d') : '' }}"
-                                            required />
-                                        @error('tgl_observasi')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Keperluan Observasi</label>
-                                        <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
-                                        @error('keperluan')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">NIM</label>
+                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                                    data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
+                                                    data-kt-initialized="1" required>
+                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                        Pilih Mahasiswa...</option>
+                                                    @foreach ($mahasiswa as $mhs)
+                                                        <option value="{{ $mhs->nim }}"
+                                                            {{ old('nim', $surat->nim) == $mhs->nim ? 'selected' : '' }}>
+                                                            {{ $mhs->nim }} - {{ $mhs->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nim')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Akademik"
+                                                    name="akademik_id" data-select2-id="select2-data-72-r5i3" tabindex="-1"
+                                                    aria-hidden="true" data-kt-initialized="1" required>
+                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                        Pilih Akademik...</option>
+                                                    @foreach ($akademik as $item)
+                                                        <option value="{{ $item->id_akademik }}"
+                                                            {{ old('akademik_id', $surat->akademik_id) == $item->id_akademik ? 'selected' : '' }}>
+                                                            {{ $item->tahun_akademik }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('akademik_id')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>                                        
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Semester</label>
+                                                <input type="number" name="semester"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ old('semester', $surat->semester) }}" required />
+                                                @error('semester')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">
+                                                        <i class="ki-duotone ki-calendar fs-5">
+                                                            <span class="path1"></span><span class="path2"></span>
+                                                        </i>
+                                                    </span>
+                                                    <input id="tgl_observasi" type="text" name="tgl_observasi"
+                                                        class="form-control form-control-sm"
+                                                        placeholder="Pilih tanggal observasi" autocomplete="off"
+                                                        value="{{ old('tgl_observasi', $surat->tgl_observasi ? $surat->tgl_observasi->format('Y-m-d') : '') }}"
+                                                        required />
+                                                </div>
+                                                @error('tgl_observasi')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
+                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Tempat Observasi"
+                                                    name="mitra_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                    aria-hidden="true" data-kt-initialized="1" required>
+                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                        Pilih Tempat Observasi...</option>
+                                                    @foreach ($mitra as $mitra)
+                                                        <option value="{{ $mitra->id_mitra }}"
+                                                            {{ old('mitra_id', $surat->mitra_id) == $mitra->id_mitra ? 'selected' : '' }}>
+                                                            {{ $mitra->nama_mitra }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('mitra_id')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Keperluan Observasi</label>
+                                                <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                                @error('keperluan')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
@@ -125,6 +154,24 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+            const tglObsEl = document.getElementById('tgl_observasi');
+            const tglObsVal = tglObsEl.value || null;
+
+            flatpickr(tglObsEl, {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d/m/Y",
+                altInputClass: "form-control form-control-sm",
+                allowInput: true,
+                defaultDate: tglObsVal,
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.altInput) {
+                        instance.altInput.required = true;
+                        instance.altInput.placeholder = tglObsEl.placeholder || '';
+                    }
+                }
+            });
+
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

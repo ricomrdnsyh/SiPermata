@@ -98,7 +98,7 @@
                 </div>
                 @if (Auth::user()->role == 'admin')
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('admin/dashboard') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('admin/dashboard*') ? 'active' : '' }}"
                             href="{{ route('admin.dashboard') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -142,7 +142,7 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/penduduk') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/penduduk*') ? 'active' : '' }}"
                                     href="{{ route('admin.penduduk.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -151,7 +151,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/jabatan') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/jabatan*') ? 'active' : '' }}"
                                     href="{{ route('admin.jabatan.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -160,7 +160,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/fakultas') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/fakultas*') ? 'active' : '' }}"
                                     href="{{ route('admin.fakultas.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -169,7 +169,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/prodi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/prodi*') ? 'active' : '' }}"
                                     href="{{ route('admin.prodi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -178,7 +178,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/akademik') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/akademik*') ? 'active' : '' }}"
                                     href="{{ route('admin.akademik.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -187,7 +187,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/mitra') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/mitra*') ? 'active' : '' }}"
                                     href="{{ route('admin.mitra.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -196,7 +196,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/template') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/template*') ? 'active' : '' }}"
                                     href="{{ route('admin.template.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -205,7 +205,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/ttdSurat') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/ttdSurat*') ? 'active' : '' }}"
                                     href="{{ route('admin.ttdSurat.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -240,7 +240,7 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/surat-aktif') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/surat-aktif*') ? 'active' : '' }}"
                                     href="{{ route('admin.surat-aktif.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -251,7 +251,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/surat-izin-penelitian') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/surat-izin-penelitian*') ? 'active' : '' }}"
                                     href="{{ route('admin.surat-izin-penelitian.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -262,7 +262,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/surat-observasi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/surat-observasi*') ? 'active' : '' }}"
                                     href="{{ route('admin.surat-observasi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -273,7 +273,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/surat-rekomendasi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/surat-rekomendasi*') ? 'active' : '' }}"
                                     href="{{ route('admin.surat-rekomendasi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -284,7 +284,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/surat-pkl') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/surat-pkl*') ? 'active' : '' }}"
                                     href="{{ route('admin.surat-pkl.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -295,7 +295,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('admin/surat-keterangan-lulus') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('admin/surat-keterangan-lulus*') ? 'active' : '' }}"
                                     href="{{ route('admin.surat-keterangan-lulus.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -306,7 +306,7 @@
                         </div>
                     </div>
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('admin/history-pengajuan') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('admin/history-pengajuan*') ? 'active' : '' }}"
                             href="{{ route('admin.history-pengajuan.index') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -330,7 +330,7 @@
                         </div>
                     </div>
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('admin/users') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('admin/users*') ? 'active' : '' }}"
                             href="{{ route('admin.users.index') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -351,7 +351,7 @@
                 @endif
                 @if (Auth::user()->role == 'DEKAN')
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('dekan/dashboard') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('dekan/dashboard*') ? 'active' : '' }}"
                             href="{{ route('dekan.dashboard') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -372,7 +372,7 @@
                         </a>
                     </div>
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('dekan/history-pengajuan') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('dekan/history-pengajuan*') ? 'active' : '' }}"
                             href="{{ route('dekan.history.index') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -393,7 +393,7 @@
                 @endif
                 @if (Auth::user()->role == 'BAK')
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('bak/dashboard') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('bak/dashboard*') ? 'active' : '' }}"
                             href="{{ route('bak.dashboard') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -433,7 +433,7 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/mitra') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/mitra*') ? 'active' : '' }}"
                                     href="{{ route('bak.mitra.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -444,7 +444,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/ttdSurat') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/ttdSurat*') ? 'active' : '' }}"
                                     href="{{ route('bak.ttdSurat.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -474,7 +474,7 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/surat-aktif') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/surat-aktif*') ? 'active' : '' }}"
                                     href="{{ route('bak.surat-aktif.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -485,7 +485,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/surat-izin-penelitian') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/surat-izin-penelitian*') ? 'active' : '' }}"
                                     href="{{ route('bak.surat-izin-penelitian.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -496,7 +496,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/surat-observasi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/surat-observasi*') ? 'active' : '' }}"
                                     href="{{ route('bak.surat-observasi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -507,7 +507,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/surat-rekomendasi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/surat-rekomendasi*') ? 'active' : '' }}"
                                     href="{{ route('bak.surat-rekomendasi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -518,7 +518,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/surat-pkl') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/surat-pkl*') ? 'active' : '' }}"
                                     href="{{ route('bak.surat-pkl.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -529,7 +529,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('bak/surat-keterangan-lulus') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('bak/surat-keterangan-lulus*') ? 'active' : '' }}"
                                     href="{{ route('bak.surat-keterangan-lulus.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -540,7 +540,7 @@
                         </div>
                     </div>
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('bak/history-pengajuan') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('bak/history-pengajuan*') ? 'active' : '' }}"
                             href="{{ route('bak.history.index') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -561,7 +561,7 @@
                 @endif
                 @if (Auth::user()->role == 'mahasiswa')
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('mahasiswa/dashboard') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('mahasiswa/dashboard*') ? 'active' : '' }}"
                             href="{{ route('mahasiswa.dashboard') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
@@ -601,7 +601,7 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('mahasiswa/surat-aktif') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-aktif*') ? 'active' : '' }}"
                                     href="{{ route('mahasiswa.surat-aktif.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -612,7 +612,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('mahasiswa/surat-izin-penelitian') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-izin-penelitian*') ? 'active' : '' }}"
                                     href="{{ route('mahasiswa.surat-izin-penelitian.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -623,7 +623,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('mahasiswa/surat-observasi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-observasi*') ? 'active' : '' }}"
                                     href="{{ route('mahasiswa.surat-observasi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -634,7 +634,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('mahasiswa/surat-rekomendasi') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-rekomendasi*') ? 'active' : '' }}"
                                     href="{{ route('mahasiswa.surat-rekomendasi.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -645,7 +645,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('mahasiswa/surat-pkl') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-pkl*') ? 'active' : '' }}"
                                     href="{{ route('mahasiswa.surat-pkl.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -656,7 +656,7 @@
                         </div>
                         <div class="menu-sub menu-sub-accordion menu-active-bg">
                             <div class="menu-item">
-                                <a class="menu-link {{ Request::is('mahasiswa/surat-keterangan-lulus') ? 'active' : '' }}"
+                                <a class="menu-link {{ Request::is('mahasiswa/surat-keterangan-lulus*') ? 'active' : '' }}"
                                     href="{{ route('mahasiswa.surat-keterangan-lulus.index') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
@@ -667,7 +667,7 @@
                         </div>
                     </div>
                     <div class="menu-item">
-                        <a class="menu-link {{ Request::is('mahasiswa/history-pengajuan') ? 'active' : '' }}"
+                        <a class="menu-link {{ Request::is('mahasiswa/history-pengajuan*') ? 'active' : '' }}"
                             href="{{ route('mahasiswa.history.index') }}">
                             <span class="menu-icon">
                                 <span class="svg-icon svg-icon-2">
