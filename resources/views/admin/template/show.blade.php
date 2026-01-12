@@ -15,54 +15,85 @@
                                 </div>
                                 <div class="separator border-gray-200 mt-4"></div>
                                 <div class="card-body pt-5">
-                                    <form id="kt_ecommerce_settings_general_form"
-                                        class="form fv-plugins-bootstrap5 fv-plugins-framework">
-                                        <div class="fv-row mb-3">
-                                            <label class="fw-semibold fs-6 mb-2">Nama Template</label>
-                                            <input type="text" name="nama_template" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                disabled value="{{ $data->nama_template }}" />
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="fw-semibold fs-6 mb-2">Jenis Surat</label>
-                                            <input type="text" name="jenis_surat" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                disabled value="{{ $data->jenis_surat }}" />
-                                        </div>
-                                        <div class="fv-row mb-3"> <label class="fw-semibold fs-6 mb-2">File Template</label>
-                                            @if ($data->file)
-                                                @php
-                                                    $ext = strtolower(pathinfo($data->file, PATHINFO_EXTENSION));
-                                                    $icon = 'fa-file';
-                                                    $color = 'text-secondary';
-                                                    if (in_array($ext, ['doc', 'docx'])) {
-                                                        $icon = 'fa-file-word';
-                                                        $color = 'text-primary';
-                                                    } elseif ($ext === 'pdf') {
-                                                        $icon = 'fa-file-pdf';
-                                                        $color = 'text-danger';
-                                                    }
-                                                @endphp
-                                                <div class="input-group"> <span class="input-group-text bg-light"> <i
-                                                            class="fas {{ $icon }} {{ $color }}"></i> </span>
-                                                    <a href="{{ route('admin.template.download', $data->id_template) }}"
-                                                        target="_blank"
-                                                        class="form-control form-control-sm text-decoration-none d-flex align-items-center"
-                                                        style="background-color: #f8f9fa; border: 1px solid #ced4da; cursor: pointer;">
-                                                        {{ basename($data->file) }} </a>
+                                    <form class="form fv-plugins-bootstrap5 fv-plugins-framework">
+                                        <div class="row">
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Nama Template</label>
+                                                    <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        disabled value="{{ $data->nama_template }}" />
                                                 </div>
-                                            @else
-                                                <input type="text" class="form-control form-control-sm" value="Tidak ada file" readonly>
-                                            @endif
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Jenis Surat</label>
+                                                    <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        disabled value="{{ $data->jenis_surat }}" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-2">File Template</label>
+                                                    @if ($data->file)
+                                                        @php
+                                                            $ext = strtolower(
+                                                                pathinfo($data->file, PATHINFO_EXTENSION),
+                                                            );
+                                                            $icon = 'fa-file';
+                                                            $color = 'text-secondary';
+                                                            if (in_array($ext, ['doc', 'docx'])) {
+                                                                $icon = 'fa-file-word';
+                                                                $color = 'text-primary';
+                                                            } elseif ($ext === 'pdf') {
+                                                                $icon = 'fa-file-pdf';
+                                                                $color = 'text-danger';
+                                                            }
+                                                        @endphp
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-text bg-light">
+                                                                <i class="fas {{ $icon }} {{ $color }}"></i>
+                                                            </span>
+                                                            <a href="{{ route('admin.template.download', $data->id_template) }}"
+                                                                target="_blank"
+                                                                class="form-control form-control-sm text-decoration-none d-flex align-items-center"
+                                                                style="background-color: #f8f9fa; border: 1px solid #ced4da; cursor: pointer;">
+                                                                {{ basename($data->file) }}
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            value="Tidak ada file" readonly>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
+                                                    <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        disabled value="{{ $data->fakultas->nama_fakultas }}" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Tanggal SK</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">
+                                                            <i class="ki-duotone ki-calendar fs-5">
+                                                                <span class="path1"></span><span class="path2"></span>
+                                                            </i>
+                                                        </span>
+                                                        <input type="text"
+                                                            class="form-control form-control-sm mb-3 mb-lg-0" disabled
+                                                            value="{{ $data->tgl_sk ? $data->tgl_sk->locale('id')->isoFormat('D MMMM YYYY') : '' }}" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <input type="text" name="fakultas_id" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                disabled value="{{ $data->fakultas->nama_fakultas }}" />
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="fw-semibold fs-6 mb-2">Nama Prodi</label>
-                                            <input type="text" name="tgl_sk" class="form-control form-control-sm mb-3 mb-lg-0" disabled
-                                                value="{{ $data->tgl_sk ? $data->tgl_sk->format('Y-m-d') : '' }}" />
-                                        </div>
+
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
                                             <a href="{{ route('admin.template.index') }}" class="btn btn-sm btn-light me-3">

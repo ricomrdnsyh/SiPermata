@@ -24,7 +24,7 @@
                                             <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Penduduk" name="penduduk_id"
                                                 id="penduduk_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
+                                                aria-hidden="true" data-kt-initialized="1" required>
                                                 <option value="" data-select2-id="select2-data-74-9zwr">
                                                     Pilih Penduduk...</option>
                                                 @foreach ($penduduk as $item)
@@ -43,7 +43,7 @@
                                             <div class="d-flex fv-col">
                                                 <div class="form-check form-check-custom form-check-solid mx-4">
                                                     <input class="form-check-input" name="status" type="radio"
-                                                        value="BAK" id="BAK" />
+                                                        value="BAK" id="BAK" required />
                                                     <label class="form-check-label" for="BAK">
                                                         <div class="fw-bold text-gray-800">BAK</div>
                                                     </label>

@@ -19,92 +19,123 @@
                                         class="form fv-plugins-bootstrap5 fv-plugins-framework"
                                         action="{{ route('admin.ttdSurat.store') }}" method="POST">
                                         @csrf
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Template</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Template" name="template_id"
-                                                id="template_id" data-select2-id="select2-data-72-r5i3" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Template...</option>
-                                                @foreach ($template as $tmp)
-                                                    <option value="{{ $tmp->id_template }}">
-                                                        {{ $tmp->nama_template }} - {{ $tmp->fakultas->nama_fakultas }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('template_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama TTD Surat</label>
-                                            <input type="text" name="nama_ttd" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ old('nama_ttd') }}" />
-                                            @error('nama_ttd')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
-                                            <input type="text" name="nidn" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ old('nidn') }}" />
-                                            @error('nidn')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
-                                                id="fakultas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Fakultas...</option>
-                                                @foreach ($fakultas as $fakultas)
-                                                    <option value="{{ $fakultas->id_fakultas }}">
-                                                        {{ $fakultas->nama_fakultas }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('fakultas_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="mb-7">
-                                            <label class="required fw-semibold fs-6 mb-5">Status</label>
-                                            <div class="d-flex fv-col">
-                                                <div class="form-check form-check-custom form-check-solid mx-4">
-                                                    <input class="form-check-input" name="status" type="radio"
-                                                        value="aktif" id="aktif" />
-                                                    <label class="form-check-label" for="aktif">
-                                                        <div class="fw-bold text-gray-800">Aktif</div>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-custom form-check-solid mx-4">
-                                                    <input class="form-check-input" name="status" type="radio"
-                                                        value="nonaktif" id="nonaktif" Label-->
-                                                    <label class="form-check-label" for="nonaktif">
-                                                        <div class="fw-bold text-gray-800">Nonaktif</div>
-                                                    </label>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Nama Template</label>
+                                                    <select
+                                                        class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                        data-control="select2" data-placeholder="Pilih Template"
+                                                        name="template_id" id="template_id"
+                                                        data-select2-id="select2-data-72-r5i3" tabindex="-1"
+                                                        aria-hidden="true" data-kt-initialized="1" required>
+                                                        <option value="" data-select2-id="select2-data-74-9zwr">
+                                                            Pilih Template...</option>
+                                                        @foreach ($template as $tmp)
+                                                            <option value="{{ $tmp->id_template }}">
+                                                                {{ $tmp->nama_template }} -
+                                                                {{ $tmp->fakultas->nama_fakultas }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('template_id')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
                                                 </div>
                                             </div>
-                                            @error('status')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Nama TTD Surat</label>
+                                                    <input type="text" name="nama_ttd"
+                                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        value="{{ old('nama_ttd') }}" required />
+                                                    @error('nama_ttd')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">NIDN/NUPTK</label>
+                                                    <input type="text" name="nidn"
+                                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        value="{{ old('nidn') }}" required />
+                                                    @error('nidn')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
+                                                    <select
+                                                        class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                        data-control="select2" data-placeholder="Pilih Fakultas"
+                                                        name="fakultas_id" id="fakultas_id"
+                                                        data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                        aria-hidden="true" data-kt-initialized="1" required>
+                                                        <option value="" data-select2-id="select2-data-74-9zwr">
+                                                            Pilih Fakultas...</option>
+                                                        @foreach ($fakultas as $f)
+                                                            <option value="{{ $f->id_fakultas }}">
+                                                                {{ $f->nama_fakultas }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('fakultas_id')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Status</label>
+                                                    <div class="d-flex fv-col mt-2">
+                                                        <div class="form-check form-check-custom form-check-solid me-8">
+                                                            <input class="form-check-input" name="status" type="radio"
+                                                                value="aktif" id="aktif"
+                                                                {{ old('status') == 'aktif' ? 'checked' : '' }} required />
+                                                            <label class="form-check-label" for="aktif">
+                                                                <div class="fw-bold text-gray-800">Aktif</div>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check form-check-custom form-check-solid">
+                                                            <input class="form-check-input" name="status" type="radio"
+                                                                value="nonaktif" id="nonaktif"
+                                                                {{ old('status') == 'nonaktif' ? 'checked' : '' }}
+                                                                required />
+                                                            <label class="form-check-label" for="nonaktif">
+                                                                <div class="fw-bold text-gray-800">Nonaktif</div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    @error('status')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.ttdSurat.index') }}" class="btn btn-sm btn-light me-3">
+                                            <a href="{{ route('admin.ttdSurat.index') }}"
+                                                class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit"
+                                                class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>
                                                 <span class="indicator-progress">
                                                     Tunggu sebentar...
-                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                    <span
+                                                        class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                                 </span>
                                             </button>
                                         </div>
@@ -118,11 +149,13 @@
         </div>
     </div>
 @endsection
+
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

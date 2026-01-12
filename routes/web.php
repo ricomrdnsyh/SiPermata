@@ -54,10 +54,10 @@ Route::get('/', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    // Route::get('/login', function () {
-    //     return redirect()->away('https://sso.unuja.ac.id');
-    // })->name('login');
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::get('/login', function () {
+        return redirect()->away('https://sso.unuja.ac.id');
+    })->name('login');
+    Route::get('/login-admin', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login-proses', [LoginController::class, 'login'])->name('login-proses');
 });
 

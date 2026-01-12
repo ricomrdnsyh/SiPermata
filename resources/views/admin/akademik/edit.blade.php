@@ -24,7 +24,7 @@
                                         <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Kode Akademik</label>
                                             <input type="text" name="kode_akademik" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ $akademik->kode_akademik }}" />
+                                                value="{{ $akademik->kode_akademik }}" required />
                                             @error('kode_akademik')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
@@ -32,7 +32,7 @@
                                         <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                             <input type="text" name="tahun_akademik" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ $akademik->tahun_akademik }}" />
+                                                value="{{ $akademik->tahun_akademik }}" required />
                                             @error('tahun_akademik')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror

@@ -24,7 +24,7 @@
                                             <select class="form-select form-select-sm select2-hidden-accessible w-100"
                                                 data-control="select2" data-placeholder="Pilih Role" name="type"
                                                 id="userType" data-select2-id="select2-data-72-r5i3" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
+                                                aria-hidden="true" data-kt-initialized="1" required>
                                                 <option value="">Pilih Role</option>
                                                 <option value="admin" {{ old('type') == 'admin' ? 'selected' : '' }}>Admin
                                                 </option>
@@ -44,7 +44,7 @@
                                                     class="form-select form-select-sm select2-hidden-accessible w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa"
                                                     name="m_reference_id" data-select2-id="select2-data-72-r5i6"
-                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1">
+                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1" required>
                                                     <option value="">Pilih Mahasiswa</option>
                                                     @foreach ($mahasiswa as $m)
                                                         <option value="{{ $m->nim }}">{{ $m->nim }} -
@@ -57,8 +57,9 @@
                                             </div>
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Password</label>
-                                                <input type="password" name="m_password" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    minlength="6" />
+                                                <input type="password" name="m_password"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0" minlength="6"
+                                                    required />
                                                 @error('m_password')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -71,7 +72,7 @@
                                                     class="form-select form-select-sm select2-hidden-accessible w-100"
                                                     data-control="select2" data-placeholder="Pilih Penduduk"
                                                     name="p_reference_id" data-select2-id="select2-data-72-r5i4"
-                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1">
+                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1" required>
                                                     <option value="">Pilih Penduduk</option>
                                                     @foreach ($penduduk as $p)
                                                         <option value="{{ $p->id_penduduk }}">
@@ -88,8 +89,9 @@
                                             </div>
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Password</label>
-                                                <input type="password" name="p_password" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    minlength="6" />
+                                                <input type="password" name="p_password"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0" minlength="6"
+                                                    required />
                                                 @error('p_password')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -99,7 +101,7 @@
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Username</label>
                                                 <input type="text" name="identifier" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ old('identifier') }}" />
+                                                    value="{{ old('identifier') }}" required />
                                                 @error('identifier')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -107,7 +109,7 @@
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama</label>
                                                 <input type="text" name="nama" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ old('nama') }}" />
+                                                    value="{{ old('nama') }}" required />
                                                 @error('nama')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -115,7 +117,7 @@
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Password</label>
                                                 <input type="password" name="password" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    minlength="6" />
+                                                    minlength="6" required />
                                                 @error('password')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -177,19 +179,47 @@
     @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const userTypeSelect = document.getElementById('userType');
+            if (!userTypeSelect) {
+                return;
+            }
+
+            const fieldGroups = {
+                mahasiswa: {
+                    wrapper: document.getElementById('mahasiswaFields'),
+                    fields: ['m_reference_id', 'm_password'],
+                },
+                penduduk: {
+                    wrapper: document.getElementById('pendudukFields'),
+                    fields: ['p_reference_id', 'p_password'],
+                },
+                admin: {
+                    wrapper: document.getElementById('adminFields'),
+                    fields: ['identifier', 'nama', 'password'],
+                },
+            };
+
+            const toggleUserFields = (selectedType) => {
+                Object.entries(fieldGroups).forEach(([group, config]) => {
+                    const isActive = group === selectedType;
+                    if (config.wrapper) {
+                        config.wrapper.style.display = isActive ? 'block' : 'none';
+                    }
+                    config.fields.forEach((name) => {
+                        const field = document.querySelector(`[name="${name}"]`);
+                        if (!field) {
+                            return;
+                        }
+                        field.required = isActive;
+                    });
+                });
+            };
+
             $('#userType').on('change', function() {
-                const value = $(this).val();
-                document.getElementById('mahasiswaFields').style.display = 'none';
-                document.getElementById('pendudukFields').style.display = 'none';
-                document.getElementById('adminFields').style.display = 'none';
-                if (value === 'mahasiswa') {
-                    document.getElementById('mahasiswaFields').style.display = 'block';
-                } else if (value === 'penduduk') {
-                    document.getElementById('pendudukFields').style.display = 'block';
-                } else if (value === 'admin') {
-                    document.getElementById('adminFields').style.display = 'block';
-                }
+                toggleUserFields(this.value);
             });
+
+            toggleUserFields(userTypeSelect.value);
         });
     </script>
     <script>

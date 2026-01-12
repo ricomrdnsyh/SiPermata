@@ -20,63 +20,98 @@
                                         action="{{ route('admin.template.store') }}" method="POST"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Template</label>
-                                            <input type="text" name="nama_template" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ old('nama_template') }}" />
-                                            @error('nama_template')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
+
+                                        <div class="row">
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Nama Template</label>
+                                                    <input type="text" name="nama_template"
+                                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        value="{{ old('nama_template') }}" required />
+                                                    @error('nama_template')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Jenis
+                                                        Surat(contoh_nama_jenis_surat)</label>
+                                                    <input type="text" name="jenis_surat"
+                                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        value="{{ old('jenis_surat') }}" required />
+                                                    @error('jenis_surat')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">File
+                                                        Template(Doc/Docx)</label>
+                                                    <input type="file" name="file"
+                                                        class="form-control form-control-sm mb-3 mb-lg-0" required />
+                                                    @error('file')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
+                                                    <select
+                                                        class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                        data-control="select2" data-placeholder="Pilih Fakultas"
+                                                        name="fakultas_id" id="fakultas_id"
+                                                        data-select2-id="select2-data-72-r5i4" tabindex="-1"
+                                                        aria-hidden="true" data-kt-initialized="1" required>
+                                                        <option value="" data-select2-id="select2-data-74-9zwr">
+                                                            Pilih Fakultas...</option>
+                                                        @foreach ($fakultas as $f)
+                                                            <option value="{{ $f->id_fakultas }}">
+                                                                {{ $f->nama_fakultas }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('fakultas_id')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Tanggal SK(Kosongkan jikan bukan
+                                                        surat keterangan lulus)</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">
+                                                            <i class="ki-duotone ki-calendar fs-5">
+                                                                <span class="path1"></span><span class="path2"></span>
+                                                            </i>
+                                                        </span>
+                                                        <input id="tgl_sk" type="text" name="tgl_sk"
+                                                            class="form-control form-control-sm"
+                                                            placeholder="Pilih tanggal SK" autocomplete="off"
+                                                            value="{{ old('tgl_sk') }}" />
+                                                    </div>
+                                                    @error('tgl_sk')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Jenis
-                                                Surat(contoh_nama_jenis_surat)</label>
-                                            <input type="text" name="jenis_surat" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ old('jenis_surat') }}" />
-                                            @error('jenis_surat')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">File Template(Doc/Docx)</label>
-                                            <input type="file" name="file" class="form-control form-control-sm mb-3 mb-lg-0" />
-                                            @error('file')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                data-control="select2" data-placeholder="Pilih Fakultas" name="fakultas_id"
-                                                id="fakultas_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1">
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
-                                                    Pilih Fakultas...</option>
-                                                @foreach ($fakultas as $fakultas)
-                                                    <option value="{{ $fakultas->id_fakultas }}">
-                                                        {{ $fakultas->nama_fakultas }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('fakultas_id')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="fv-row mb-3">
-                                            <label class="fw-semibold fs-6 mb-2">Tanggal SK(Kosongkan jikan bukan
-                                                surat keterangan lulus)</label>
-                                            <input type="date" name="tgl_sk" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ old('tgl_sk') }}" />
-                                            @error('tgl_sk')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
+
                                         <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.template.index') }}" class="btn btn-sm btn-light me-3">
+                                            <a href="{{ route('admin.template.index') }}"
+                                                class="btn btn-sm btn-light me-3">
                                                 Batal
                                             </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
+                                            <button type="submit" data-kt-contacts-type="submit"
+                                                class="btn btn-sm btn-primary">
                                                 <span class="indicator-label">
                                                     Tambah
                                                 </span>
@@ -96,11 +131,30 @@
         </div>
     </div>
 @endsection
+
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
+            const tglEl = document.getElementById('tgl_sk');
+            const tglVal = tglEl.value || null;
+
+            flatpickr(tglEl, {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d/m/Y",
+                altInputClass: "form-control form-control-sm",
+                allowInput: true,
+                defaultDate: tglVal,
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.altInput) {
+                        instance.altInput.placeholder = tglEl.placeholder || '';
+                    }
+                }
+            });
+
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

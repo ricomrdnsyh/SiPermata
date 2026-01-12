@@ -24,6 +24,9 @@ class MitraController extends Controller
         $data = Mitra::select(['id_mitra', 'nama_mitra']);
 
         return DataTables::of($data)
+            ->order(function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('admin.mitra.show', $row->id_mitra) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';

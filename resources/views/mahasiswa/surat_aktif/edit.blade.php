@@ -122,7 +122,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="number" name="nip" class="form-control form-control-sm"
                                                     value="{{ $surat->nip }}" required />
                                                 @error('nip')
@@ -130,7 +131,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="text" name="nama_ortu"
                                                     class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
                                                     required />
@@ -247,9 +249,11 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control form-control-sm"
+                                                <input type="text" name="tmt"
+                                                    class="form-control form-control-sm form-control kt_datepicker_tmt"
+                                                    placeholder="Pilih tanggal"
                                                     value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
-                                                    required />
+                                                    autocomplete="off" required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -264,7 +268,7 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-7 col-12">
-                                                <label class="required fw-semibold fs-6 mb-2">Alamat</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Alamat Orang Tua</label>
                                                 <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
                                                 @error('alamat')
                                                     <small class="text-danger">{{ $message }}</small>
@@ -321,7 +325,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="number" name="nip" class="form-control form-control-sm"
                                                     value="{{ $surat->nip }}" required />
                                                 @error('nip')
@@ -329,7 +334,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="text" name="nama_ortu"
                                                     class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
                                                     required />
@@ -446,9 +452,11 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control form-control-sm"
+                                                <input type="text" name="tmt"
+                                                    class="form-control form-control-sm form-control kt_datepicker_tmt"
+                                                    placeholder="Pilih tanggal"
                                                     value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
-                                                    required />
+                                                    autocomplete="off" required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -463,7 +471,7 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-7 col-12">
-                                                <label class="required fw-semibold fs-6 mb-2">Alamat</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Alamat Orang Tua</label>
                                                 <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
                                                 @error('alamat')
                                                     <small class="text-danger">{{ $message }}</small>
@@ -534,6 +542,23 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".kt_datepicker_tmt").forEach(function(el) {
+                if (typeof flatpickr === "undefined") return;
+
+                flatpickr(el, {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d/m/Y",
+                    allowInput: true,
+                    defaultDate: el.value ? el.value : null
+                });
+
+            });
+        });
+    </script>
+
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({
