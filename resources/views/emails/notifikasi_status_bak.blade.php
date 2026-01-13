@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +14,15 @@
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
         }
+
         table {
             border-collapse: collapse;
         }
+
         td {
             padding: 0;
         }
+
         .container {
             width: 100%;
             max-width: 600px;
@@ -28,27 +32,32 @@
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
+
         .header {
             background-color: #0e345c;
             color: #ffffff;
             padding: 30px 25px;
             text-align: center;
         }
+
         .header h1 {
             margin: 0;
             font-size: 24px;
             font-weight: 600;
         }
+
         .header p {
             margin-top: 5px;
             font-size: 14px;
         }
+
         .content {
             padding: 25px 35px;
             color: #444444;
             line-height: 1.7;
             font-size: 14px;
         }
+
         .status-pill {
             display: inline-block;
             padding: 6px 12px;
@@ -58,16 +67,19 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
+
         .status-approve {
             background-color: #e6f7ff;
             color: #0056b3;
             border: 1px solid #b3e0ff;
         }
+
         .status-reject {
             background-color: #fdecea;
             color: #c0392b;
             border: 1px solid #f5c6cb;
         }
+
         .highlight-box {
             background-color: #e6f7ff;
             border-left: 5px solid #007bff;
@@ -75,13 +87,16 @@
             margin: 20px 0;
             border-radius: 4px;
         }
+
         .highlight-box p {
             margin: 0;
         }
+
         .highlight-box.reject {
             background-color: #fdecea;
             border-left-color: #e74c3c;
         }
+
         .note-box {
             background-color: #fff8e5;
             border-left: 5px solid #f0ad4e;
@@ -90,6 +105,7 @@
             border-radius: 4px;
             font-size: 13px;
         }
+
         .footer {
             background-color: #f0f3f6;
             padding: 20px 25px;
@@ -97,15 +113,17 @@
             font-size: 12px;
             color: #888888;
         }
+
         .footer p {
             margin: 0;
         }
     </style>
 </head>
+
 <body>
     @php
         $isApproved = $status === 'disetujui';
-        $judulStatus = $isApproved ? 'Pengajuan Surat Anda Disetujui BAK ?' : 'Pengajuan Surat Anda Ditolak BAK ?';
+        $judulStatus = $isApproved ? 'Pengajuan Surat Anda Disetujui BAK' : 'Pengajuan Surat Anda Ditolak BAK';
     @endphp
     <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
@@ -160,7 +178,7 @@
                             @if (!empty($catatan))
                                 <div class="note-box">
                                     <b>Catatan dari BAK:</b><br>
-                                    “{{ $catatan }}”
+                                    ï¿½{{ $catatan }}ï¿½
                                 </div>
                             @endif
                             <p>
@@ -187,4 +205,5 @@
         </tr>
     </table>
 </body>
+
 </html>

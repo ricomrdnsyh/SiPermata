@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Anda Telah Selesai Diproses! ??</title>
+    <title>Surat Anda Telah Selesai Diproses!</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,12 +14,15 @@
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
         }
+
         table {
             border-collapse: collapse;
         }
+
         td {
             padding: 0;
         }
+
         .container {
             width: 100%;
             max-width: 600px;
@@ -28,22 +32,26 @@
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
+
         .header {
             background-color: #0e345c;
             color: #ffffff;
             padding: 30px 25px;
             text-align: center;
         }
+
         .header h1 {
             margin: 0;
             font-size: 26px;
             font-weight: 600;
         }
+
         .content {
             padding: 25px 35px;
             color: #444444;
             line-height: 1.7;
         }
+
         .highlight-box {
             background-color: #e6f7ff;
             border-left: 5px solid #007bff;
@@ -51,6 +59,7 @@
             margin: 25px 0;
             border-radius: 4px;
         }
+
         .attachment-info {
             background-color: #d4edda;
             color: #155724;
@@ -61,6 +70,7 @@
             text-align: center;
             font-weight: bold;
         }
+
         .footer {
             background-color: #f0f3f6;
             padding: 20px 25px;
@@ -70,6 +80,7 @@
         }
     </style>
 </head>
+
 <body>
     <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
@@ -77,7 +88,7 @@
                 <table class="container" cellpadding="0" cellspacing="0" border="0" role="presentation">
                     <tr>
                         <td class="header">
-                            <h1 style="margin: 0;">?? Berita Baik! Surat Anda Sudah Siap!</h1>
+                            <h1 style="margin: 0;">Berita Baik! Surat Anda Sudah Siap!</h1>
                             <p style="margin-top: 5px; font-size: 16px;">
                                 Sistem Informasi Pengajuan Surat Mahasiswa Terpadu
                             </p>
@@ -144,4 +155,5 @@
         </tr>
     </table>
 </body>
+
 </html>

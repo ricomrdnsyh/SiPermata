@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
 use chillerlan\QRCode\Output\QROutputInterface;
 
-
 class SignatureService
 {
     public function insertSignatureWithQR(Model $suratModel, string $jabatan, string $nama, $nidn): string
@@ -172,8 +171,6 @@ class SignatureService
         return $filePath;
     }
 
-
-
     public function convertDocxToPdf(string $wordFilePath): string
     {
         $docxPath = storage_path("app/{$wordFilePath}");
@@ -210,6 +207,8 @@ class SignatureService
                 "Konversi DOCX ke PDF gagal (exit: {$returnCode}). Output: \n" . implode("\n", $output)
             );
         }
+
+        @unlink($docxPath);
 
         $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
         $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
