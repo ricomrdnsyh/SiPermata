@@ -164,10 +164,17 @@
                         bg-gradient-to-r from-primary via-blue-600 to-indigo-600 shadow-soft hover:shadow-lift transition">
                                 Mulai ajukan
                             </a>
-                            <a href="#layanan"
-                                class="inline-flex items-center justify-center px-6 py-3 rounded-2xl font-semibold
-                        border border-white/70 bg-white/60 hover:bg-white transition">
-                                Lihat layanan
+                            <a href="{{ asset('panduan.pdf') }}" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-semibold
+                                    border border-black/40 bg-white/60 hover:bg-white transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z" />
+                                    <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
+                                </svg>
+
+                                Buku Panduan
                             </a>
                         </div>
 
