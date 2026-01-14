@@ -71,6 +71,19 @@
                                                 <span>{{ Auth::user()->nama }}</span>
                                             @endif
                                         </div>
+                                        <span class="fw-bold text-muted text-hover-primary fs-7">
+                                            @if (Auth::user()->role == 'admin')
+                                                <span>{{ Auth::user()->email ?? 'Admin' }}</span>
+                                            @elseif (Auth::user()->role == 'DEKAN')
+                                                <span>{{ Auth::user()->penduduk->email ?? '-' }}</span>
+                                            @elseif (Auth::user()->role == 'BAK')
+                                                <span>{{ Auth::user()->penduduk->email ?? '-' }}</span>
+                                            @elseif (Auth::user()->role == 'mahasiswa')
+                                                <span>{{ Auth::user()->mahasiswa->email ?? '-' }}</span>
+                                            @else
+                                                Pengguna
+                                            @endif
+                                        </span>
                                     </div>
                                 </div>
                             </div>

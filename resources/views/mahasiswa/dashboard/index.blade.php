@@ -17,7 +17,7 @@
             <div id="kt_content_container" class="container-fluid">
                 <div class="container-fluid">
                     <div class="row gx-5 gx-xl-10">
-                        <div class="col-12 mb-6">
+                        <div class="col-12 mb-4">
                             <div class="card border-transparent mb-5" data-bs-theme="light"
                                 style="background-color: #1C325E;">
                                 <div class="card-body d-flex ps-xl-15 position-relative">
@@ -46,6 +46,23 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row gx-5 gx-xl-10">
+                        <div class="col-12 mb-6">
+                            <div class="alert alert-warning d-flex align-items-center p-5 mb-0">
+                                <i class="fas fa-exclamation-triangle fs-2x me-4 text-warning"></i>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bolder fs-6 mb-1">Informasi</span>
+                                    <span class="fs-7">
+                                        Jika Tempat Penelitian, Tempat Observasi, dan Tempat PKL Tidak Ada Pada Form
+                                        Pengajuan,
+                                        Silahkan Menghubungi BAK Fakultas Untuk Menambahkan!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row g-5 g-xl-8">
                         <div class="col-xl-4 col-md-6 mb-5">
                             <div
