@@ -141,11 +141,11 @@ class BAKSuratObservasiController extends Controller
             return redirect()->route('bak.dashboard')->with('failed', 'Anda belum terhubung ke fakultas manapun.');
         }
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_observasi.create', compact('akademik', 'mitra', 'mahasiswa'));
+        return view('bak.surat_observasi.create', compact('latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**
@@ -287,11 +287,11 @@ class BAKSuratObservasiController extends Controller
             ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_observasi.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('bak.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**

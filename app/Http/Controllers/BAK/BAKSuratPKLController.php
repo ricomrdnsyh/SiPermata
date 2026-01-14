@@ -141,11 +141,11 @@ class BAKSuratPKLController extends Controller
             return redirect()->route('bak.dashboard')->with('failed', 'Anda belum terhubung ke fakultas manapun.');
         }
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_pkl.create', compact('akademik', 'mitra', 'mahasiswa'));
+        return view('bak.surat_pkl.create', compact('latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**
@@ -284,11 +284,11 @@ class BAKSuratPKLController extends Controller
             ->where('id_surat_pkl', $id)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_pkl.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('bak.surat_pkl.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**

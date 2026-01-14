@@ -141,11 +141,11 @@ class BAKSuratPenelitianController extends Controller
             return redirect()->route('bak.dashboard')->with('failed', 'Anda belum terhubung ke fakultas manapun.');
         }
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_penelitian.create', compact('akademik', 'mitra', 'mahasiswa'));
+        return view('bak.surat_penelitian.create', compact('latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**
@@ -286,11 +286,11 @@ class BAKSuratPenelitianController extends Controller
             ->where('id_surat_izin_penelitian', $id)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_penelitian.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('bak.surat_penelitian.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**
