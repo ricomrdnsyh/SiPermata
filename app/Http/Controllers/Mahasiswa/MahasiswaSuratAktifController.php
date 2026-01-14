@@ -109,6 +109,7 @@ class MahasiswaSuratAktifController extends Controller
             'tmt'                 => 'required_if:kategori,PNS,PPPK|nullable',
             'unit_kerja'          => 'required_if:kategori,PNS,PPPK|nullable',
             'alamat'              => 'required_if:kategori,PNS,PPPK|nullable',
+            'keperluan'           => 'required'
         ]);
 
         $user = Auth::user();
@@ -160,16 +161,15 @@ class MahasiswaSuratAktifController extends Controller
             'tmt'                 => $request->tmt,
             'unit_kerja'          => $request->unit_kerja,
             'alamat'              => $request->alamat,
+            'keperluan'           => $request->keperluan,
             'status'              => 'pengajuan',
             'catatan'             => 'Diajukan oleh mahasiswa',
             'file_generated'      => null,
         ]);
 
         try {
-            // GENERATE FILE WORD
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-            // UPDATE MODEL DENGAN PATH FILE
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -240,6 +240,7 @@ class MahasiswaSuratAktifController extends Controller
             'tmt'                 => 'required_if:kategori,PNS,PPPK|nullable',
             'unit_kerja'          => 'required_if:kategori,PNS,PPPK|nullable',
             'alamat'              => 'required_if:kategori,PNS,PPPK|nullable',
+            'keperluan'           => 'required',
         ]);
 
         $user = Auth::user();
@@ -255,7 +256,6 @@ class MahasiswaSuratAktifController extends Controller
 
         $template = Template::findOrFail($surat->template_id);
 
-        // Update data surat
         $surat->update([
             'akademik_id'         => $request->akademik_id,
             'semester'            => $request->semester,
@@ -267,6 +267,7 @@ class MahasiswaSuratAktifController extends Controller
             'golongan'            => $request->golongan,
             'tmt'                 => $request->tmt,
             'unit_kerja'          => $request->unit_kerja,
+            'keperluan'           => $request->keperluan,
             'status'              => 'pengajuan',
             'catatan'             => 'Diajukan ulang oleh mahasiswa',
         ]);
@@ -308,8 +309,6 @@ class MahasiswaSuratAktifController extends Controller
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::all();
-
-        return view('mahasiswa.surat_aktif.show', compact('surat', 'akademik'));
+        return view('mahasiswa.surat_aktif.show', compact('surat'));
     }
 }

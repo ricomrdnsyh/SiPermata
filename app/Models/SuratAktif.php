@@ -30,6 +30,7 @@ class SuratAktif extends Model
         'unit_kerja',
         'alamat',
         'status',
+        'keperluan',
         'catatan',
         'file_generated'
     ];

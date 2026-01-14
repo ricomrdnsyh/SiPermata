@@ -157,6 +157,7 @@ class SuratAktifController extends Controller
             'tmt'                       => 'required_if:kategori,PNS,PPPK|nullable',
             'unit_kerja'                => 'required_if:kategori,PNS,PPPK|nullable',
             'alamat'                    => 'required_if:kategori,PNS,PPPK|nullable',
+            'keperluan'                 => 'required',
         ]);
 
         $user = Auth::user();
@@ -212,6 +213,7 @@ class SuratAktifController extends Controller
             'tmt'                  => $request->tmt,
             'unit_kerja'           => $request->unit_kerja,
             'alamat'               => $request->alamat,
+            'keperluan'            => $request->keperluan,
             'status'               => 'pengajuan',
             'catatan'              => 'Diajukan oleh Admin untuk mahasiswa',
         ]);
@@ -307,6 +309,7 @@ class SuratAktifController extends Controller
             'tmt'                   => 'required_if:kategori,PNS,PPPK|nullable',
             'unit_kerja'            => 'required_if:kategori,PNS,PPPK|nullable',
             'alamat'                => 'required_if:kategori,PNS,PPPK|nullable',
+            'keperluan'             => 'required',
         ]);
 
         $surat = SuratAktif::findOrFail($id);
@@ -327,6 +330,7 @@ class SuratAktifController extends Controller
             'tmt'                   => $request->tmt,
             'unit_kerja'            => $request->unit_kerja,
             'alamat'                => $request->alamat,
+            'keperluan'             => $request->keperluan,
             'status'                => 'pengajuan',
             'catatan'               => 'Diajukan ulang oleh Admin untuk mahasiswa',
         ]);

@@ -30,34 +30,40 @@
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
                                     <h3 class="mb-5 text-center">Pengajuan Surat Keterangan Aktif Umum</h3>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                            data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1" required>
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Mahasiswa...</option>
-                                            @foreach ($mahasiswa as $mhs)
-                                                <option value="{{ $mhs->nim }}"
-                                                    {{ $mhs->nim == $surat->nim ? 'selected' : '' }}>
-                                                    {{ $mhs->nim }} - {{ $mhs->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('nim')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ $latestAkademik?->tahun_akademik }}" disabled />
-                                        <input type="hidden" name="akademik_id"
-                                            value="{{ $latestAkademik?->id_akademik }}">
-                                        @error('akademik_id')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                                    data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
+                                                    data-kt-initialized="1" required>
+                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                        Pilih Mahasiswa...</option>
+                                                    @foreach ($mahasiswa as $mhs)
+                                                        <option value="{{ $mhs->nim }}"
+                                                            {{ $mhs->nim == $surat->nim ? 'selected' : '' }}>
+                                                            {{ $mhs->nim }} - {{ $mhs->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nim')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                <input type="hidden" name="akademik_id"
+                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                @error('akademik_id')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
@@ -72,6 +78,13 @@
                                         <label class="required fw-semibold fs-6 mb-2">Alamat</label>
                                         <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
                                         @error('alamat')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="fv-row mb-3">
+                                        <label class="required fw-semibold fs-6 mb-2">Keperluan Surat</label>
+                                        <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                        @error('keperluan')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
@@ -94,27 +107,27 @@
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PNS</h3>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                            data-select2-id="select2-data-72-r5i9" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1" required>
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Mahasiswa...</option>
-                                            @foreach ($mahasiswa as $mhsw)
-                                                <option value="{{ $mhsw->nim }}"
-                                                    {{ $mhsw->nim == $surat->nim ? 'selected' : '' }}>
-                                                    {{ $mhsw->nim }} - {{ $mhsw->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('nim')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
+                                                    data-select2-id="select2-data-72-r5i9" tabindex="-1" aria-hidden="true"
+                                                    data-kt-initialized="1" required>
+                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                        Pilih Mahasiswa...</option>
+                                                    @foreach ($mahasiswa as $mhsw)
+                                                        <option value="{{ $mhsw->nim }}"
+                                                            {{ $mhsw->nim == $surat->nim ? 'selected' : '' }}>
+                                                            {{ $mhsw->nim }} - {{ $mhsw->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nim')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                                 <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
@@ -135,7 +148,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="number" name="nip" class="form-control form-control-sm"
                                                     value="{{ $surat->nip }}" required />
                                                 @error('nip')
@@ -143,7 +157,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="text" name="nama_ortu"
                                                     class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
                                                     required />
@@ -151,6 +166,8 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
                                                     Tua</label>
@@ -239,8 +256,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
                                                 <input type="text" name="pangkat" class="form-control form-control-sm"
@@ -260,9 +275,11 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control form-control-sm"
+                                                <input type="text" name="tmt"
+                                                    class="form-control form-control-sm form-control kt_datepicker_tmt"
+                                                    placeholder="Pilih tanggal"
                                                     value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
-                                                    required />
+                                                    autocomplete="off" required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -276,13 +293,20 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-                                            <div class="fv-row mb-7 col-12">
-                                                <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                                                <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
-                                                @error('alamat')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">Alamat Orang Tua</label>
+                                            <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
+                                            @error('alamat')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Keperluan Surat</label>
+                                            <textarea name="keperluan" class="form-control form-control-sm" rows="3" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                            @error('keperluan')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="text-center mt-4">
@@ -302,27 +326,27 @@
                                     @method('PUT')
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PPPK</h3>
-                                    <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                            data-select2-id="select2-data-72-r5i1" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1" required>
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Mahasiswa...</option>
-                                            @foreach ($mahasiswa as $mhswa)
-                                                <option value="{{ $mhswa->nim }}"
-                                                    {{ $mhswa->nim == $surat->nim ? 'selected' : '' }}>
-                                                    {{ $mhswa->nim }} - {{ $mhswa->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('nim')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
+                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    data-control="select2" data-placeholder="Pilih Mahasiswa"
+                                                    name="nim" data-select2-id="select2-data-72-r5i1" tabindex="-1"
+                                                    aria-hidden="true" data-kt-initialized="1" required>
+                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                        Pilih Mahasiswa...</option>
+                                                    @foreach ($mahasiswa as $mhswa)
+                                                        <option value="{{ $mhswa->nim }}"
+                                                            {{ $mhswa->nim == $surat->nim ? 'selected' : '' }}>
+                                                            {{ $mhswa->nim }} - {{ $mhswa->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nim')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                                 <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
@@ -343,7 +367,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="number" name="nip" class="form-control form-control-sm"
                                                     value="{{ $surat->nip }}" required />
                                                 @error('nip')
@@ -351,7 +376,8 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua Sesuai
+                                                    SK</label>
                                                 <input type="text" name="nama_ortu"
                                                     class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
                                                     required />
@@ -359,6 +385,8 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
                                                     Tua</label>
@@ -447,8 +475,6 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
                                                 <input type="text" name="pangkat" class="form-control form-control-sm"
@@ -468,9 +494,11 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control form-control-sm"
+                                                <input type="text" name="tmt"
+                                                    class="form-control form-control-sm form-control kt_datepicker_tmt"
+                                                    placeholder="Pilih tanggal"
                                                     value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
-                                                    required />
+                                                    autocomplete="off" required />
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -484,13 +512,20 @@
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
-                                            <div class="fv-row mb-7 col-12">
-                                                <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                                                <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
-                                                @error('alamat')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">Alamat Orang Tua</label>
+                                            <textarea name="alamat" class="form-control form-control-sm" rows="3" required>{{ old('alamat', $surat->alamat) }}</textarea>
+                                            @error('alamat')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Keperluan Surat</label>
+                                            <textarea name="keperluan" class="form-control form-control-sm" rows="3" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                            @error('keperluan')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="text-center mt-4">
@@ -556,6 +591,23 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".kt_datepicker_tmt").forEach(function(el) {
+                if (typeof flatpickr === "undefined") return;
+
+                flatpickr(el, {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d/m/Y",
+                    allowInput: true,
+                    defaultDate: el.value ? el.value : null
+                });
+
+            });
+        });
+    </script>
+
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({

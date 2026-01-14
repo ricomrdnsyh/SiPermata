@@ -5,6 +5,7 @@
         .form-section {
             display: none;
         }
+
         .form-section.active {
             display: block;
         }
@@ -25,25 +26,39 @@
                                 <form id="form-umum" class="form-section active">
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
                                     <h3 class="mb-5 text-center">Pengajuan Surat Keterangan Aktif Umum</h3>
-                                    <div class="fv-row mb-3">
-                                        <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ auth()->user()->reference_id }}" disabled />
-                                    </div>
-                                    <div class="fv-row mb-3">
-                                        <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <input type="text" name="akademik_id" class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
-                                            disabled />
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">NIM</label>
+                                                <input type="text" name="nim"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ auth()->user()->reference_id }}" disabled />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                                <input type="text" name="akademik_id"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
+                                                    disabled />
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="text" name="semester" class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ $surat->semester }}" disabled />
+                                        <input type="text" name="semester"
+                                            class="form-control form-control-sm mb-3 mb-lg-0" value="{{ $surat->semester }}"
+                                            disabled />
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="fw-semibold fs-6 mb-2">Alamat</label>
                                         <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('alamat', $surat->alamat) }}</textarea>
+                                    </div>
+                                    <div class="fv-row mb-3">
+                                        <label class="fw-semibold fs-6 mb-2">Keperluan Surat</label>
+                                        <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="fw-semibold fs-6 mb-2">Catatan</label>
@@ -53,83 +68,13 @@
                                 <form id="form-pns" class="form-section">
                                     <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
                                     <h3 class="mb-5 text-center">Pengajuan Surat Aktif PNS</h3>
-                                    <div class="fv-row mb-3">
-                                        <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control form-control-sm"
-                                            value="{{ auth()->user()->reference_id }}" disabled />
-                                    </div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" name="akademik_id" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
-                                                    disabled />
+                                                <label class="fw-semibold fs-6 mb-2">NIM</label>
+                                                <input type="text" name="nim" class="form-control form-control-sm"
+                                                    value="{{ auth()->user()->reference_id }}" disabled />
                                             </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="text" name="semester" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $surat->semester }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">NIP Orang Tua</label>
-                                                <input type="text" name="nip" class="form-control form-control-sm"
-                                                    value="{{ $surat->nip }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Nama Orang Tua</label>
-                                                <input type="text" name="nama_ortu" class="form-control form-control-sm"
-                                                    value="{{ $surat->nama_ortu }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
-                                                    Tua</label>
-                                                <input type="text" name="pendidikan_terakhir" class="form-control form-control-sm"
-                                                    value="{{ $surat->pendidikan_terakhir }}" disabled />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
-                                                <input type="text" name="pangkat" class="form-control form-control-sm"
-                                                    value="{{ $surat->pangkat }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Golongan</label>
-                                                <input type="text" name="golongan" class="form-control form-control-sm"
-                                                    value="{{ $surat->golongan }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="date" name="tmt" class="form-control form-control-sm"
-                                                    value="{{ $surat->tmt }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                <input type="text" name="unit_kerja" class="form-control form-control-sm"
-                                                    value="{{ $surat->unit_kerja }}" disabled />
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Alamat</label>
-                                                <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('alamat', $surat->alamat) }}</textarea>
-                                            </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Catatan</label>
-                                                <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="2" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <form id="form-pppk" class="form-section">
-                                    <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
-                                    <h3 class="mb-5 text-center">Pengajuan Surat Aktif PPPK</h3>
-                                    <div class="fv-row mb-3">
-                                        <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                        <input type="text" name="nim" class="form-control form-control-sm"
-                                            value="{{ auth()->user()->reference_id }}" disabled />
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                                 <input type="text" name="akademik_id"
@@ -139,7 +84,8 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="text" name="semester" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                <input type="text" name="semester"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
                                                     value="{{ $surat->semester }}" disabled />
                                             </div>
                                             <div class="fv-row mb-3">
@@ -152,14 +98,14 @@
                                                 <input type="text" name="nama_ortu" class="form-control form-control-sm"
                                                     value="{{ $surat->nama_ortu }}" disabled />
                                             </div>
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
-                                                    Tua</label>
-                                                <input type="text" name="pendidikan_terakhir" class="form-control form-control-sm"
-                                                    value="{{ $surat->pendidikan_terakhir }}" disabled />
-                                            </div>
                                         </div>
                                         <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang Tua</label>
+                                                <input type="text" name="pendidikan_terakhir"
+                                                    class="form-control form-control-sm"
+                                                    value="{{ $surat->pendidikan_terakhir }}" disabled />
+                                            </div>
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
                                                 <input type="text" name="pangkat" class="form-control form-control-sm"
@@ -167,27 +113,115 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Golongan</label>
-                                                <input type="text" name="golongan" class="form-control form-control-sm"
-                                                    value="{{ $surat->golongan }}" disabled />
+                                                <input type="text" name="golongan"
+                                                    class="form-control form-control-sm" value="{{ $surat->golongan }}"
+                                                    disabled />
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
                                                 <input type="date" name="tmt" class="form-control form-control-sm"
-                                                    value="{{ $surat->tmt }}" disabled />
+                                                    value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
+                                                    disabled />
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                <input type="text" name="unit_kerja" class="form-control form-control-sm"
-                                                    value="{{ $surat->unit_kerja }}" disabled />
+                                                <input type="text" name="unit_kerja"
+                                                    class="form-control form-control-sm" value="{{ $surat->unit_kerja }}"
+                                                    disabled />
+                                            </div>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="fw-semibold fs-6 mb-2">Alamat</label>
+                                            <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('alamat', $surat->alamat) }}</textarea>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="fw-semibold fs-6 mb-2">Keperluan Surat</label>
+                                            <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="fw-semibold fs-6 mb-2">Catatan</label>
+                                            <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="2" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                                <form id="form-pppk" class="form-section">
+                                    <input type="hidden" name="kategori" value="{{ $surat->kategori }}">
+                                    <h3 class="mb-5 text-center">Pengajuan Surat Aktif PPPK</h3>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">NIM</label>
+                                                <input type="text" name="nim" class="form-control form-control-sm"
+                                                    value="{{ auth()->user()->reference_id }}" disabled />
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Alamat</label>
-                                                <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('alamat', $surat->alamat) }}</textarea>
+                                                <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                                <input type="text" name="akademik_id"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
+                                                    disabled />
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Catatan</label>
-                                                <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="2" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
+                                                <label class="fw-semibold fs-6 mb-2">Semester</label>
+                                                <input type="text" name="semester"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->semester }}" disabled />
                                             </div>
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">NIP Orang Tua</label>
+                                                <input type="text" name="nip" class="form-control form-control-sm"
+                                                    value="{{ $surat->nip }}" disabled />
+                                            </div>
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Nama Orang Tua</label>
+                                                <input type="text" name="nama_ortu"
+                                                    class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
+                                                    disabled />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Pendidikan Terakhir Orang
+                                                    Tua</label>
+                                                <input type="text" name="pendidikan_terakhir"
+                                                    class="form-control form-control-sm"
+                                                    value="{{ $surat->pendidikan_terakhir }}" disabled />
+                                            </div>
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Pangkat Orang Tua</label>
+                                                <input type="text" name="pangkat" class="form-control form-control-sm"
+                                                    value="{{ $surat->pangkat }}" disabled />
+                                            </div>
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Golongan</label>
+                                                <input type="text" name="golongan"
+                                                    class="form-control form-control-sm" value="{{ $surat->golongan }}"
+                                                    disabled />
+                                            </div>
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
+                                                <input type="date" name="tmt" class="form-control form-control-sm"
+                                                    value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
+                                                    disabled />
+                                            </div>
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Unit Kerja</label>
+                                                <input type="text" name="unit_kerja"
+                                                    class="form-control form-control-sm" value="{{ $surat->unit_kerja }}"
+                                                    disabled />
+                                            </div>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="fw-semibold fs-6 mb-2">Alamat</label>
+                                            <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('alamat', $surat->alamat) }}</textarea>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="fw-semibold fs-6 mb-2">Keperluan Surat</label>
+                                            <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="1" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                        </div>
+                                        <div class="fv-row mb-3">
+                                            <label class="fw-semibold fs-6 mb-2">Catatan</label>
+                                            <textarea name="alamat" class="form-control form-control-sm mb-3 mb-lg-0" rows="2" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
                                         </div>
                                     </div>
                                 </form>
@@ -221,6 +255,7 @@
             if (activeForm) {
                 activeForm.classList.add('active');
             }
+
             function attachSpinnerToForm(form) {
                 const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
                 if (!submitButton) return;

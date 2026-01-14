@@ -9,14 +9,17 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
+
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
         .filter-container {
             margin-bottom: 2rem;
             padding-bottom: 0 !important;
         }
+
         .dt-buttons .btn-export-primary,
         .dt-buttons .btn-export-primary:focus,
         .dt-buttons .btn-export-primary:hover,
@@ -25,6 +28,7 @@
             border-color: #004289 !important;
             color: #fff !important;
         }
+
         .dt-buttons .btn-export-primary:focus {
             box-shadow: none !important;
         }
@@ -103,6 +107,7 @@
                                     <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Kategori</th>
                                     <th class="min-w-125px">Tanggal Pengajuan</th>
+                                    <th class="min-w-125px">Keperluan Surat</th>
                                     <th class="min-w-125px">Status Pengajuan</th>
                                     <th class="min-w-125px">Catatan</th>
                                 </tr>
@@ -185,6 +190,10 @@
                     {
                         data: 'tanggal_pengajuan',
                         name: 'created_at'
+                    },
+                    {
+                        data: 'keperluan',
+                        name: 'keperluan'
                     },
                     {
                         data: 'status',

@@ -6,12 +6,15 @@
                 @case('UMUM')
                     Surat Keterangan Aktif Umum
                 @break
+
                 @case('PNS')
                     Surat Keterangan Aktif PNS
                 @break
+
                 @case('PPPK')
                     Surat Keterangan Aktif PPPK
                 @break
+
                 @default
                     {{ $surat->kategori }}
             @endswitch
@@ -49,7 +52,7 @@
         <tr>
             <td class="text-gray-400">Tahun Mulai Tugas</td>
             <td class="text-gray-800">
-                {{ $surat->tmt?->locale('id')->isoFormat('D MMMM YYYY') ?? '-' }}
+                {{ $surat->tmt->locale('id')->isoFormat('D MMMM YYYY') ?? '-' }}
             </td>
         </tr>
         <tr>
@@ -60,5 +63,9 @@
     <tr>
         <td class="text-gray-400">Alamat</td>
         <td class="text-gray-800">{{ $surat->alamat ?? '-' }}</td>
+    </tr>
+    <tr>
+        <td class="text-gray-400">Keperluan Surat</td>
+        <td class="text-gray-800">{{ $surat->keperluan ?? '-' }}</td>
     </tr>
 </table>

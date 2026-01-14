@@ -9,6 +9,7 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
+
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
@@ -46,6 +47,7 @@
                                     <th class="min-w-125px">Kategori</th>
                                     <th class="min-w-125px">Tanggal Pengajuan</th>
                                     <th class="min-w-125px">Tahun Akademik</th>
+                                    <th class="min-w-125px">Keperluan Surat</th>
                                     <th class="min-w-125px">Status Pengajuan</th>
                                     <th class="min-w-125px">Catatan</th>
                                 </tr>
@@ -86,6 +88,10 @@
                     {
                         data: 'akademik',
                         name: 'akademik'
+                    },
+                    {
+                        data: 'keperluan',
+                        name: 'keperluan'
                     },
                     {
                         data: 'status',
