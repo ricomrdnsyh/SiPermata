@@ -87,9 +87,9 @@ class MahasiswaSuratPKLController extends Controller
             abort(403, 'Akses ditolak');
         }
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
-        return view('mahasiswa.surat_pkl.create', compact('akademik', 'mitra'));
+        return view('mahasiswa.surat_pkl.create', compact('latestAkademik', 'mitra'));
     }
 
     /**
@@ -226,10 +226,10 @@ class MahasiswaSuratPKLController extends Controller
             return redirect()->route('mahasiswa.surat-pkl.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
         }
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
 
-        return view('mahasiswa.surat_pkl.edit', compact('surat', 'akademik', 'mitra'));
+        return view('mahasiswa.surat_pkl.edit', compact('surat', 'latestAkademik', 'mitra'));
     }
 
     /**

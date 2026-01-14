@@ -86,9 +86,9 @@ class MahasiswaSuratLulusController extends Controller
             abort(403, 'Akses ditolak');
         }
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('mahasiswa.surat_lulus.create', compact('akademik'));
+        return view('mahasiswa.surat_lulus.create', compact('latestAkademik'));
     }
 
     /**
@@ -225,9 +225,9 @@ class MahasiswaSuratLulusController extends Controller
             return redirect()->route('mahasiswa.surat-keterangan-lulus.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
         }
 
-        $akademik = TahunAkademik::all();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('mahasiswa.surat_lulus.edit', compact('surat', 'akademik'));
+        return view('mahasiswa.surat_lulus.edit', compact('surat', 'latestAkademik'));
     }
 
     /**
