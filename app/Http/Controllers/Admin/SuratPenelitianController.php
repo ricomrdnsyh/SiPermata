@@ -124,10 +124,10 @@ class SuratPenelitianController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
 
-        return view('admin.surat_penelitian.create', compact('mahasiswa', 'akademik', 'mitra'));
+        return view('admin.surat_penelitian.create', compact('mahasiswa', 'latestAkademik', 'mitra'));
     }
 
     /**
@@ -255,11 +255,11 @@ class SuratPenelitianController extends Controller
             ->where('id_surat_izin_penelitian', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
         $mahasiswa = Mahasiswa::all();
 
-        return view('admin.surat_penelitian.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('admin.surat_penelitian.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**

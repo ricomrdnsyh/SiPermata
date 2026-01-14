@@ -123,10 +123,10 @@ class SuratObservasiController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
 
-        return view('admin.surat_observasi.create', compact('mahasiswa', 'akademik', 'mitra'));
+        return view('admin.surat_observasi.create', compact('mahasiswa', 'latestAkademik', 'mitra'));
     }
 
     /**
@@ -254,11 +254,11 @@ class SuratObservasiController extends Controller
             ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
         $mahasiswa = Mahasiswa::all();
 
-        return view('admin.surat_observasi.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('admin.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**

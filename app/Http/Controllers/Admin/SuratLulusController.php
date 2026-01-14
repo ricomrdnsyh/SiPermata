@@ -123,9 +123,9 @@ class SuratLulusController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('admin.surat_lulus.create', compact('mahasiswa', 'akademik'));
+        return view('admin.surat_lulus.create', compact('mahasiswa', 'latestAkademik'));
     }
 
     /**
@@ -251,10 +251,10 @@ class SuratLulusController extends Controller
             ->where('id_surat_lulus', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mahasiswa = Mahasiswa::all();
 
-        return view('admin.surat_lulus.edit', compact('surat', 'akademik', 'mahasiswa'));
+        return view('admin.surat_lulus.edit', compact('surat', 'latestAkademik', 'mahasiswa'));
     }
 
     /**

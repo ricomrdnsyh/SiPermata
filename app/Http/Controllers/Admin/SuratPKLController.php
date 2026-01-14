@@ -124,10 +124,10 @@ class SuratPKLController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
 
-        return view('admin.surat_pkl.create', compact('mahasiswa', 'akademik', 'mitra'));
+        return view('admin.surat_pkl.create', compact('mahasiswa', 'latestAkademik', 'mitra'));
     }
 
     /**
@@ -253,11 +253,11 @@ class SuratPKLController extends Controller
             ->where('id_surat_pkl', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
         $mahasiswa = Mahasiswa::all();
 
-        return view('admin.surat_pkl.edit', compact('surat', 'akademik', 'mitra', 'mahasiswa'));
+        return view('admin.surat_pkl.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
     /**

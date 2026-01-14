@@ -123,9 +123,9 @@ class SuratRekomendasiController extends Controller
         }
 
         $mahasiswa = Mahasiswa::all();
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('admin.surat_rekomendasi.create', compact('mahasiswa', 'akademik'));
+        return view('admin.surat_rekomendasi.create', compact('mahasiswa', 'latestAkademik'));
     }
 
     /**
@@ -249,10 +249,10 @@ class SuratRekomendasiController extends Controller
             ->where('id_surat_rekomendasi', $id)
             ->firstOrFail();
 
-        $akademik  = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mahasiswa = Mahasiswa::all();
 
-        return view('admin.surat_rekomendasi.edit', compact('surat', 'akademik', 'mahasiswa'));
+        return view('admin.surat_rekomendasi.edit', compact('surat', 'latestAkademik', 'mahasiswa'));
     }
 
     /**

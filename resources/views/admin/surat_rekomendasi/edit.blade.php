@@ -44,19 +44,10 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                    data-control="select2" data-placeholder="Pilih Akademik"
-                                                    name="akademik_id" data-select2-id="select2-data-72-r5i3" tabindex="-1"
-                                                    aria-hidden="true" data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">
-                                                        Pilih Akademik...</option>
-                                                    @foreach ($akademik as $item)
-                                                        <option value="{{ $item->id_akademik }}"
-                                                            {{ old('akademik_id', $surat->akademik_id) == $item->id_akademik ? 'selected' : '' }}>
-                                                            {{ $item->tahun_akademik }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                <input type="hidden" name="akademik_id"
+                                                    value="{{ $latestAkademik?->id_akademik }}">
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
