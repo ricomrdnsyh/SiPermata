@@ -5,6 +5,7 @@
         .form-section {
             display: none;
         }
+
         .form-section.active {
             display: block;
         }
@@ -50,26 +51,18 @@
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                        <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                            data-control="select2" data-placeholder="Pilih Akademik" name="akademik_id"
-                                            data-select2-id="select2-data-72-r5i3" tabindex="-1" aria-hidden="true"
-                                            data-kt-initialized="1">
-                                            <option value="" data-select2-id="select2-data-74-9zwr">
-                                                Pilih Akademik...</option>
-                                            @foreach ($akademik as $item)
-                                                <option value="{{ $item->id_akademik }}"
-                                                    {{ $item->id_akademik == $surat->akademik_id ? 'selected' : '' }}>
-                                                    {{ $item->tahun_akademik }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                            value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                        <input type="hidden" name="akademik_id"
+                                            value="{{ $latestAkademik?->id_akademik }}">
                                         @error('akademik_id')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester" class="form-control form-control-sm mb-3 mb-lg-0"
+                                        <input type="number" name="semester"
+                                            class="form-control form-control-sm mb-3 mb-lg-0"
                                             value="{{ $surat->semester }}" />
                                         @error('semester')
                                             <small class="text-danger">{{ $message }}</small>
@@ -124,24 +117,19 @@
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <select class="form-select form-select-sm" data-control="select2"
-                                                    name="akademik_id" required>
-                                                    <option value="">Pilih Akademik...</option>
-                                                    @foreach ($akademik as $akd)
-                                                        <option value="{{ $akd->id_akademik }}"
-                                                            {{ $akd->id_akademik == $surat->akademik_id ? 'selected' : '' }}>
-                                                            {{ $akd->tahun_akademik }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                <input type="hidden" name="akademik_id"
+                                                    value="{{ $latestAkademik?->id_akademik }}">
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester" class="form-control form-control-sm"
-                                                    value="{{ $surat->semester }}" required />
+                                                <input type="number" name="semester"
+                                                    class="form-control form-control-sm" value="{{ $surat->semester }}"
+                                                    required />
                                                 @error('semester')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -156,8 +144,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
-                                                <input type="text" name="nama_ortu" class="form-control form-control-sm"
-                                                    value="{{ $surat->nama_ortu }}" required />
+                                                <input type="text" name="nama_ortu"
+                                                    class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
+                                                    required />
                                                 @error('nama_ortu')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -262,8 +251,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Golongan</label>
-                                                <input type="text" name="golongan" class="form-control form-control-sm"
-                                                    value="{{ $surat->golongan }}" required />
+                                                <input type="text" name="golongan"
+                                                    class="form-control form-control-sm" value="{{ $surat->golongan }}"
+                                                    required />
                                                 @error('golongan')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -279,8 +269,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                <input type="text" name="unit_kerja" class="form-control form-control-sm"
-                                                    value="{{ $surat->unit_kerja }}" required />
+                                                <input type="text" name="unit_kerja"
+                                                    class="form-control form-control-sm" value="{{ $surat->unit_kerja }}"
+                                                    required />
                                                 @error('unit_kerja')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -334,23 +325,19 @@
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <select class="form-select form-select-sm" data-control="select2"
-                                                    name="akademik_id" required>
-                                                    <option value="">Pilih Akademik...</option>
-                                                    @foreach ($akademik as $akdm)
-                                                        <option value="{{ $akdm->id_akademik }}"
-                                                            {{ $akdm->id_akademik == $surat->akademik_id ? 'selected' : '' }}>
-                                                            {{ $akdm->tahun_akademik }}</option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                <input type="hidden" name="akademik_id"
+                                                    value="{{ $latestAkademik?->id_akademik }}">
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester" class="form-control form-control-sm"
-                                                    value="{{ $surat->semester }}" required />
+                                                <input type="number" name="semester"
+                                                    class="form-control form-control-sm" value="{{ $surat->semester }}"
+                                                    required />
                                                 @error('semester')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -365,8 +352,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Orang Tua</label>
-                                                <input type="text" name="nama_ortu" class="form-control form-control-sm"
-                                                    value="{{ $surat->nama_ortu }}" required />
+                                                <input type="text" name="nama_ortu"
+                                                    class="form-control form-control-sm" value="{{ $surat->nama_ortu }}"
+                                                    required />
                                                 @error('nama_ortu')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -471,8 +459,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Golongan</label>
-                                                <input type="text" name="golongan" class="form-control form-control-sm"
-                                                    value="{{ $surat->golongan }}" required />
+                                                <input type="text" name="golongan"
+                                                    class="form-control form-control-sm" value="{{ $surat->golongan }}"
+                                                    required />
                                                 @error('golongan')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -488,7 +477,8 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                <input type="text" name="unit_kerja" class="form-control form-control-sm"
+                                                <input type="text" name="unit_kerja"
+                                                    class="form-control form-control-sm"
                                                     value="{{ $surat->unit_kerja }}" required />
                                                 @error('unit_kerja')
                                                     <small class="text-danger">{{ $message }}</small>
@@ -544,6 +534,7 @@
             if (activeForm) {
                 activeForm.classList.add('active');
             }
+
             function attachSpinnerToForm(form) {
                 const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
                 if (!submitButton) return;

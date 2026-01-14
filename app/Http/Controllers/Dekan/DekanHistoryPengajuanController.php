@@ -758,18 +758,22 @@ class DekanHistoryPengajuanController extends Controller
             abort(404, 'File surat tidak ditemukan atau belum disetujui/digenerate.');
         }
 
-        if ($surat->mahasiswa->fakultas_id !== $user->penduduk?->fakultas_id) {
-            abort(403, 'Anda tidak berhak melihat surat ini.');
-        }
+        $filePath = $surat->file_generated;
+        $disk = 'local';
 
-        $filePath = $surat->file_generated;      // sekarang 'surat/aktif/surat_1.pdf'
-        if (!Storage::disk('local')->exists($filePath)) {
+        // Cek keberadaan file
+        if (!Storage::disk($disk)->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }
 
         $fileName = strtoupper(str_replace(' ', '_', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
 
-        return Storage::download($filePath, $fileName);
+        $absolutePath = Storage::disk($disk)->path($filePath);
+
+        return response()->file($absolutePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
     }
 
     public function sendEmailMahasiswa(Request $request, string $tabel, int $id)

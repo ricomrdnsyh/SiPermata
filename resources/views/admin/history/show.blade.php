@@ -144,7 +144,7 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-sm btn-light-primary" target="_blank">
+                                                class="btn btn-sm btn-light-primary" target="_blank" rel="noopener noreferrer">
                                                 <i class="fas fa-cloud-download-alt"></i> Lihat Surat
                                             </a>
                                         @endif

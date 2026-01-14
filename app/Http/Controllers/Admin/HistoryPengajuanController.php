@@ -574,6 +574,11 @@ class HistoryPengajuanController extends Controller
 
         $fileName = strtoupper(str_replace(' ', '_', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
 
-        return Storage::download($filePath, $fileName);
+        $absolutePath = Storage::disk($disk)->path($filePath);
+
+        return response()->file($absolutePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
     }
 }

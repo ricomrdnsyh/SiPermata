@@ -83,15 +83,17 @@ class MahasiswaSuratAktifController extends Controller
 
     public function create()
     {
-        $user     = Auth::user();
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $user = Auth::user();
 
         if ($user->role !== 'mahasiswa') {
             abort(403, 'Akses ditolak');
         }
 
-        return view('mahasiswa.surat_aktif.create', compact('akademik'));
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
+
+        return view('mahasiswa.surat_aktif.create', compact('latestAkademik'));
     }
+
 
     public function store(Request $request, SuratAktifGenerator $generatorService)
     {
@@ -219,9 +221,9 @@ class MahasiswaSuratAktifController extends Controller
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
+        $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('mahasiswa.surat_aktif.edit', compact('surat', 'akademik'));
+        return view('mahasiswa.surat_aktif.edit', compact('surat', 'latestAkademik'));
     }
 
     public function update(Request $request, $id, SuratAktifGenerator $generatorService)

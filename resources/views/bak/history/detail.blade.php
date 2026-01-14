@@ -5,10 +5,12 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
+
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
         .summary-pill {
             padding: 0.65rem 1.2rem;
             border-radius: 999px;
@@ -68,15 +70,19 @@
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Menunggu BAK</span>
                                                             @break
+
                                                             @case('proses')
                                                                 <span class="badge bg-info">Menunggu Dekan</span>
                                                             @break
+
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui</span>
                                                             @break
+
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
+
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
@@ -148,7 +154,8 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-sm btn-light-primary" target="_blank">
+                                                class="btn btn-sm btn-light-primary" target="_blank"
+                                                rel="noopener noreferrer">
                                                 <i class="fas fa-cloud-download-alt"></i> Lihat Surat
                                             </a>
                                         @endif
@@ -190,18 +197,23 @@
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Menunggu BAK</span>
                                                             @break
+
                                                             @case('proses')
                                                                 <span class="badge bg-info">Menunggu Dekan</span>
                                                             @break
+
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui</span>
                                                             @break
+
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
+
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
+
                                                             @default
                                                                 <span class="badge bg-secondary">
                                                                     {{ ucfirst($log->status) }}
