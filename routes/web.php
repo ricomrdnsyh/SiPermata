@@ -63,9 +63,6 @@ Route::middleware('guest')->group(function () {
 
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/verifikasi/pdf/{jenis}/{id}', [VerifikasiController::class, 'streamPdf'])
-    ->name('verifikasi.streamPdf');
-
 Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])
     ->name('verifikasi.surat-aktif');
 

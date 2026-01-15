@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\SuratPKL;
+use App\Models\TtdSurat;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
-use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class VerifikasiController extends Controller
@@ -28,320 +27,144 @@ class VerifikasiController extends Controller
     {
         $approvedStatuses = ['diterima', 'selesai'];
 
-        return in_array($surat->status, $approvedStatuses, true) ||
-            in_array($surat->status_verifikasi, $approvedStatuses, true) ||
+        return in_array($surat->status ?? null, $approvedStatuses, true) ||
+            in_array($surat->status_verifikasi ?? null, $approvedStatuses, true) ||
             ($surat->is_diterima ?? false) === true ||
             ($surat->is_approved ?? false) === true;
     }
 
-    protected function validateFileGenerated($surat)
+    protected function fmtDateTime($value): string
     {
-        if (empty($surat->file_generated)) {
-            return 'File surat belum digenerate.';
-        }
+        if (empty($value)) return '-';
 
-        if (! Storage::disk('local')->exists($surat->file_generated)) {
-            return 'File surat tidak ditemukan di server.';
-        }
-
-        return null;
+        return Carbon::parse($value)
+            ->timezone('Asia/Jakarta')
+            ->locale('id')
+            ->isoFormat('D MMMM YYYY, HH:mm:ss') . ' WIB';
     }
 
-    public function streamPdf(string $jenis, string $encryptedId)
+    protected function getJenisSuratLabel(string $jenis): string
+    {
+        $map = [
+            'aktif'       => 'Surat Keterangan Aktif Kuliah',
+            'penelitian'  => 'Surat Izin Penelitian',
+            'rekomendasi' => 'Surat Rekomendasi',
+            'pkl'         => 'Surat Permohonan PKL',
+            'observasi'   => 'Surat Permohonan Observasi',
+            'lulus'       => 'Surat Keterangan Lulus',
+        ];
+
+        return $map[$jenis] ?? 'Surat';
+    }
+
+    protected function legalitasPayload($surat, string $jenis): array
+    {
+        $mhs = $surat->mahasiswa;
+
+        $fakultas = optional($mhs?->fakultas)->nama_fakultas ?? '-';
+        $prodi    = optional($mhs?->prodi)->nama_prodi ?? '-';
+
+        $tahunAkademik = optional($surat->akademik)->tahun_akademik ?? '-';
+
+        // ambil fakultas_id yang konsisten
+        $fakultasId = data_get($surat, 'template.fakultas_id')
+            ?? data_get($mhs, 'fakultas_id');
+
+        // ambil TTD sesuai approve
+        $ttd = TtdSurat::where('fakultas_id', $fakultasId)
+            ->where('template_id', $surat->template_id)
+            ->where('status', 'aktif')
+            ->first();
+
+        $penandatangan = $ttd->nama_ttd ?? '-';
+        $nidn          = $ttd->nidn ?? '-';
+
+        // jabatan: kalau belum punya sumber tabel, set default
+        $jabatan = 'Dekan';
+
+        return [
+            'jenis_surat'     => $this->getJenisSuratLabel($jenis),
+            'nama'            => $mhs->nama ?? '-',
+            'nim'             => $mhs->nim ?? ($surat->nim ?? '-'),
+            'fakultas'        => $fakultas,
+            'prodi'           => $prodi,
+            'tahun_akademik'  => $tahunAkademik,
+            'no_surat'        => $surat->no_surat ?? '-',
+            'tgl_pengajuan'   => $this->fmtDateTime($surat->created_at),
+            'tgl_persetujuan' => $this->fmtDateTime($surat->updated_at),
+            'penandatangan'   => $penandatangan,
+            'jabatan'         => $jabatan,
+            'nidn'            => $nidn,
+        ];
+    }
+
+
+
+    protected function verifyGeneric(string $id, string $modelClass, string $pkField, string $jenis)
     {
         try {
-            $id = Crypt::decryptString($encryptedId);
+            $decryptedId = Crypt::decryptString($id);
         } catch (DecryptException $e) {
-            abort(404);
+            $decryptedId = null;
         }
 
-        switch ($jenis) {
-            case 'aktif':
-                $surat = SuratAktif::where('id_surat_aktif', $id)->first();
-                break;
-            case 'penelitian':
-                $surat = SuratPenelitian::where('id_surat_izin_penelitian', $id)->first();
-                break;
-            case 'rekomendasi':
-                $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)->first();
-                break;
-            case 'pkl':
-                $surat = SuratPKL::where('id_surat_pkl', $id)->first();
-                break;
-            case 'observasi':
-                $surat = SuratObservasi::where('id_surat_observasi', $id)->first();
-                break;
-            case 'lulus':
-                $surat = SuratLulus::where('id_surat_lulus', $id)->first();
-                break;
-            default:
-                abort(404);
+        $surat = $modelClass::with([
+            'mahasiswa.fakultas',
+            'mahasiswa.prodi',
+            'akademik',
+            'template.ttdSurat',        // penting untuk ambil nama ttd
+            'template.ttdSurat.fakultas', // optional
+        ])
+            ->where(function ($q) use ($id, $decryptedId, $pkField) {
+                if ($decryptedId !== null) {
+                    $q->where($pkField, $decryptedId);
+                }
+                $q->orWhere($pkField, $id)
+                    ->orWhere('no_surat', $id);
+            })
+            ->first();
+
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
         }
 
-        if (
-            ! $surat ||
-            empty($surat->file_generated) ||
-            ! Storage::disk('local')->exists($surat->file_generated)
-        ) {
-            abort(404);
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
-        $fullPath = Storage::disk('local')->path($surat->file_generated);
-
-        return response()->file($fullPath, [
-            'Content-Type'     => 'application/pdf',
-            'X-Frame-Options'  => 'SAMEORIGIN',
+        return view('verifikasi.lihat_pdf', [
+            'data' => $this->legalitasPayload($surat, $jenis),
         ]);
     }
+
 
     public function verifySuratAktif(string $id)
     {
-        try {
-            $decryptedId = Crypt::decryptString($id);
-        } catch (DecryptException $e) {
-            $decryptedId = null;
-        }
-
-        $surat = SuratAktif::with(['mahasiswa', 'akademik'])
-            ->where(function ($q) use ($id, $decryptedId) {
-                if ($decryptedId !== null) {
-                    $q->where('id_surat_aktif', $decryptedId);
-                }
-
-                $q->orWhere('id_surat_aktif', $id)
-                    ->orWhere('no_surat', $id);
-            })
-            ->first();
-
-        if (! $surat) {
-            return $this->gagal(null, 'Surat tidak ditemukan.');
-        }
-
-        if (! $this->isSuratApproved($surat)) {
-            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
-        }
-
-        if ($msg = $this->validateFileGenerated($surat)) {
-            return $this->gagal($surat, $msg);
-        }
-
-        $pdfUrl = route('verifikasi.streamPdf', [
-            'jenis' => 'aktif',
-            'id'    => Crypt::encryptString($surat->id_surat_aktif),
-        ]);
-
-        return view('verifikasi.lihat_pdf', [
-            'pdf_url' => $pdfUrl,
-        ]);
+        return $this->verifyGeneric($id, SuratAktif::class, 'id_surat_aktif', 'aktif');
     }
-
 
     public function verifySuratPenelitian(string $id)
     {
-        try {
-            $decryptedId = Crypt::decryptString($id);
-        } catch (DecryptException $e) {
-            $decryptedId = null;
-        }
-
-        $surat = SuratPenelitian::with(['mahasiswa', 'akademik'])
-            ->where(function ($q) use ($id, $decryptedId) {
-                if ($decryptedId !== null) {
-                    $q->where('id_surat_izin_penelitian', $decryptedId);
-                }
-
-                $q->orWhere('id_surat_izin_penelitian', $id)
-                    ->orWhere('no_surat', $id);
-            })
-            ->first();
-
-        if (! $surat) {
-            return $this->gagal(null, 'Surat tidak ditemukan.');
-        }
-
-        if (! $this->isSuratApproved($surat)) {
-            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
-        }
-
-        if ($msg = $this->validateFileGenerated($surat)) {
-            return $this->gagal($surat, $msg);
-        }
-
-        $pdfUrl = route('verifikasi.streamPdf', [
-            'jenis' => 'penelitian',
-            'id'    => Crypt::encryptString($surat->id_surat_izin_penelitian),
-        ]);
-
-        return view('verifikasi.lihat_pdf', [
-            'pdf_url' => $pdfUrl,
-        ]);
+        return $this->verifyGeneric($id, SuratPenelitian::class, 'id_surat_izin_penelitian', 'penelitian');
     }
-
 
     public function verifySuratRekomendasi(string $id)
     {
-        try {
-            $decryptedId = Crypt::decryptString($id);
-        } catch (DecryptException $e) {
-            $decryptedId = null;
-        }
-
-        $surat = SuratRekomendasi::with(['mahasiswa', 'akademik'])
-            ->where(function ($q) use ($id, $decryptedId) {
-                if ($decryptedId !== null) {
-                    $q->where('id_surat_rekomendasi', $decryptedId);
-                }
-
-                $q->orWhere('id_surat_rekomendasi', $id)
-                    ->orWhere('no_surat', $id);
-            })
-            ->first();
-
-        if (! $surat) {
-            return $this->gagal(null, 'Surat tidak ditemukan.');
-        }
-
-        if (! $this->isSuratApproved($surat)) {
-            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
-        }
-
-        if ($msg = $this->validateFileGenerated($surat)) {
-            return $this->gagal($surat, $msg);
-        }
-
-        $pdfUrl = route('verifikasi.streamPdf', [
-            'jenis' => 'rekomendasi',
-            'id'    => Crypt::encryptString($surat->id_surat_rekomendasi),
-        ]);
-
-        return view('verifikasi.lihat_pdf', [
-            'pdf_url' => $pdfUrl,
-        ]);
+        return $this->verifyGeneric($id, SuratRekomendasi::class, 'id_surat_rekomendasi', 'rekomendasi');
     }
-
 
     public function verifySuratPKL(string $id)
     {
-        try {
-            $decryptedId = Crypt::decryptString($id);
-        } catch (DecryptException $e) {
-            $decryptedId = null;
-        }
-
-        $surat = SuratPKL::with(['mahasiswa', 'akademik'])
-            ->where(function ($q) use ($id, $decryptedId) {
-                if ($decryptedId !== null) {
-                    $q->where('id_surat_pkl', $decryptedId);
-                }
-
-                $q->orWhere('id_surat_pkl', $id)
-                    ->orWhere('no_surat', $id);
-            })
-            ->first();
-
-        if (! $surat) {
-            return $this->gagal(null, 'Surat tidak ditemukan.');
-        }
-
-        if (! $this->isSuratApproved($surat)) {
-            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
-        }
-
-        if ($msg = $this->validateFileGenerated($surat)) {
-            return $this->gagal($surat, $msg);
-        }
-
-        $pdfUrl = route('verifikasi.streamPdf', [
-            'jenis' => 'pkl',
-            'id'    => Crypt::encryptString($surat->id_surat_pkl),
-        ]);
-
-        return view('verifikasi.lihat_pdf', [
-            'pdf_url' => $pdfUrl,
-        ]);
+        return $this->verifyGeneric($id, SuratPKL::class, 'id_surat_pkl', 'pkl');
     }
-
 
     public function verifySuratObservasi(string $id)
     {
-        try {
-            $decryptedId = Crypt::decryptString($id);
-        } catch (DecryptException $e) {
-            $decryptedId = null;
-        }
-
-        $surat = SuratObservasi::with(['mahasiswa', 'akademik'])
-            ->where(function ($q) use ($id, $decryptedId) {
-                if ($decryptedId !== null) {
-                    $q->where('id_surat_observasi', $decryptedId);
-                }
-
-                $q->orWhere('id_surat_observasi', $id)
-                    ->orWhere('no_surat', $id);
-            })
-            ->first();
-
-        if (! $surat) {
-            return $this->gagal(null, 'Surat tidak ditemukan.');
-        }
-
-        if (! $this->isSuratApproved($surat)) {
-            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
-        }
-
-        if ($msg = $this->validateFileGenerated($surat)) {
-            return $this->gagal($surat, $msg);
-        }
-
-        $pdfUrl = route('verifikasi.streamPdf', [
-            'jenis' => 'observasi',
-            'id'    => Crypt::encryptString($surat->id_surat_observasi),
-        ]);
-
-        return view('verifikasi.lihat_pdf', [
-            'pdf_url' => $pdfUrl,
-        ]);
+        return $this->verifyGeneric($id, SuratObservasi::class, 'id_surat_observasi', 'observasi');
     }
-
 
     public function verifySuratLulus(string $id)
     {
-        try {
-            $decryptedId = Crypt::decryptString($id);
-        } catch (DecryptException $e) {
-            $decryptedId = null;
-        }
-
-        $surat = SuratLulus::with(['mahasiswa', 'akademik'])
-            ->where(function ($q) use ($id, $decryptedId) {
-                if ($decryptedId !== null) {
-                    $q->where('id_surat_lulus', $decryptedId);
-                }
-
-                $q->orWhere('id_surat_lulus', $id)
-                    ->orWhere('no_surat', $id);
-            })
-            ->first();
-
-        if (! $surat) {
-            return $this->gagal(null, 'Surat tidak ditemukan.');
-        }
-
-        if (! $this->isSuratApproved($surat)) {
-            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
-        }
-
-        if ($msg = $this->validateFileGenerated($surat)) {
-            return $this->gagal($surat, $msg);
-        }
-
-        $pdfUrl = route('verifikasi.streamPdf', [
-            'jenis' => 'lulus',
-            'id'    => Crypt::encryptString($surat->id_surat_lulus),
-        ]);
-
-        return view('verifikasi.lihat_pdf', [
-            'pdf_url' => $pdfUrl,
-        ]);
+        return $this->verifyGeneric($id, SuratLulus::class, 'id_surat_lulus', 'lulus');
     }
 }
