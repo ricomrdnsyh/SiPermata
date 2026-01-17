@@ -132,8 +132,8 @@
                                 </div>
                                 <div class="pt-5 border-top border-gray-200 d-flex justify-content-end">
                                     @if ($pengajuan->status === 'pengajuan')
-                                        <button type="button" class="btn btn-sm btn-light-danger" id="btn-reject-main">
-                                            Tolak Pengajuan (BAK)
+                                        <button type="button" class="btn btn-sm btn-danger" id="btn-reject-main">
+                                            <i class="fas fa-times"></i> Tolak Pengajuan (BAK)
                                         </button>
                                         <button type="button" class="btn btn-sm btn-success ms-3" id="btn-approve-main">
                                             <i class="fas fa-check-circle"></i> Terima Pengajuan (BAK)
@@ -144,8 +144,8 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-sm btn-light-primary" target="_blank" rel="noopener noreferrer">
-                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                class="btn btn-sm btn-primary" target="_blank" rel="noopener noreferrer">
+                                                <i class="fas fa-file-alt"></i> Lihat Surat
                                             </a>
                                         @endif
                                     @elseif($pengajuan->status === 'selesai')
@@ -154,12 +154,12 @@
                                                 'tabel' => $pengajuan->tabel,
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
-                                                class="btn btn-sm btn-light-primary" target="_blank">
-                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                class="btn btn-sm btn-primary" target="_blank">
+                                                <i class="fas fa-file-alt"></i> Lihat Surat
                                             </a>
                                         @endif
                                     @else
-                                        <button class="btn btn-sm  btn-success">
+                                        <button class="btn btn-sm btn-success">
                                             <i class="fas fa-check-circle"></i>
                                             Pengajuan sudah dikonfirmasi
                                         </button>
