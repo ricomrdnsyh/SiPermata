@@ -39,6 +39,7 @@ class SuratLulusGenerator
         $tglLahir   = $tglLahirCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $bulanSurat = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
         $tglSK      = $tglSKCarbon->locale('id')->isoFormat('D MMMM YYYY');
+        $tempatLahirTitlecase = strtoupper($surat->tempat_lahir ?? '-');
         $judulPenelitianUppercase = strtoupper($surat->judul_penelitian ?? '-');
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
@@ -47,7 +48,7 @@ class SuratLulusGenerator
         $processor->setValue('FAKULTAS', $mahasiswa?->fakultas?->nama_fakultas ?? '-');
         $processor->setValue('PRODI', $mahasiswa?->prodi?->nama_prodi ?? '-');
         $processor->setValue('NIM', $surat->nim);
-        $processor->setValue('TEMPAT_LAHIR', $surat->tempat_lahir ?? '-');
+        $processor->setValue('TEMPAT_LAHIR', $tempatLahirTitlecase ?? '-');
         $processor->setValue('TGL_LAHIR', $tglLahir ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
         $processor->setValue('TGL_SK', $tglSK ?? '-');

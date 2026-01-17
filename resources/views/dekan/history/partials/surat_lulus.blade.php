@@ -9,11 +9,11 @@
     </tr>
     <tr>
         <td class="text-gray-400">Tempat, Tanggal Lahir</td>
-        <td class="text-gray-800">{{ $surat->tempat_lahir }},
+        <td class="text-gray-800">{{ ucwords($surat->tempat_lahir) }},
             {{ $surat->tgl_lahir?->locale('id')->isoFormat('D MMMM YYYY') }}</td>
     </tr>
     <tr>
         <td class="text-gray-400">Judul Penelitian</td>
-        <td class="text-gray-800">{{ $surat->judul_penelitian }}</td>
+        <td class="text-gray-800">{{ strtoupper($surat->judul_penelitian) }}</td>
     </tr>
 </table>

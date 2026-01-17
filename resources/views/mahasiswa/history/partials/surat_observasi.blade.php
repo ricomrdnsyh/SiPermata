@@ -21,6 +21,6 @@
     </tr>
     <tr>
         <td class="text-gray-400">Keperluan Observasi</td>
-        <td class="text-gray-800">{{ $surat->keperluan }}</td>
+        <td class="text-gray-800">{{ ucwords($surat->keperluan) }}</td>
     </tr>
 </table>

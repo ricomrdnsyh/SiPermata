@@ -21,6 +21,6 @@
     </tr>
     <tr>
         <td class="text-gray-400">Judul Penelitian</td>
-        <td class="text-gray-800">{{ $surat->judul_penelitian }}</td>
+        <td class="text-gray-800">{{ strtoupper($surat->judul_penelitian) }}</td>
     </tr>
 </table>

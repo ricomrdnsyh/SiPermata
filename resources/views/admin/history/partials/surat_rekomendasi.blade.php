@@ -9,10 +9,10 @@
     </tr>
     <tr>
         <td class="text-gray-400">Keperluan Rekomendasi</td>
-        <td class="text-gray-800">{{ $surat->keperluan }}</td>
+        <td class="text-gray-800">{{ ucwords($surat->keperluan) }}</td>
     </tr>
     <tr>
         <td class="text-gray-400">Penyelenggara</td>
-        <td class="text-gray-800">{{ $surat->penyelenggara }}</td>
+        <td class="text-gray-800">{{ strtoupper($surat->penyelenggara) }}</td>
     </tr>
 </table>

@@ -62,7 +62,8 @@
     @endif
     <tr>
         <td class="text-gray-400">Alamat</td>
-        <td class="text-gray-800">{{ $surat->alamat ?? '-' }}</td>
+        <td class="text-gray-800">{{ ucwords($surat->alamat ?? '-') }}
+</td>
     </tr>
     <tr>
         <td class="text-gray-400">Keperluan Surat</td>
