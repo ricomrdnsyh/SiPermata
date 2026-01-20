@@ -15,34 +15,31 @@
                                 </div>
                                 <div class="separator border-gray-200 mt-4"></div>
                                 <div class="card-body pt-5">
-                                    <form id="kt_ecommerce_settings_general_form"
-                                        class="form fv-plugins-bootstrap5 fv-plugins-framework"
-                                        action="{{ route('admin.mitra.store') }}" method="POST">
+                                    <form id="kt_ecommerce_settings_general_form" class="form"
+                                        action="{{ route('admin.mitra.store') }}" method="POST" novalidate>
                                         @csrf
-                                        <div class="fv-row mb-3">
+                                        <div class="fv-row mb-7">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Mitra</label>
-                                            <input type="text" name="nama_mitra" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                value="{{ old('nama_mitra') }}" required />
-                                            @error('nama_mitra')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
+                                            <input type="text" name="nama_mitra" id="nama_mitra"
+                                                class="form-control form-control-sm mb-1" required>
+                                            <div id="error-nama_mitra" class="invalid-feedback d-block"
+                                                style="display:none;"></div>
                                         </div>
-                                        <div class="separator mb-6"></div>
                                         <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.mitra.index') }}" class="btn btn-sm btn-light me-3">
-                                                Batal
-                                            </a>
-                                            <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
-                                                <span class="indicator-label">
-                                                    Tambah
-                                                </span>
-                                                <span class="indicator-progress">
+                                            <a href="{{ route('admin.mitra.index') }}"
+                                                class="btn btn-sm btn-light me-3">Batal</a>
+
+                                            <button type="submit" data-kt-contacts-type="submit"
+                                                class="btn btn-sm btn-primary">
+                                                <span class="indicator-label">Tambah</span>
+                                                <span class="indicator-progress" style="display:none;">
                                                     Tunggu sebentar...
                                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                                 </span>
                                             </button>
                                         </div>
                                     </form>
+
                                 </div>
                             </div>
                         </div>
@@ -57,13 +54,76 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-            form.addEventListener('submit', function(event) {
+
+            const inputNama = document.getElementById('nama_mitra');
+            const errNama = document.getElementById('error-nama_mitra');
+
+            const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            function setLoading(on) {
+                submitButton.disabled = on;
+                submitButton.querySelector('.indicator-label').style.display = on ? 'none' : 'inline-block';
+                submitButton.querySelector('.indicator-progress').style.display = on ? 'inline-block' : 'none';
+            }
+
+            function clearNamaError() {
+                inputNama.classList.remove('is-invalid');
+                errNama.style.display = 'none';
+                errNama.textContent = '';
+            }
+
+            function showNamaError(msg) {
+                inputNama.classList.add('is-invalid');
+                errNama.textContent = msg;
+                errNama.style.display = 'block';
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                clearNamaError();
+
                 if (!form.checkValidity()) {
+                    form.reportValidity();
                     return;
                 }
-                submitButton.disabled = true;
-                submitButton.querySelector('.indicator-label').style.display = 'none';
-                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+
+                setLoading(true);
+
+                try {
+                    const res = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': csrf,
+                        },
+                        body: new FormData(form),
+                        credentials: 'same-origin',
+                    });
+
+                    const ct = res.headers.get('content-type') || '';
+                    const data = ct.includes('application/json') ? await res.json() : null;
+
+                    if (res.status === 422) {
+                        const msg = data?.errors?.nama_mitra?.[0] || 'Data tidak valid.';
+                        showNamaError(msg);
+                        inputNama.focus();
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (!res.ok) {
+                        showNamaError('Terjadi kesalahan. Silakan coba lagi.');
+                        setLoading(false);
+                        return;
+                    }
+
+                    window.location.href = data?.redirect || "{{ route('admin.mitra.index') }}";
+
+                } catch (err) {
+                    showNamaError('Gagal mengirim data. Silakan coba lagi.');
+                    setLoading(false);
+                }
             });
         });
     </script>

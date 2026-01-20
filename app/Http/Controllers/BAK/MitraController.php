@@ -5,7 +5,9 @@ namespace App\Http\Controllers\BAK;
 use App\Models\Mitra;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class MitraController extends Controller
 {
@@ -51,20 +53,57 @@ class MitraController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'nama_mitra' => 'required',
-            ],
+        $data = [
+            'nama_mitra' => preg_replace('/\s+/', ' ', trim((string) $request->nama_mitra)),
+        ];
+
+        $validator = Validator::make(
+            $data,
+            ['nama_mitra' => 'required|unique:mitra,nama_mitra'],
             [
                 'nama_mitra.required' => 'Nama Mitra wajib diisi.',
+                'nama_mitra.unique'   => 'Mitra tersebut sudah ada.',
             ]
         );
 
-        Mitra::create([
-            'nama_mitra' => $request->nama_mitra,
-        ]);
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'Validation error',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            Mitra::create($data);
+        } catch (QueryException $e) {
+            $sqlState   = $e->errorInfo[0] ?? null;
+            $driverCode = $e->errorInfo[1] ?? null;
+
+            if ($sqlState === '23000' || $sqlState === '23505' || $driverCode === 1062) {
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'message' => 'Validation error',
+                        'errors'  => ['nama_mitra' => ['Mitra tersebut sudah ada.']],
+                    ], 422);
+                }
+                return back()->withErrors(['nama_mitra' => 'Mitra tersebut sudah ada.'])->withInput();
+            }
+
+            throw $e;
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('bak.mitra.index'),
+            ], 201);
+        }
 
         return redirect()->route('bak.mitra.index')->with('success', 'Data berhasil ditambahkan!');
     }
@@ -89,24 +128,57 @@ class MitraController extends Controller
         return view('bak.mitra.edit', compact('mitra'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        $request->validate(
-            [
-                'nama_mitra' => 'required',
-            ],
+        $data = [
+            'nama_mitra' => preg_replace('/\s+/', ' ', trim((string) $request->nama_mitra)),
+        ];
+
+        $validator = Validator::make(
+            $data,
+            ['nama_mitra' => 'required|unique:mitra,nama_mitra,' . $id . ',id_mitra'],
             [
                 'nama_mitra.required' => 'Nama Mitra wajib diisi.',
+                'nama_mitra.unique'   => 'Mitra tersebut sudah ada.',
             ]
         );
 
-        $mitra = Mitra::findOrFail($id);
-        $mitra->update([
-            'nama_mitra' => $request->nama_mitra,
-        ]);
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'Validation error',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $mitra = Mitra::findOrFail($id);
+            $mitra->update($data);
+        } catch (QueryException $e) {
+            $sqlState   = $e->errorInfo[0] ?? null;
+            $driverCode = $e->errorInfo[1] ?? null;
+
+            if ($sqlState === '23000' || $sqlState === '23505' || $driverCode === 1062) {
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'message' => 'Validation error',
+                        'errors'  => ['nama_mitra' => ['Mitra tersebut sudah ada.']],
+                    ], 422);
+                }
+                return back()->withErrors(['nama_mitra' => 'Mitra tersebut sudah ada.'])->withInput();
+            }
+
+            throw $e;
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('bak.mitra.index'),
+            ], 200);
+        }
 
         return redirect()->route('bak.mitra.index')->with('success', 'Data berhasil diupdate!');
     }
