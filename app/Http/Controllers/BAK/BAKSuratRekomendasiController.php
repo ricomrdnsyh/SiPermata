@@ -168,6 +168,7 @@ class BAKSuratRekomendasiController extends Controller
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'keperluan'        => 'required',
             'penyelenggara'    => 'required',
+            'tgl_pelaksanaan'  => 'required',
         ]);
 
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
@@ -196,6 +197,7 @@ class BAKSuratRekomendasiController extends Controller
             'akademik_id'         => $request->akademik_id,
             'keperluan'           => $request->keperluan,
             'penyelenggara'       => $request->penyelenggara,
+            'tgl_pelaksanaan'     => $request->tgl_pelaksanaan,
             'status'              => 'pengajuan',
             'catatan'             => 'Diajukan BAK untuk mahasiswa',
             'file_generated'      => null,
@@ -307,6 +309,7 @@ class BAKSuratRekomendasiController extends Controller
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'keperluan'        => 'required',
             'penyelenggara'    => 'required',
+            'tgl_pelaksanaan'  => 'required',
         ]);
 
         $surat = SuratRekomendasi::findOrFail($id);
@@ -319,6 +322,7 @@ class BAKSuratRekomendasiController extends Controller
             'akademik_id'      => $request->akademik_id,
             'keperluan'        => $request->keperluan,
             'penyelenggara'    => $request->penyelenggara,
+            'tgl_pelaksanaan'  => $request->tgl_pelaksanaan,
             'status'           => 'pengajuan',
             'catatan'          => 'Diajukan ulang oleh BAK untuk mahasiswa',
         ]);
@@ -349,13 +353,5 @@ class BAKSuratRekomendasiController extends Controller
         } catch (\Exception $e) {
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

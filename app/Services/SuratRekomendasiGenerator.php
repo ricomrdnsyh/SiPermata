@@ -25,17 +25,16 @@ class SuratRekomendasiGenerator
             throw new \Exception("File template tidak ditemukan di: " . $templatePath);
         }
 
-        // Load Template
         $processor = new TemplateProcessor($templatePath);
 
         $mahasiswa                = $surat->mahasiswa;
         $tglSuratCarbon           = Carbon::parse($surat->updated_at);
         $bulanSuratCarbon         = Carbon::parse($surat->updated_at);
-        $tahunKeperluanCarbon     = Carbon::parse($surat->updated_at);
+        $tglPelaksanaanCarbon     = Carbon::parse($surat->tgl_pelaksanaan);
 
         $tglSurat       = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $bulanSurat     = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
-        $tahunKeperluan = $tahunKeperluanCarbon->locale('id')->isoFormat('YYYY');
+        $tglPelaksanaan = $tglPelaksanaanCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $penyelenggaraUppercase = strtoupper($surat->penyelenggara);
         $keperluanTitleCase = ucwords(strtolower($surat->keperluan));
 
@@ -48,7 +47,7 @@ class SuratRekomendasiGenerator
         $processor->setValue('KEPERLUAN', $keperluanTitleCase ?? '-');
         $processor->setValue('PENYELENGGARA', $penyelenggaraUppercase ?? '-');
         $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
-        $processor->setValue('TAHUN_KEPERLUAN', $tahunKeperluan ?? '-');
+        $processor->setValue('TANGGAL_PELAKSANAAN', $tglPelaksanaan ?? '-');
 
         // Direktori Output
         $outputFileName    = "SURAT_REKOMENDASI_{$surat->nim}_{$surat->id_surat_rekomendasi}.docx";

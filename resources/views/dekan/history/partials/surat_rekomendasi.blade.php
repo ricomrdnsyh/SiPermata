@@ -15,4 +15,8 @@
         <td class="text-gray-400">Penyelenggara</td>
         <td class="text-gray-800">{{ strtoupper($surat->penyelenggara) }}</td>
     </tr>
+    <tr>
+        <td class="text-gray-400">Tanggal Pelaksanaan</td>
+        <td class="text-gray-800">{{ $surat->tgl_pelaksanaan?->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+    </tr>
 </table>

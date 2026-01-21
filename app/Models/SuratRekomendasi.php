@@ -10,6 +10,10 @@ class SuratRekomendasi extends Model
 
     protected $primaryKey = 'id_surat_rekomendasi';
 
+    protected $casts = [
+        'tgl_pelaksanaan' => 'datetime',
+    ];
+
     protected $fillable = [
         'template_id',
         'no_surat',
@@ -17,6 +21,7 @@ class SuratRekomendasi extends Model
         'akademik_id',
         'keperluan',
         'penyelenggara',
+        'tgl_pelaksanaan',
         'status',
         'catatan',
         'file_generated'
