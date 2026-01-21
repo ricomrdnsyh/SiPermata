@@ -275,11 +275,16 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="text" name="tmt"
-                                                    class="form-control form-control-sm form-control kt_datepicker_tmt"
-                                                    placeholder="Pilih tanggal"
-                                                    value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
-                                                    autocomplete="off" required />
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
+                                                    </span>
+                                                    <input type="text" name="tmt"
+                                                        class="form-control form-control-sm form-control kt_datepicker_tmt"
+                                                        placeholder="Pilih tanggal"
+                                                        value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
+                                                        autocomplete="off" required />
+                                                </div>
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -494,11 +499,16 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Mulai Tugas</label>
-                                                <input type="text" name="tmt"
-                                                    class="form-control form-control-sm form-control kt_datepicker_tmt"
-                                                    placeholder="Pilih tanggal"
-                                                    value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
-                                                    autocomplete="off" required />
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
+                                                    </span>
+                                                    <input type="text" name="tmt"
+                                                        class="form-control form-control-sm form-control kt_datepicker_tmt"
+                                                        placeholder="Pilih tanggal"
+                                                        value="{{ $surat->tmt ? $surat->tmt->format('Y-m-d') : '' }}"
+                                                        autocomplete="off" required />
+                                                </div>
                                                 @error('tmt')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror

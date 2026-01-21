@@ -228,7 +228,7 @@
 
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-text">
-                                                        <i class="ki-duotone ki-calendar fs-2"></i>
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
 
                                                     <input type="text" name="tmt"
@@ -396,9 +396,8 @@
 
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-text">
-                                                        <i class="ki-duotone ki-calendar fs-2"></i>
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
-
                                                     <input type="text" name="tmt"
                                                         class="form-control form-control-sm form-control kt_datepicker_tmt"
                                                         placeholder="Pilih tanggal" value="{{ old('tmt') }}"

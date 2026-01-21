@@ -57,9 +57,7 @@
                                                 <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-text">
-                                                        <i class="ki-duotone ki-calendar fs-5">
-                                                            <span class="path1"></span><span class="path2"></span>
-                                                        </i>
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
                                                     <input id="tgl_observasi" type="text" name="tgl_observasi"
                                                         class="form-control form-control-sm"

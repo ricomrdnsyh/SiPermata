@@ -56,6 +56,25 @@
 
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Tanggal Pelaksanaan</label>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
+                                                    </span>
+                                                    <input id="tgl_pelaksanaan" type="text" name="tgl_pelaksanaan"
+                                                        class="form-control form-control-sm"
+                                                        placeholder="Pilih tanggal pelaksanaan" autocomplete="off"
+                                                        value="{{ old('tgl_pelaksanaan', $surat->tgl_pelaksanaan ? $surat->tgl_pelaksanaan->format('Y-m-d') : '') }}"
+                                                        required />
+                                                </div>
+                                                @error('tgl_pelaksanaan')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Keperluan Rekomendasi</label>
                                                 <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
                                                 @error('keperluan')
@@ -64,7 +83,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-12">
+                                        <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label>
                                                 <textarea name="penyelenggara" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('penyelenggara', $surat->penyelenggara) }}</textarea>
@@ -100,6 +119,25 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+
+            const tglPel = document.getElementById('tgl_pelaksanaan');
+            const tglPelVal = tglPel.value || null;
+
+            flatpickr(tglPel, {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d/m/Y",
+                altInputClass: "form-control form-control-sm",
+                allowInput: true,
+                defaultDate: tglPelVal,
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.altInput) {
+                        instance.altInput.required = true;
+                        instance.altInput.placeholder = tglPel.placeholder || '';
+                    }
+                }
+            });
+
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     return;

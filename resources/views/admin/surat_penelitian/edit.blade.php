@@ -81,9 +81,7 @@
                                                 <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-text">
-                                                        <i class="ki-duotone ki-calendar fs-5">
-                                                            <span class="path1"></span><span class="path2"></span>
-                                                        </i>
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
                                                     <input id="tgl_mulai" type="text" name="tgl_mulai"
                                                         class="form-control form-control-sm"
@@ -102,9 +100,7 @@
                                                 <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-text">
-                                                        <i class="ki-duotone ki-calendar fs-5">
-                                                            <span class="path1"></span><span class="path2"></span>
-                                                        </i>
+                                                        <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
                                                     <input id="tgl_selesai" type="text" name="tgl_selesai"
                                                         class="form-control form-control-sm"

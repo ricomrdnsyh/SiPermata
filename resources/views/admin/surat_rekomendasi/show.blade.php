@@ -35,6 +35,16 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-12">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Tanggal Pelaksanaan</label>
+                                                <input type="text" name="tgl_pelaksanaan"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->tgl_pelaksanaan?->locale('id')->isoFormat('D MMMM YYYY') }}"
+                                                    disabled />
+                                            </div>
+                                        </div>
+
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Keperluan Rekomendasi</label>
