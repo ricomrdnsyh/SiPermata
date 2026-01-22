@@ -134,12 +134,20 @@
                                 </div>
                                 <div class="pt-5 border-top border-gray-200 d-flex justify-content-end">
                                     @if ($pengajuan->status === 'proses')
-                                        <button type="button" class="btn btn-sm btn-danger" id="btn-reject-main">
+                                        <button type="button" class="btn btn-sm btn-danger me-3" id="btn-reject-main">
                                             <i class="fas fa-times"></i> Tolak Pengajuan
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-success ms-3" id="btn-approve-main">
+                                        <a href="{{ route('dekan.surat.lampiran_preview', ['tabel' => $pengajuan->tabel, 'id' => $pengajuan->id_tabel_surat]) }}"
+                                            class="btn btn-sm btn-primary" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-eye"></i> Periksa Surat
+                                        </a>
+                                        {{-- <button type="button" class="btn btn-sm btn-success ms-3" id="btn-approve-main">
                                             <i class="fas fa-check-circle"></i>
                                             Terima Pengajuan
+                                        </button> --}}
+                                        <button type="button" class="btn btn-sm btn-success ms-3" id="btn-approve-send">
+                                            <i class="fas fa-paper-plane"></i>
+                                            Terima & Kirim Surat ke Mahasiswa
                                         </button>
                                     @elseif($pengajuan->status === 'diterima')
                                         @if (isset($fileGeneratedPath) && $fileGeneratedPath && $pengajuan->id_tabel_surat)
@@ -151,7 +159,7 @@
                                                 <i class="fas fa-file-alt"></i> Lihat Surat
                                             </a>
                                             <button type="button" class="btn btn-sm btn-success ms-3" id="btn-kirim-surat">
-                                                <i class="fas fa-external-link-alt"></i> Kirim Surat ke Mahasiswa
+                                                <i class="fas fa-paper-plane"></i> Kirim Surat ke Mahasiswa
                                             </button>
                                         @endif
                                     @elseif($pengajuan->status === 'selesai')
@@ -345,7 +353,7 @@
         <script>
             const pengajuanId = {{ $pengajuan->id_history }};
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            // Terima Pengajuan
+
             document.addEventListener('DOMContentLoaded', function() {
                 const btnApproveMain = document.getElementById('btn-approve-main');
                 if (btnApproveMain) {
@@ -359,7 +367,7 @@
                             cancelButtonText: "Batal",
                             customClass: {
                                 confirmButton: "btn btn-success",
-                                cancelButton: "btn btn-light text-black"
+                                cancelButton: "btn btn-secondary"
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -486,6 +494,87 @@
                                             "error");
                                     });
                             }
+                        });
+                    });
+                }
+
+                // Terima & Kirim Surat
+                const btnApproveSend = document.getElementById('btn-approve-send');
+                if (btnApproveSend) {
+                    btnApproveSend.addEventListener('click', function() {
+                        Swal.fire({
+                            title: "Konfirmasi Terima & Kirim",
+                            text: "Apakah Anda yakin ingin menyetujui pengajuan ini dan langsung mengirim surat ke email mahasiswa?",
+                            icon: "question",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya, Terima & Kirim!",
+                            cancelButtonText: "Batal",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                                cancelButton: "btn btn-secondary"
+                            }
+                        }).then((result) => {
+                            if (!result.isConfirmed) return;
+
+                            Swal.fire({
+                                title: "Mohon Tunggu..",
+                                icon: "info",
+                                text: 'Memproses persetujuan & pengiriman email...',
+                                allowOutsideClick: false,
+                                didOpen: () => Swal.showLoading()
+                            });
+
+                            const approveUrl = "{{ route('dekan.history.approve', ':id') }}".replace(
+                                ':id', pengajuanId);
+                            const sendUrl =
+                                "{{ route('dekan.surat.send', ['tabel' => ':tabel', 'id' => ':id']) }}"
+                                .replace(':tabel', tabelSurat)
+                                .replace(':id', idSurat);
+
+                            fetch(approveUrl, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken,
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (!data.success) {
+                                        Swal.fire("Gagal!", data.message ||
+                                            "Gagal menyetujui pengajuan.", "error");
+                                        return;
+                                    }
+
+                                    return fetch(sendUrl, {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': csrfToken,
+                                                'Content-Type': 'application/json'
+                                            }
+                                        })
+                                        .then(r => r.json())
+                                        .then(sendRes => {
+                                            if (sendRes.success) {
+                                                Swal.fire("Berhasil!",
+                                                        "Pengajuan disetujui dan surat berhasil dikirim ke email mahasiswa.",
+                                                        "success")
+                                                    .then(() => window.location.reload());
+                                            } else {
+                                                Swal.fire(
+                                                    "Sebagian Berhasil",
+                                                    (sendRes.message ||
+                                                        "Pengajuan sudah disetujui, tetapi pengiriman email gagal. Silakan coba tombol 'Kirim Surat ke Mahasiswa' setelah ini."
+                                                    ),
+                                                    "warning"
+                                                ).then(() => window.location.reload());
+                                            }
+                                        });
+                                })
+                                .catch(() => {
+                                    Swal.fire("Gagal!", "Terjadi kesalahan jaringan atau server.",
+                                        "error");
+                                });
                         });
                     });
                 }

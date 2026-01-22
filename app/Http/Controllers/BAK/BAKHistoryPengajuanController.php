@@ -606,7 +606,7 @@ class BAKHistoryPengajuanController extends Controller
         $docAbs = Storage::disk($disk)->path($docRel);
 
         $lastMod = Storage::disk($disk)->lastModified($docRel);
-        $cacheRelDir = "preview_bak/{$tabel}";
+        $cacheRelDir = "preview_surat/{$tabel}";
         $cacheRelPdf = "{$cacheRelDir}/{$id}_{$lastMod}.pdf";
 
         Storage::disk($disk)->makeDirectory($cacheRelDir);
@@ -625,9 +625,9 @@ class BAKHistoryPengajuanController extends Controller
             $cmd = 'libreoffice --headless --convert-to pdf --outdir ' . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
 
             // Windows
-            $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
-            $cmd = $soffice . ' --headless --convert-to pdf --outdir '
-                . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
+            // $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
+            // $cmd = $soffice . ' --headless --convert-to pdf --outdir '
+            //     . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
 
             exec($cmd . ' 2>&1', $output, $code);
 

@@ -189,6 +189,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/history/{id}/approve', [DekanHistoryPengajuanController::class, 'approve'])->name('history.approve');
         Route::post('/history/{id}/reject', [DekanHistoryPengajuanController::class, 'reject'])->name('history.reject');
         Route::get('surat/view/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
+        Route::get('/surat/lampiran-preview/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'previewLampiranPdf'])
+            ->name('surat.lampiran_preview');
         Route::post('surat/kirim/{tabel}/{id}', [DekanHistoryPengajuanController::class, 'sendEmailMahasiswa'])->name('surat.send');
 
         Route::post('/dekan/history/bulk-approve', [DekanHistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
