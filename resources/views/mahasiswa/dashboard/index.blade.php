@@ -64,6 +64,12 @@
                                         Jika Tempat Penelitian, Tempat Observasi, dan Tempat PKL Tidak Ada Pada Form
                                         Pengajuan,
                                         Silahkan Menghubungi BAK Fakultas Untuk Menambahkan!
+                                        <br>
+                                        <strong>Informasi lainnya bisa akses:</strong>
+                                        <a href="https://sipermata.unuja.ac.id/" target="_blank"
+                                            class="text-primary fw-bold text-decoration-underline">
+                                            https://sipermata.unuja.ac.id
+                                        </a>
                                     </span>
                                 </div>
                             </div>
