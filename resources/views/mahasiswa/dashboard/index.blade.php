@@ -38,7 +38,13 @@
                                             <br>
                                             Cek status pengajuanmu atau segera buat pengajuan surat baru!
                                         </div>
+
+                                        <a href="{{ asset('panduan.pdf') }}" target="_blank" rel="noopener noreferrer"
+                                            class="btn btn-sm btn-light fw-semibold position-relative z-index-2">
+                                            <i class="fas fa-book-open me-2"></i> Buku Panduan
+                                        </a>
                                     </div>
+
                                     <img src="{{ asset('assets/media/illustrations/sigma-1/17-dark.png') }}"
                                         class="d-none d-md-block position-absolute me-3 bottom-0 end-0 h-200px"
                                         alt="">
@@ -46,6 +52,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="row gx-5 gx-xl-10">
                         <div class="col-12 mb-6">

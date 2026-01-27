@@ -504,10 +504,9 @@ class HistoryPengajuanController extends Controller
         }
 
 
-        $jenisTabel   = $pengajuan->tabel; // Contoh: 'surat_aktif' atau 'surat_izin_penelitian'
-        $idSuratUtama = $pengajuan->id_tabel_surat; // ID surat di tabel utama
+        $jenisTabel   = $pengajuan->tabel;
+        $idSuratUtama = $pengajuan->id_tabel_surat;
 
-        // Cek ketersediaan mapping
         if (!isset($this->suratModels[$jenisTabel])) {
             return response()->json(['success' => false, 'message' => "Jenis surat '{$jenisTabel}' tidak ditemukan dalam daftar mapping."], 400);
         }
@@ -520,7 +519,7 @@ class HistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => "Data surat utama tidak ditemukan."], 404);
         }
 
-        $catatanPenolakan = 'Ditolak oleh BAK: ' . $request->catatan;
+        $catatanPenolakan = 'Ditolak oleh Admin: ' . $request->catatan;
 
         $pengajuan->update([
             'status'  => 'ditolak',
@@ -543,6 +542,85 @@ class HistoryPengajuanController extends Controller
         $namaSurat = ucwords(str_replace(['_', 'surat'], [' ', ''], $jenisTabel));
 
         return response()->json(['success' => true, 'message' => "Pengajuan Surat {$namaSurat} berhasil ditolak!"]);
+    }
+
+    public function previewLampiranPdf(string $tabel, int $id): Response
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin') abort(403);
+
+        $modelClass = $this->getModelClass($tabel);
+        if (!$modelClass) abort(404, 'Jenis surat tidak valid.');
+
+        $surat = $modelClass::findOrFail($id);
+
+        $disk = 'local';
+        $docRel = $surat->file_generated ?? null;
+        if (!$docRel) return response('Lampiran tidak ditemukan.', 404);
+
+        if (!Storage::disk($disk)->exists($docRel)) {
+            return response('File lampiran di server tidak ditemukan.', 404);
+        }
+
+        $docAbs = Storage::disk($disk)->path($docRel);
+
+        $lastMod = Storage::disk($disk)->lastModified($docRel);
+        $cacheRelDir = "preview_surat/{$tabel}";
+        $cacheRelPdf = "{$cacheRelDir}/{$id}_{$lastMod}.pdf";
+
+        Storage::disk($disk)->makeDirectory($cacheRelDir);
+
+        if (!Storage::disk($disk)->exists($cacheRelPdf)) {
+            $cacheAbsDir = Storage::disk($disk)->path($cacheRelDir);
+
+            $all = Storage::disk($disk)->files($cacheRelDir);
+            foreach ($all as $f) {
+                if (str_starts_with(basename($f), $id . "_") && str_ends_with($f, ".pdf")) {
+                    Storage::disk($disk)->delete($f);
+                }
+            }
+
+            // Linux
+            $cmd = 'libreoffice --headless --convert-to pdf --outdir ' . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
+
+            // Windows
+            // $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
+            // $cmd = $soffice . ' --headless --convert-to pdf --outdir '
+            //     . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
+
+            exec($cmd . ' 2>&1', $output, $code);
+
+            if ($code !== 0) {
+                Log::error('Gagal konversi DOCX->PDF', [
+                    'code' => $code,
+                    'output' => $output,
+                    'cmd' => $cmd,
+                ]);
+                return response("Gagal konversi DOCX->PDF:\n" . implode("\n", $output), 500);
+            }
+
+            $baseName = pathinfo($docAbs, PATHINFO_FILENAME);
+            $generatedAbs = $cacheAbsDir . DIRECTORY_SEPARATOR . $baseName . '.pdf';
+
+            if (!file_exists($generatedAbs)) {
+                return response('PDF hasil konversi tidak ditemukan.', 500);
+            }
+
+            $finalAbs = Storage::disk($disk)->path($cacheRelPdf);
+            @rename($generatedAbs, $finalAbs);
+
+            if (!file_exists($finalAbs)) {
+                Storage::disk($disk)->put($cacheRelPdf, file_get_contents($generatedAbs));
+                @unlink($generatedAbs);
+            }
+        }
+
+        $pdfAbs = Storage::disk($disk)->path($cacheRelPdf);
+
+        return response()->file($pdfAbs, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="PREVIEW_' . $tabel . '_' . $id . '.pdf"',
+        ]);
     }
 
     public function viewGeneratedFile(string $tabel, int $id): Response

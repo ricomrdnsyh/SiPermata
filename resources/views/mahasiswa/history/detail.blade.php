@@ -5,10 +5,12 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
+
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
         .summary-pill {
             padding: 0.65rem 1.2rem;
             border-radius: 999px;
@@ -70,18 +72,23 @@
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
+
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui Dekan</span>
                                                             @break
+
                                                             @case('proses')
                                                                 <span class="badge bg-info">Diproses</span>
                                                             @break
+
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Menunggu Verifikasi</span>
                                                             @break
+
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
+
                                                             @default
                                                                 <span class="badge bg-secondary">
                                                                     {{ ucfirst($pengajuan->status) }}
@@ -138,7 +145,7 @@
                                                 'id' => $pengajuan->id_tabel_surat,
                                             ]) }}"
                                                 class="btn btn-sm btn-light-primary" target="_blank">
-                                                <i class="fas fa-cloud-download-alt"></i> Lihat Surat
+                                                <i class="fas fa-file-alt"></i> Lihat Surat
                                             </a>
                                         @endif
                                     @else
@@ -177,18 +184,23 @@
                                                             @case('pengajuan')
                                                                 <span class="badge bg-warning">Diajukan</span>
                                                             @break
+
                                                             @case('proses')
                                                                 <span class="badge bg-info">Diproses</span>
                                                             @break
+
                                                             @case('diterima')
                                                                 <span class="badge bg-success">Disetujui Dekan</span>
                                                             @break
+
                                                             @case('selesai')
                                                                 <span class="badge bg-primary">Selesai</span>
                                                             @break
+
                                                             @case('ditolak')
                                                                 <span class="badge bg-danger">Ditolak</span>
                                                             @break
+
                                                             @default
                                                                 <span class="badge bg-secondary">
                                                                     {{ ucfirst($log->status) }}
