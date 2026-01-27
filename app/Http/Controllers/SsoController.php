@@ -49,7 +49,7 @@ class SsoController extends Controller
                     $phpSessionId = $request->session()->getId();
 
                     $data = [
-                        "logout" => "http://sipermata.unuja.ac.id:8080/sso/logout/".$phpSessionId,
+                        "logout" => "http://sipermata.unuja.ac.id:8080/sso/logout/" . $phpSessionId,
                     ];
                     $this->makeCurlRequest($callbackUrl, $access_token, $xToken, $UserAgent, $data);
                     $request->session()->put('logout_session', $logoutUrl);
@@ -58,28 +58,34 @@ class SsoController extends Controller
                     return "Coba Kembali, Akses Anda Gagal";
                 }
             } else if (isset($responseData['id_penduduk'])) {
+
                 $user = User::where('identifier', $responseData['id_penduduk'])->first();
-                if (Auth::loginUsingId($user->id, $request->get('remember'))) {
-                    $callbackUrl = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['callback_session']);
-                    $logoutUrl = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['logout_session']);
 
-                    $phpSessionId = $request->session()->getId();
-
-                    $data = [
-                        "logout" => "http://sipermata.unuja.ac.id:8080/sso/logout/".$phpSessionId,
-                    ];
-                    $this->makeCurlRequest($callbackUrl, $access_token, $xToken, $UserAgent, $data);
-                    $request->session()->put('logout_session', $logoutUrl);
-                    return match ($user->role) {
-                        'BAK'       => redirect()->route('bak.dashboard'),
-                        'DEKAN'     => redirect()->route('dekan.dashboard'),
-                        'admin'     => redirect()->route('admin.dashboard'),
-                        default     => redirect('/login'),
-                    };
-                } else {
-                    return "Coba Kembali, Akses Anda Gagal";
+                if (!$user) {
+                    abort(401, 'User belum terdaftar / tidak punya akses.');
                 }
-            }else {
+
+                Auth::login($user, $request->boolean('remember'));
+
+                $callbackUrl = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['callback_session']);
+                $logoutUrl   = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['logout_session']);
+
+                $phpSessionId = $request->session()->getId();
+
+                $data = [
+                    "logout" => "http://sipermata.unuja.ac.id:8080/sso/logout/" . $phpSessionId,
+                ];
+
+                $this->makeCurlRequest($callbackUrl, $access_token, $xToken, $UserAgent, $data);
+                $request->session()->put('logout_session', $logoutUrl);
+
+                return match ($user->role) {
+                    'BAK'   => redirect()->route('bak.dashboard'),
+                    'DEKAN' => redirect()->route('dekan.dashboard'),
+                    'admin' => redirect()->route('admin.dashboard'),
+                    default => redirect('/login'),
+                };
+            } else {
                 return response()->json(['error' => 'Invalid user data'], 400);
             }
         } else {
@@ -140,4 +146,3 @@ class SsoController extends Controller
         return $decodedResponse;
     }
 }
-
