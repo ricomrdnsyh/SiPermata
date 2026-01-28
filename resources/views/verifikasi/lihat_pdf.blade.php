@@ -112,11 +112,23 @@
                                     <div class="text-gray-600">Informasi legalitas surat berdasarkan data sistem.</div>
                                 </div>
 
-                                <div class="mt-4 mt-md-0">
+                                <div class="mt-4 mt-md-0 d-flex gap-2 align-items-center">
                                     <span class="badge badge-light-success fs-7 px-4 py-2">
                                         <i class="fas fa-shield-alt icon-success me-2"></i>
                                         VALID (SISTEM)
                                     </span>
+
+                                    @if (!empty($preview_url))
+                                        <a href="{{ $preview_url }}" class="btn btn-sm btn-primary" target="_blank"
+                                            rel="noopener noreferrer">
+                                            <i class="fas fa-file-alt me-2"></i>Lihat Surat Asli
+                                        </a>
+                                    @else
+                                        <span class="badge badge-light-warning fs-7 px-4 py-2">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            File belum tersedia
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
 
@@ -207,7 +219,8 @@
                                                         <i class="fas fa-hashtag icon-muted me-2"></i> Nomor Surat
                                                     </div>
                                                     <div class="fw-bold text-gray-900 fs-5" id="noSuratText">
-                                                        {{ $noSurat }}</div>
+                                                        {{ $noSurat }}
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -215,8 +228,7 @@
                                                 <table class="table table-row-dashed align-middle gs-0 gy-3 kv mb-0">
                                                     <tr>
                                                         <td class="fw-semibold"><i
-                                                                class="fas fa-tag icon-muted me-2"></i>Jenis Surat
-                                                        </td>
+                                                                class="fas fa-tag icon-muted me-2"></i>Jenis Surat</td>
                                                         <td class="text-gray-900 fw-bold">
                                                             {{ $data['jenis_surat'] ?? '-' }}</td>
                                                     </tr>
@@ -278,8 +290,7 @@
                                                     </div>
                                                     <div class="text-gray-600">
                                                         <i class="fas fa-briefcase icon-muted me-2"></i>Direktur/Dekan
-                                                        Fakultas
-                                                        {{ $fakultas }}
+                                                        Fakultas {{ $fakultas }}
                                                     </div>
                                                 </div>
 
@@ -299,9 +310,7 @@
 
                                             <div class="text-gray-600 fs-8">
                                                 <i class="fas fa-exclamation-triangle icon-warning me-2"></i>
-                                                Catatan: Halaman ini menampilkan ringkasan legalitas surat. Jika
-                                                diperlukan,
-                                                verifikasi silang dapat dilakukan melalui sistem internal.
+                                                Catatan: Halaman ini menampilkan ringkasan legalitas surat resmi.
                                             </div>
                                         </div>
                                     </div>

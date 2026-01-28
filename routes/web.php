@@ -65,21 +65,33 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/verifikasi/surat-aktif/{id}', [VerifikasiController::class, 'verifySuratAktif'])
     ->name('verifikasi.surat-aktif');
+Route::get('/verifikasi/surat-aktif/{id}/preview', [VerifikasiController::class, 'previewSuratAktif'])
+    ->name('verifikasi.aktif.preview');
 
 Route::get('/verifikasi/surat-izin-penelitian/{id}', [VerifikasiController::class, 'verifySuratPenelitian'])
     ->name('verifikasi.surat-izin-penelitian');
+Route::get('/verifikasi/surat-izin-penelitian/{id}/preview', [VerifikasiController::class, 'previewSuratPenelitian'])
+    ->name('verifikasi.penelitian.preview');
 
 Route::get('/verifikasi/surat-rekomendasi/{id}', [VerifikasiController::class, 'verifySuratRekomendasi'])
     ->name('verifikasi.surat-rekomendasi');
+Route::get('/verifikasi/surat-rekomendasi/{id}/preview', [VerifikasiController::class, 'previewSuratRekomendasi'])
+    ->name('verifikasi.rekomendasi.preview');
 
 Route::get('/verifikasi/surat-pkl/{id}', [VerifikasiController::class, 'verifySuratPKL'])
     ->name('verifikasi.surat-pkl');
+Route::get('/verifikasi/surat-pkl/{id}/preview', [VerifikasiController::class, 'previewSuratPKL'])
+    ->name('verifikasi.pkl.preview');
 
 Route::get('/verifikasi/surat-observasi/{id}', [VerifikasiController::class, 'verifySuratObservasi'])
     ->name('verifikasi.surat-observasi');
+Route::get('/verifikasi/surat-observasi/{id}/preview', [VerifikasiController::class, 'previewSuratObservasi'])
+    ->name('verifikasi.observasi.preview');
 
 Route::get('/verifikasi/surat-keterangan-lulus/{id}', [VerifikasiController::class, 'verifySuratLulus'])
     ->name('verifikasi.surat-keterangan-lulus');
+Route::get('/verifikasi/surat-keterangan-lulus/{id}/preview', [VerifikasiController::class, 'previewSuratLulus'])
+    ->name('verifikasi.lulus.preview');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {

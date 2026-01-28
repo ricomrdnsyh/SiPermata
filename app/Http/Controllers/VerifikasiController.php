@@ -12,6 +12,7 @@ use App\Models\SuratPenelitian;
 use App\Models\SuratRekomendasi;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Storage;
 
 class VerifikasiController extends Controller
 {
@@ -66,11 +67,9 @@ class VerifikasiController extends Controller
 
         $tahunAkademik = optional($surat->akademik)->tahun_akademik ?? '-';
 
-        // ambil fakultas_id yang konsisten
         $fakultasId = data_get($surat, 'template.fakultas_id')
             ?? data_get($mhs, 'fakultas_id');
 
-        // ambil TTD sesuai approve
         $ttd = TtdSurat::where('fakultas_id', $fakultasId)
             ->where('template_id', $surat->template_id)
             ->where('status', 'aktif')
@@ -79,7 +78,6 @@ class VerifikasiController extends Controller
         $penandatangan = $ttd->nama_ttd ?? '-';
         $nidn          = $ttd->nidn ?? '-';
 
-        // jabatan: kalau belum punya sumber tabel, set default
         $jabatan = 'Dekan';
 
         return [
@@ -98,9 +96,7 @@ class VerifikasiController extends Controller
         ];
     }
 
-
-
-    protected function verifyGeneric(string $id, string $modelClass, string $pkField, string $jenis)
+    protected function findSuratByAnyId(string $id, string $modelClass, string $pkField)
     {
         try {
             $decryptedId = Crypt::decryptString($id);
@@ -108,12 +104,12 @@ class VerifikasiController extends Controller
             $decryptedId = null;
         }
 
-        $surat = $modelClass::with([
+        return $modelClass::with([
             'mahasiswa.fakultas',
             'mahasiswa.prodi',
             'akademik',
-            'template.ttdSurat',        // penting untuk ambil nama ttd
-            'template.ttdSurat.fakultas', // optional
+            'template.ttdSurat',
+            'template.ttdSurat.fakultas',
         ])
             ->where(function ($q) use ($id, $decryptedId, $pkField) {
                 if ($decryptedId !== null) {
@@ -123,6 +119,48 @@ class VerifikasiController extends Controller
                     ->orWhere('no_surat', $id);
             })
             ->first();
+    }
+
+    protected function sanitizeStoragePath(?string $path): ?string
+    {
+        if (!$path) return null;
+
+        $p = str_replace('\\', '/', $path);
+        $p = ltrim($p, '/');
+
+        if (str_contains($p, '..')) return null;
+
+        return $p;
+    }
+
+    protected function buildPdfName($surat, string $jenis): string
+    {
+        $nim = data_get($surat, 'mahasiswa.nim') ?? ($surat->nim ?? 'NoNIM');
+        $no  = $surat->no_surat ?? $jenis;
+
+        $nim = preg_replace('/[^A-Za-z0-9_\-]/', '_', (string) $nim);
+        $no  = preg_replace('/[^A-Za-z0-9_\-]/', '_', (string) $no);
+
+        return strtoupper($jenis) . '_' . $nim . '_' . $no . '.pdf';
+    }
+
+    protected function previewRouteName(string $jenis): ?string
+    {
+        $map = [
+            'aktif'       => 'verifikasi.aktif.preview',
+            'penelitian'  => 'verifikasi.penelitian.preview',
+            'rekomendasi' => 'verifikasi.rekomendasi.preview',
+            'pkl'         => 'verifikasi.pkl.preview',
+            'observasi'   => 'verifikasi.observasi.preview',
+            'lulus'       => 'verifikasi.lulus.preview',
+        ];
+
+        return $map[$jenis] ?? null;
+    }
+
+    protected function verifyGeneric(string $id, string $modelClass, string $pkField, string $jenis)
+    {
+        $surat = $this->findSuratByAnyId($id, $modelClass, $pkField);
 
         if (! $surat) {
             return $this->gagal(null, 'Surat tidak ditemukan.');
@@ -132,11 +170,49 @@ class VerifikasiController extends Controller
             return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
         }
 
+        $filePath = $this->sanitizeStoragePath($surat->file_generated ?? null);
+        $hasFile = $filePath && Storage::disk('local')->exists($filePath);
+
+        $routeName = $this->previewRouteName($jenis);
+        $previewUrl = ($hasFile && $routeName) ? route($routeName, ['id' => $id]) : null;
+
         return view('verifikasi.lihat_pdf', [
             'data' => $this->legalitasPayload($surat, $jenis),
+            'preview_url' => $previewUrl,
+            'has_file' => $hasFile,
         ]);
     }
 
+    protected function previewGeneric(string $id, string $modelClass, string $pkField, string $jenis)
+    {
+        $surat = $this->findSuratByAnyId($id, $modelClass, $pkField);
+
+        if (! $surat) {
+            return $this->gagal(null, 'Surat tidak ditemukan.');
+        }
+
+        if (! $this->isSuratApproved($surat)) {
+            return $this->gagal($surat, 'Surat belum disetujui atau masih dalam proses.');
+        }
+
+        $filePath = $this->sanitizeStoragePath($surat->file_generated ?? null);
+
+        if (!$filePath) {
+            return $this->gagal($surat, 'File surat belum tersedia.');
+        }
+
+        if (!Storage::disk('local')->exists($filePath)) {
+            return $this->gagal($surat, 'File di server tidak ditemukan.');
+        }
+
+        $absolutePath = Storage::disk('local')->path($filePath);
+        $fileName = $this->buildPdfName($surat, $jenis);
+
+        return response()->file($absolutePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
+    }
 
     public function verifySuratAktif(string $id)
     {
@@ -166,5 +242,35 @@ class VerifikasiController extends Controller
     public function verifySuratLulus(string $id)
     {
         return $this->verifyGeneric($id, SuratLulus::class, 'id_surat_lulus', 'lulus');
+    }
+
+    public function previewSuratAktif(string $id)
+    {
+        return $this->previewGeneric($id, SuratAktif::class, 'id_surat_aktif', 'aktif');
+    }
+
+    public function previewSuratPenelitian(string $id)
+    {
+        return $this->previewGeneric($id, SuratPenelitian::class, 'id_surat_izin_penelitian', 'penelitian');
+    }
+
+    public function previewSuratRekomendasi(string $id)
+    {
+        return $this->previewGeneric($id, SuratRekomendasi::class, 'id_surat_rekomendasi', 'rekomendasi');
+    }
+
+    public function previewSuratPKL(string $id)
+    {
+        return $this->previewGeneric($id, SuratPKL::class, 'id_surat_pkl', 'pkl');
+    }
+
+    public function previewSuratObservasi(string $id)
+    {
+        return $this->previewGeneric($id, SuratObservasi::class, 'id_surat_observasi', 'observasi');
+    }
+
+    public function previewSuratLulus(string $id)
+    {
+        return $this->previewGeneric($id, SuratLulus::class, 'id_surat_lulus', 'lulus');
     }
 }
