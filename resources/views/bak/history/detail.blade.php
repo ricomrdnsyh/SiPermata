@@ -340,7 +340,8 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const pengajuanId = {{ $pengajuan->id_history }};
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                // Approve
+                const historyIndexUrl = "{{ route('bak.history.index') }}";
+
                 const btnApprove = document.getElementById('btn-approve-main');
                 if (btnApprove) {
                     btnApprove.addEventListener('click', function() {
@@ -358,12 +359,13 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 Swal.fire({
+                                    title: "Tunggu Sebentar..",
+                                    icon: "info",
                                     text: 'Memproses persetujuan...',
                                     allowOutsideClick: false,
-                                    didOpen: () => {
-                                        Swal.showLoading();
-                                    }
+                                    didOpen: () => Swal.showLoading()
                                 });
+
                                 fetch("{{ route('bak.history.approve', ':id') }}".replace(':id',
                                         pengajuanId), {
                                         method: 'POST',
@@ -384,7 +386,7 @@
                                                     confirmButton: "btn btn-primary"
                                                 }
                                             }).then(() => {
-                                                window.location.reload();
+                                                window.location.href = historyIndexUrl;
                                             });
                                         } else {
                                             Swal.fire({
@@ -414,7 +416,7 @@
                         });
                     });
                 }
-                // Buka modal reject
+
                 const btnReject = document.getElementById('btn-reject-main');
                 if (btnReject) {
                     btnReject.addEventListener('click', function() {
@@ -424,21 +426,26 @@
                         rejectModal.show();
                     });
                 }
-                // Submit reject
+
                 document.getElementById('btn-submit-reject').addEventListener('click', function() {
                     const reason = document.getElementById('rejectReason').value.trim();
                     const errorDiv = document.getElementById('rejectError');
+
                     if (!reason) {
                         errorDiv.textContent = 'Catatan penolakan wajib diisi.';
                         errorDiv.style.display = 'block';
                         return;
                     }
+
                     errorDiv.style.display = 'none';
+
                     const submitBtn = this;
                     const label = submitBtn.querySelector('.indicator-label');
                     const progress = submitBtn.querySelector('.indicator-progress');
+
                     label.style.display = 'none';
                     progress.style.display = 'inline-block';
+
                     fetch("{{ route('bak.history.reject', ':id') }}".replace(':id', pengajuanId), {
                             method: 'POST',
                             headers: {
@@ -454,6 +461,7 @@
                             const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
                                 'rejectReasonModal'));
                             rejectModal.hide();
+
                             if (data.success) {
                                 Swal.fire({
                                     text: data.message,
@@ -464,7 +472,7 @@
                                         confirmButton: "btn btn-primary"
                                     }
                                 }).then(() => {
-                                    window.location.reload();
+                                    window.location.href = historyIndexUrl;
                                 });
                             } else {
                                 Swal.fire({
@@ -482,6 +490,7 @@
                             const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
                                 'rejectReasonModal'));
                             rejectModal.hide();
+
                             Swal.fire({
                                 text: 'Terjadi kesalahan saat menolak.',
                                 icon: "error",
@@ -499,4 +508,5 @@
                 });
             });
         </script>
+
     @endsection

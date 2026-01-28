@@ -351,10 +351,69 @@
     @endsection
     @section('js')
         <script>
-            const pengajuanId = {{ $pengajuan->id_history }};
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
             document.addEventListener('DOMContentLoaded', function() {
+                const pengajuanId = {{ $pengajuan->id_history }};
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                const historyIndexUrl = "{{ route('dekan.history.index') }}";
+                const tabelSurat = "{{ $pengajuan->tabel }}";
+                const idSurat = "{{ $pengajuan->id_tabel_surat }}";
+
+                const approveUrl = "{{ route('dekan.history.approve', ':id') }}".replace(':id', pengajuanId);
+                const rejectUrl = "{{ route('dekan.history.reject', ':id') }}".replace(':id', pengajuanId);
+                const sendUrl = "{{ route('dekan.surat.send', ['tabel' => ':tabel', 'id' => ':id']) }}"
+                    .replace(':tabel', tabelSurat)
+                    .replace(':id', idSurat);
+
+                const jsonHeaders = {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json'
+                };
+
+                const showLoading = (text) => {
+                    Swal.fire({
+                        title: "Tunggu Sebentar..",
+                        icon: "info",
+                        text,
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                };
+
+                const showSuccessRedirect = (message) => {
+                    Swal.fire({
+                        text: message,
+                        icon: "success",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn btn-primary"
+                        }
+                    }).then(() => {
+                        window.location.href = historyIndexUrl;
+                    });
+                };
+
+                const showError = (message) => {
+                    Swal.fire({
+                        text: message,
+                        icon: "error",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn btn-danger"
+                        }
+                    });
+                };
+
+                const postJson = (url, body = null) => {
+                    const opts = {
+                        method: 'POST',
+                        headers: jsonHeaders
+                    };
+                    if (body !== null) opts.body = JSON.stringify(body);
+                    return fetch(url, opts).then(r => r.json());
+                };
+
                 const btnApproveMain = document.getElementById('btn-approve-main');
                 if (btnApproveMain) {
                     btnApproveMain.addEventListener('click', function() {
@@ -370,77 +429,78 @@
                                 cancelButton: "btn btn-secondary"
                             }
                         }).then((result) => {
-                            if (result.isConfirmed) {
-                                Swal.fire({
-                                    text: 'Memproses persetujuan...',
-                                    allowOutsideClick: false,
-                                    didOpen: () => {
-                                        Swal.showLoading();
-                                    }
-                                });
-                                fetch("{{ route('dekan.history.approve', ':id') }}".replace(':id',
-                                        pengajuanId), {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': csrfToken,
-                                            'Content-Type': 'application/json'
-                                        }
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            Swal.fire({
-                                                text: data.message,
-                                                icon: "success",
-                                                buttonsStyling: false,
-                                                confirmButtonText: "Ok, got it!",
-                                                customClass: {
-                                                    confirmButton: "btn btn-primary"
-                                                }
-                                            }).then(() => {
-                                                window.location.reload();
-                                            });
-                                        } else {
-                                            Swal.fire({
-                                                text: data.message ||
-                                                    'Terjadi kesalahan saat menyetujui.',
-                                                icon: "error",
-                                                buttonsStyling: false,
-                                                confirmButtonText: "Ok, got it!",
-                                                customClass: {
-                                                    confirmButton: "btn btn-danger"
-                                                }
-                                            });
-                                        }
-                                    })
-                                    .catch(error => {
-                                        Swal.fire({
-                                            text: 'Terjadi kesalahan saat menyetujui.',
-                                            icon: "error",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, got it!",
-                                            customClass: {
-                                                confirmButton: "btn btn-danger"
-                                            }
-                                        });
-                                    });
-                            }
+                            if (!result.isConfirmed) return;
+
+                            showLoading('Memproses persetujuan...');
+                            postJson(approveUrl)
+                                .then(data => {
+                                    if (data.success) return showSuccessRedirect(data.message);
+                                    showError(data.message || 'Terjadi kesalahan saat menyetujui.');
+                                })
+                                .catch(() => showError('Terjadi kesalahan saat menyetujui.'));
                         });
                     });
                 }
-                // Tolak Pengajuan
+
                 const btnRejectMain = document.getElementById('btn-reject-main');
                 if (btnRejectMain) {
                     btnRejectMain.addEventListener('click', function() {
-                        document.getElementById('rejectReason').value = '';
-                        document.getElementById('rejectError').style.display = 'none';
-                        const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'));
-                        rejectModal.show();
+                        const reasonEl = document.getElementById('rejectReason');
+                        const errEl = document.getElementById('rejectError');
+                        if (reasonEl) reasonEl.value = '';
+                        if (errEl) errEl.style.display = 'none';
+
+                        const modalEl = document.getElementById('rejectReasonModal');
+                        if (modalEl) new bootstrap.Modal(modalEl).show();
                     });
                 }
-                // Kirim Surat ke Mahasiswa
-                const tabelSurat = "{{ $pengajuan->tabel }}";
-                const idSurat = "{{ $pengajuan->id_tabel_surat }}";
+
+                const btnSubmitReject = document.getElementById('btn-submit-reject');
+                if (btnSubmitReject) {
+                    btnSubmitReject.addEventListener('click', function() {
+                        const reasonEl = document.getElementById('rejectReason');
+                        const errEl = document.getElementById('rejectError');
+                        const reason = (reasonEl?.value || '').trim();
+
+                        if (!reason) {
+                            if (errEl) {
+                                errEl.textContent = 'Catatan penolakan wajib diisi.';
+                                errEl.style.display = 'block';
+                            }
+                            return;
+                        }
+                        if (errEl) errEl.style.display = 'none';
+
+                        const submitBtn = this;
+                        const label = submitBtn.querySelector('.indicator-label');
+                        const progress = submitBtn.querySelector('.indicator-progress');
+                        if (label) label.style.display = 'none';
+                        if (progress) progress.style.display = 'inline-block';
+
+                        postJson(rejectUrl, {
+                                catatan: reason
+                            })
+                            .then(data => {
+                                const modalEl = document.getElementById('rejectReasonModal');
+                                const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
+                                if (modal) modal.hide();
+
+                                if (data.success) return showSuccessRedirect(data.message);
+                                showError(data.message || 'Terjadi kesalahan saat menolak.');
+                            })
+                            .catch(() => {
+                                const modalEl = document.getElementById('rejectReasonModal');
+                                const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
+                                if (modal) modal.hide();
+                                showError('Terjadi kesalahan saat menolak.');
+                            })
+                            .finally(() => {
+                                if (label) label.style.display = 'inline';
+                                if (progress) progress.style.display = 'none';
+                            });
+                    });
+                }
+
                 const btnKirimSurat = document.getElementById('btn-kirim-surat');
                 if (btnKirimSurat) {
                     btnKirimSurat.addEventListener('click', function() {
@@ -456,49 +516,26 @@
                                 cancelButton: "btn btn-light text-black"
                             }
                         }).then((result) => {
-                            if (result.isConfirmed) {
-                                Swal.fire({
-                                    text: 'Memproses pengiriman email...',
-                                    allowOutsideClick: false,
-                                    didOpen: () => {
-                                        Swal.showLoading();
+                            if (!result.isConfirmed) return;
+
+                            showLoading('Memproses pengiriman email...');
+                            postJson(sendUrl)
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire("Berhasil!", data.message, "success").then(() => {
+                                            window.location.href = historyIndexUrl;
+                                        });
+                                        return;
                                     }
-                                });
-                                const sendUrl =
-                                    "{{ route('dekan.surat.send', ['tabel' => ':tabel', 'id' => ':id']) }}"
-                                    .replace(':tabel', tabelSurat)
-                                    .replace(':id', idSurat);
-                                fetch(sendUrl, {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': csrfToken,
-                                            'Content-Type': 'application/json'
-                                        }
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            Swal.fire("Berhasil!", data.message, "success").then(
-                                                () => {
-                                                    window.location.reload();
-                                                });
-                                        } else {
-                                            Swal.fire("Gagal!", data.message ||
-                                                'Terjadi kesalahan saat mengirim email.',
-                                                "error");
-                                        }
-                                    })
-                                    .catch(error => {
-                                        Swal.fire("Gagal!",
-                                            'Terjadi kesalahan jaringan atau server.',
-                                            "error");
-                                    });
-                            }
+                                    Swal.fire("Gagal!", data.message ||
+                                        'Terjadi kesalahan saat mengirim email.', "error");
+                                })
+                                .catch(() => Swal.fire("Gagal!",
+                                    'Terjadi kesalahan jaringan atau server.', "error"));
                         });
                     });
                 }
 
-                // Terima & Kirim Surat
                 const btnApproveSend = document.getElementById('btn-approve-send');
                 if (btnApproveSend) {
                     btnApproveSend.addEventListener('click', function() {
@@ -516,140 +553,42 @@
                         }).then((result) => {
                             if (!result.isConfirmed) return;
 
-                            Swal.fire({
-                                title: "Mohon Tunggu..",
-                                icon: "info",
-                                text: 'Memproses persetujuan & pengiriman email...',
-                                allowOutsideClick: false,
-                                didOpen: () => Swal.showLoading()
-                            });
-
-                            const approveUrl = "{{ route('dekan.history.approve', ':id') }}".replace(
-                                ':id', pengajuanId);
-                            const sendUrl =
-                                "{{ route('dekan.surat.send', ['tabel' => ':tabel', 'id' => ':id']) }}"
-                                .replace(':tabel', tabelSurat)
-                                .replace(':id', idSurat);
-
-                            fetch(approveUrl, {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': csrfToken,
-                                        'Content-Type': 'application/json'
-                                    }
-                                })
-                                .then(r => r.json())
+                            showLoading('Memproses persetujuan & pengiriman email...');
+                            postJson(approveUrl)
                                 .then(data => {
                                     if (!data.success) {
                                         Swal.fire("Gagal!", data.message ||
                                             "Gagal menyetujui pengajuan.", "error");
+                                        return null;
+                                    }
+                                    return postJson(sendUrl);
+                                })
+                                .then(sendRes => {
+                                    if (!sendRes) return;
+
+                                    if (sendRes.success) {
+                                        Swal.fire(
+                                            "Berhasil!",
+                                            "Pengajuan disetujui dan surat berhasil dikirim ke email mahasiswa.",
+                                            "success"
+                                        ).then(() => window.location.href = historyIndexUrl);
                                         return;
                                     }
 
-                                    return fetch(sendUrl, {
-                                            method: 'POST',
-                                            headers: {
-                                                'X-CSRF-TOKEN': csrfToken,
-                                                'Content-Type': 'application/json'
-                                            }
-                                        })
-                                        .then(r => r.json())
-                                        .then(sendRes => {
-                                            if (sendRes.success) {
-                                                Swal.fire("Berhasil!",
-                                                        "Pengajuan disetujui dan surat berhasil dikirim ke email mahasiswa.",
-                                                        "success")
-                                                    .then(() => window.location.reload());
-                                            } else {
-                                                Swal.fire(
-                                                    "Sebagian Berhasil",
-                                                    (sendRes.message ||
-                                                        "Pengajuan sudah disetujui, tetapi pengiriman email gagal. Silakan coba tombol 'Kirim Surat ke Mahasiswa' setelah ini."
-                                                    ),
-                                                    "warning"
-                                                ).then(() => window.location.reload());
-                                            }
-                                        });
+                                    Swal.fire(
+                                        "Sebagian Berhasil",
+                                        (sendRes.message ||
+                                            "Pengajuan sudah disetujui, tetapi pengiriman email gagal. Silakan coba tombol 'Kirim Surat ke Mahasiswa' setelah ini."
+                                        ),
+                                        "warning"
+                                    ).then(() => window.location.href = historyIndexUrl);
                                 })
-                                .catch(() => {
-                                    Swal.fire("Gagal!", "Terjadi kesalahan jaringan atau server.",
-                                        "error");
-                                });
+                                .catch(() => Swal.fire("Gagal!",
+                                    "Terjadi kesalahan jaringan atau server.", "error"));
                         });
                     });
                 }
             });
-            // Submit penolakan (Modal)
-            const btnSubmitReject = document.getElementById('btn-submit-reject');
-            if (btnSubmitReject) {
-                btnSubmitReject.addEventListener('click', function() {
-                    const reason = document.getElementById('rejectReason').value.trim();
-                    const errorDiv = document.getElementById('rejectError');
-                    if (!reason) {
-                        errorDiv.textContent = 'Catatan penolakan wajib diisi.';
-                        errorDiv.style.display = 'block';
-                        return;
-                    }
-                    errorDiv.style.display = 'none';
-                    const submitBtn = this;
-                    const label = submitBtn.querySelector('.indicator-label');
-                    const progress = submitBtn.querySelector('.indicator-progress');
-                    label.style.display = 'none';
-                    progress.style.display = 'inline-block';
-                    fetch("{{ route('dekan.history.reject', ':id') }}".replace(':id', pengajuanId), {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                catatan: reason
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
-                                'rejectReasonModal'));
-                            rejectModal.hide();
-                            if (data.success) {
-                                Swal.fire({
-                                    text: data.message,
-                                    icon: "success",
-                                    buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
-                                    customClass: {
-                                        confirmButton: "btn btn-primary"
-                                    }
-                                }).then(() => {
-                                    window.location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    text: data.message || 'Terjadi kesalahan saat menolak.',
-                                    icon: "error",
-                                    buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
-                                    customClass: {
-                                        confirmButton: "btn btn-danger"
-                                    }
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            const rejectModal = bootstrap.Modal.getInstance(document.getElementById(
-                                'rejectReasonModal'));
-                            rejectModal.hide();
-                            Swal.fire({
-                                text: 'Terjadi kesalahan saat menolak.',
-                                icon: "error",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-danger"
-                                }
-                            });
-                        })
-                });
-            }
         </script>
+
     @endsection
