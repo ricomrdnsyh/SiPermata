@@ -36,7 +36,7 @@ class SuratRekomendasiGenerator
         $bulanSurat     = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
         $tglPelaksanaan = $tglPelaksanaanCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $penyelenggaraUppercase = strtoupper($surat->penyelenggara);
-        $keperluanTitleCase = ucwords(strtolower($surat->keperluan));
+        $keperluanTitleCase     = ucwords($surat->keperluan);
 
         $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
         $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');

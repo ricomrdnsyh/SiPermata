@@ -33,7 +33,7 @@ class SuratAktifGenerator
         $tmtCarbon = Carbon::parse($surat->tmt);
         $tglSuratCarbon = Carbon::parse($surat->updated_at);
         $bulanSuratCarbon = Carbon::parse($surat->updated_at);
-        $alamatTitleCase = ucwords(strtolower($surat->alamat));
+        $alamatTitleCase = ucwords($surat->alamat);
 
         $tmtOrtu = $tmtCarbon->locale('id')->isoFormat('D MMMM YYYY');
         $tglSurat = $tglSuratCarbon->locale('id')->isoFormat('D MMMM YYYY');

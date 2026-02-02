@@ -5,8 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>SiPermata | Portal Pengajuan Surat Mahasiswa</title>
+    <meta name="robots" content="index, follow">
+    <meta name="description"
+        content="SiPermata merupakan Sistem Informasi Pengajuan Surat Mahasiswa Terpadu di Universitas Nurul Jadid.">
     <link rel="shortcut icon" href="{{ asset('assets/media/logos/unuja.png') }}" />
+    <title>SiPermata | Universitas Nurul Jadid</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
