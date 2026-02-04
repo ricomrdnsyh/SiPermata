@@ -1,6 +1,66 @@
 @extends('layout.main')
 @section('title', 'Dashboard')
 
+@section('css')
+    <style>
+        .btn-riwayat-hover {
+            transition: all .2s ease;
+        }
+
+        .btn-riwayat-hover i {
+            transition: all .2s ease;
+        }
+
+        .btn-riwayat-hover.btn-light-primary:hover,
+        .btn-riwayat-hover.btn-light-warning:hover,
+        .btn-riwayat-hover.btn-light-info:hover,
+        .btn-riwayat-hover.btn-light-danger:hover,
+        .btn-riwayat-hover.btn-light-success:hover,
+        .btn-riwayat-hover.btn-light-dark:hover {
+            color: #fff !important;
+        }
+
+        .btn-riwayat-hover.btn-light-primary:hover i,
+        .btn-riwayat-hover.btn-light-warning:hover i,
+        .btn-riwayat-hover.btn-light-info:hover i,
+        .btn-riwayat-hover.btn-light-danger:hover i,
+        .btn-riwayat-hover.btn-light-success:hover i,
+        .btn-riwayat-hover.btn-light-dark:hover i {
+            color: #fff !important;
+        }
+
+        .btn-riwayat-hover.btn-light-primary:hover {
+            background-color: var(--bs-primary) !important;
+            border-color: var(--bs-primary) !important;
+        }
+
+        .btn-riwayat-hover.btn-light-warning:hover {
+            background-color: var(--bs-warning) !important;
+            border-color: var(--bs-warning) !important;
+        }
+
+        .btn-riwayat-hover.btn-light-info:hover {
+            background-color: var(--bs-info) !important;
+            border-color: var(--bs-info) !important;
+        }
+
+        .btn-riwayat-hover.btn-light-danger:hover {
+            background-color: var(--bs-danger) !important;
+            border-color: var(--bs-danger) !important;
+        }
+
+        .btn-riwayat-hover.btn-light-success:hover {
+            background-color: var(--bs-success) !important;
+            border-color: var(--bs-success) !important;
+        }
+
+        .btn-riwayat-hover.btn-light-dark:hover {
+            background-color: var(--bs-dark) !important;
+            border-color: var(--bs-dark) !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column flex-column-fluid" id="kt_post">
@@ -100,7 +160,7 @@
                                         <i class="fas fa-plus me-2"></i>Ajukan
                                     </a>
                                     <a href="{{ route('mahasiswa.surat-aktif.index') }}"
-                                        class="btn btn-sm btn-light-primary text-primary flex-fill">
+                                        class="btn btn-sm btn-light-primary text-primary flex-fill btn-riwayat-hover">
                                         <i class="fas fa-history me-2"></i>Riwayat
                                     </a>
                                 </div>
@@ -146,7 +206,7 @@
                                         <i class="fas fa-plus me-2"></i>Ajukan
                                     </a>
                                     <a href="{{ route('mahasiswa.surat-izin-penelitian.index') }}"
-                                        class="btn btn-sm btn-light-warning text-warning flex-fill">
+                                        class="btn btn-sm btn-light-warning text-warning flex-fill btn-riwayat-hover">
                                         <i class="fas fa-history me-2"></i>Riwayat
                                     </a>
                                 </div>
@@ -192,7 +252,7 @@
                                         <i class="fas fa-plus me-2"></i>Ajukan
                                     </a>
                                     <a href="{{ route('mahasiswa.surat-observasi.index') }}"
-                                        class="btn btn-sm btn-light-info text-info flex-fill">
+                                        class="btn btn-sm btn-light-info text-info flex-fill btn-riwayat-hover">
                                         <i class="fas fa-history me-2"></i>Riwayat
                                     </a>
                                 </div>
@@ -238,7 +298,7 @@
                                         <i class="fas fa-plus me-2"></i>Ajukan
                                     </a>
                                     <a href="{{ route('mahasiswa.surat-rekomendasi.index') }}"
-                                        class="btn btn-sm btn-light-dark text-dark flex-fill">
+                                        class="btn btn-sm btn-light-dark text-dark flex-fill btn-riwayat-hover">
                                         <i class="fas fa-history me-2"></i>Riwayat
                                     </a>
                                 </div>
@@ -284,7 +344,7 @@
                                         <i class="fas fa-plus me-2"></i>Ajukan
                                     </a>
                                     <a href="{{ route('mahasiswa.surat-pkl.index') }}"
-                                        class="btn btn-sm btn-light-danger text-danger flex-fill">
+                                        class="btn btn-sm btn-light-danger text-danger flex-fill btn-riwayat-hover">
                                         <i class="fas fa-history me-2"></i>Riwayat
                                     </a>
                                 </div>
@@ -330,7 +390,7 @@
                                         <i class="fas fa-plus me-2"></i>Ajukan
                                     </a>
                                     <a href="{{ route('mahasiswa.surat-keterangan-lulus.index') }}"
-                                        class="btn btn-sm btn-light-success text-success flex-fill">
+                                        class="btn btn-sm btn-light-success text-success flex-fill btn-riwayat-hover">
                                         <i class="fas fa-history me-2"></i>Riwayat
                                     </a>
                                 </div>
