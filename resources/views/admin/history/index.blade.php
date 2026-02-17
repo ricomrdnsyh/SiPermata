@@ -9,14 +9,17 @@
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
+
         #users-table thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
         .filter-container {
             margin-bottom: 2rem;
             padding-bottom: 0 !important;
         }
+
         .dt-buttons .btn-export-primary,
         .dt-buttons .btn-export-primary:focus,
         .dt-buttons .btn-export-primary:hover,
@@ -25,6 +28,7 @@
             border-color: #004289 !important;
             color: #fff !important;
         }
+
         .dt-buttons .btn-export-primary:focus {
             box-shadow: none !important;
         }
@@ -140,11 +144,13 @@
         $(document).ready(function() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let selectedIds = new Set();
+
             function refreshBulkUI() {
                 const count = selectedIds.size;
                 $('#selected-count').text(count);
                 $('#btn-bulk-approve').prop('disabled', count === 0);
             }
+
             function clearSelection() {
                 selectedIds.clear();
                 $('#select-all').prop('checked', false);
