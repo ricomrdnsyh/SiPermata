@@ -71,7 +71,7 @@
 
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
+                                                <label class="required fw-semibold fs-6 mb-2">Judul Penelitian/Tugas Akhir</label>
                                                 <textarea name="judul_penelitian" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required></textarea>
                                                 @error('judul_penelitian')
                                                     <small class="text-danger">{{ $message }}</small>

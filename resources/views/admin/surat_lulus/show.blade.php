@@ -50,7 +50,7 @@
                                                 <div class="input-group input-group-sm">
                                                     <span class="input-group-text">
                                                         <i class="fas fa-calendar-alt fs-5"></i>
-                                                    </span> 
+                                                    </span>
                                                     <input type="text" name="tgl_lahir"
                                                         class="form-control form-control-sm mb-3 mb-lg-0"
                                                         value="{{ $surat->tgl_lahir?->locale('id')->isoFormat('D MMMM YYYY') }}"
@@ -61,7 +61,7 @@
 
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Judul Penelitian</label>
+                                                <label class="fw-semibold fs-6 mb-2">Judul Penelitian/Tugas Akhir</label>
                                                 <textarea name="judul_penelitian" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                             </div>
                                         </div>
