@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers\BAK;
 
-use App\Models\Prodi;
-use App\Models\Template;
-use App\Models\Mahasiswa;
-use Illuminate\Http\Request;
-use App\Models\TahunAkademik;
-use Illuminate\Support\Carbon;
-use App\Models\HistoryPengajuan;
-use App\Models\SuratRekomendasi;
-use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\Facades\DataTables;
+use App\Models\HistoryPengajuan;
+use App\Models\Mahasiswa;
+use App\Models\PengajuanStatusLog;
+use App\Models\Prodi;
+use App\Models\SuratRekomendasi;
+use App\Models\TahunAkademik;
+use App\Models\Template;
 use App\Services\SuratRekomendasiGenerator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+use Yajra\DataTables\Facades\DataTables;
 
 class BAKSuratRekomendasiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $user = Auth::user();
@@ -49,7 +50,6 @@ class BAKSuratRekomendasiController extends Controller
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $query = SuratRekomendasi::whereHas('mahasiswa', function ($q) use ($fakultasId) {
@@ -123,12 +123,35 @@ class BAKSuratRekomendasiController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function getDataMahasiswaSimpt(string $nim)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
+
+        $dataSimpt = $this->getDataSimpt($nim);
+
+        if (!$dataSimpt) {
+            return response()->json([
+                'semester' => null,
+                'ipk'      => null,
+                'message'  => 'Data SIMPT tidak ditemukan untuk mahasiswa ini.',
+            ]);
+        }
+
+        return response()->json([
+            'semester' => $dataSimpt->semester,
+            'ipk'      => $dataSimpt->ipk_ketuntasan
+                ? number_format((float) $dataSimpt->ipk_ketuntasan, 2)
+                : null,
+        ]);
+    }
+
     public function create()
     {
-        $user     = Auth::user();
+        $user = Auth::user();
 
         if ($user->role !== 'BAK') {
             abort(403, 'Akses ditolak');
@@ -141,14 +164,14 @@ class BAKSuratRekomendasiController extends Controller
         }
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
-        $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
+        $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)
+            ->select('nim', 'nama')
+            ->orderBy('nama', 'asc')
+            ->get();
 
         return view('bak.surat_rekomendasi.create', compact('latestAkademik', 'mahasiswa'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request, SuratRekomendasiGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -157,7 +180,6 @@ class BAKSuratRekomendasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        // Tentukan ID Fakultas BAK yang login
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
 
         if (!$fakultasIdBak) {
@@ -165,6 +187,7 @@ class BAKSuratRekomendasiController extends Controller
         }
 
         $request->validate([
+            'nim'              => 'required|exists:mahasiswa,nim',
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'keperluan'        => 'required',
             'penyelenggara'    => 'required',
@@ -177,6 +200,10 @@ class BAKSuratRekomendasiController extends Controller
             return back()->with('failed', 'Mahasiswa tersebut bukan bagian dari fakultas Anda.');
         }
 
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+        $semester  = $dataSimpt?->semester ?? null;
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
+
         $namaTemplate = 'surat_rekomendasi';
 
         $template = Template::where('jenis_surat', $namaTemplate)
@@ -187,33 +214,27 @@ class BAKSuratRekomendasiController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
         $noSurat = SuratRekomendasi::getNextNoSurat($template->id_template);
 
         $surat = SuratRekomendasi::create([
-            'template_id'         => $template->id_template,
-            'no_surat'            => $noSurat,
-            'nim'                 => $mahasiswa->nim,
-            'akademik_id'         => $request->akademik_id,
-            'keperluan'           => $request->keperluan,
-            'penyelenggara'       => $request->penyelenggara,
-            'tgl_pelaksanaan'     => $request->tgl_pelaksanaan,
-            'status'              => 'pengajuan',
-            'catatan'             => 'Diajukan BAK untuk mahasiswa',
-            'file_generated'      => null,
+            'template_id'     => $template->id_template,
+            'no_surat'        => $noSurat,
+            'nim'             => $mahasiswa->nim,
+            'akademik_id'     => $request->akademik_id,
+            'keperluan'       => $request->keperluan,
+            'penyelenggara'   => $request->penyelenggara,
+            'tgl_pelaksanaan' => $request->tgl_pelaksanaan,
+            'status'          => 'pengajuan',
+            'catatan'         => 'Diajukan BAK untuk mahasiswa',
+            'file_generated'  => null,
         ]);
 
         try {
-            // GENERATE FILE WORD
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
-
-            // UPDATE MODEL DENGAN PATH FILE
-            $surat->update([
-                'file_generated' => $generatedFilePath,
-            ]);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $semester, $ipk);
+            $surat->update(['file_generated' => $generatedFilePath]);
         } catch (\Exception $e) {
             $surat->delete();
-            return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
+            return back()->with('failed', 'Gagal memproses template dokumen. Error: ' . $e->getMessage());
         }
 
         $pengajuan = HistoryPengajuan::create([
@@ -234,12 +255,10 @@ class BAKSuratRekomendasiController extends Controller
             'catatan'    => 'Diajukan oleh BAK Fakultas untuk mahasiswa',
         ]);
 
-        return redirect()->route('bak.surat-rekomendasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
+        return redirect()->route('bak.surat-rekomendasi.index')
+            ->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $user = Auth::user();
@@ -258,12 +277,12 @@ class BAKSuratRekomendasiController extends Controller
             ->where('id_surat_rekomendasi', $id)
             ->firstOrFail();
 
-        return view('bak.surat_rekomendasi.show', compact('surat'));
+        $dataSimpt = $this->getDataSimpt($surat->nim);
+
+        return view('bak.surat_rekomendasi.show', compact('surat', 'dataSimpt'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -288,9 +307,6 @@ class BAKSuratRekomendasiController extends Controller
         return view('bak.surat_rekomendasi.edit', compact('surat', 'latestAkademik', 'mahasiswa'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id, SuratRekomendasiGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -306,6 +322,7 @@ class BAKSuratRekomendasiController extends Controller
         }
 
         $request->validate([
+            'nim'              => 'required|exists:mahasiswa,nim',
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'keperluan'        => 'required',
             'penyelenggara'    => 'required',
@@ -317,28 +334,30 @@ class BAKSuratRekomendasiController extends Controller
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $request->nim)->firstOrFail();
 
+        $dataSimpt = $this->getDataSimpt($request->nim);
+        $semester  = $dataSimpt?->semester ?? null;
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
+
         $surat->update([
-            'nim'              => $request->nim,
-            'akademik_id'      => $request->akademik_id,
-            'keperluan'        => $request->keperluan,
-            'penyelenggara'    => $request->penyelenggara,
-            'tgl_pelaksanaan'  => $request->tgl_pelaksanaan,
-            'status'           => 'pengajuan',
-            'catatan'          => 'Diajukan ulang oleh BAK untuk mahasiswa',
+            'nim'             => $request->nim,
+            'akademik_id'     => $request->akademik_id,
+            'keperluan'       => $request->keperluan,
+            'penyelenggara'   => $request->penyelenggara,
+            'tgl_pelaksanaan' => $request->tgl_pelaksanaan,
+            'status'          => 'pengajuan',
+            'catatan'         => 'Diajukan ulang oleh BAK untuk mahasiswa',
         ]);
 
         try {
             $template = Template::findOrFail($surat->template_id);
 
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $semester, $ipk);
 
-            $surat->update([
-                'file_generated' => $generatedFilePath
-            ]);
+            $surat->update(['file_generated' => $generatedFilePath]);
 
             $pengajuan->update([
                 'status'  => 'pengajuan',
-                'catatan' => 'Diajukan ulang oleh BAK untuk mahasiswa'
+                'catatan' => 'Diajukan ulang oleh BAK untuk mahasiswa',
             ]);
 
             PengajuanStatusLog::create([
@@ -349,9 +368,46 @@ class BAKSuratRekomendasiController extends Controller
                 'catatan'    => 'Diajukan ulang oleh BAK Fakultas untuk mahasiswa',
             ]);
 
-            return redirect()->route('bak.surat-rekomendasi.index')->with('success', 'Data surat berhasil diperbarui!');
+            return redirect()->route('bak.surat-rekomendasi.index')
+                ->with('success', 'Data surat berhasil diperbarui!');
         } catch (\Exception $e) {
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
+        }
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) return null;
+
+        try {
+            return DB::selectOne('
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ', [$nim]);
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
         }
     }
 }

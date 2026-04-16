@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
-use App\Models\SuratPKL;
+use App\Http\Controllers\Controller;
+use App\Models\HistoryPengajuan;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
-use Illuminate\Http\Request;
 use App\Models\SuratObservasi;
-use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
-use App\Models\HistoryPengajuan;
+use App\Models\SuratPKL;
 use App\Models\SuratRekomendasi;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Yajra\DataTables\Facades\DataTables;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
+use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaHistoryPegajuan extends Controller
 {
@@ -115,6 +118,8 @@ class MahasiswaHistoryPegajuan extends Controller
         $jumlahDitolak   = $pengajuan->statusLogs->where('status', 'ditolak')->count();
         $jumlahDiterima  = $pengajuan->statusLogs->where('status', 'diterima')->count();
 
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
         return view('mahasiswa.history.detail', compact(
             'pengajuan',
             'surat',
@@ -175,5 +180,41 @@ class MahasiswaHistoryPegajuan extends Controller
         $fileName = strtoupper(str_replace(' ', '_', $tabel)) . '_' . ($surat->nim ?? 'NoNIM') . '.pdf';
 
         return Storage::download($filePath, $fileName);
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) return null;
+
+        try {
+            return DB::selectOne('
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ', [$nim]);
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
     }
 }

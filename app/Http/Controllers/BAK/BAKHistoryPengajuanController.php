@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers\BAK;
 
-use App\Models\Prodi;
-use App\Models\SuratPKL;
+use App\Http\Controllers\Controller;
+use App\Mail\NotifikasiStatusBak;
+use App\Models\HistoryPengajuan;
 use App\Models\Mahasiswa;
+use App\Models\PengajuanStatusLog;
+use App\Models\Prodi;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
-use Illuminate\Http\Request;
-use App\Models\TahunAkademik;
 use App\Models\SuratObservasi;
-use Illuminate\Support\Carbon;
 use App\Models\SuratPenelitian;
-use App\Models\HistoryPengajuan;
+use App\Models\SuratPKL;
 use App\Models\SuratRekomendasi;
-use App\Mail\NotifikasiStatusBak;
-use App\Models\PengajuanStatusLog;
+use App\Models\TahunAkademik;
+use App\Services\NotifikasiDekanService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use App\Services\NotifikasiDekanService;
-use Yajra\DataTables\Facades\DataTables;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
+use Yajra\DataTables\Facades\DataTables;
 
 class BAKHistoryPengajuanController extends Controller
 {
@@ -243,13 +244,16 @@ class BAKHistoryPengajuanController extends Controller
         $jumlahDitolak   = $pengajuan->statusLogs->where('status', 'ditolak')->count();
         $jumlahDiterima  = $pengajuan->statusLogs->where('status', 'diterima')->count();
 
+        $dataSimpt = $this->getDataSimpt($surat->nim);
+
         return view('bak.history.detail', compact(
             'pengajuan',
             'surat',
             'fileGeneratedPath',
             'jumlahPengajuan',
             'jumlahDitolak',
-            'jumlahDiterima'
+            'jumlahDiterima',
+            'dataSimpt'
         ));
     }
 
@@ -588,7 +592,7 @@ class BAKHistoryPengajuanController extends Controller
     public function previewLampiranPdf(string $tabel, int $id): Response
     {
         $user = Auth::user();
-        if ($user->role !== 'BAK') abort(403);
+        if (!$user || $user->role !== 'BAK') abort(403);
 
         $modelClass = $this->getModelClass($tabel);
         if (!$modelClass) abort(404, 'Jenis surat tidak valid.');
@@ -598,68 +602,85 @@ class BAKHistoryPengajuanController extends Controller
         $disk = 'local';
         $docRel = $surat->file_generated ?? null;
         if (!$docRel) return response('Lampiran tidak ditemukan.', 404);
-
-        if (!Storage::disk($disk)->exists($docRel)) {
-            return response('File lampiran di server tidak ditemukan.', 404);
-        }
+        if (!Storage::disk($disk)->exists($docRel)) return response('File lampiran di server tidak ditemukan.', 404);
 
         $docAbs = Storage::disk($disk)->path($docRel);
 
         $lastMod = Storage::disk($disk)->lastModified($docRel);
         $cacheRelDir = "preview_surat/{$tabel}";
         $cacheRelPdf = "{$cacheRelDir}/{$id}_{$lastMod}.pdf";
-
         Storage::disk($disk)->makeDirectory($cacheRelDir);
 
         if (!Storage::disk($disk)->exists($cacheRelPdf)) {
             $cacheAbsDir = Storage::disk($disk)->path($cacheRelDir);
 
-            $all = Storage::disk($disk)->files($cacheRelDir);
-            foreach ($all as $f) {
-                if (str_starts_with(basename($f), $id . "_") && str_ends_with($f, ".pdf")) {
+            foreach (Storage::disk($disk)->files($cacheRelDir) as $f) {
+                if (str_starts_with(basename($f), $id . '_') && str_ends_with($f, '.pdf')) {
                     Storage::disk($disk)->delete($f);
                 }
             }
 
-            // Linux
-            $cmd = 'libreoffice --headless --convert-to pdf --outdir ' . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
+            $cmd = 'HOME=/tmp libreoffice --headless --nologo --nofirststartwizard --norestore '
+                . '--convert-to pdf --outdir ' . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
 
-            // Windows
-            // $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
-            // $cmd = $soffice . ' --headless --convert-to pdf --outdir '
-            //     . escapeshellarg($cacheAbsDir) . ' ' . escapeshellarg($docAbs);
+            $descriptors = [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ];
 
-            exec($cmd . ' 2>&1', $output, $code);
+            $process = proc_open($cmd, $descriptors, $pipes);
+
+            if (!is_resource($process)) {
+                Log::error('Gagal membuka proses konversi DOCX->PDF', ['cmd' => $cmd]);
+                return response('Gagal membuka proses konversi.', 500);
+            }
+
+            fclose($pipes[0]);
+
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            $code = proc_close($process);
+
+            $output = array_filter(
+                array_merge(
+                    explode("\n", $stdout),
+                    explode("\n", $stderr)
+                )
+            );
 
             if ($code !== 0) {
                 Log::error('Gagal konversi DOCX->PDF', [
-                    'code' => $code,
-                    'output' => $output,
-                    'cmd' => $cmd,
+                    'code'   => $code,
+                    'output' => array_values($output),
+                    'cmd'    => $cmd,
                 ]);
                 return response("Gagal konversi DOCX->PDF:\n" . implode("\n", $output), 500);
             }
 
-            $baseName = pathinfo($docAbs, PATHINFO_FILENAME);
-            $generatedAbs = $cacheAbsDir . DIRECTORY_SEPARATOR . $baseName . '.pdf';
+            $pdfs = glob($cacheAbsDir . DIRECTORY_SEPARATOR . '*.pdf') ?: [];
+            if (!$pdfs) return response('PDF hasil konversi tidak ditemukan.', 500);
 
-            if (!file_exists($generatedAbs)) {
-                return response('PDF hasil konversi tidak ditemukan.', 500);
-            }
+            usort($pdfs, fn($a, $b) => filemtime($b) <=> filemtime($a));
+            $generatedAbs = $pdfs[0];
 
             $finalAbs = Storage::disk($disk)->path($cacheRelPdf);
-            @rename($generatedAbs, $finalAbs);
 
-            if (!file_exists($finalAbs)) {
-                Storage::disk($disk)->put($cacheRelPdf, file_get_contents($generatedAbs));
+            if (!@rename($generatedAbs, $finalAbs)) {
+                @copy($generatedAbs, $finalAbs);
                 @unlink($generatedAbs);
             }
+
+            if (!file_exists($finalAbs)) return response('Gagal menyimpan PDF cache.', 500);
         }
 
         $pdfAbs = Storage::disk($disk)->path($cacheRelPdf);
 
         return response()->file($pdfAbs, [
-            'Content-Type' => 'application/pdf',
+            'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="PREVIEW_' . $tabel . '_' . $id . '.pdf"',
         ]);
     }
@@ -699,5 +720,41 @@ class BAKHistoryPengajuanController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $fileName . '"',
         ]);
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) return null;
+
+        try {
+            return DB::selectOne('
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ', [$nim]);
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
     }
 }

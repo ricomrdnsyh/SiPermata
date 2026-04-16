@@ -101,16 +101,7 @@ class SignatureService
             $dstX = (int)(($qrWidth - $logoW) / 2);
             $dstY = (int)(($qrHeight - $logoH) / 2);
 
-            imagecopy(
-                $qrImage,
-                $logoResized,
-                $dstX,
-                $dstY,
-                0,
-                0,
-                $logoW,
-                $logoH
-            );
+            imagecopy($qrImage, $logoResized, $dstX, $dstY, 0, 0, $logoW, $logoH);
 
             imagedestroy($logoResized);
             imagedestroy($logo);
@@ -123,20 +114,10 @@ class SignatureService
         $finalHeight = $qrHeight + $marginTop + $marginBottom;
 
         $finalImage = imagecreatetruecolor($finalWidth, $finalHeight);
-
-        $white = imagecolorallocate($finalImage, 255, 255, 255);
+        $white      = imagecolorallocate($finalImage, 255, 255, 255);
         imagefill($finalImage, 0, 0, $white);
 
-        imagecopy(
-            $finalImage,
-            $qrImage,
-            0,
-            $marginTop,
-            0,
-            0,
-            $qrWidth,
-            $qrHeight
-        );
+        imagecopy($finalImage, $qrImage, 0, $marginTop, 0, 0, $qrWidth, $qrHeight);
 
         ob_start();
         imagepng($finalImage);
@@ -183,14 +164,10 @@ class SignatureService
         $outputDir = dirname($docxPath);
         $pdfPath   = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $docxPath);
 
-        // Pakai filter Writer dan minta embed font standar agar layout lebih konsisten.
         $pdfFilter = 'pdf:writer_pdf_Export:EmbedStandardFonts=true;SelectPdfVersion=1;Quality=100';
+        $command   = $this->buildLibreOfficeCommand($pdfFilter, $outputDir, $docxPath);
 
-        $command = $this->buildLibreOfficeCommand($pdfFilter, $outputDir, $docxPath);
-
-        $output     = [];
-        $returnCode = 0;
-        exec($command, $output, $returnCode);
+        $returnCode = $this->runCommand($command, $output);
 
         $maxWait       = $isWindows ? 10 : 5;
         $waited        = 0.0;
@@ -216,9 +193,57 @@ class SignatureService
         return $relativePdfPath;
     }
 
-    /**
-     * Bangun perintah LibreOffice headless dengan opsi yang lebih stabil.
-     */
+    private function runCommand(string $command, ?array &$output = []): int
+    {
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($command, $descriptors, $pipes);
+
+        if (!is_resource($process)) {
+            Log::error('proc_open gagal membuka proses', ['command' => $command]);
+            $output = [];
+            return -1;
+        }
+
+        fclose($pipes[0]);
+
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+
+        $exitCode = proc_close($process);
+
+        $output = array_values(array_filter(
+            array_merge(
+                explode("\n", $stdout ?? ''),
+                explode("\n", $stderr ?? '')
+            )
+        ));
+
+        return $exitCode;
+    }
+
+    private function findBinary(string $binaryName): string
+    {
+        $command = PHP_OS_FAMILY === 'Windows'
+            ? "where {$binaryName}"
+            : "which {$binaryName}";
+
+        $this->runCommand($command . ' 2>&1', $output);
+
+        $result = trim(implode("\n", $output));
+
+        $lines = array_filter(explode("\n", $result));
+
+        return trim(reset($lines) ?: '');
+    }
+
     private function buildLibreOfficeCommand(string $pdfFilter, string $outputDir, string $docxPath): string
     {
         $envPath   = env('LIBREOFFICE_PATH');
@@ -239,7 +264,7 @@ class SignatureService
                 );
             } else {
                 $command = sprintf(
-                    '%s %s --convert-to %s --outdir %s %s 2>&1',
+                    'HOME=/tmp %s %s --convert-to %s --outdir %s %s 2>&1',
                     escapeshellcmd($envPath),
                     $baseFlags,
                     escapeshellarg($pdfFilter),
@@ -282,17 +307,18 @@ class SignatureService
                     $docxPath
                 );
             } else {
-                $soffice = trim(shell_exec('which libreoffice') ?? '');
+                $soffice = $this->findBinary('libreoffice');
                 if ($soffice === '') {
-                    $soffice = trim(shell_exec('which soffice') ?? '');
+                    $soffice = $this->findBinary('soffice');
                 }
+                // ─────────────────────────────────────────────────────────
 
                 if ($soffice === '') {
                     throw new \Exception('LibreOffice/soffice tidak ditemukan di PATH.');
                 }
 
                 $command = sprintf(
-                    '%s %s --convert-to %s --outdir %s %s 2>&1',
+                    'HOME=/tmp %s %s --convert-to %s --outdir %s %s 2>&1',
                     escapeshellcmd($soffice),
                     $baseFlags,
                     escapeshellarg($pdfFilter),

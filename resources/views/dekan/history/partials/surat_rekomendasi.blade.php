@@ -9,6 +9,14 @@
             <td class="text-gray-800">{{ $surat->akademik->tahun_akademik }}</td>
         </tr>
         <tr class="border-bottom border-dashed">
+            <td class="text-gray-400">Semester</td>
+            <td class="text-gray-800">{{ $dataSimpt?->semester ?? '-' }}</td>
+        </tr>
+        <tr class="border-bottom border-dashed">
+            <td class="text-gray-400">IPK</td>
+            <td class="text-gray-800">{{ $dataSimpt?->ipk_ketuntasan ?? '-' }}</td>
+        </tr>
+        <tr class="border-bottom border-dashed">
             <td class="text-gray-400">Keperluan Rekomendasi</td>
             <td class="text-gray-800">{{ ucwords($surat->keperluan) }}</td>
         </tr>

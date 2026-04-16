@@ -42,6 +42,24 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">Semester</label>
+                                                <input type="text" name="semester"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $dataSimpt?->semester ?? '-' }}" disabled />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">IPK</label>
+                                                <input type="text" name="ipk"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $dataSimpt?->ipk_ketuntasan ?? '-' }}" disabled />
+                                            </div>
+                                        </div>
+
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tanggal Pelaksanaan</label>

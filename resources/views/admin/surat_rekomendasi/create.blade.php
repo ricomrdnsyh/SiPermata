@@ -18,15 +18,15 @@
                                     action="{{ route('admin.surat-rekomendasi.store') }}">
                                     @csrf
                                     <div class="row">
+
+                                        {{-- Nama Mahasiswa --}}
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select id="select-nim" class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                    data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                                    data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">
-                                                        Pilih Mahasiswa...</option>
+                                                    required>
+                                                    <option value="">Pilih Mahasiswa...</option>
                                                     @foreach ($mahasiswa as $mhs)
                                                         <option value="{{ $mhs->nim }}"
                                                             {{ old('nim') == $mhs->nim ? 'selected' : '' }}>
@@ -40,10 +40,11 @@
                                             </div>
                                         </div>
 
+                                        {{-- Tahun Akademik --}}
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                <input type="text" class="form-control form-control-sm"
                                                     value="{{ $latestAkademik?->tahun_akademik }}" disabled />
                                                 <input type="hidden" name="akademik_id"
                                                     value="{{ $latestAkademik?->id_akademik }}">
@@ -53,6 +54,41 @@
                                             </div>
                                         </div>
 
+                                        {{-- Semester --}}
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">
+                                                    Semester
+                                                    <span id="semester-loading"
+                                                        class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                                </label>
+                                                <input id="field-semester" type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa" value=""
+                                                    readonly />
+                                            </div>
+                                        </div>
+
+                                        {{-- IPK --}}
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">
+                                                    IPK
+                                                    <span id="ipk-loading"
+                                                        class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                                </label>
+                                                <input id="field-ipk" type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa" value=""
+                                                    readonly />
+                                                <small id="simpt-warning" class="text-warning d-none">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Data IPK/Semester tidak ditemukan di SIMPT.
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                        {{-- Tanggal Pelaksanaan --}}
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tanggal Pelaksanaan</label>
@@ -71,40 +107,43 @@
                                             </div>
                                         </div>
 
+                                        {{-- Keperluan --}}
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Keperluan Rekomendasi</label>
-                                                <textarea name="keperluan" placeholder="Penerima Beasiswa GenBi, MBKM Santri, dll"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('keperluan') }}</textarea>
+                                                <textarea name="keperluan" placeholder="Penerima Beasiswa GenBi, MBKM Santri, dll" class="form-control form-control-sm"
+                                                    rows="3" required>{{ old('keperluan') }}</textarea>
                                                 @error('keperluan')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
                                         </div>
 
+                                        {{-- Penyelenggara --}}
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label>
                                                 <textarea name="penyelenggara" placeholder="Bank Indonesia, LP3M Universitas Nurul Jadid, dll"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('penyelenggara') }}</textarea>
+                                                    class="form-control form-control-sm" rows="3" required>{{ old('penyelenggara') }}</textarea>
                                                 @error('penyelenggara')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
                                         </div>
+
                                     </div>
+
                                     <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
                                             class="btn btn-sm btn-primary w-250px">
-                                            <span class="indicator-label">
-                                                Buat Pengajuan
-                                            </span>
-                                            <span class="indicator-progress">
+                                            <span class="indicator-label">Buat Pengajuan</span>
+                                            <span class="indicator-progress" style="display:none">
                                                 Tunggu sebentar...
                                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                             </span>
                                         </button>
                                     </div>
+
                                 </form>
                             </div>
                         </div>
@@ -114,40 +153,91 @@
         </div>
     </div>
 @endsection
+
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
-            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+            const submitBtn = form.querySelector('[data-kt-contacts-type="submit"]');
+            const fieldSmt = document.getElementById('field-semester');
+            const fieldIpk = document.getElementById('field-ipk');
+            const smtSpinner = document.getElementById('semester-loading');
+            const ipkSpinner = document.getElementById('ipk-loading');
+            const simptWarn = document.getElementById('simpt-warning');
 
-            const tglPel = document.getElementById('tgl_pelaksanaan');
-            const tglPelVal = tglPel.value || null;
-
-            flatpickr(tglPel, {
+            flatpickr(document.getElementById('tgl_pelaksanaan'), {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d/m/Y",
                 altInputClass: "form-control form-control-sm",
                 allowInput: true,
-                defaultDate: tglPelVal,
-                onReady: function(selectedDates, dateStr, instance) {
+                onReady: function(_, __, instance) {
                     if (instance.altInput) {
                         instance.altInput.required = true;
-                        instance.altInput.placeholder = tglPel.placeholder || '';
+                        instance.altInput.placeholder = 'Pilih tanggal pelaksanaan';
                     }
                 }
             });
 
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
+            const simptUrl = "{{ route('admin.surat-rekomendasi.simpt', '__NIM__') }}";
+
+            function fetchSimpt(nim) {
+                if (!nim) {
+                    fieldSmt.value = '';
+                    fieldIpk.value = '';
+                    simptWarn.classList.add('d-none');
                     return;
                 }
-                submitButton.disabled = true;
-                submitButton.querySelector('.indicator-label').style.display = 'none';
-                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+
+                smtSpinner.classList.remove('d-none');
+                ipkSpinner.classList.remove('d-none');
+                simptWarn.classList.add('d-none');
+                fieldSmt.value = '';
+                fieldIpk.value = '';
+
+                const url = simptUrl.replace('__NIM__', encodeURIComponent(nim));
+
+                fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.semester && data.ipk) {
+                            fieldSmt.value = data.semester;
+                            fieldIpk.value = data.ipk;
+                            simptWarn.classList.add('d-none');
+                        } else {
+                            fieldSmt.value = '-';
+                            fieldIpk.value = '-';
+                            simptWarn.classList.remove('d-none');
+                        }
+                    })
+                    .catch(() => {
+                        fieldSmt.value = '-';
+                        fieldIpk.value = '-';
+                        simptWarn.classList.remove('d-none');
+                    })
+                    .finally(() => {
+                        smtSpinner.classList.add('d-none');
+                        ipkSpinner.classList.add('d-none');
+                    });
+            }
+
+            $('#select-nim').on('change', function() {
+                fetchSimpt(this.value);
+            });
+
+            form.addEventListener('submit', function() {
+                if (!form.checkValidity()) return;
+                submitBtn.disabled = true;
+                submitBtn.querySelector('.indicator-label').style.display = 'none';
+                submitBtn.querySelector('.indicator-progress').style.display = 'inline-block';
             });
         });
     </script>
+
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({

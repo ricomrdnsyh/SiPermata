@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
-use App\Models\Template;
-use Illuminate\Http\Request;
-use App\Models\TahunAkademik;
-use Illuminate\Support\Carbon;
-use App\Models\HistoryPengajuan;
-use App\Models\SuratRekomendasi;
-use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\HistoryPengajuan;
+use App\Models\PengajuanStatusLog;
+use App\Models\SuratRekomendasi;
+use App\Models\TahunAkademik;
+use App\Models\Template;
 use App\Services\NotifikasiBAKService;
-use Yajra\DataTables\Facades\DataTables;
 use App\Services\SuratRekomendasiGenerator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaSuratRekomendasiController extends Controller
 {
@@ -28,7 +31,7 @@ class MahasiswaSuratRekomendasiController extends Controller
     public function getSuratRekomendasi()
     {
         $user = Auth::user();
-        $nim = $user->mahasiswa?->nim;
+        $nim  = $user->mahasiswa?->nim;
 
         if (!$nim) {
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
@@ -74,35 +77,35 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->rawColumns(['status', 'akademik', 'catatan', 'action'])
             ->make(true);
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $user     = Auth::user();
+        $user = Auth::user();
 
         if ($user->role !== 'mahasiswa') {
             abort(403, 'Akses ditolak');
         }
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
-        return view('mahasiswa.surat_rekomendasi.create', compact('latestAkademik'));
+
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_rekomendasi.create', compact('latestAkademik', 'dataSimpt'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request, SuratRekomendasiGenerator $generatorService)
     {
         $request->validate([
-            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
-            'keperluan'        => 'required',
-            'penyelenggara'    => 'required',
-            'tgl_pelaksanaan'  => 'required',
+            'akademik_id'     => 'required|exists:tahun_akademik,id_akademik',
+            'keperluan'       => 'required',
+            'penyelenggara'   => 'required',
+            'tgl_pelaksanaan' => 'required',
         ]);
 
-        $user = Auth::user();
-
+        $user      = Auth::user();
         $mahasiswa = $user->mahasiswa;
 
         if (!$mahasiswa) {
@@ -115,6 +118,10 @@ class MahasiswaSuratRekomendasiController extends Controller
             return back()->with('failed', 'Fakultas Anda belum ditentukan.');
         }
 
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+        $semester  = $dataSimpt?->semester ?? null;
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
+
         $namaTemplate = 'surat_rekomendasi';
 
         $template = Template::where('jenis_surat', $namaTemplate)
@@ -122,36 +129,30 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->first();
 
         if (!$template) {
-            return back()->with('failed', "Template surat ini belum tersedia untuk fakultas Anda.");
+            return back()->with('failed', 'Template surat ini belum tersedia untuk fakultas Anda.');
         }
 
-        // Generate nomor surat
         $noSurat = SuratRekomendasi::getNextNoSurat($template->id_template);
 
         $surat = SuratRekomendasi::create([
-            'template_id'         => $template->id_template,
-            'no_surat'            => $noSurat,
-            'nim'                 => $mahasiswa->nim,
-            'akademik_id'         => $request->akademik_id,
-            'keperluan'           => $request->keperluan,
-            'penyelenggara'       => $request->penyelenggara,
-            'tgl_pelaksanaan'     => $request->tgl_pelaksanaan,
-            'status'              => 'pengajuan',
-            'catatan'             => 'Diajukan oleh mahasiswa',
-            'file_generated'      => null,
+            'template_id'     => $template->id_template,
+            'no_surat'        => $noSurat,
+            'nim'             => $mahasiswa->nim,
+            'akademik_id'     => $request->akademik_id,
+            'keperluan'       => $request->keperluan,
+            'penyelenggara'   => $request->penyelenggara,
+            'tgl_pelaksanaan' => $request->tgl_pelaksanaan,
+            'status'          => 'pengajuan',
+            'catatan'         => 'Diajukan oleh mahasiswa',
+            'file_generated'  => null,
         ]);
 
         try {
-            // GENERATE FILE WORD
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
-
-            // UPDATE MODEL DENGAN PATH FILE
-            $surat->update([
-                'file_generated' => $generatedFilePath,
-            ]);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $semester, $ipk);
+            $surat->update(['file_generated' => $generatedFilePath]);
         } catch (\Exception $e) {
             $surat->delete();
-            return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
+            return back()->with('failed', 'Gagal memproses template dokumen. Error: ' . $e->getMessage());
         }
 
         $pengajuan = HistoryPengajuan::create([
@@ -172,23 +173,17 @@ class MahasiswaSuratRekomendasiController extends Controller
             'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
         ]);
 
-        $namaSurat = "Surat Rekomendasi";
-
-        $urlDetail = 'https://sso.unuja.ac.id';
-
         NotifikasiBAKService::kirimPengajuanBaru(
             $mahasiswa->nim,
             $pengajuan,
-            $namaSurat,
-            $urlDetail
+            'Surat Rekomendasi',
+            'https://sso.unuja.ac.id'
         );
 
-        return redirect()->route('mahasiswa.surat-rekomendasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
+        return redirect()->route('mahasiswa.surat-rekomendasi.index')
+            ->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $user = Auth::user();
@@ -196,16 +191,16 @@ class MahasiswaSuratRekomendasiController extends Controller
         if ($user->role !== 'mahasiswa') {
             abort(403);
         }
+
         $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
-        return view('mahasiswa.surat_rekomendasi.show', compact('surat'));
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_rekomendasi.show', compact('surat', 'dataSimpt'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -213,29 +208,30 @@ class MahasiswaSuratRekomendasiController extends Controller
         if ($user->role !== 'mahasiswa') {
             abort(403);
         }
+
         $surat = SuratRekomendasi::where('id_surat_rekomendasi', $id)
             ->where('nim', $user->mahasiswa?->nim)
             ->firstOrFail();
 
         if ($surat->status !== 'ditolak') {
-            return redirect()->route('mahasiswa.surat-rekomendasi.index')->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
+            return redirect()->route('mahasiswa.surat-rekomendasi.index')
+                ->with('failed', 'Hanya pengajuan yang ditolak yang dapat diedit.');
         }
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('mahasiswa.surat_rekomendasi.edit', compact('surat', 'latestAkademik'));
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_rekomendasi.edit', compact('surat', 'latestAkademik', 'dataSimpt'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id, SuratRekomendasiGenerator $generatorService)
     {
         $request->validate([
-            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
-            'keperluan'        => 'required',
-            'penyelenggara'    => 'required',
-            'tgl_pelaksanaan'  => 'required',
+            'akademik_id'     => 'required|exists:tahun_akademik,id_akademik',
+            'keperluan'       => 'required',
+            'penyelenggara'   => 'required',
+            'tgl_pelaksanaan' => 'required',
         ]);
 
         $user = Auth::user();
@@ -245,7 +241,12 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->firstOrFail();
 
         $pengajuan = $surat->historyPengajuan()
-            ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
+            ->where('nim', $user->mahasiswa?->nim)
+            ->firstOrFail();
+
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        $semester  = $dataSimpt?->semester ?? null;
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
 
         $surat->update([
             'akademik_id'     => $request->akademik_id,
@@ -257,14 +258,15 @@ class MahasiswaSuratRekomendasiController extends Controller
         ]);
 
         try {
-            $template = Template::findOrFail($surat->template_id);
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $template          = Template::findOrFail($surat->template_id);
+
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $semester, $ipk);
 
             $surat->update(['file_generated' => $generatedFilePath]);
 
             $pengajuan->update([
                 'status'  => 'pengajuan',
-                'catatan' => 'Diajukan ulang oleh mahasiswa'
+                'catatan' => 'Diajukan ulang oleh mahasiswa',
             ]);
 
             PengajuanStatusLog::create([
@@ -279,6 +281,42 @@ class MahasiswaSuratRekomendasiController extends Controller
                 ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
         } catch (\Exception $e) {
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
+        }
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) return null;
+
+        try {
+            return DB::selectOne('
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ', [$nim]);
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
         }
     }
 }
