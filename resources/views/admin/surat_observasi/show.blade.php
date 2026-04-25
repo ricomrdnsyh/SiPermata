@@ -1,6 +1,11 @@
 @extends('layout.main')
 @section('title', 'Surat Permohonan Observasi')
 @section('content')
+    @php
+        $daftarMahasiswa = collect($surat->daftar_mahasiswa ?? [])->values();
+        $isKelompok = $daftarMahasiswa->count() > 1;
+    @endphp
+
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
@@ -9,37 +14,33 @@
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
                                 <h1 class="fs-2hx fw-bolder mb-3">Detail Surat Permohonan Observasi</h1>
-                                <div class="text-gray-400 fw-bold fs-5">Silakan lihat detail pengajuan Anda !</div>
+                                <div class="text-gray-400 fw-bold fs-5">Silakan lihat detail pengajuan observasi.</div>
                             </div>
                             <div class="separator border-gray-200 mb-8"></div>
                             <div id="form-container" class="mt-2">
-                                <form id="kt_ecommerce_settings_general_form"
-                                    class="form fv-plugins-bootstrap5 fv-plugins-framework">
+                                <form class="form fv-plugins-bootstrap5 fv-plugins-framework">
                                     <div class="row">
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                                <input type="text" name="nim"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $surat->nim . ' - ' . $surat->mahasiswa->nama }}" disabled />
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 col-md-6">
-                                            <div class="fv-row mb-3">
-                                                <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" name="akademik_id"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
+                                                <label class="fw-semibold fs-6 mb-2">Mahasiswa Pengaju</label>
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->nim . ' - ' . ($surat->mahasiswa?->nama ?? '-') }}"
                                                     disabled />
                                             </div>
                                         </div>
 
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
+                                                <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->akademik?->tahun_akademik ?? '-' }}" disabled />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="text" name="semester"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
                                                     value="{{ $surat->semester }}" disabled />
                                             </div>
                                         </div>
@@ -51,8 +52,7 @@
                                                     <span class="input-group-text">
                                                         <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
-                                                    <input type="text" name="tgl_observasi"
-                                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
                                                         value="{{ $surat->tgl_observasi?->locale('id')->isoFormat('D MMMM YYYY') }}"
                                                         disabled />
                                                 </div>
@@ -62,26 +62,81 @@
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Tempat Observasi</label>
-                                                <input type="text" name="mitra_id"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $surat->mitra ? $surat->mitra->nama_mitra : '-' }}"
-                                                    disabled />
+                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->mitra?->nama_mitra ?? '-' }}" disabled />
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Keperluan Observasi</label>
-                                                <textarea name="keperluan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                                <textarea class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">Catatan</label>
-                                                <textarea name="catatan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
+                                                <textarea class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
                                             </div>
                                         </div>
+
+                                        @if ($isKelompok)
+                                            <div class="col-12">
+                                                <div class="separator border-gray-200 my-4"></div>
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-3">Daftar Mahasiswa</label>
+
+                                                    @foreach ($daftarMahasiswa as $index => $mahasiswa)
+                                                        <div class="border border-gray-200 rounded p-4 mb-4">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-between mb-3">
+                                                                <div class="fw-semibold text-gray-900">
+                                                                    Mahasiswa {{ $index + 1 }}
+                                                                </div>
+                                                                <span
+                                                                    class="badge {{ data_get($mahasiswa, 'is_ketua') ? 'badge-light-primary' : 'badge-light-success' }}">
+                                                                    {{ data_get($mahasiswa, 'is_ketua') ? 'Ketua' : 'Anggota' }}
+                                                                </span>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-12 col-md-4">
+                                                                    <div class="fv-row mb-3">
+                                                                        <label class="fw-semibold fs-6 mb-2">NIM</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                                                            value="{{ data_get($mahasiswa, 'nim', '-') }}"
+                                                                            disabled />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 col-md-4">
+                                                                    <div class="fv-row mb-3">
+                                                                        <label class="fw-semibold fs-6 mb-2">Nama
+                                                                            Mahasiswa</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                                                            value="{{ data_get($mahasiswa, 'nama', '-') }}"
+                                                                            disabled />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 col-md-4">
+                                                                    <div class="fv-row mb-3">
+                                                                        <label class="fw-semibold fs-6 mb-2">Prodi</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                                                            value="{{ data_get($mahasiswa, 'prodi', '-') }}"
+                                                                            disabled />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </form>
                             </div>

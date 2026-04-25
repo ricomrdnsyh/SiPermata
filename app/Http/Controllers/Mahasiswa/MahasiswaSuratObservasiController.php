@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Models\Mitra;
+use App\Models\Mahasiswa;
 use App\Models\Template;
 use Illuminate\Http\Request;
 use App\Models\TahunAkademik;
@@ -12,7 +13,10 @@ use App\Models\HistoryPengajuan;
 use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File;
 use App\Services\NotifikasiBAKService;
+use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\SuratObservasiGenerator;
 
@@ -76,6 +80,35 @@ class MahasiswaSuratObservasiController extends Controller
             ->make(true);
     }
 
+    public function lookupAnggota(string $nim)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'mahasiswa') {
+            abort(403);
+        }
+
+        $mahasiswa = Mahasiswa::with('prodi')
+            ->where('nim', trim($nim))
+            ->first();
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'success' => false,
+                'message' => "NIM {$nim} tidak ditemukan pada data mahasiswa.",
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'nim' => $mahasiswa->nim,
+                'nama' => $mahasiswa->nama,
+                'prodi' => $mahasiswa->prodi?->nama_prodi ?? '-',
+            ],
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -97,98 +130,122 @@ class MahasiswaSuratObservasiController extends Controller
      */
     public function store(Request $request, SuratObservasiGenerator $generatorService)
     {
-        $request->validate([
-            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
-            'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'semester'         => 'required',
-            'tgl_observasi'    => 'required',
-            'keperluan'        => 'required',
-        ]);
-
-        $user = Auth::user();
-
-        $mahasiswa = $user->mahasiswa;
-
-        if (!$mahasiswa) {
-            return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
-        }
-
-        $fakultasId = $mahasiswa->fakultas_id;
-
-        if (!$fakultasId) {
-            return back()->with('failed', 'Fakultas Anda belum ditentukan.');
-        }
-
-        $namaTemplate = 'surat_observasi';
-
-        $template = Template::where('jenis_surat', $namaTemplate)
-            ->where('fakultas_id', $fakultasId)
-            ->first();
-
-        if (!$template) {
-            return back()->with('failed', "Template surat ini belum tersedia untuk fakultas Anda.");
-        }
-
-        // Generate nomor surat
-        $noSurat = SuratObservasi::getNextNoSurat($template->id_template);
-
-        $surat = SuratObservasi::create([
-            'template_id'         => $template->id_template,
-            'no_surat'            => $noSurat,
-            'nim'                 => $mahasiswa->nim,
-            'akademik_id'         => $request->akademik_id,
-            'mitra_id'            => $request->mitra_id,
-            'semester'            => $request->semester,
-            'tgl_observasi'       => $request->tgl_observasi,
-            'keperluan'           => $request->keperluan,
-            'status'              => 'pengajuan',
-            'catatan'             => 'Diajukan oleh mahasiswa',
-            'file_generated'      => null,
-        ]);
-
         try {
-            // GENERATE FILE WORD
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $request->validate($this->rules());
 
-            // UPDATE MODEL DENGAN PATH FILE
-            $surat->update([
-                'file_generated' => $generatedFilePath,
+            $user = Auth::user();
+
+            $mahasiswa = $user->mahasiswa;
+
+            if (!$mahasiswa) {
+                return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+            }
+
+            $supportsAnggotaKelompok = $this->supportsAnggotaKelompok();
+            $hasAnggotaKelompokInput = collect($request->input('anggota_kelompok', []))
+                ->contains(fn($anggota) => filled(data_get($anggota, 'nama')) || filled(data_get($anggota, 'nim')));
+
+            if (!$supportsAnggotaKelompok && $hasAnggotaKelompokInput) {
+                return back()
+                    ->withInput()
+                    ->with('failed', 'Fitur pengajuan observasi kelompok belum aktif di database. Jalankan migrasi terlebih dahulu.');
+            }
+
+            $anggotaKelompok = $supportsAnggotaKelompok
+                ? $this->resolveAnggotaKelompok($request->input('anggota_kelompok', []), $mahasiswa->nim)
+                : [];
+            $isKelompok = !empty($anggotaKelompok);
+
+            $fakultasId = $mahasiswa->fakultas_id;
+
+            if (!$fakultasId) {
+                return back()->with('failed', 'Fakultas Anda belum ditentukan.');
+            }
+
+            $template = $this->resolveTemplateObservasi($fakultasId, $isKelompok);
+
+            if (!$template) {
+                return back()->with('failed', $this->missingTemplateMessage($isKelompok));
+            }
+
+            // Generate nomor surat
+            $noSurat = SuratObservasi::getNextNoSurat($template->id_template);
+
+            $payload = [
+                'template_id'         => $template->id_template,
+                'no_surat'            => $noSurat,
+                'nim'                 => $mahasiswa->nim,
+                'akademik_id'         => $request->akademik_id,
+                'mitra_id'            => $request->mitra_id,
+                'semester'            => $request->semester,
+                'tgl_observasi'       => $request->tgl_observasi,
+                'keperluan'           => $request->keperluan,
+                'status'              => 'pengajuan',
+                'catatan'             => 'Diajukan oleh mahasiswa',
+                'file_generated'      => null,
+            ];
+
+            if ($supportsAnggotaKelompok) {
+                $payload['anggota_kelompok'] = $anggotaKelompok;
+            }
+
+            $surat = SuratObservasi::create($payload);
+
+            try {
+                // GENERATE FILE WORD
+                $generatedFilePath = $generatorService->generateWord($surat, $template);
+
+                // UPDATE MODEL DENGAN PATH FILE
+                $surat->update([
+                    'file_generated' => $generatedFilePath,
+                ]);
+            } catch (\Exception $e) {
+                $surat->delete();
+                return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
+            }
+
+            $pengajuan = HistoryPengajuan::create([
+                'id_tabel_surat' => $surat->id_surat_observasi,
+                'nim'            => $mahasiswa->nim,
+                'fakultas_id'    => $mahasiswa->fakultas_id,
+                'tabel'          => 'surat_observasi',
+                'status'         => 'pengajuan',
+                'catatan'        => 'Diajukan oleh mahasiswa',
+                'jabatan_id'     => null,
             ]);
-        } catch (\Exception $e) {
-            $surat->delete();
-            return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'pengajuan',
+                'user_role'  => 'Mahasiswa',
+                'user_id'    => $user->id,
+                'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
+            ]);
+
+            $namaSurat = "Surat Permohonan Observasi";
+
+            $urlDetail = 'https://sso.unuja.ac.id';
+
+            NotifikasiBAKService::kirimPengajuanBaru(
+                $mahasiswa->nim,
+                $pengajuan,
+                $namaSurat,
+                $urlDetail
+            );
+
+            return redirect()->route('mahasiswa.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
+        } catch (ValidationException $e) {
+            return back()
+                ->withInput()
+                ->withErrors($e->errors())
+                ->with('failed', $this->validationExceptionMessage($e, 'anggota kelompok'));
+        } catch (\Throwable $e) {
+            $this->logObservasiException('store', $request, $e);
+
+            return back()
+                ->withInput()
+                ->with('failed', 'Terjadi kesalahan saat membuat pengajuan observasi. Detail disimpan di storage/logs/observasi-debug.log. Error: ' . $e->getMessage());
         }
-
-        $pengajuan = HistoryPengajuan::create([
-            'id_tabel_surat' => $surat->id_surat_observasi,
-            'nim'            => $mahasiswa->nim,
-            'fakultas_id'    => $mahasiswa->fakultas_id,
-            'tabel'          => 'surat_observasi',
-            'status'         => 'pengajuan',
-            'catatan'        => 'Diajukan oleh mahasiswa',
-            'jabatan_id'     => null,
-        ]);
-
-        PengajuanStatusLog::create([
-            'history_id' => $pengajuan->id_history,
-            'status'     => 'pengajuan',
-            'user_role'  => 'Mahasiswa',
-            'user_id'    => $user->id,
-            'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
-        ]);
-
-        $namaSurat = "Surat Permohonan Observasi";
-
-        $urlDetail = 'https://sso.unuja.ac.id';
-
-        NotifikasiBAKService::kirimPengajuanBaru(
-            $mahasiswa->nim,
-            $pengajuan,
-            $namaSurat,
-            $urlDetail
-        );
-
-        return redirect()->route('mahasiswa.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
     /**
@@ -239,56 +296,96 @@ class MahasiswaSuratObservasiController extends Controller
      */
     public function update(Request $request, string $id, SuratObservasiGenerator $generatorService)
     {
-        $request->validate([
-            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
-            'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'semester'         => 'required',
-            'tgl_observasi'    => 'required',
-            'keperluan'        => 'required',
-        ]);
-
-        $user = Auth::user();
-
-        $surat = SuratObservasi::where('id_surat_observasi', $id)
-            ->where('nim', $user->mahasiswa?->nim)
-            ->firstOrFail();
-
-        $pengajuan = $surat->historyPengajuan()
-            ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
-
-        $surat->update([
-            'akademik_id'      => $request->akademik_id,
-            'mitra_id'         => $request->mitra_id,
-            'semester'         => $request->semester,
-            'tgl_observasi'    => $request->tgl_observasi,
-            'keperluan'        => $request->keperluan,
-            'status'           => 'pengajuan',
-            'catatan'          => 'Diajukan ulang oleh mahasiswa',
-        ]);
-
         try {
-            $template = Template::findOrFail($surat->template_id);
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $request->validate($this->rules());
 
-            $surat->update(['file_generated' => $generatedFilePath]);
+            $user = Auth::user();
+            $mahasiswa = $user->mahasiswa;
 
-            $pengajuan->update([
-                'status'  => 'pengajuan',
-                'catatan' => 'Diajukan ulang oleh mahasiswa'
-            ]);
+            $surat = SuratObservasi::where('id_surat_observasi', $id)
+                ->where('nim', $mahasiswa?->nim)
+                ->firstOrFail();
 
-            PengajuanStatusLog::create([
-                'history_id' => $pengajuan->id_history,
-                'status'     => 'pengajuan',
-                'user_role'  => 'Mahasiswa',
-                'user_id'    => $user->id,
-                'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
-            ]);
+            $pengajuan = $surat->historyPengajuan()
+                ->where('nim', $mahasiswa?->nim)->firstOrFail();
 
-            return redirect()->route('mahasiswa.surat-observasi.index')
-                ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
-        } catch (\Exception $e) {
-            return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
+            $supportsAnggotaKelompok = $this->supportsAnggotaKelompok();
+            $hasAnggotaKelompokInput = collect($request->input('anggota_kelompok', []))
+                ->contains(fn($anggota) => filled(data_get($anggota, 'nama')) || filled(data_get($anggota, 'nim')));
+
+            if (!$supportsAnggotaKelompok && $hasAnggotaKelompokInput) {
+                return back()
+                    ->withInput()
+                    ->with('failed', 'Fitur pengajuan observasi kelompok belum aktif di database. Jalankan migrasi terlebih dahulu.');
+            }
+
+            $anggotaKelompok = $supportsAnggotaKelompok
+                ? $this->resolveAnggotaKelompok($request->input('anggota_kelompok', []), $mahasiswa?->nim)
+                : [];
+            $isKelompok = !empty($anggotaKelompok);
+            $fakultasId = $mahasiswa?->fakultas_id;
+
+            if (!$fakultasId) {
+                return back()->with('failed', 'Fakultas Anda belum ditentukan.');
+            }
+
+            $template = $this->resolveTemplateObservasi($fakultasId, $isKelompok);
+
+            if (!$template) {
+                return back()->with('failed', $this->missingTemplateMessage($isKelompok));
+            }
+
+            $payload = [
+                'template_id'       => $template->id_template,
+                'akademik_id'      => $request->akademik_id,
+                'mitra_id'         => $request->mitra_id,
+                'semester'         => $request->semester,
+                'tgl_observasi'    => $request->tgl_observasi,
+                'keperluan'        => $request->keperluan,
+                'status'           => 'pengajuan',
+                'catatan'          => 'Diajukan ulang oleh mahasiswa',
+            ];
+
+            if ($supportsAnggotaKelompok) {
+                $payload['anggota_kelompok'] = $anggotaKelompok;
+            }
+
+            $surat->update($payload);
+
+            try {
+                $generatedFilePath = $generatorService->generateWord($surat, $template);
+
+                $surat->update(['file_generated' => $generatedFilePath]);
+
+                $pengajuan->update([
+                    'status'  => 'pengajuan',
+                    'catatan' => 'Diajukan ulang oleh mahasiswa'
+                ]);
+
+                PengajuanStatusLog::create([
+                    'history_id' => $pengajuan->id_history,
+                    'status'     => 'pengajuan',
+                    'user_role'  => 'Mahasiswa',
+                    'user_id'    => $user->id,
+                    'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
+                ]);
+
+                return redirect()->route('mahasiswa.surat-observasi.index')
+                    ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
+            } catch (\Exception $e) {
+                return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
+            }
+        } catch (ValidationException $e) {
+            return back()
+                ->withInput()
+                ->withErrors($e->errors())
+                ->with('failed', $this->validationExceptionMessage($e, 'anggota kelompok'));
+        } catch (\Throwable $e) {
+            $this->logObservasiException('update', $request, $e, ['id' => $id]);
+
+            return back()
+                ->withInput()
+                ->with('failed', 'Terjadi kesalahan saat memperbarui pengajuan observasi. Detail disimpan di storage/logs/observasi-debug.log. Error: ' . $e->getMessage());
         }
     }
 
@@ -298,5 +395,145 @@ class MahasiswaSuratObservasiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function rules(): array
+    {
+        return [
+            'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
+            'mitra_id' => 'required|exists:mitra,id_mitra',
+            'semester' => 'required',
+            'tgl_observasi' => 'required',
+            'keperluan' => 'required',
+            'anggota_kelompok' => 'nullable|array',
+            'anggota_kelompok.*.nim' => 'nullable|string|max:50',
+        ];
+    }
+
+    private function resolveTemplateObservasi(int $fakultasId, bool $isKelompok): ?Template
+    {
+        $jenisSurat = $isKelompok ? 'surat_observasi_kelompok' : 'surat_observasi';
+
+        return Template::where('jenis_surat', $jenisSurat)
+            ->where('fakultas_id', $fakultasId)
+            ->first();
+    }
+
+    private function missingTemplateMessage(bool $isKelompok): string
+    {
+        if ($isKelompok) {
+            return 'Template surat observasi kelompok belum tersedia untuk fakultas Anda.';
+        }
+
+        return 'Template surat observasi biasa belum tersedia untuk fakultas Anda.';
+    }
+
+    private function supportsAnggotaKelompok(): bool
+    {
+        return Schema::hasColumn('surat_observasi', 'anggota_kelompok');
+    }
+
+    private function logObservasiException(string $action, Request $request, \Throwable $e, array $extra = []): void
+    {
+        $logPath = storage_path('logs/observasi-debug.log');
+        $payload = [
+            'time' => now()->toDateTimeString(),
+            'action' => $action,
+            'url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'user_id' => Auth::id(),
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'extra' => $extra,
+            'input' => collect($request->except(['_token', '_method']))->toArray(),
+            'trace' => $e->getTraceAsString(),
+        ];
+
+        File::ensureDirectoryExists(dirname($logPath));
+        File::append($logPath, json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL . str_repeat('-', 120) . PHP_EOL);
+    }
+
+    private function validationExceptionMessage(ValidationException $e, string $fallback = 'Data tidak valid.'): string
+    {
+        $messages = collect($e->errors())
+            ->flatten()
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($messages->isEmpty()) {
+            return $fallback;
+        }
+
+        return $messages->implode("\n");
+    }
+
+    private function resolveAnggotaKelompok(array $anggotaKelompok, ?string $nimKetua): array
+    {
+        $anggotaKelompok = collect($anggotaKelompok)
+            ->map(function ($anggota, $index) {
+                return [
+                    'index' => $index,
+                    'nim' => trim((string) data_get($anggota, 'nim')),
+                ];
+            })
+            ->filter(function ($anggota) {
+                return $anggota['nim'] !== '';
+            })
+            ->values();
+
+        if ($anggotaKelompok->isEmpty()) {
+            return [];
+        }
+
+        $errors = [];
+        $nimAnggota = $anggotaKelompok->pluck('nim')->filter()->all();
+        $mahasiswaAnggota = Mahasiswa::with('prodi')
+            ->whereIn('nim', $nimAnggota)
+            ->get()
+            ->keyBy('nim');
+        $nimUsed = [];
+        $resolved = [];
+
+        foreach ($anggotaKelompok as $anggota) {
+            $index = $anggota['index'];
+            $nim = $anggota['nim'];
+
+            if ($nim === '') {
+                $errors["anggota_kelompok.{$index}.nim"] = 'NIM anggota wajib diisi.';
+                continue;
+            }
+
+            if ($nimKetua && $nim === $nimKetua) {
+                $errors["anggota_kelompok.{$index}.nim"] = 'NIM anggota tidak boleh sama dengan ketua pengaju.';
+                continue;
+            }
+
+            if (isset($nimUsed[$nim])) {
+                $errors["anggota_kelompok.{$index}.nim"] = 'NIM anggota tidak boleh duplikat.';
+                continue;
+            }
+
+            $mahasiswa = $mahasiswaAnggota->get($nim);
+
+            if (!$mahasiswa) {
+                $errors["anggota_kelompok.{$index}.nim"] = "NIM anggota {$nim} tidak ditemukan pada data mahasiswa.";
+                continue;
+            }
+
+            $nimUsed[$nim] = true;
+            $resolved[] = [
+                'nama' => $mahasiswa->nama,
+                'nim' => $mahasiswa->nim,
+                'prodi' => $mahasiswa->prodi?->nama_prodi ?? '-',
+            ];
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
+
+        return $resolved;
     }
 }

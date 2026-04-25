@@ -347,9 +347,14 @@
                                             Menunggu BAK untuk validasi
                                         </button>
                                     @else
-                                        <button class="btn btn-sm btn-success fw-semibold" type="button">
+                                        <button class="btn btn-sm btn-success fw-semibold me-2" type="button">
                                             <i class="fas fa-check-circle me-2"></i>Pengajuan sudah dikonfirmasi
                                         </button>
+                                        <a href="{{ route('dekan.surat.lampiran_preview', ['tabel' => $pengajuan->tabel, 'id' => $pengajuan->id_tabel_surat]) }}"
+                                            class="btn btn-sm btn-primary fw-semibold" target="_blank"
+                                            rel="noopener noreferrer">
+                                            <i class="fas fa-eye me-2"></i>Periksa Surat
+                                        </a>
                                     @endif
                                 </div>
                             </div>

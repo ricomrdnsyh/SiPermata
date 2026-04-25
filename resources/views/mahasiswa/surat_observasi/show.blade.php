@@ -1,6 +1,11 @@
 @extends('layout.main')
 @section('title', 'Surat Permohonan Observasi')
 @section('content')
+    @php
+        $daftarMahasiswa = collect($surat->daftar_mahasiswa ?? [])->values();
+        $isKelompok = $daftarMahasiswa->count() > 1;
+    @endphp
+
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-column-fluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
@@ -82,6 +87,63 @@
                                                 <textarea name="catatan" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('catatan', $surat->catatan) }}</textarea>
                                             </div>
                                         </div>
+
+                                        @if ($isKelompok)
+                                            <div class="col-12">
+                                                <div class="separator border-gray-200 my-4"></div>
+                                                <div class="fv-row mb-3">
+                                                    <label class="fw-semibold fs-6 mb-3">Daftar Mahasiswa</label>
+
+                                                    @foreach ($daftarMahasiswa as $index => $mahasiswa)
+                                                        <div class="border border-gray-200 rounded p-4 mb-4">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-between mb-3">
+                                                                <div class="fw-semibold text-gray-900">
+                                                                    Mahasiswa {{ $index + 1 }}
+                                                                </div>
+                                                                <span
+                                                                    class="badge {{ data_get($mahasiswa, 'is_ketua') ? 'badge-light-primary' : 'badge-light-success' }}">
+                                                                    {{ data_get($mahasiswa, 'is_ketua') ? 'Ketua' : 'Anggota' }}
+                                                                </span>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-12 col-md-4">
+                                                                    <div class="fv-row mb-3">
+                                                                        <label class="fw-semibold fs-6 mb-2">NIM</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                                                            value="{{ data_get($mahasiswa, 'nim', '-') }}"
+                                                                            disabled />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 col-md-4">
+                                                                    <div class="fv-row mb-3">
+                                                                        <label class="fw-semibold fs-6 mb-2">Nama
+                                                                            Mahasiswa</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                                                            value="{{ data_get($mahasiswa, 'nama', '-') }}"
+                                                                            disabled />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 col-md-4">
+                                                                    <div class="fv-row mb-3">
+                                                                        <label class="fw-semibold fs-6 mb-2">Prodi</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                                                            value="{{ data_get($mahasiswa, 'prodi', '-') }}"
+                                                                            disabled />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </form>
                             </div>

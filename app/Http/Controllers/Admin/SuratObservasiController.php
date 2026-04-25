@@ -14,6 +14,8 @@ use App\Models\HistoryPengajuan;
 use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\SuratObservasiGenerator;
 
@@ -122,7 +124,9 @@ class SuratObservasiController extends Controller
             abort(403);
         }
 
-        $mahasiswa = Mahasiswa::all();
+        $mahasiswa = Mahasiswa::with('prodi')
+            ->orderBy('nama', 'asc')
+            ->get();
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
 
@@ -140,15 +144,11 @@ class SuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $request->validate([
-            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
-            'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'semester'         => 'required',
-            'tgl_observasi'    => 'required',
-            'keperluan'        => 'required',
-        ]);
+        $request->validate($this->rules());
 
-        $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
+        $mahasiswa = Mahasiswa::with('prodi')
+            ->where('nim', $request->nim)
+            ->first();
 
         if (!$mahasiswa) {
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
@@ -157,23 +157,34 @@ class SuratObservasiController extends Controller
         $fakultasId = $mahasiswa->fakultas_id;
 
         if (!$fakultasId) {
-            return back()->with('failed', 'Fakultas Anda belum ditentukan.');
+            return back()->with('failed', 'Fakultas mahasiswa terpilih belum ditentukan.');
         }
 
-        $namaTemplate = 'surat_observasi';
+        $supportsAnggotaKelompok = $this->supportsAnggotaKelompok();
+        $hasAnggotaKelompokInput = collect($request->input('anggota_kelompok', []))
+            ->contains(fn($anggota) => filled(data_get($anggota, 'nama')) || filled(data_get($anggota, 'nim')));
 
-        $template = Template::where('jenis_surat', $namaTemplate)
-            ->where('fakultas_id', $fakultasId)
-            ->first();
+        if (!$supportsAnggotaKelompok && $hasAnggotaKelompokInput) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Fitur pengajuan observasi kelompok belum aktif di database. Jalankan migrasi terlebih dahulu.');
+        }
+
+        $anggotaKelompok = $supportsAnggotaKelompok
+            ? $this->resolveAnggotaKelompok($request->input('anggota_kelompok', []), $mahasiswa->nim)
+            : [];
+        $isKelompok = !empty($anggotaKelompok);
+
+        $template = $this->resolveTemplateObservasi($fakultasId, $isKelompok);
 
         if (!$template) {
-            return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
+            return back()->with('failed', $this->missingTemplateMessage($isKelompok));
         }
 
         // Generate nomor surat
         $noSurat = SuratObservasi::getNextNoSurat($template->id_template);
 
-        $surat = SuratObservasi::create([
+        $payload = [
             'template_id'         => $template->id_template,
             'no_surat'            => $noSurat,
             'nim'                 => $mahasiswa->nim,
@@ -185,7 +196,13 @@ class SuratObservasiController extends Controller
             'status'              => 'pengajuan',
             'catatan'             => 'Diajukan oleh Admin untuk mahasiswa',
             'file_generated'      => null,
-        ]);
+        ];
+
+        if ($supportsAnggotaKelompok) {
+            $payload['anggota_kelompok'] = $anggotaKelompok;
+        }
+
+        $surat = SuratObservasi::create($payload);
 
         try {
             // GENERATE FILE WORD
@@ -206,7 +223,7 @@ class SuratObservasiController extends Controller
             'fakultas_id'    => $mahasiswa->fakultas_id,
             'tabel'          => 'surat_observasi',
             'status'         => 'pengajuan',
-            'catatan'        => 'Diajukan oleh mahasiswa',
+            'catatan'        => 'Diajukan oleh Admin untuk mahasiswa',
             'jabatan_id'     => null,
         ]);
 
@@ -232,7 +249,7 @@ class SuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $surat = SuratObservasi::with('mahasiswa')
+        $surat = SuratObservasi::with('mahasiswa.prodi')
             ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
@@ -250,13 +267,15 @@ class SuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $surat = SuratObservasi::with('mahasiswa')
+        $surat = SuratObservasi::with('mahasiswa.prodi')
             ->where('id_surat_observasi', $id)
             ->firstOrFail();
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra     = Mitra::all();
-        $mahasiswa = Mahasiswa::all();
+        $mahasiswa = Mahasiswa::with('prodi')
+            ->orderBy('nama', 'asc')
+            ->get();
 
         return view('admin.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
@@ -272,20 +291,46 @@ class SuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $request->validate([
-            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
-            'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'semester'         => 'required',
-            'tgl_observasi'    => 'required',
-            'keperluan'        => 'required',
-        ]);
+        $request->validate($this->rules());
 
         $surat = SuratObservasi::findOrFail($id);
+        $mahasiswa = Mahasiswa::with('prodi')
+            ->where('nim', $request->nim)
+            ->first();
 
-        $pengajuan = $surat->historyPengajuan()
-            ->where('nim', $request->nim)->firstOrFail();
+        if (!$mahasiswa) {
+            return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
 
-        $surat->update([
+        if (!$mahasiswa->fakultas_id) {
+            return back()->with('failed', 'Fakultas mahasiswa terpilih belum ditentukan.');
+        }
+
+        $pengajuan = $surat->historyPengajuan()->firstOrFail();
+
+        $supportsAnggotaKelompok = $this->supportsAnggotaKelompok();
+        $hasAnggotaKelompokInput = collect($request->input('anggota_kelompok', []))
+            ->contains(fn($anggota) => filled(data_get($anggota, 'nama')) || filled(data_get($anggota, 'nim')));
+
+        if (!$supportsAnggotaKelompok && $hasAnggotaKelompokInput) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Fitur pengajuan observasi kelompok belum aktif di database. Jalankan migrasi terlebih dahulu.');
+        }
+
+        $anggotaKelompok = $supportsAnggotaKelompok
+            ? $this->resolveAnggotaKelompok($request->input('anggota_kelompok', []), $mahasiswa->nim)
+            : [];
+        $isKelompok = !empty($anggotaKelompok);
+
+        $template = $this->resolveTemplateObservasi($mahasiswa->fakultas_id, $isKelompok);
+
+        if (!$template) {
+            return back()->with('failed', $this->missingTemplateMessage($isKelompok));
+        }
+
+        $payload = [
+            'template_id'      => $template->id_template,
             'nim'              => $request->nim,
             'akademik_id'      => $request->akademik_id,
             'mitra_id'         => $request->mitra_id,
@@ -294,11 +339,15 @@ class SuratObservasiController extends Controller
             'keperluan'        => $request->keperluan,
             'status'           => 'pengajuan',
             'catatan'          => 'Diajukan ulang oleh Admin untuk mahasiswa',
-        ]);
+        ];
+
+        if ($supportsAnggotaKelompok) {
+            $payload['anggota_kelompok'] = $anggotaKelompok;
+        }
+
+        $surat->update($payload);
 
         try {
-            $template = Template::findOrFail($surat->template_id);
-
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
             $surat->update([
@@ -306,6 +355,8 @@ class SuratObservasiController extends Controller
             ]);
 
             $pengajuan->update([
+                'nim'     => $mahasiswa->nim,
+                'fakultas_id' => $mahasiswa->fakultas_id,
                 'status'  => 'pengajuan',
                 'catatan' => 'Diajukan ulang oleh Admin untuk mahasiswa'
             ]);
@@ -330,5 +381,108 @@ class SuratObservasiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function rules(): array
+    {
+        return [
+            'nim' => 'required|string|max:50',
+            'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
+            'mitra_id' => 'required|exists:mitra,id_mitra',
+            'semester' => 'required',
+            'tgl_observasi' => 'required',
+            'keperluan' => 'required',
+            'anggota_kelompok' => 'nullable|array',
+            'anggota_kelompok.*.nim' => 'nullable|string|max:50',
+        ];
+    }
+
+    private function supportsAnggotaKelompok(): bool
+    {
+        return Schema::hasColumn('surat_observasi', 'anggota_kelompok');
+    }
+
+    private function resolveTemplateObservasi(int $fakultasId, bool $isKelompok): ?Template
+    {
+        $jenisSurat = $isKelompok ? 'surat_observasi_kelompok' : 'surat_observasi';
+
+        return Template::where('jenis_surat', $jenisSurat)
+            ->where('fakultas_id', $fakultasId)
+            ->first();
+    }
+
+    private function missingTemplateMessage(bool $isKelompok): string
+    {
+        if ($isKelompok) {
+            return 'Template surat observasi kelompok belum tersedia untuk fakultas mahasiswa terpilih.';
+        }
+
+        return 'Template surat observasi biasa belum tersedia untuk fakultas mahasiswa terpilih.';
+    }
+
+    private function resolveAnggotaKelompok(array $anggotaKelompok, ?string $nimKetua): array
+    {
+        $anggotaKelompok = collect($anggotaKelompok)
+            ->map(function ($anggota, $index) {
+                return [
+                    'index' => $index,
+                    'nim' => trim((string) data_get($anggota, 'nim')),
+                ];
+            })
+            ->filter(fn($anggota) => $anggota['nim'] !== '')
+            ->values();
+
+        if ($anggotaKelompok->isEmpty()) {
+            return [];
+        }
+
+        $errors = [];
+        $nimAnggota = $anggotaKelompok->pluck('nim')->filter()->all();
+        $mahasiswaAnggota = Mahasiswa::with('prodi')
+            ->whereIn('nim', $nimAnggota)
+            ->get()
+            ->keyBy('nim');
+        $nimUsed = [];
+        $resolved = [];
+
+        foreach ($anggotaKelompok as $anggota) {
+            $index = $anggota['index'];
+            $nim = $anggota['nim'];
+
+            if ($nim === '') {
+                $errors["anggota_kelompok.{$index}.nim"] = 'Mahasiswa anggota wajib dipilih.';
+                continue;
+            }
+
+            if ($nimKetua && $nim === $nimKetua) {
+                $errors["anggota_kelompok.{$index}.nim"] = 'Mahasiswa anggota tidak boleh sama dengan ketua pengaju.';
+                continue;
+            }
+
+            if (isset($nimUsed[$nim])) {
+                $errors["anggota_kelompok.{$index}.nim"] = 'Mahasiswa anggota tidak boleh duplikat.';
+                continue;
+            }
+
+            $mahasiswa = $mahasiswaAnggota->get($nim);
+
+            if (!$mahasiswa) {
+                $errors["anggota_kelompok.{$index}.nim"] = "Mahasiswa anggota {$nim} tidak ditemukan.";
+                continue;
+            }
+
+            $nimUsed[$nim] = true;
+            $resolved[] = [
+                'nama' => $mahasiswa->nama,
+                'nim' => $mahasiswa->nim,
+                'prodi' => $mahasiswa->prodi?->nama_prodi ?? '-',
+            ];
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
+
+        return $resolved;
     }
 }

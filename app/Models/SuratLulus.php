@@ -99,7 +99,7 @@ class SuratLulus extends Model
 
     public function mitra()
     {
-        return $this->belongsTo(Mitra::class, 'mitra_id');
+        return $this->belongsTo(Mitra::class, 'mitra_id', 'id_mitra');
     }
 
     public function historyPengajuan()

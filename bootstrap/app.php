@@ -32,16 +32,29 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(static function (Exceptions $exceptions): void {
         $exceptions->reportable(static function (Throwable $e) {
-            Log::log(
-                match (true) {
-                    $e instanceof NotFoundHttpException,
-                    $e instanceof ModelNotFoundException => LogLevel::WARNING,
-                    $e instanceof AuthenticationException => LogLevel::NOTICE,
-                    default => LogLevel::ERROR,
-                },
-                $e->getMessage(),
-                ['exception' => $e, 'file' => $e->getFile(), 'line' => $e->getLine()],
-            );
+            $level = match (true) {
+                $e instanceof NotFoundHttpException,
+                $e instanceof ModelNotFoundException => LogLevel::WARNING,
+                $e instanceof AuthenticationException => LogLevel::NOTICE,
+                default => LogLevel::ERROR,
+            };
+
+            $context = [
+                'exception' => $e,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ];
+
+            try {
+                Log::log($level, $e->getMessage(), $context);
+            } catch (Throwable $loggingException) {
+                $timestamp = date('Y-m-d H:i:s');
+                $entry = "[{$timestamp}] {$level}: {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}" . PHP_EOL
+                    . $e->getTraceAsString() . PHP_EOL . PHP_EOL;
+
+                @file_put_contents(storage_path('logs/laravel.log'), $entry, FILE_APPEND);
+                error_log($entry);
+            }
         });
 
         $exceptions->render(static function (Throwable $e, Request $request) {
@@ -71,7 +84,17 @@ return Application::configure(basePath: dirname(__DIR__))
                 $message = 'Terjadi kesalahan pada server.';
             }
 
-            return $request->wantsJson() ? response()->json(['success' => false, 'message' => $message], $status) : response()->view("errors.$status", ['message' => $message], $status);
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $message], $status);
+            }
+
+            $errorView = "errors.$status";
+
+            if (view()->exists($errorView)) {
+                return response()->view($errorView, ['message' => $message], $status);
+            }
+
+            return response($message, $status);
         });
     })
     ->create();
