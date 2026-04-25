@@ -44,11 +44,12 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0" required />
-                                                @error('semester')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                                <input type="text" name="semester"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $dataSimpt?->semester ?? '-' }}" disabled />
+                                                @if (blank($dataSimpt?->semester))
+                                                    <small class="text-warning">Data semester belum ditemukan di SIMPT.</small>
+                                                @endif
                                             </div>
                                         </div>
 

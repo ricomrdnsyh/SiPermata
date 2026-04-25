@@ -13,10 +13,13 @@ use App\Models\HistoryPengajuan;
 use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use App\Services\NotifikasiBAKService;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\SuratObservasiGenerator;
 
@@ -114,15 +117,17 @@ class MahasiswaSuratObservasiController extends Controller
      */
     public function create()
     {
-        $user     = Auth::user();
+        $user = Auth::user();
 
         if ($user->role !== 'mahasiswa') {
             abort(403, 'Akses ditolak');
         }
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
-        $mitra    = Mitra::all();
-        return view('mahasiswa.surat_observasi.create', compact('latestAkademik', 'mitra'));
+        $mitra = Mitra::all();
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_observasi.create', compact('latestAkademik', 'mitra', 'dataSimpt'));
     }
 
     /**
@@ -139,6 +144,15 @@ class MahasiswaSuratObservasiController extends Controller
 
             if (!$mahasiswa) {
                 return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+            }
+
+            $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+            $semester = $dataSimpt?->semester;
+
+            if (blank($semester)) {
+                return back()
+                    ->withInput()
+                    ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
             }
 
             $supportsAnggotaKelompok = $this->supportsAnggotaKelompok();
@@ -177,7 +191,7 @@ class MahasiswaSuratObservasiController extends Controller
                 'nim'                 => $mahasiswa->nim,
                 'akademik_id'         => $request->akademik_id,
                 'mitra_id'            => $request->mitra_id,
-                'semester'            => $request->semester,
+                'semester'            => $semester,
                 'tgl_observasi'       => $request->tgl_observasi,
                 'keperluan'           => $request->keperluan,
                 'status'              => 'pengajuan',
@@ -286,9 +300,10 @@ class MahasiswaSuratObservasiController extends Controller
         }
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
-        $mitra    = Mitra::all();
+        $mitra = Mitra::all();
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
-        return view('mahasiswa.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra'));
+        return view('mahasiswa.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'dataSimpt'));
     }
 
     /**
@@ -301,6 +316,19 @@ class MahasiswaSuratObservasiController extends Controller
 
             $user = Auth::user();
             $mahasiswa = $user->mahasiswa;
+
+            if (!$mahasiswa) {
+                return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+            }
+
+            $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+            $semester = $dataSimpt?->semester;
+
+            if (blank($semester)) {
+                return back()
+                    ->withInput()
+                    ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
+            }
 
             $surat = SuratObservasi::where('id_surat_observasi', $id)
                 ->where('nim', $mahasiswa?->nim)
@@ -339,7 +367,7 @@ class MahasiswaSuratObservasiController extends Controller
                 'template_id'       => $template->id_template,
                 'akademik_id'      => $request->akademik_id,
                 'mitra_id'         => $request->mitra_id,
-                'semester'         => $request->semester,
+                'semester'         => $semester,
                 'tgl_observasi'    => $request->tgl_observasi,
                 'keperluan'        => $request->keperluan,
                 'status'           => 'pengajuan',
@@ -402,7 +430,6 @@ class MahasiswaSuratObservasiController extends Controller
         return [
             'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id' => 'required|exists:mitra,id_mitra',
-            'semester' => 'required',
             'tgl_observasi' => 'required',
             'keperluan' => 'required',
             'anggota_kelompok' => 'nullable|array',
@@ -535,5 +562,47 @@ class MahasiswaSuratObservasiController extends Controller
         }
 
         return $resolved;
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) {
+            return null;
+        }
+
+        try {
+            return DB::selectOne(
+                '
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ',
+                [$nim]
+            );
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }

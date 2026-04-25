@@ -70,13 +70,20 @@
 
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ old('semester', $surat->semester) }}" required />
-                                                @error('semester')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                                <label class="fw-semibold fs-6 mb-2">
+                                                    Semester
+                                                    <span id="semester-loading"
+                                                        class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                                </label>
+                                                <input id="field-semester" type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa"
+                                                    value="{{ old('nim', $surat->nim) ? ($surat->semester ?? '') : '' }}"
+                                                    readonly />
+                                                <small id="simpt-warning" class="text-warning d-none">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Data semester tidak ditemukan di SIMPT.
+                                                </small>
                                             </div>
                                         </div>
 
@@ -168,8 +175,12 @@
             const tglObsEl = document.getElementById('tgl_observasi');
             const tglObsVal = tglObsEl.value || null;
             const pengajuSelect = document.getElementById('mahasiswa_pengaju_select');
+            const fieldSemester = document.getElementById('field-semester');
+            const semesterSpinner = document.getElementById('semester-loading');
+            const simptWarning = document.getElementById('simpt-warning');
             const anggotaContainer = document.getElementById('anggota-kelompok-container');
             const mahasiswaOptions = @json($mahasiswaOptions);
+            const simptUrl = "{{ route('bak.surat-observasi.simpt', '__NIM__') }}";
             let anggotaIndex = anggotaContainer ? anggotaContainer.querySelectorAll('tr').length : 0;
 
             flatpickr(tglObsEl, {
@@ -209,6 +220,45 @@
                             syncAnggotaRow(element.closest('tr'));
                         });
                 }
+            }
+
+            function fetchSimpt(nim) {
+                if (!fieldSemester || !semesterSpinner || !simptWarning) {
+                    return;
+                }
+
+                if (!nim) {
+                    fieldSemester.value = '';
+                    simptWarning.classList.add('d-none');
+                    return;
+                }
+
+                semesterSpinner.classList.remove('d-none');
+                simptWarning.classList.add('d-none');
+                fieldSemester.value = '';
+
+                fetch(simptUrl.replace('__NIM__', encodeURIComponent(nim)), {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.semester) {
+                            fieldSemester.value = data.semester;
+                            simptWarning.classList.add('d-none');
+                        } else {
+                            fieldSemester.value = '-';
+                            simptWarning.classList.remove('d-none');
+                        }
+                    })
+                    .catch(() => {
+                        fieldSemester.value = '-';
+                        simptWarning.classList.remove('d-none');
+                    })
+                    .finally(() => {
+                        semesterSpinner.classList.add('d-none');
+                    });
             }
 
             function buildMahasiswaOptions(selectedNim) {
@@ -331,6 +381,18 @@
 
             if (pengajuSelect) {
                 initSelect2(pengajuSelect);
+                fetchSimpt(pengajuSelect.value);
+                if (window.jQuery) {
+                    jQuery(pengajuSelect)
+                        .off('.simptObservasiBak')
+                        .on('change.simptObservasiBak select2:select.simptObservasiBak', function() {
+                            fetchSimpt(this.value);
+                        });
+                } else {
+                    pengajuSelect.addEventListener('change', function() {
+                        fetchSimpt(this.value);
+                    });
+                }
             }
 
             if (anggotaContainer) {

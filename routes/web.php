@@ -150,6 +150,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-pkl/data', [SuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', SuratPKLController::class)->except(['destroy']);
 
+        Route::get('surat-observasi/simpt/{nim}', [SuratObservasiController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-observasi.simpt');
         Route::get('/surat-observasi/data', [SuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
         Route::resource('surat-observasi', SuratObservasiController::class)->except(['destroy']);
 
@@ -238,6 +240,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
 
+        Route::get('surat-observasi/simpt/{nim}', [BAKSuratObservasiController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-observasi.simpt');
         Route::get('/surat-observasi/data', [BAKSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
         Route::resource('surat-observasi', BAKSuratObservasiController::class)->except(['destroy']);
 
