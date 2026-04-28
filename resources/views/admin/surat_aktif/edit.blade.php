@@ -66,13 +66,21 @@
                                         </div>
                                     </div>
                                     <div class="fv-row mb-3">
-                                        <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester"
-                                            class="form-control form-control-sm mb-3 mb-lg-0"
-                                            value="{{ $surat->semester }}" required />
-                                        @error('semester')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
+                                        <label class="fw-semibold fs-6 mb-2">
+                                            Semester
+                                            <span id="semester-loading-umum"
+                                                class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                        </label>
+                                        <input id="field-semester-umum" type="text"
+                                            class="form-control form-control-sm bg-light mb-3 mb-lg-0"
+                                            placeholder="Otomatis terisi setelah memilih mahasiswa"
+                                            value="{{ $surat->semester }}" disabled />
+                                        <input type="hidden" name="semester" id="hidden-semester-umum"
+                                            value="{{ $surat->semester }}">
+                                        <small id="simpt-warning-umum" class="text-warning d-none">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Data semester tidak ditemukan di SIMPT.
+                                        </small>
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Alamat</label>
@@ -139,13 +147,21 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester"
-                                                    class="form-control form-control-sm" value="{{ $surat->semester }}"
-                                                    required />
-                                                @error('semester')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                                <label class="fw-semibold fs-6 mb-2">
+                                                    Semester
+                                                    <span id="semester-loading-pns"
+                                                        class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                                </label>
+                                                <input id="field-semester-pns" type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa"
+                                                    value="{{ $surat->semester }}" disabled />
+                                                <input type="hidden" name="semester" id="hidden-semester-pns"
+                                                    value="{{ $surat->semester }}">
+                                                <small id="simpt-warning-pns" class="text-warning d-none">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Data semester tidak ditemukan di SIMPT.
+                                                </small>
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua Sesuai
@@ -363,13 +379,21 @@
                                                 @enderror
                                             </div>
                                             <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester"
-                                                    class="form-control form-control-sm" value="{{ $surat->semester }}"
-                                                    required />
-                                                @error('semester')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                                <label class="fw-semibold fs-6 mb-2">
+                                                    Semester
+                                                    <span id="semester-loading-pppk"
+                                                        class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                                </label>
+                                                <input id="field-semester-pppk" type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa"
+                                                    value="{{ $surat->semester }}" disabled />
+                                                <input type="hidden" name="semester" id="hidden-semester-pppk"
+                                                    value="{{ $surat->semester }}">
+                                                <small id="simpt-warning-pppk" class="text-warning d-none">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Data semester tidak ditemukan di SIMPT.
+                                                </small>
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">NIP Orang Tua Sesuai
@@ -614,6 +638,79 @@
                     defaultDate: el.value ? el.value : null
                 });
 
+            });
+
+            // === AJAX Semester Auto-fill dari SIM-PT ===
+            const simptUrl = "{{ route('admin.surat-aktif.simpt', '__NIM__') }}";
+
+            function fetchSimpt(nim, suffix) {
+                const field = document.getElementById('field-semester-' + suffix);
+                const hidden = document.getElementById('hidden-semester-' + suffix);
+                const spinner = document.getElementById('semester-loading-' + suffix);
+                const warning = document.getElementById('simpt-warning-' + suffix);
+
+                if (!field || !spinner || !warning || !hidden) return;
+
+                if (!nim) {
+                    field.value = '';
+                    hidden.value = '';
+                    warning.classList.add('d-none');
+                    return;
+                }
+
+                spinner.classList.remove('d-none');
+                warning.classList.add('d-none');
+                field.value = '';
+                hidden.value = '';
+
+                fetch(simptUrl.replace('__NIM__', encodeURIComponent(nim)), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.semester) {
+                            field.value = data.semester;
+                            hidden.value = data.semester;
+                            warning.classList.add('d-none');
+                        } else {
+                            field.value = '-';
+                            hidden.value = '';
+                            warning.classList.remove('d-none');
+                        }
+                    })
+                    .catch(() => {
+                        field.value = '-';
+                        hidden.value = '';
+                        warning.classList.remove('d-none');
+                    })
+                    .finally(() => {
+                        spinner.classList.add('d-none');
+                    });
+            }
+
+            const editFormMap = {
+                'form-umum': 'umum',
+                'form-pns': 'pns',
+                'form-pppk': 'pppk'
+            };
+
+            Object.entries(editFormMap).forEach(([formId, suffix]) => {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                const select = form.querySelector('select[name="nim"]');
+                if (!select) return;
+
+                if (window.jQuery && jQuery.fn.select2) {
+                    jQuery(select)
+                        .off('.simptAktifAdminEdit')
+                        .on('change.simptAktifAdminEdit select2:select.simptAktifAdminEdit', function() {
+                            fetchSimpt(this.value, suffix);
+                        });
+                } else {
+                    select.addEventListener('change', function() {
+                        fetchSimpt(this.value, suffix);
+                    });
+                }
             });
         });
     </script>

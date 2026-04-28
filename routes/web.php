@@ -136,6 +136,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/jabatan/data', [JabatanController::class, 'getJabatan'])->name('jabatan.data');
         Route::resource('jabatan', JabatanController::class);
 
+        Route::get('surat-aktif/simpt/{nim}', [SuratAktifController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-aktif.simpt');
         Route::get('/surat-aktif/data', [SuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', SuratAktifController::class);
 
@@ -226,6 +228,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/ttdSurat/data', [BAKTtdSuratController::class, 'getTtdSurat'])->name('ttdSurat.data');
         Route::resource('ttdSurat', BAKTtdSuratController::class)->except(['destroy']);
 
+        Route::get('surat-aktif/simpt/{nim}', [BAKSuratAktifController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-aktif.simpt');
         Route::get('/surat-aktif/data', [BAKSuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', BAKSuratAktifController::class)->except(['destroy']);
 

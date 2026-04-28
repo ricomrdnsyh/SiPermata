@@ -54,9 +54,10 @@
                                     </div>
                                     <div class="fv-row mb-3">
                                         <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                        <input type="number" name="semester"
-                                            class="form-control form-control-sm mb-3 mb-lg-0" value="{{ $surat->semester }}"
-                                            required />
+                                        <input type="text"
+                                            class="form-control form-control-sm mb-3 mb-lg-0"
+                                            value="{{ $dataSimpt?->semester ?? $surat->semester ?? 'Tidak tersedia' }}" disabled />
+                                        <input type="hidden" name="semester" value="{{ $dataSimpt?->semester ?? $surat->semester }}">
                                         @error('semester')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -113,8 +114,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester" class="form-control form-control-sm"
-                                                    value="{{ $surat->semester }}" required />
+                                                <input type="text" class="form-control form-control-sm"
+                                                    value="{{ $dataSimpt?->semester ?? $surat->semester ?? 'Tidak tersedia' }}" disabled />
+                                                <input type="hidden" name="semester" value="{{ $dataSimpt?->semester ?? $surat->semester }}">
                                                 @error('semester')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -322,9 +324,9 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                <input type="number" name="semester"
-                                                    class="form-control form-control-sm" value="{{ $surat->semester }}"
-                                                    required />
+                                                <input type="text" class="form-control form-control-sm"
+                                                    value="{{ $dataSimpt?->semester ?? $surat->semester ?? 'Tidak tersedia' }}" disabled />
+                                                <input type="hidden" name="semester" value="{{ $dataSimpt?->semester ?? $surat->semester }}">
                                                 @error('semester')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror

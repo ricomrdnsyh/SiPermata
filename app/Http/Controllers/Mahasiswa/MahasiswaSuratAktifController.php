@@ -11,8 +11,11 @@ use App\Models\HistoryPengajuan;
 use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Services\SuratAktifGenerator;
 use App\Services\NotifikasiBAKService;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaSuratAktifController extends Controller
@@ -90,8 +93,9 @@ class MahasiswaSuratAktifController extends Controller
         }
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
-        return view('mahasiswa.surat_aktif.create', compact('latestAkademik'));
+        return view('mahasiswa.surat_aktif.create', compact('latestAkademik', 'dataSimpt'));
     }
 
 
@@ -99,7 +103,6 @@ class MahasiswaSuratAktifController extends Controller
     {
         $request->validate([
             'kategori'            => 'required|in:UMUM,PNS,PPPK',
-            'semester'            => 'required',
             'akademik_id'         => 'required|exists:tahun_akademik,id_akademik',
             'nama_ortu'           => 'required_if:kategori,PNS,PPPK|nullable',
             'nip'                 => 'required_if:kategori,PNS,PPPK|nullable',
@@ -118,6 +121,16 @@ class MahasiswaSuratAktifController extends Controller
 
         if (!$mahasiswa) {
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        // Ambil semester otomatis dari SIM-PT
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+        $semester = $dataSimpt?->semester;
+
+        if (blank($semester)) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
         }
 
         $fakultasId = $mahasiswa->fakultas_id;
@@ -151,7 +164,7 @@ class MahasiswaSuratAktifController extends Controller
             'no_surat'            => $noSurat,
             'nim'                 => $mahasiswa->nim,
             'akademik_id'         => $request->akademik_id,
-            'semester'            => $request->semester,
+            'semester'            => $semester,
             'kategori'            => $request->kategori,
             'nama_ortu'           => $request->nama_ortu,
             'nip'                 => $request->nip,
@@ -222,15 +235,15 @@ class MahasiswaSuratAktifController extends Controller
             ->firstOrFail();
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
-        return view('mahasiswa.surat_aktif.edit', compact('surat', 'latestAkademik'));
+        return view('mahasiswa.surat_aktif.edit', compact('surat', 'latestAkademik', 'dataSimpt'));
     }
 
     public function update(Request $request, $id, SuratAktifGenerator $generatorService)
     {
         $request->validate([
             'kategori'            => 'required|in:UMUM,PNS,PPPK',
-            'semester'            => 'required',
             'akademik_id'         => 'required|exists:tahun_akademik,id_akademik',
             'nama_ortu'           => 'required_if:kategori,PNS,PPPK|nullable',
             'nip'                 => 'required_if:kategori,PNS,PPPK|nullable',
@@ -254,11 +267,21 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Data surat tidak ditemukan.');
         }
 
+        // Ambil semester otomatis dari SIM-PT
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        $semester = $dataSimpt?->semester;
+
+        if (blank($semester)) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
+        }
+
         $template = Template::findOrFail($surat->template_id);
 
         $surat->update([
             'akademik_id'         => $request->akademik_id,
-            'semester'            => $request->semester,
+            'semester'            => $semester,
             'alamat'              => $request->alamat,
             'nama_ortu'           => $request->nama_ortu,
             'nip'                 => $request->nip,
@@ -310,5 +333,47 @@ class MahasiswaSuratAktifController extends Controller
             ->firstOrFail();
 
         return view('mahasiswa.surat_aktif.show', compact('surat'));
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) {
+            return null;
+        }
+
+        try {
+            return DB::selectOne(
+                '
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ',
+                [$nim]
+            );
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }
