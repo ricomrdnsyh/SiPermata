@@ -13,12 +13,14 @@ class SuratPKL extends Model
     protected $casts = [
         'tgl_mulai' => 'datetime',
         'tgl_selesai' => 'datetime',
+        'anggota_kelompok' => 'array',
     ];
 
     protected $fillable = [
         'template_id',
         'no_surat',
         'nim',
+        'anggota_kelompok',
         'akademik_id',
         'tgl_mulai',
         'tgl_selesai',
@@ -107,5 +109,35 @@ class SuratPKL extends Model
     {
         return $this->hasOne(HistoryPengajuan::class, 'id_tabel_surat')
             ->where('tabel', 'surat_pkl');
+    }
+
+    public function getDaftarMahasiswaAttribute()
+    {
+        $ketua = collect();
+
+        if ($this->nim) {
+            $ketua = collect([[
+                'nama' => $this->mahasiswa?->nama ?? '-',
+                'nim' => $this->nim,
+                'prodi' => $this->mahasiswa?->prodi?->nama_prodi ?? '-',
+                'is_ketua' => true,
+            ]]);
+        }
+
+        $anggota = collect($this->anggota_kelompok ?? [])
+            ->map(function ($anggota) {
+                return [
+                    'nama' => data_get($anggota, 'nama', '-'),
+                    'nim' => data_get($anggota, 'nim', '-'),
+                    'prodi' => data_get($anggota, 'prodi', '-'),
+                    'is_ketua' => false,
+                ];
+            })
+            ->filter(function ($anggota) {
+                return filled($anggota['nama']) || filled($anggota['nim']);
+            })
+            ->values();
+
+        return $ketua->merge($anggota)->values();
     }
 }

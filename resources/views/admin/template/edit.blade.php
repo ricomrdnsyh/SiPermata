@@ -42,9 +42,6 @@
                                                         class="form-control form-control-sm mb-3 mb-lg-0"
                                                         value="{{ old('jenis_surat', $data->jenis_surat) }}" required />
                                                     <small class="text-muted d-block mt-1">
-                                                        Gunakan <code>surat_observasi</code> untuk observasi biasa dan
-                                                        <code>surat_observasi_kelompok</code> untuk observasi kelompok.
-                                                    </small>
                                                     @error('jenis_surat')
                                                         <small class="text-danger">{{ $message }}</small>
                                                     @enderror

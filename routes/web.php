@@ -185,6 +185,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('surat-rekomendasi', MahasiswaSuratRekomendasiController::class)->except(['destroy']);
 
         Route::get('/surat-pkl/data', [MahasiswaSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
+        Route::get('/surat-pkl/anggota/{nim}', [MahasiswaSuratPKLController::class, 'lookupAnggota'])->name('surat-pkl.anggota');
         Route::resource('surat-pkl', MahasiswaSuratPKLController::class)->except(['destroy']);
 
         Route::get('/surat-observasi/data', [MahasiswaSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
