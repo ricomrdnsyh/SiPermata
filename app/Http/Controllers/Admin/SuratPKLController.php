@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Mitra;
 use App\Models\Prodi;
+use App\Models\Fakultas;
 use App\Models\SuratPKL;
 use App\Models\Template;
 use App\Models\Mahasiswa;
@@ -26,11 +27,12 @@ class SuratPKLController extends Controller
         $user = Auth::user();
         if ($user->role !== 'admin') { abort(403); }
 
+        $listFakultas = Fakultas::all();
         $listProdi = Prodi::all();
         $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
 
-        return view('admin.surat_pkl.index', compact('listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
+        return view('admin.surat_pkl.index', compact('listFakultas', 'listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getSuratPKL(Request $request)
@@ -40,6 +42,10 @@ class SuratPKLController extends Controller
 
         $query = SuratPKL::with(['mahasiswa.prodi', 'akademik', 'mitra']);
 
+        if ($request->filled('fakultas_filter')) {
+            $fakultasId = $request->input('fakultas_filter');
+            $query->whereHas('mahasiswa', fn($q) => $q->where('fakultas_id', $fakultasId));
+        }
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');
             $query->whereHas('mahasiswa', fn($q) => $q->where('prodi_id', $prodiId));

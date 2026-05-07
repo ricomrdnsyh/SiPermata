@@ -169,6 +169,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('surat.lampiran_preview');
 
         Route::post('/history/bulk-approve', [HistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
+
+        Route::get('/prodi-by-fakultas/{fakultas_id}', [HistoryPengajuanController::class, 'getProdiByFakultas'])->name('prodi.byFakultas');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {

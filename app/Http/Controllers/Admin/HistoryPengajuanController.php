@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\NotifikasiStatusBak;
+use App\Models\Fakultas;
 use App\Models\HistoryPengajuan;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanStatusLog;
@@ -45,13 +46,14 @@ class HistoryPengajuanController extends Controller
             abort(403);
         }
 
+        $listFakultas = Fakultas::all();
         $listProdi = Prodi::all();
         $listNamaSurat = $this->listSurat;
         $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
         $currentTahunAkademik = $listTahunAkademik->first() ? $listTahunAkademik->first()->tahun_akademik : null;
 
-        return view('admin.history.index', compact('listProdi', 'listNamaSurat', 'listTahunAkademik', 'currentTahunAkademik'));
+        return view('admin.history.index', compact('listFakultas', 'listProdi', 'listNamaSurat', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getHistory(Request $request)
@@ -116,6 +118,13 @@ class HistoryPengajuanController extends Controller
             }
         }
 
+
+        if ($request->filled('fakultas_filter')) {
+            $fakultasId = $request->input('fakultas_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($fakultasId) {
+                $q->where('fakultas_id', $fakultasId);
+            });
+        }
 
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');
@@ -708,5 +717,11 @@ class HistoryPengajuanController extends Controller
             ]);
             return null;
         }
+    }
+
+    public function getProdiByFakultas($fakultas_id)
+    {
+        $prodi = Prodi::where('fakultas_id', $fakultas_id)->get(['id_prodi', 'nama_prodi']);
+        return response()->json($prodi);
     }
 }

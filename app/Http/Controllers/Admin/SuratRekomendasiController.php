@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Prodi;
+use App\Models\Fakultas;
 use App\Models\Template;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -29,11 +30,12 @@ class SuratRekomendasiController extends Controller
             abort(403);
         }
 
+        $listFakultas = Fakultas::all();
         $listProdi = Prodi::all();
         $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
 
-        return view('admin.surat_rekomendasi.index', compact('listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
+        return view('admin.surat_rekomendasi.index', compact('listFakultas', 'listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getSuratRekomendasi(Request $request)
@@ -45,6 +47,13 @@ class SuratRekomendasiController extends Controller
         }
 
         $query = SuratRekomendasi::with(['mahasiswa.prodi', 'akademik']);
+
+        if ($request->filled('fakultas_filter')) {
+            $fakultasId = $request->input('fakultas_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($fakultasId) {
+                $q->where('fakultas_id', $fakultasId);
+            });
+        }
 
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');

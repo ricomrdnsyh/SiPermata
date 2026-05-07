@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Mitra;
 use App\Models\Prodi;
+use App\Models\Fakultas;
 use App\Models\Template;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -30,11 +31,12 @@ class SuratPenelitianController extends Controller
             abort(403);
         }
 
+        $listFakultas = Fakultas::all();
         $listProdi = Prodi::all();
         $listTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
         $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
 
-        return view('admin.surat_penelitian.index', compact('listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
+        return view('admin.surat_penelitian.index', compact('listFakultas', 'listProdi', 'listTahunAkademik', 'currentTahunAkademik'));
     }
 
     public function getSuratPenelitian(Request $request)
@@ -46,6 +48,13 @@ class SuratPenelitianController extends Controller
         }
 
         $query = SuratPenelitian::with(['mahasiswa.prodi', 'akademik', 'mitra']);
+
+        if ($request->filled('fakultas_filter')) {
+            $fakultasId = $request->input('fakultas_filter');
+            $query->whereHas('mahasiswa', function ($q) use ($fakultasId) {
+                $q->where('fakultas_id', $fakultasId);
+            });
+        }
 
         if ($request->filled('prodi_filter')) {
             $prodiId = $request->input('prodi_filter');

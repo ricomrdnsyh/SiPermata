@@ -57,18 +57,26 @@
                     <div class="separator mt-6"></div>
                     <div class="card-body py-4 px-8 filter-container">
                         <div class="row g-5">
-                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Program Studi:</label>
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Fakultas:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
-                                    id="filter-prodi">
-                                    <option value="">Semua Prodi</option>
-                                    @foreach ($listProdi as $prodi)
-                                        <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                    data-placeholder="Semua Fakultas" data-allow-clear="true" data-filter="fakultas"
+                                    id="filter-fakultas">
+                                    <option value="">Semua Fakultas</option>
+                                    @foreach ($listFakultas as $fakultas)
+                                        <option value="{{ $fakultas->id_fakultas }}">{{ $fakultas->nama_fakultas }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <label class="form-label fw-bold mb-2">Program Studi:</label>
+                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                    data-placeholder="Pilih Fakultas terlebih dahulu" data-allow-clear="true" data-filter="prodi"
+                                    id="filter-prodi" disabled>
+                                    <option value="">Semua Prodi</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Nama Surat:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
                                     data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat"
@@ -79,7 +87,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Status:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
                                     data-placeholder="Semua Status" data-allow-clear="true" data-filter="status"
@@ -92,7 +100,7 @@
                                     <option value="ditolak">Ditolak</option>
                                 </select>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
                                 <select class="form-select form-select-sm form-select-solid" data-control="select2"
                                     data-placeholder="Pilih Tahun Akademik" data-allow-clear="true"
@@ -187,6 +195,7 @@
                 ajax: {
                     url: '{{ route('admin.history.data') }}',
                     data: function(d) {
+                        d.fakultas_filter = $('#filter-fakultas').val();
                         d.prodi_filter = $('#filter-prodi').val();
                         d.nama_surat_filter = $('#filter-nama-surat').val();
                         d.status_filter = $('#filter-status').val();
@@ -273,7 +282,35 @@
                     refreshBulkUI();
                 }
             });
-            $('[data-filter]').on('change', function() {
+            // Fakultas change: load prodi options, reset prodi, redraw table
+            $('#filter-fakultas').on('change', function() {
+                const fakultasId = $(this).val();
+                const $prodi = $('#filter-prodi');
+
+                // Reset prodi
+                $prodi.val('').trigger('change.select2');
+
+                if (fakultasId) {
+                    // Fetch prodi for selected fakultas
+                    $.get('{{ url("admin/prodi-by-fakultas") }}/' + fakultasId, function(data) {
+                        $prodi.empty().append('<option value="">Semua Prodi</option>');
+                        $.each(data, function(i, item) {
+                            $prodi.append('<option value="' + item.id_prodi + '">' + item.nama_prodi + '</option>');
+                        });
+                        $prodi.prop('disabled', false).trigger('change.select2');
+                    });
+                } else {
+                    // Semua Fakultas: disable prodi
+                    $prodi.empty().append('<option value="">Semua Prodi</option>');
+                    $prodi.prop('disabled', true).trigger('change.select2');
+                }
+
+                clearSelection();
+                table.draw();
+            });
+
+            // Other filters: just redraw table
+            $('[data-filter]').not('#filter-fakultas').on('change', function() {
                 clearSelection();
                 table.draw();
             });
