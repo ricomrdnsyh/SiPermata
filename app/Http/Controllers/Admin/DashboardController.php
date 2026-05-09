@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Prodi;
 use App\Models\SuratPKL;
+use App\Models\Fakultas;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
 use Illuminate\Http\Request;
@@ -65,16 +67,20 @@ class DashboardController extends Controller
         $globalStats = $this->getGlobalStats($currentAkademikId);
         $detailedStatus = $this->getDetailedStatusData($currentAkademikId);
         $chartData = $this->getChartData($currentAkademikId);
+        $fakultasChartData = $this->getFakultasChartData($currentAkademikId);
+        $prodiChartData = $this->getProdiChartData($currentAkademikId);
 
         return view('admin.dashboard.index', [
-            'user_name'         => $user->nama,
-            'currentAkademikId' => $currentAkademikId,
-            'currentYearLabel'  => $currentYearLabel,
-            'tahunAkademikList' => $tahunAkademikList,
-            'globalStats'       => $globalStats,
-            'detailedStatus'    => $detailedStatus,
-            'chartData'         => $chartData,
-            'chartColors'       => $this->chartColors,
+            'user_name'          => $user->nama,
+            'currentAkademikId'  => $currentAkademikId,
+            'currentYearLabel'   => $currentYearLabel,
+            'tahunAkademikList'  => $tahunAkademikList,
+            'globalStats'        => $globalStats,
+            'detailedStatus'     => $detailedStatus,
+            'chartData'          => $chartData,
+            'chartColors'        => $this->chartColors,
+            'fakultasChartData'  => $fakultasChartData,
+            'prodiChartData'     => $prodiChartData,
         ]);
     }
 
@@ -180,6 +186,65 @@ class DashboardController extends Controller
 
             $labels[] = $label;
             $dataCounts[] = $count;
+        }
+
+        return [
+            'labels' => $labels,
+            'data'   => $dataCounts,
+        ];
+    }
+
+    /**
+     * Mengambil data chart jumlah pengajuan per Fakultas
+     */
+    private function getFakultasChartData($akademikId)
+    {
+        $fakultasList = Fakultas::orderBy('nama_fakultas')->get();
+        $labels = [];
+        $dataCounts = [];
+
+        foreach ($fakultasList as $fakultas) {
+            $total = 0;
+            foreach ($this->suratModels as $model) {
+                $total += $model::where('akademik_id', $akademikId)
+                    ->whereHas('mahasiswa', function ($q) use ($fakultas) {
+                        $q->where('fakultas_id', $fakultas->id_fakultas);
+                    })
+                    ->count();
+            }
+            $labels[] = $fakultas->nama_fakultas;
+            $dataCounts[] = $total;
+        }
+
+        return [
+            'labels' => $labels,
+            'data'   => $dataCounts,
+        ];
+    }
+
+    /**
+     * Mengambil data chart jumlah pengajuan per Program Studi
+     */
+    private function getProdiChartData($akademikId)
+    {
+        $prodiList = Prodi::with('fakultas')->orderBy('nama_prodi')->get();
+        $labels = [];
+        $dataCounts = [];
+
+        foreach ($prodiList as $prodi) {
+            $total = 0;
+            foreach ($this->suratModels as $model) {
+                $total += $model::where('akademik_id', $akademikId)
+                    ->whereHas('mahasiswa', function ($q) use ($prodi) {
+                        $q->where('prodi_id', $prodi->id_prodi);
+                    })
+                    ->count();
+            }
+            // Only include prodi that have submissions
+            if ($total > 0) {
+                $labels[] = $prodi->nama_prodi;
+                $dataCounts[] = $total;
+            }
         }
 
         return [

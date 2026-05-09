@@ -62,8 +62,7 @@
                                     </span>
                                 </div>
                                 <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">
-                                        {{ number_format($globalStats['totalMasuk']) }}</div>
+                                    <div class="fw-semibold fs-2x text-white">{{ number_format($globalStats['totalMasuk']) }}</div>
                                     <div class="fw-semibold text-white text-opacity-75 mt-1">Total Masuk</div>
                                 </div>
                             </div>
@@ -83,8 +82,7 @@
                                     </span>
                                 </div>
                                 <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">
-                                        {{ number_format($globalStats['totalPengajuan']) }}</div>
+                                    <div class="fw-semibold fs-2x text-white">{{ number_format($globalStats['totalPengajuan']) }}</div>
                                     <div class="fw-semibold text-white text-opacity-75 mt-1">Menunggu BAK</div>
                                 </div>
                             </div>
@@ -104,8 +102,7 @@
                                     </span>
                                 </div>
                                 <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">
-                                        {{ number_format($globalStats['totalProses']) }}</div>
+                                    <div class="fw-semibold fs-2x text-white">{{ number_format($globalStats['totalProses']) }}</div>
                                     <div class="fw-semibold text-white text-opacity-75 mt-1">Menunggu Dekan</div>
                                 </div>
                             </div>
@@ -125,8 +122,7 @@
                                     </span>
                                 </div>
                                 <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">
-                                        {{ number_format($globalStats['totalDiterima']) }}</div>
+                                    <div class="fw-semibold fs-2x text-white">{{ number_format($globalStats['totalDiterima']) }}</div>
                                     <div class="fw-semibold text-white text-opacity-75 mt-1">Disetujui</div>
                                 </div>
                             </div>
@@ -146,8 +142,7 @@
                                     </span>
                                 </div>
                                 <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">
-                                        {{ number_format($globalStats['totalSelesai']) }}</div>
+                                    <div class="fw-semibold fs-2x text-white">{{ number_format($globalStats['totalSelesai']) }}</div>
                                     <div class="fw-semibold text-white text-opacity-75 mt-1">Selesai</div>
                                 </div>
                             </div>
@@ -167,8 +162,7 @@
                                     </span>
                                 </div>
                                 <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">
-                                        {{ number_format($globalStats['totalDitolak']) }}</div>
+                                    <div class="fw-semibold fs-2x text-white">{{ number_format($globalStats['totalDitolak']) }}</div>
                                     <div class="fw-semibold text-white text-opacity-75 mt-1">Ditolak</div>
                                 </div>
                             </div>
@@ -181,20 +175,15 @@
                         <div class="card card-flush h-100">
                             <div class="card-header pt-7">
                                 <div class="card-title d-flex flex-column">
-                                    <span class="fw-semibold fs-3 text-gray-900">Perbandingan Pengajuan Per Jenis
-                                        Surat</span>
-                                    <span class="text-gray-600 fw-semibold fs-7">Statistik total pengajuan pada Tahun
-                                        Akademik
-                                        {{ $currentYearLabel }}.</span>
+                                    <span class="fw-semibold fs-3 text-gray-900">Perbandingan Pengajuan Per Jenis Surat</span>
+                                    <span class="text-gray-600 fw-semibold fs-7">Statistik total pengajuan pada Tahun Akademik {{ $currentYearLabel }}.</span>
                                 </div>
                             </div>
-
                             <div class="card-body pt-5">
                                 <div class="bg-white rounded p-5">
                                     <div id="surat_chart_container" style="height: 360px; padding-bottom: 6px;">
                                         <canvas id="suratChart"></canvas>
                                     </div>
-
                                     <div id="barLegendBottom" class="row g-2 mt-0"></div>
                                 </div>
                             </div>
@@ -209,64 +198,47 @@
                                     <span class="text-gray-600 fw-semibold fs-7">Distribusi berdasarkan status.</span>
                                 </div>
                             </div>
-
                             <div class="card-body pt-5">
                                 <div class="bg-white rounded p-5">
                                     <div style="height: 260px;">
                                         <canvas id="statusDonut"></canvas>
                                     </div>
-
                                     <div class="separator separator-dashed my-5"></div>
-
                                     <div class="d-flex flex-column gap-3">
                                         <div class="d-flex flex-stack">
                                             <div class="d-flex align-items-center gap-3">
-                                                <span class="d-inline-block rounded-1"
-                                                    style="width: 28px; height: 10px; background: rgba(245, 158, 11, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
+                                                <span class="d-inline-block rounded-1" style="width: 28px; height: 10px; background: rgba(245, 158, 11, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
                                                 <span class="text-gray-700 fw-semibold">Menunggu BAK</span>
                                             </div>
-                                            <span
-                                                class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalPengajuan']) }}</span>
+                                            <span class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalPengajuan']) }}</span>
                                         </div>
-
                                         <div class="d-flex flex-stack">
                                             <div class="d-flex align-items-center gap-3">
-                                                <span class="d-inline-block rounded-1"
-                                                    style="width: 28px; height: 10px; background: rgba(59, 130, 246, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
+                                                <span class="d-inline-block rounded-1" style="width: 28px; height: 10px; background: rgba(59, 130, 246, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
                                                 <span class="text-gray-700 fw-semibold">Menunggu Dekan</span>
                                             </div>
-                                            <span
-                                                class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalProses']) }}</span>
+                                            <span class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalProses']) }}</span>
                                         </div>
-
                                         <div class="d-flex flex-stack">
                                             <div class="d-flex align-items-center gap-3">
-                                                <span class="d-inline-block rounded-1"
-                                                    style="width: 28px; height: 10px; background: rgba(34, 197, 94, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
+                                                <span class="d-inline-block rounded-1" style="width: 28px; height: 10px; background: rgba(34, 197, 94, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
                                                 <span class="text-gray-700 fw-semibold">Disetujui</span>
                                             </div>
-                                            <span
-                                                class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalDiterima']) }}</span>
+                                            <span class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalDiterima']) }}</span>
                                         </div>
-
                                         <div class="d-flex flex-stack">
                                             <div class="d-flex align-items-center gap-3">
-                                                <span class="d-inline-block rounded-1"
-                                                    style="width: 28px; height: 10px; background: rgba(99, 102, 241, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
+                                                <span class="d-inline-block rounded-1" style="width: 28px; height: 10px; background: rgba(99, 102, 241, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
                                                 <span class="text-gray-700 fw-semibold">Selesai</span>
                                             </div>
-                                            <span
-                                                class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalSelesai']) }}</span>
+                                            <span class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalSelesai']) }}</span>
                                         </div>
-
                                         <div class="d-flex flex-stack">
                                             <div class="d-flex align-items-center gap-3">
-                                                <span class="d-inline-block rounded-1"
-                                                    style="width: 28px; height: 10px; background: rgba(239, 68, 68, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
+                                                <span class="d-inline-block rounded-1" style="width: 28px; height: 10px; background: rgba(239, 68, 68, 0.95); border: 1px solid rgba(0,0,0,.06);"></span>
                                                 <span class="text-gray-700 fw-semibold">Ditolak</span>
                                             </div>
-                                            <span
-                                                class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalDitolak']) }}</span>
+                                            <span class="text-gray-900 fw-semibold">{{ number_format($globalStats['totalDitolak']) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -275,15 +247,43 @@
                     </div>
                 </div>
 
+                <div class="card card-flush mb-8">
+                    <div class="card-header pt-7 pb-0 border-0">
+                        <div class="card-title d-flex flex-column gap-1">
+                            <span class="text-uppercase fw-semibold text-gray-500" style="font-size: 10px; letter-spacing: .08em;">Distribusi</span>
+                            <span class="fw-semibold fs-3 text-gray-900">Pengajuan Per Fakultas</span>
+                            <span class="text-gray-500 fw-semibold fs-7">Total pengajuan berdasarkan fakultas &mdash; TA {{ $currentYearLabel }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body pt-5">
+                        <div style="position: relative; width: 100%; height: 300px;">
+                            <canvas id="fakultasChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-flush mb-8">
+                    <div class="card-header pt-7 pb-0 border-0">
+                        <div class="card-title d-flex flex-column gap-1">
+                            <span class="text-uppercase fw-semibold text-gray-500" style="font-size: 10px; letter-spacing: .08em;">Distribusi</span>
+                            <span class="fw-semibold fs-3 text-gray-900">Pengajuan Per Program Studi</span>
+                            <span class="text-gray-500 fw-semibold fs-7">Total pengajuan berdasarkan prodi &mdash; TA {{ $currentYearLabel }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body pt-5">
+                        <div id="prodi_chart_container" style="position: relative; width: 100%; min-height: 300px;">
+                            <canvas id="prodiChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card card-flush mb-5">
                     <div class="card-header pt-7">
                         <div class="card-title d-flex flex-column">
                             <span class="fw-semibold fs-3 text-gray-900">Status Detail Pengajuan Per Jenis Surat</span>
-                            <span class="text-gray-600 fw-semibold fs-7">Rincian jumlah pengajuan berdasarkan
-                                status.</span>
+                            <span class="text-gray-600 fw-semibold fs-7">Rincian jumlah pengajuan berdasarkan status.</span>
                         </div>
                     </div>
-
                     <div class="card-body py-3">
                         <div class="table-responsive">
                             <table class="table align-middle gs-0 gy-3">
@@ -304,27 +304,15 @@
                                             <td class="ps-4">
                                                 <div class="d-flex flex-column">
                                                     <span class="text-gray-900 fw-bolder">{{ $surat['label'] }}</span>
-                                                    <span class="text-gray-600 fw-semibold fs-7">Tahun Akademik
-                                                        {{ $currentYearLabel }}</span>
+                                                    <span class="text-gray-600 fw-semibold fs-7">Tahun Akademik {{ $currentYearLabel }}</span>
                                                 </div>
                                             </td>
-                                            <td class="text-center"><span
-                                                    class="text-gray-900 fw-semibold">{{ $surat['total'] }}</span></td>
-                                            <td class="text-center"><span
-                                                    class="badge badge-light-warning fw-semibold px-3 py-2">{{ $surat['pengajuan'] }}</span>
-                                            </td>
-                                            <td class="text-center"><span
-                                                    class="badge badge-light-info fw-semibold px-3 py-2">{{ $surat['proses'] }}</span>
-                                            </td>
-                                            <td class="text-center"><span
-                                                    class="badge badge-light-success fw-semibold px-3 py-2">{{ $surat['diterima'] }}</span>
-                                            </td>
-                                            <td class="text-center"><span
-                                                    class="badge badge-light-primary fw-semibold px-3 py-2">{{ $surat['selesai'] }}</span>
-                                            </td>
-                                            <td class="text-center"><span
-                                                    class="badge badge-light-danger fw-semibold px-3 py-2">{{ $surat['ditolak'] }}</span>
-                                            </td>
+                                            <td class="text-center"><span class="text-gray-900 fw-semibold">{{ $surat['total'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-warning fw-semibold px-3 py-2">{{ $surat['pengajuan'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-info fw-semibold px-3 py-2">{{ $surat['proses'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-success fw-semibold px-3 py-2">{{ $surat['diterima'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-primary fw-semibold px-3 py-2">{{ $surat['selesai'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-danger fw-semibold px-3 py-2">{{ $surat['ditolak'] }}</span></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -365,44 +353,26 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            display: false
-                        }
+                        grid: { display: false },
+                        ticks: { display: false }
                     },
                     y: {
                         beginAtZero: true,
-                        grid: {
-                            borderDash: [6, 6],
-                            color: 'rgba(0,0,0,0.08)'
-                        },
+                        grid: { borderDash: [6, 6], color: 'rgba(0,0,0,0.08)' },
                         ticks: {
                             color: '#7E8299',
-                            font: {
-                                size: 12,
-                                weight: '600'
-                            },
-                            callback: function(value) {
-                                if (value % 1 === 0) return value;
-                            }
+                            font: { size: 12, weight: '600' },
+                            callback: function(value) { if (value % 1 === 0) return value; }
                         }
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         displayColors: false,
                         callbacks: {
-                            title: function(items) {
-                                return items?.[0]?.label ?? '';
-                            },
-                            label: function(context) {
-                                return ' ' + context.parsed.y + ' pengajuan';
-                            }
+                            title: function(items) { return items?.[0]?.label ?? ''; },
+                            label: function(context) { return ' ' + context.parsed.y + ' pengajuan'; }
                         }
                     }
                 }
@@ -421,8 +391,7 @@
                                 <div class="text-gray-700 fw-semibold text-truncate" style="max-width: 100%;">${label}</div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
@@ -455,15 +424,11 @@
                 maintainAspectRatio: false,
                 cutout: '68%',
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         displayColors: false,
                         callbacks: {
-                            label: function(context) {
-                                return ' ' + context.label + ': ' + context.parsed;
-                            }
+                            label: function(context) { return ' ' + context.label + ': ' + context.parsed; }
                         }
                     }
                 }
@@ -473,6 +438,126 @@
         $('#filter_akademik_id').on('change', function() {
             const selectedId = $(this).val();
             window.location.href = `{{ url()->current() }}?id_akademik=${selectedId}`;
+        });
+
+        const fakultasData = @json($fakultasChartData);
+        const fakBgColors = fakultasData.labels.map((_, i) => solidColors[i % solidColors.length]);
+        const fakBorderColors = fakultasData.labels.map((_, i) => solidColors[i % solidColors.length]);
+
+        new Chart(document.getElementById('fakultasChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: fakultasData.labels,
+                datasets: [{
+                    label: 'Jumlah Pengajuan',
+                    data: fakultasData.data,
+                    backgroundColor: fakBgColors,
+                    borderColor: fakBorderColors,
+                    borderWidth: 1.5,
+                    borderRadius: 8,
+                    barThickness: 36,
+                    maxBarThickness: 52
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: '#7E8299',
+                            font: { size: 12, weight: '500' },
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(136,135,128,0.12)', lineWidth: 1 },
+                        ticks: {
+                            color: '#7E8299',
+                            font: { size: 12, weight: '500' },
+                            callback: v => v % 1 === 0 ? v : null
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        displayColors: false,
+                        callbacks: { label: ctx => ' ' + ctx.parsed.y + ' pengajuan' }
+                    }
+                }
+            }
+        });
+
+        const prodiData = @json($prodiChartData);
+        const prodiPalette = [
+            '#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6',
+            '#06B6D4','#F97316','#EC4899','#84CC16','#14B8A6',
+            '#6366F1','#F43F5E','#A3E635','#0EA5E9','#D946EF',
+            '#FB923C','#22D3EE','#4ADE80','#FBBF24','#C084FC',
+            '#34D399','#60A5FA','#FCD34D','#F472B6','#38BDF8',
+            '#A78BFA','#86EFAC','#FCA5A5','#67E8F9','#FDE68A',
+            '#2DD4BF','#818CF8','#BEF264','#FDA4AF','#7DD3FC',
+            '#E879F9','#6EE7B7','#93C5FD','#FDE047','#F9A8D4'
+        ];
+        function generateProdiColors(count) {
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                colors.push(prodiPalette[i % prodiPalette.length]);
+            }
+            return colors;
+        }
+        const prodiBgColors = generateProdiColors(prodiData.labels.length);
+        const prodiBorderColors = prodiBgColors;
+
+        const prodiContainer = document.getElementById('prodi_chart_container');
+        prodiContainer.style.height = Math.max(300, prodiData.labels.length * 38) + 'px';
+
+        new Chart(document.getElementById('prodiChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: prodiData.labels,
+                datasets: [{
+                    label: 'Jumlah Pengajuan',
+                    data: prodiData.data,
+                    backgroundColor: prodiBgColors,
+                    borderColor: prodiBorderColors,
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    barThickness: 22,
+                    maxBarThickness: 30
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(136,135,128,0.12)', lineWidth: 1 },
+                        ticks: {
+                            color: '#7E8299',
+                            font: { size: 12, weight: '500' },
+                            callback: v => v % 1 === 0 ? v : null
+                        }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#7E8299', font: { size: 12, weight: '500' } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        displayColors: false,
+                        callbacks: { label: ctx => ' ' + ctx.parsed.x + ' pengajuan' }
+                    }
+                }
+            }
         });
     </script>
 @endsection
