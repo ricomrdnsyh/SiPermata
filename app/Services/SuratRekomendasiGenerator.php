@@ -9,6 +9,11 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 class SuratRekomendasiGenerator
 {
+    private function escapeXml($value): string
+    {
+        return htmlspecialchars((string)($value ?: '-'), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+
     public function generateWord(
         SuratRekomendasi $surat,
         Template $template,
@@ -37,19 +42,19 @@ class SuratRekomendasiGenerator
 
         $ipkFormatted = $ipk !== null ? number_format((float) $ipk, 2) : '-';
 
-        $processor->setValue('NO_SURAT',            $surat->no_surat ?? '-');
-        $processor->setValue('BULAN_SURAT',         $bulanSurat ?? '-');
-        $processor->setValue('NAMA_MAHASISWA',      $mahasiswa?->nama ?? '-');
-        $processor->setValue('FAKULTAS',            $mahasiswa?->fakultas?->nama_fakultas ?? '-');
-        $processor->setValue('PRODI',               $mahasiswa?->prodi?->nama_prodi ?? '-');
-        $processor->setValue('NIM',                 $surat->nim ?? '-');
-        $processor->setValue('KEPERLUAN',           $keperluanTitleCase ?? '-');
-        $processor->setValue('PENYELENGGARA',       $penyelenggaraUppercase ?? '-');
-        $processor->setValue('TANGGAL_SURAT',       $tglSurat ?? '-');
-        $processor->setValue('TANGGAL_PELAKSANAAN', $tglPelaksanaan ?? '-');
+        $processor->setValue('NO_SURAT',            $this->escapeXml($surat->no_surat));
+        $processor->setValue('BULAN_SURAT',         $this->escapeXml($bulanSurat));
+        $processor->setValue('NAMA_MAHASISWA',      $this->escapeXml($mahasiswa?->nama));
+        $processor->setValue('FAKULTAS',            $this->escapeXml($mahasiswa?->fakultas?->nama_fakultas));
+        $processor->setValue('PRODI',               $this->escapeXml($mahasiswa?->prodi?->nama_prodi));
+        $processor->setValue('NIM',                 $this->escapeXml($surat->nim));
+        $processor->setValue('KEPERLUAN',           $this->escapeXml($keperluanTitleCase));
+        $processor->setValue('PENYELENGGARA',       $this->escapeXml($penyelenggaraUppercase));
+        $processor->setValue('TANGGAL_SURAT',       $this->escapeXml($tglSurat));
+        $processor->setValue('TANGGAL_PELAKSANAAN', $this->escapeXml($tglPelaksanaan));
 
-        $processor->setValue('SEMESTER', $semester ?? '-');
-        $processor->setValue('IPK',      $ipkFormatted);
+        $processor->setValue('SEMESTER', $this->escapeXml($semester));
+        $processor->setValue('IPK',      $this->escapeXml($ipkFormatted));
 
         $outputFileName    = "SURAT_REKOMENDASI_{$surat->nim}_{$surat->id_surat_rekomendasi}.docx";
         $outputFileRelatif = "surat_rekomendasi/{$outputFileName}";

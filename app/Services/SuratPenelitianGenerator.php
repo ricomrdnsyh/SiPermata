@@ -10,6 +10,14 @@ use PhpOffice\PhpWord\TemplateProcessor;
 class SuratPenelitianGenerator
 {
     /**
+     * Escape special characters for XML to prevent DOCX corruption.
+     */
+    private function escapeXml($value): string
+    {
+        return htmlspecialchars((string)($value ?: '-'), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
      * Memproses data dan template untuk membuat file Word.
      * * @param SuratPenelitian
      * @param Template $template Model Template yang sudah dipilih.
@@ -25,7 +33,6 @@ class SuratPenelitianGenerator
             throw new \Exception("File template tidak ditemukan di: " . $templatePath);
         }
 
-        // Load Template
         $processor = new TemplateProcessor($templatePath);
 
         $mahasiswa          = $surat->mahasiswa;
@@ -40,19 +47,18 @@ class SuratPenelitianGenerator
         $bulanSurat = $bulanSuratCarbon->locale('id')->isoFormat('MM.YYYY');
         $judulPenelitianUppercase = strtoupper($surat->judul_penelitian ?? '-');
 
-        $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
-        $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
-        $processor->setValue('NAMA_MITRA', $surat->mitra->nama_mitra ?? '-');
-        $processor->setValue('NAMA_MAHASISWA', $surat->mahasiswa?->nama ?? '-');
-        $processor->setValue('FAKULTAS', $mahasiswa?->fakultas?->nama_fakultas ?? '-');
-        $processor->setValue('PRODI', $mahasiswa?->prodi?->nama_prodi ?? '-');
-        $processor->setValue('NIM', $surat->nim);
-        $processor->setValue('TGL_MULAI', $tglMulai ?? '-');
-        $processor->setValue('TGL_SELESAI', $tglSelesai ?? '-');
-        $processor->setValue('JUDUL_PENELITIAN', $judulPenelitianUppercase ?? '-');
-        $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
+        $processor->setValue('NO_SURAT', $this->escapeXml($surat->no_surat));
+        $processor->setValue('BULAN_SURAT', $this->escapeXml($bulanSurat));
+        $processor->setValue('NAMA_MITRA', $this->escapeXml($surat->mitra->nama_mitra ?? '-'));
+        $processor->setValue('NAMA_MAHASISWA', $this->escapeXml($surat->mahasiswa?->nama));
+        $processor->setValue('FAKULTAS', $this->escapeXml($mahasiswa?->fakultas?->nama_fakultas));
+        $processor->setValue('PRODI', $this->escapeXml($mahasiswa?->prodi?->nama_prodi));
+        $processor->setValue('NIM', $this->escapeXml($surat->nim));
+        $processor->setValue('TGL_MULAI', $this->escapeXml($tglMulai));
+        $processor->setValue('TGL_SELESAI', $this->escapeXml($tglSelesai));
+        $processor->setValue('JUDUL_PENELITIAN', $this->escapeXml($judulPenelitianUppercase));
+        $processor->setValue('TANGGAL_SURAT', $this->escapeXml($tglSurat));
 
-        // Direktori Output
         $outputFileName    = "SURAT_IZIN_PENELITIAN_{$surat->nim}_{$surat->id_surat_izin_penelitian}.docx";
         $outputFileRelatif = "surat_penelitian/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");

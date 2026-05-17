@@ -9,6 +9,11 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 class SuratLulusGenerator
 {
+    private function escapeXml($value): string
+    {
+        return htmlspecialchars((string)($value ?: '-'), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+
     /**
      * Memproses data dan template untuk membuat file Word.
      * * @param SuratLulus
@@ -26,7 +31,6 @@ class SuratLulusGenerator
             throw new \Exception("File template tidak ditemukan di: " . $templatePath);
         }
 
-        // Load Template
         $processor = new TemplateProcessor($templatePath);
 
         $mahasiswa          = $surat->mahasiswa;
@@ -42,19 +46,18 @@ class SuratLulusGenerator
         $tempatLahirTitlecase = strtoupper($surat->tempat_lahir ?? '-');
         $judulPenelitianUppercase = strtoupper($surat->judul_penelitian ?? '-');
 
-        $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
-        $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
-        $processor->setValue('NAMA_MAHASISWA', $surat->mahasiswa?->nama ?? '-');
-        $processor->setValue('FAKULTAS', $mahasiswa?->fakultas?->nama_fakultas ?? '-');
-        $processor->setValue('PRODI', $mahasiswa?->prodi?->nama_prodi ?? '-');
-        $processor->setValue('NIM', $surat->nim);
-        $processor->setValue('TEMPAT_LAHIR', $tempatLahirTitlecase ?? '-');
-        $processor->setValue('TGL_LAHIR', $tglLahir ?? '-');
-        $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
-        $processor->setValue('TGL_SK', $tglSK ?? '-');
-        $processor->setValue('JUDUL_PENELITIAN', $judulPenelitianUppercase);
+        $processor->setValue('NO_SURAT', $this->escapeXml($surat->no_surat));
+        $processor->setValue('BULAN_SURAT', $this->escapeXml($bulanSurat));
+        $processor->setValue('NAMA_MAHASISWA', $this->escapeXml($surat->mahasiswa?->nama));
+        $processor->setValue('FAKULTAS', $this->escapeXml($mahasiswa?->fakultas?->nama_fakultas));
+        $processor->setValue('PRODI', $this->escapeXml($mahasiswa?->prodi?->nama_prodi));
+        $processor->setValue('NIM', $this->escapeXml($surat->nim));
+        $processor->setValue('TEMPAT_LAHIR', $this->escapeXml($tempatLahirTitlecase));
+        $processor->setValue('TGL_LAHIR', $this->escapeXml($tglLahir));
+        $processor->setValue('TANGGAL_SURAT', $this->escapeXml($tglSurat));
+        $processor->setValue('TGL_SK', $this->escapeXml($tglSK));
+        $processor->setValue('JUDUL_PENELITIAN', $this->escapeXml($judulPenelitianUppercase));
 
-        // Direktori Output
         $outputFileName    = "SURAT_KETERANGAN_LULUS_{$surat->nim}_{$surat->id_surat_lulus}.docx";
         $outputFileRelatif = "surat_lulus/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");

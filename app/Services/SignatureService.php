@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use ZipArchive;
+
 use App\Models\SuratPKL;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
@@ -19,6 +21,11 @@ use chillerlan\QRCode\Output\QROutputInterface;
 
 class SignatureService
 {
+    private function escapeXml($value): string
+    {
+        return htmlspecialchars((string)($value ?: '-'), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+
     public function insertSignatureWithQR(Model $suratModel, string $jabatan, string $nama, $nidn): string
     {
         $filePath          = $suratModel->file_generated;
@@ -140,9 +147,9 @@ class SignatureService
                 'ratio'  => true,
             ]);
 
-            $processor->setValue('JABATAN', $jabatan);
-            $processor->setValue('NAMA_DEKAN', $nama);
-            $processor->setValue('NIDN', $nidn);
+            $processor->setValue('JABATAN', $this->escapeXml($jabatan));
+            $processor->setValue('NAMA_DEKAN', $this->escapeXml($nama));
+            $processor->setValue('NIDN', $this->escapeXml($nidn));
 
             $processor->saveAs($outputPathAbsolut);
         } finally {
@@ -160,37 +167,126 @@ class SignatureService
             throw new \Exception("File Word tidak ditemukan: " . $docxPath);
         }
 
-        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-        $outputDir = dirname($docxPath);
-        $pdfPath   = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $docxPath);
+        $this->repairDocx($docxPath);
 
-        $pdfFilter = 'pdf:writer_pdf_Export:EmbedStandardFonts=true;SelectPdfVersion=1;Quality=100';
-        $command   = $this->buildLibreOfficeCommand($pdfFilter, $outputDir, $docxPath);
+        $isWindows     = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        $uniqueId      = uniqid('pdf_', true);
+        $outputDir     = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $uniqueId;
+        mkdir($outputDir, 0755, true);
+
+        try {
+            $uniqueProfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'lo_profile_' . uniqid('', true);
+            $pdfFilter     = 'pdf:writer_pdf_Export:EmbedStandardFonts=true;SelectPdfVersion=1;Quality=100';
+            $command       = $this->buildLibreOfficeCommand($pdfFilter, $outputDir, $docxPath, $uniqueProfile);
+
+            Log::info("LibreOffice command: {$command}");
+
+            $returnCode = $this->runCommand($command, $output);
+
+            Log::info("LibreOffice exit code: {$returnCode}, output: " . implode(' | ', $output));
+
+            $maxWait       = $isWindows ? 10 : 5;
+            $waited        = 0.0;
+            $checkInterval = 0.5;
+            $foundPdf      = null;
+
+            while ($waited < $maxWait) {
+                clearstatcache();
+                $pdfs = glob($outputDir . DIRECTORY_SEPARATOR . '*.pdf') ?: [];
+                if (!empty($pdfs)) {
+                    $foundPdf = $pdfs[0];
+                    break;
+                }
+                usleep((int)($checkInterval * 1_000_000));
+                $waited += $checkInterval;
+            }
+
+            if (!$foundPdf || !file_exists($foundPdf) || filesize($foundPdf) <= 1000) {
+                Log::error("Konversi DOCX ke PDF gagal", [
+                    'docxPath'  => $docxPath,
+                    'exitCode'  => $returnCode,
+                    'output'    => $output,
+                    'command'   => $command,
+                ]);
+
+                throw new \Exception(
+                    "Konversi DOCX ke PDF gagal (exit: {$returnCode}). Output: \n" . implode("\n", $output)
+                );
+            }
+
+            $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
+            $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
+            $finalPdfPath    = storage_path("app/{$relativePdfPath}");
+
+            rename($foundPdf, $finalPdfPath);
+
+            @unlink($docxPath);
+
+            if (file_exists($uniqueProfile)) {
+                $this->deleteDirectory($uniqueProfile);
+            }
+
+            return $relativePdfPath;
+
+        } finally {
+            if (is_dir($outputDir)) {
+                $this->deleteDirectory($outputDir);
+            }
+        }
+    }
+
+    public function convertDocxToPdfPreview(string $docxAbsolutePath, string $outputDir): ?string
+    {
+        if (!file_exists($docxAbsolutePath)) {
+            Log::error("convertDocxToPdfPreview: file DOCX tidak ditemukan: {$docxAbsolutePath}");
+            return null;
+        }
+
+        $this->repairDocx($docxAbsolutePath);
+
+        $uniqueOutputDir = $outputDir . DIRECTORY_SEPARATOR . uniqid('prev_', true);
+        mkdir($uniqueOutputDir, 0755, true);
+
+        $uniqueProfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'lo_profile_' . uniqid('', true);
+        $pdfFilter     = 'pdf:writer_pdf_Export:EmbedStandardFonts=true;SelectPdfVersion=1;Quality=100';
+        $command       = $this->buildLibreOfficeCommand($pdfFilter, $uniqueOutputDir, $docxAbsolutePath, $uniqueProfile);
 
         $returnCode = $this->runCommand($command, $output);
 
+        $isWindows     = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $maxWait       = $isWindows ? 10 : 5;
         $waited        = 0.0;
         $checkInterval = 0.5;
 
-        while (!file_exists($pdfPath) && $waited < $maxWait) {
+        while ($waited < $maxWait) {
+            clearstatcache();
+            $pdfs = glob($uniqueOutputDir . DIRECTORY_SEPARATOR . '*.pdf') ?: [];
+            if (!empty($pdfs)) {
+                break;
+            }
             usleep((int)($checkInterval * 1_000_000));
             $waited += $checkInterval;
-            clearstatcache();
         }
 
-        if (!file_exists($pdfPath) || filesize($pdfPath) <= 1000) {
-            throw new \Exception(
-                "Konversi DOCX ke PDF gagal (exit: {$returnCode}). Output: \n" . implode("\n", $output)
-            );
+        $pdfs = glob($uniqueOutputDir . DIRECTORY_SEPARATOR . '*.pdf') ?: [];
+
+        if (empty($pdfs)) {
+            Log::error('convertDocxToPdfPreview: PDF tidak ditemukan setelah konversi', [
+                'exitCode' => $returnCode,
+                'output'   => $output,
+                'command'  => $command,
+            ]);
+            $this->deleteDirectory($uniqueOutputDir);
+            return null;
         }
 
-        @unlink($docxPath);
+        $finalPdf = $pdfs[0];
 
-        $relativePdfPath = preg_replace('/\.(docx?|DOCX?)$/', '.pdf', $wordFilePath);
-        $relativePdfPath = str_replace('\\', '/', $relativePdfPath);
+        if (file_exists($uniqueProfile)) {
+            $this->deleteDirectory($uniqueProfile);
+        }
 
-        return $relativePdfPath;
+        return $finalPdf;
     }
 
     private function runCommand(string $command, ?array &$output = []): int
@@ -238,19 +334,59 @@ class SignatureService
         $this->runCommand($command . ' 2>&1', $output);
 
         $result = trim(implode("\n", $output));
-
-        $lines = array_filter(explode("\n", $result));
+        $lines  = array_filter(explode("\n", $result));
 
         return trim(reset($lines) ?: '');
     }
 
-    private function buildLibreOfficeCommand(string $pdfFilter, string $outputDir, string $docxPath): string
+    private function repairDocx(string $docxPath): void
+    {
+        $tempPath = $docxPath . '.repair.tmp';
+
+        $srcZip = new ZipArchive();
+        $dstZip = new ZipArchive();
+
+        if ($srcZip->open($docxPath) !== true) {
+            Log::warning("repairDocx: gagal membuka source DOCX: {$docxPath}");
+            return;
+        }
+
+        if ($dstZip->open($tempPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            $srcZip->close();
+            Log::warning("repairDocx: gagal membuat temp DOCX: {$tempPath}");
+            return;
+        }
+
+        for ($i = 0; $i < $srcZip->numFiles; $i++) {
+            $name    = $srcZip->getNameIndex($i);
+            $content = $srcZip->getFromIndex($i);
+
+            if ($content !== false) {
+                $dstZip->addFromString($name, $content);
+            }
+        }
+
+        $dstZip->close();
+        $srcZip->close();
+
+        if (file_exists($tempPath) && filesize($tempPath) > 0) {
+            @unlink($docxPath);
+            rename($tempPath, $docxPath);
+            Log::info("repairDocx: berhasil memperbaiki DOCX: {$docxPath}");
+        } else {
+            @unlink($tempPath);
+            Log::warning("repairDocx: file repair kosong, skip.");
+        }
+    }
+
+    private function buildLibreOfficeCommand(string $pdfFilter, string $outputDir, string $docxPath, string $uniqueProfile): string
     {
         $envPath   = env('LIBREOFFICE_PATH');
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $command   = null;
 
-        $baseFlags = '--headless --nologo --nofirststartwizard --nodefault --norestore --nolockcheck';
+        $profileFlag = '-env:UserInstallation=file:///' . str_replace('\\', '/', $uniqueProfile);
+        $baseFlags   = '--headless --nologo --nofirststartwizard --nodefault --norestore --nolockcheck ' . $profileFlag;
 
         if ($envPath && file_exists($envPath)) {
             if ($isWindows) {
@@ -311,7 +447,6 @@ class SignatureService
                 if ($soffice === '') {
                     $soffice = $this->findBinary('soffice');
                 }
-                // ─────────────────────────────────────────────────────────
 
                 if ($soffice === '') {
                     throw new \Exception('LibreOffice/soffice tidak ditemukan di PATH.');
@@ -333,5 +468,28 @@ class SignatureService
         }
 
         return $command;
+    }
+
+    private function deleteDirectory(string $dir): bool
+    {
+        if (!file_exists($dir)) {
+            return true;
+        }
+
+        if (!is_dir($dir)) {
+            return unlink($dir);
+        }
+
+        foreach (scandir($dir) as $item) {
+            if ($item == '.' || $item == '..') {
+                continue;
+            }
+
+            if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+                return false;
+            }
+        }
+
+        return rmdir($dir);
     }
 }

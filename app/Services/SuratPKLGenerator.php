@@ -11,16 +11,9 @@ use ZipArchive;
 
 class SuratPKLGenerator
 {
-    /**
-     * @param string|null $value
-     * @return string
-     */
-    private function sanitize(?string $value): string
+    private function escapeXml($value): string
     {
-        if ($value === null || $value === '') {
-            return '-';
-        }
-        return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars((string)($value ?: '-'), ENT_XML1 | ENT_QUOTES, 'UTF-8');
     }
 
     private function readTemplateDocumentXml(string $templatePath): ?string
@@ -117,27 +110,25 @@ class SuratPKLGenerator
         $nimMahasiswa  = $daftarMahasiswa->pluck('nim')->filter()->implode(', ');
         $prodiMahasiswa = $daftarMahasiswa->pluck('prodi')->filter()->implode(', ');
 
-        $processor->setValue('NO_SURAT',       $this->sanitize($surat->no_surat));
-        $processor->setValue('BULAN_SURAT',    $this->sanitize($bulanSurat));
-        $processor->setValue('NAMA_MITRA',     $this->sanitize($surat->mitra?->nama_mitra));
-        $processor->setValue('FAKULTAS',       $this->sanitize($mahasiswa?->fakultas?->nama_fakultas));
-        $processor->setValue('TGL_MULAI',      $this->sanitize($tglMulai));
-        $processor->setValue('TGL_SELESAI',    $this->sanitize($tglSelesai));
-        $processor->setValue('TANGGAL_SURAT',  $this->sanitize($tglSurat));
+        $processor->setValue('NO_SURAT',       $this->escapeXml($surat->no_surat));
+        $processor->setValue('BULAN_SURAT',    $this->escapeXml($bulanSurat));
+        $processor->setValue('NAMA_MITRA',     $this->escapeXml($surat->mitra?->nama_mitra));
+        $processor->setValue('FAKULTAS',       $this->escapeXml($mahasiswa?->fakultas?->nama_fakultas));
+        $processor->setValue('TGL_MULAI',      $this->escapeXml($tglMulai));
+        $processor->setValue('TGL_SELESAI',    $this->escapeXml($tglSelesai));
+        $processor->setValue('TANGGAL_SURAT',  $this->escapeXml($tglSurat));
 
-        // Deteksi apakah template memiliki tabel anggota (untuk template kelompok)
         $variables = method_exists($processor, 'getVariables') ? $processor->getVariables() : [];
         $anggotaTableAnchor = $this->resolveAnggotaTableAnchor($templatePath, $variables);
 
         if ($anggotaTableAnchor !== null) {
-            // Template kelompok: clone baris tabel untuk setiap mahasiswa
             $processor->cloneRowAndSetValues(
                 $anggotaTableAnchor,
                 $daftarMahasiswa->values()->map(function ($anggota, $index) {
                     $row = [
-                        'NAMA_MAHASISWA' => $anggota['nama'] ?? '-',
-                        'NIM' => $anggota['nim'] ?? '-',
-                        'PRODI' => $anggota['prodi'] ?? '-',
+                        'NAMA_MAHASISWA' => $this->escapeXml($anggota['nama'] ?? null),
+                        'NIM' => $this->escapeXml($anggota['nim'] ?? null),
+                        'PRODI' => $this->escapeXml($anggota['prodi'] ?? null),
                     ];
 
                     if ($index !== null) {
@@ -148,10 +139,9 @@ class SuratPKLGenerator
                 })->all()
             );
         } else {
-            // Template individu: set placeholder tunggal
-            $processor->setValue('NAMA_MAHASISWA', $this->sanitize($namaMahasiswa ?: ($mahasiswa?->nama)));
-            $processor->setValue('NIM',            $this->sanitize($nimMahasiswa ?: ((string) $surat->nim)));
-            $processor->setValue('PRODI',          $this->sanitize($prodiMahasiswa ?: ($mahasiswa?->prodi?->nama_prodi)));
+            $processor->setValue('NAMA_MAHASISWA', $this->escapeXml($namaMahasiswa ?: ($mahasiswa?->nama)));
+            $processor->setValue('NIM',            $this->escapeXml($nimMahasiswa ?: ((string) $surat->nim)));
+            $processor->setValue('PRODI',          $this->escapeXml($prodiMahasiswa ?: ($mahasiswa?->prodi?->nama_prodi)));
         }
 
         $outputFileName    = "SURAT_PKL_{$surat->nim}_{$surat->id_surat_pkl}.docx";
@@ -189,13 +179,6 @@ class SuratPKLGenerator
                     . "Periksa template dan data yang digunakan."
             );
         }
-
-        Log::info("[SuratPKLGenerator] Berhasil membuat surat PKL.", [
-            'surat_id'    => $surat->id_surat_pkl,
-            'nim'         => $surat->nim,
-            'output_path' => $outputFileRelatif,
-            'file_size'   => $outputSize . ' bytes',
-        ]);
 
         return $outputFileRelatif;
     }

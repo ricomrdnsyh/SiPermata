@@ -27,10 +27,12 @@ use App\Http\Controllers\Admin\SuratObservasiController;
 use App\Http\Controllers\Admin\SSOSinkronisasiController;
 use App\Http\Controllers\Admin\SuratPenelitianController;
 use App\Http\Controllers\BAK\BAKSuratObservasiController;
+use App\Http\Controllers\Admin\AdminRekapitulasiSuratController;
 use App\Http\Controllers\Admin\HistoryPengajuanController;
 use App\Http\Controllers\Admin\SuratRekomendasiController;
 use App\Http\Controllers\BAK\BAKSuratPenelitianController;
 use App\Http\Controllers\BAK\BAKHistoryPengajuanController;
+use App\Http\Controllers\BAK\BAKRekapitulasiSuratController;
 use App\Http\Controllers\BAK\BAKSuratRekomendasiController;
 use App\Http\Controllers\Mahasiswa\MahasiswaHistoryPegajuan;
 use App\Http\Controllers\Dekan\DekanHistoryPengajuanController;
@@ -171,6 +173,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/history/bulk-approve', [HistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
 
         Route::get('/prodi-by-fakultas/{fakultas_id}', [HistoryPengajuanController::class, 'getProdiByFakultas'])->name('prodi.byFakultas');
+
+        // Rekapitulasi Surat
+        Route::get('/rekapitulasi-surat', [AdminRekapitulasiSuratController::class, 'index'])->name('rekapitulasi.index');
+        Route::get('/rekapitulasi-surat/data', [AdminRekapitulasiSuratController::class, 'getData'])->name('rekapitulasi.data');
+        Route::get('/rekapitulasi-surat/export-excel', [AdminRekapitulasiSuratController::class, 'exportExcel'])->name('rekapitulasi.exportExcel');
+        Route::get('/rekapitulasi-surat/download-bulk', [AdminRekapitulasiSuratController::class, 'downloadBulkPdf'])->name('rekapitulasi.downloadBulk');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
@@ -265,5 +273,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('surat/view/{tabel}/{id}', [BAKHistoryPengajuanController::class, 'viewGeneratedFile'])->name('surat.view');
 
         Route::post('/bak/history/bulk-approve', [BAKHistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
+
+        // Rekapitulasi Surat
+        Route::get('/rekapitulasi-surat', [BAKRekapitulasiSuratController::class, 'index'])->name('rekapitulasi.index');
+        Route::get('/rekapitulasi-surat/data', [BAKRekapitulasiSuratController::class, 'getData'])->name('rekapitulasi.data');
+        Route::get('/rekapitulasi-surat/export-excel', [BAKRekapitulasiSuratController::class, 'exportExcel'])->name('rekapitulasi.exportExcel');
+        Route::get('/rekapitulasi-surat/download-bulk', [BAKRekapitulasiSuratController::class, 'downloadBulkPdf'])->name('rekapitulasi.downloadBulk');
     });
 });

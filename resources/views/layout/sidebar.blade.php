@@ -356,6 +356,26 @@
                             <span class="menu-title">Pengajuan Mahasiswa</span>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('admin/rekapitulasi-surat*') ? 'active' : '' }}"
+                            href="{{ route('admin.rekapitulasi.index') }}">
+                            <span class="menu-icon">
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M19 22H5C4.4 22 4 21.6 4 21V3C4 2.4 4.4 2 5 2H14L20 8V21C20 21.6 19.6 22 19 22Z"
+                                            fill="black"></path>
+                                        <path d="M15 8H20L14 2V7C14 7.6 14.4 8 15 8Z" fill="black"></path>
+                                        <path
+                                            d="M7 13.5C7 13.2 7.2 13 7.5 13H16.5C16.8 13 17 13.2 17 13.5C17 13.8 16.8 14 16.5 14H7.5C7.2 14 7 13.8 7 13.5ZM7.5 16H11.5C11.8 16 12 15.8 12 15.5C12 15.2 11.8 15 11.5 15H7.5C7.2 15 7 15.2 7 15.5C7 15.8 7.2 16 7.5 16ZM16.5 11H7.5C7.2 11 7 10.8 7 10.5C7 10.2 7.2 10 7.5 10H16.5C16.8 10 17 10.2 17 10.5C17 10.8 16.8 11 16.5 11Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                            </span>
+                            <span class="menu-title">Rekapitulasi Surat</span>
+                        </a>
+                    </div>
                 @endif
                 @if (Auth::user()->role == 'DEKAN')
                     <div class="menu-item">
@@ -564,6 +584,26 @@
                                 </span>
                             </span>
                             <span class="menu-title">Pengajuan Mahasiswa</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Request::is('bak/rekapitulasi-surat*') ? 'active' : '' }}"
+                            href="{{ route('bak.rekapitulasi.index') }}">
+                            <span class="menu-icon">
+                                <span class="svg-icon svg-icon-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <path opacity="0.3"
+                                            d="M19 22H5C4.4 22 4 21.6 4 21V3C4 2.4 4.4 2 5 2H14L20 8V21C20 21.6 19.6 22 19 22Z"
+                                            fill="black"></path>
+                                        <path d="M15 8H20L14 2V7C14 7.6 14.4 8 15 8Z" fill="black"></path>
+                                        <path
+                                            d="M7 13.5C7 13.2 7.2 13 7.5 13H16.5C16.8 13 17 13.2 17 13.5C17 13.8 16.8 14 16.5 14H7.5C7.2 14 7 13.8 7 13.5ZM7.5 16H11.5C11.8 16 12 15.8 12 15.5C12 15.2 11.8 15 11.5 15H7.5C7.2 15 7 15.2 7 15.5C7 15.8 7.2 16 7.5 16ZM16.5 11H7.5C7.2 11 7 10.8 7 10.5C7 10.2 7.2 10 7.5 10H16.5C16.8 10 17 10.2 17 10.5C17 10.8 16.8 11 16.5 11Z"
+                                            fill="black"></path>
+                                    </svg>
+                                </span>
+                            </span>
+                            <span class="menu-title">Rekapitulasi Surat</span>
                         </a>
                     </div>
                 @endif

@@ -47,6 +47,11 @@ class SuratObservasiGenerator
         return null;
     }
 
+    private function escapeXml($value): string
+    {
+        return htmlspecialchars((string)($value ?: '-'), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    }
+
     /**
      * Memproses data dan template untuk membuat file Word.
      * * @param SuratObservasi
@@ -65,7 +70,6 @@ class SuratObservasiGenerator
             throw new \Exception("File template tidak ditemukan di: " . $templatePath);
         }
 
-        // Load Template
         $processor = new TemplateProcessor($templatePath);
 
         $mahasiswa          = $surat->mahasiswa;
@@ -82,14 +86,14 @@ class SuratObservasiGenerator
         $nimMahasiswa = $daftarMahasiswa->pluck('nim')->filter()->implode(', ');
         $prodiMahasiswa = $daftarMahasiswa->pluck('prodi')->filter()->implode(', ');
 
-        $processor->setValue('NO_SURAT', $surat->no_surat ?? '-');
-        $processor->setValue('BULAN_SURAT', $bulanSurat ?? '-');
-        $processor->setValue('NAMA_MITRA', $surat->mitra?->nama_mitra ?? '-');
-        $processor->setValue('FAKULTAS', $mahasiswa?->fakultas?->nama_fakultas ?? '-');
-        $processor->setValue('TGL_OBSERVASI', $tglObservasi ?? '-');
-        $processor->setValue('KEPERLUAN', $keperluanTitleCase ?? '-');
-        $processor->setValue('SEMESTER', $surat->semester ?? '-');
-        $processor->setValue('TANGGAL_SURAT', $tglSurat ?? '-');
+        $processor->setValue('NO_SURAT', $this->escapeXml($surat->no_surat));
+        $processor->setValue('BULAN_SURAT', $this->escapeXml($bulanSurat));
+        $processor->setValue('NAMA_MITRA', $this->escapeXml($surat->mitra?->nama_mitra));
+        $processor->setValue('FAKULTAS', $this->escapeXml($mahasiswa?->fakultas?->nama_fakultas));
+        $processor->setValue('TGL_OBSERVASI', $this->escapeXml($tglObservasi));
+        $processor->setValue('KEPERLUAN', $this->escapeXml($keperluanTitleCase));
+        $processor->setValue('SEMESTER', $this->escapeXml($surat->semester));
+        $processor->setValue('TANGGAL_SURAT', $this->escapeXml($tglSurat));
 
         $variables = method_exists($processor, 'getVariables') ? $processor->getVariables() : [];
         $anggotaTableAnchor = $this->resolveAnggotaTableAnchor($templatePath, $variables);
@@ -99,9 +103,9 @@ class SuratObservasiGenerator
                 $anggotaTableAnchor,
                 $daftarMahasiswa->values()->map(function ($anggota, $index) {
                     $row = [
-                        'NAMA_MAHASISWA' => $anggota['nama'] ?? '-',
-                        'NIM' => $anggota['nim'] ?? '-',
-                        'PRODI' => $anggota['prodi'] ?? '-',
+                        'NAMA_MAHASISWA' => $this->escapeXml($anggota['nama'] ?? null),
+                        'NIM' => $this->escapeXml($anggota['nim'] ?? null),
+                        'PRODI' => $this->escapeXml($anggota['prodi'] ?? null),
                     ];
 
                     if ($index !== null) {
@@ -112,12 +116,11 @@ class SuratObservasiGenerator
                 })->all()
             );
         } else {
-            $processor->setValue('NAMA_MAHASISWA', $namaMahasiswa ?: '-');
-            $processor->setValue('NIM', $nimMahasiswa ?: '-');
-            $processor->setValue('PRODI', $prodiMahasiswa ?: ($mahasiswa?->prodi?->nama_prodi ?? '-'));
+            $processor->setValue('NAMA_MAHASISWA', $this->escapeXml($namaMahasiswa));
+            $processor->setValue('NIM', $this->escapeXml($nimMahasiswa));
+            $processor->setValue('PRODI', $this->escapeXml($prodiMahasiswa ?: $mahasiswa?->prodi?->nama_prodi));
         }
 
-        // Direktori Output
         $outputFileName    = "SURAT_IZIN_OBSERVASI_{$surat->nim}_{$surat->id_surat_observasi}.docx";
         $outputFileRelatif = "surat_observasi/{$outputFileName}";
         $outputPathAbsolut = storage_path("app/{$outputFileRelatif}");
