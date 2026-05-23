@@ -245,11 +245,20 @@
                                     <span class="menu-title">Master TTD Surat</span>
                                 </a>
                             </div>
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('admin/eligible-lulus*') ? 'active' : '' }}"
+                                    href="{{ route('admin.eligible-lulus.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Data Mahasiswa Lulusan</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="menu-item">
                         <div class="menu-content pb-2">
-                            <span class="menu-section text-muted text-uppercase fs-8 ls-1">Pengajuan Surat</span>
+                            <span class="menu-section text-muted text-uppercase fs-8 ls-1">Surat</span>
                         </div>
                     </div>
                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
@@ -441,6 +450,11 @@
                             <span class="menu-title">Dashboard</span>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <div class="menu-content pb-2">
+                            <span class="menu-section text-muted text-uppercase fs-8 ls-1">Master</span>
+                        </div>
+                    </div>
                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                         <span class="menu-link">
                             <span class="menu-icon">
@@ -480,6 +494,22 @@
                                     <span class="menu-title">Master TTD Surat</span>
                                 </a>
                             </div>
+                        </div>
+                        <div class="menu-sub menu-sub-accordion menu-active-bg">
+                            <div class="menu-item">
+                                <a class="menu-link {{ Request::is('bak/eligible-lulus*') ? 'active' : '' }}"
+                                    href="{{ route('bak.eligible-lulus.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Data Mahasiswa Lulusan</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-content pb-2">
+                            <span class="menu-section text-muted text-uppercase fs-8 ls-1">Surat</span>
                         </div>
                     </div>
                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">

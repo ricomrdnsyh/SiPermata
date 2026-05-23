@@ -43,6 +43,8 @@ use App\Http\Controllers\BAK\MitraController as BAKMitraController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratObservasiController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratPenelitianController;
 use App\Http\Controllers\Mahasiswa\MahasiswaSuratRekomendasiController;
+use App\Http\Controllers\Admin\AdminEligibleLulusController;
+use App\Http\Controllers\BAK\BAKEligibleLulusController;
 use App\Http\Controllers\BAK\DashboardController as BAKDashboardController;
 use App\Http\Controllers\Dekan\DashboardController as DekanDashboardController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
@@ -179,6 +181,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rekapitulasi-surat/data', [AdminRekapitulasiSuratController::class, 'getData'])->name('rekapitulasi.data');
         Route::get('/rekapitulasi-surat/export-excel', [AdminRekapitulasiSuratController::class, 'exportExcel'])->name('rekapitulasi.exportExcel');
         Route::get('/rekapitulasi-surat/download-bulk', [AdminRekapitulasiSuratController::class, 'downloadBulkPdf'])->name('rekapitulasi.downloadBulk');
+
+        // Eligible Lulus (Data Mahasiswa Lulusan)
+        Route::get('/eligible-lulus', [AdminEligibleLulusController::class, 'index'])->name('eligible-lulus.index');
+        Route::get('/eligible-lulus/data', [AdminEligibleLulusController::class, 'getData'])->name('eligible-lulus.data');
+        Route::post('/eligible-lulus', [AdminEligibleLulusController::class, 'store'])->name('eligible-lulus.store');
+        Route::post('/eligible-lulus/import', [AdminEligibleLulusController::class, 'import'])->name('eligible-lulus.import');
+        Route::delete('/eligible-lulus/{id}', [AdminEligibleLulusController::class, 'destroy'])->name('eligible-lulus.destroy');
+        Route::get('/eligible-lulus/template', [AdminEligibleLulusController::class, 'downloadTemplate'])->name('eligible-lulus.template');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
@@ -279,5 +289,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rekapitulasi-surat/data', [BAKRekapitulasiSuratController::class, 'getData'])->name('rekapitulasi.data');
         Route::get('/rekapitulasi-surat/export-excel', [BAKRekapitulasiSuratController::class, 'exportExcel'])->name('rekapitulasi.exportExcel');
         Route::get('/rekapitulasi-surat/download-bulk', [BAKRekapitulasiSuratController::class, 'downloadBulkPdf'])->name('rekapitulasi.downloadBulk');
+
+        // Eligible Lulus
+        Route::get('/eligible-lulus', [BAKEligibleLulusController::class, 'index'])->name('eligible-lulus.index');
+        Route::get('/eligible-lulus/data', [BAKEligibleLulusController::class, 'getData'])->name('eligible-lulus.data');
+        Route::post('/eligible-lulus', [BAKEligibleLulusController::class, 'store'])->name('eligible-lulus.store');
+        Route::post('/eligible-lulus/import', [BAKEligibleLulusController::class, 'import'])->name('eligible-lulus.import');
+        Route::delete('/eligible-lulus/{id}', [BAKEligibleLulusController::class, 'destroy'])->name('eligible-lulus.destroy');
+        Route::get('/eligible-lulus/template', [BAKEligibleLulusController::class, 'downloadTemplate'])->name('eligible-lulus.template');
     });
 });

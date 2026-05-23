@@ -30,11 +30,24 @@
                         </div>
                         <div class="card-toolbar">
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
-                                    class="btn btn-sm  btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
+                                @if ($isEligible)
+                                    <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
+                                        class="btn btn-sm  btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
+                                @endif
                             </div>
                         </div>
                     </div>
+                    @if (!$isEligible)
+                        <div class="px-8 pt-4">
+                            <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-4">
+                                <i class="fas fa-exclamation-triangle fs-3 text-warning me-3 mt-1"></i>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold fs-6 text-gray-800">Anda belum terdaftar sebagai mahasiswa lulusan.</span>
+                                    <span class="fs-7 text-gray-600 mt-1">Silakan hubungi BAK Fakultas Anda untuk didaftarkan ke daftar mahasiswa lulusan terlebih dahulu sebelum dapat mengajukan Surat Keterangan Lulus.</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <div class="separator my-5"></div>
                     <div class="card-body pt-0">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-keterangan-lulus-table">

@@ -64,4 +64,14 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(SuratLulus::class, 'nim');
     }
+
+    public function eligibleLulus()
+    {
+        return $this->hasMany(MahasiswaEligibleLulus::class, 'nim', 'nim');
+    }
+
+    public function isEligibleLulus(): bool
+    {
+        return $this->eligibleLulus()->exists();
+    }
 }

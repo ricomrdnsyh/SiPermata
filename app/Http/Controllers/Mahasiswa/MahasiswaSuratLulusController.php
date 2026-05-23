@@ -9,6 +9,7 @@ use App\Models\TahunAkademik;
 use Illuminate\Support\Carbon;
 use App\Models\HistoryPengajuan;
 use App\Models\PengajuanStatusLog;
+use App\Models\MahasiswaEligibleLulus;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\SuratLulusGenerator;
@@ -22,7 +23,11 @@ class MahasiswaSuratLulusController extends Controller
      */
     public function index()
     {
-        return view('mahasiswa.surat_lulus.index');
+        $user = Auth::user();
+        $mahasiswa = $user->mahasiswa;
+        $isEligible = $mahasiswa ? $mahasiswa->isEligibleLulus() : false;
+
+        return view('mahasiswa.surat_lulus.index', compact('isEligible'));
     }
 
     public function getSuratLulus()
@@ -86,6 +91,13 @@ class MahasiswaSuratLulusController extends Controller
             abort(403, 'Akses ditolak');
         }
 
+        $mahasiswa = $user->mahasiswa;
+
+        if (!$mahasiswa || !$mahasiswa->isEligibleLulus()) {
+            return redirect()->route('mahasiswa.surat-keterangan-lulus.index')
+                ->with('failed', 'Anda belum terdaftar sebagai mahasiswa lulusan. Silakan hubungi BAK Fakultas.');
+        }
+
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
         return view('mahasiswa.surat_lulus.create', compact('latestAkademik'));
@@ -109,6 +121,10 @@ class MahasiswaSuratLulusController extends Controller
 
         if (!$mahasiswa) {
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        if (!$mahasiswa->isEligibleLulus()) {
+            return back()->with('failed', 'Anda belum terdaftar sebagai mahasiswa lulusan. Silakan hubungi BAK Fakultas.');
         }
 
         $fakultasId = $mahasiswa->fakultas_id;
