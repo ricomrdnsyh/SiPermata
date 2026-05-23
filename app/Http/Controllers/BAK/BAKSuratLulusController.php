@@ -15,6 +15,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\SuratLulusGenerator;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class BAKSuratLulusController extends Controller
 {
@@ -123,6 +126,35 @@ class BAKSuratLulusController extends Controller
             ->make(true);
     }
 
+    public function getDataMahasiswaSimpt(string $nim)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'BAK') {
+            return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
+
+        $mahasiswa = Mahasiswa::where('nim', $nim)->first();
+        $isEligible = $mahasiswa ? $mahasiswa->isEligibleLulus() : false;
+
+        $dataSimpt = $this->getDataSimpt($nim);
+
+        if (!$dataSimpt) {
+            return response()->json([
+                'ipk'         => null,
+                'is_eligible' => $isEligible,
+                'message'     => 'Data SIMPT tidak ditemukan untuk mahasiswa ini.',
+            ]);
+        }
+
+        return response()->json([
+            'ipk'         => $dataSimpt->ipk_ketuntasan
+                ? number_format((float) $dataSimpt->ipk_ketuntasan, 2)
+                : null,
+            'is_eligible' => $isEligible,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -173,9 +205,20 @@ class BAKSuratLulusController extends Controller
 
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
 
+        if (!$mahasiswa) {
+            return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
+
         if ($mahasiswa->fakultas_id != $fakultasIdBak) {
             return back()->with('failed', 'Mahasiswa tersebut bukan bagian dari fakultas Anda.');
         }
+
+        if (!$mahasiswa->isEligibleLulus()) {
+            return back()->with('failed', 'Mahasiswa dengan NIM ini belum terdaftar di daftar mahasiswa lulusan.');
+        }
+
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
 
         $namaTemplate = 'surat_keterangan_lulus';
 
@@ -205,7 +248,7 @@ class BAKSuratLulusController extends Controller
 
         try {
             // GENERATE FILE WORD
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
             // UPDATE MODEL DENGAN PATH FILE
             $surat->update([
@@ -258,7 +301,9 @@ class BAKSuratLulusController extends Controller
             ->where('id_surat_lulus', $id)
             ->firstOrFail();
 
-        return view('bak.surat_lulus.show', compact('surat'));
+        $dataSimpt = $this->getDataSimpt($surat->nim);
+
+        return view('bak.surat_lulus.show', compact('surat', 'dataSimpt'));
     }
 
     /**
@@ -285,7 +330,9 @@ class BAKSuratLulusController extends Controller
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mahasiswa = Mahasiswa::where('fakultas_id', $fakultasId)->select('nim', 'nama')->orderBy('nama', 'asc')->get();
 
-        return view('bak.surat_lulus.edit', compact('surat', 'latestAkademik', 'mahasiswa'));
+        $dataSimpt = $this->getDataSimpt($surat->nim);
+
+        return view('bak.surat_lulus.edit', compact('surat', 'latestAkademik', 'mahasiswa', 'dataSimpt'));
     }
 
     /**
@@ -314,8 +361,24 @@ class BAKSuratLulusController extends Controller
 
         $surat = SuratLulus::findOrFail($id);
 
+        $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
+        if (!$mahasiswa) {
+            return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        if ($mahasiswa->fakultas_id != $fakultasIdBak) {
+            return back()->with('failed', 'Mahasiswa tersebut bukan bagian dari fakultas Anda.');
+        }
+
+        if (!$mahasiswa->isEligibleLulus()) {
+            return back()->with('failed', 'Mahasiswa dengan NIM ini belum terdaftar di daftar mahasiswa lulusan.');
+        }
+
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $request->nim)->firstOrFail();
+
+        $dataSimpt = $this->getDataSimpt($request->nim);
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
 
         $surat->update([
             'nim'              => $request->nim,
@@ -330,7 +393,7 @@ class BAKSuratLulusController extends Controller
         try {
             $template = Template::findOrFail($surat->template_id);
 
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
             $surat->update([
                 'file_generated' => $generatedFilePath
@@ -361,5 +424,41 @@ class BAKSuratLulusController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) return null;
+
+        try {
+            return DB::selectOne('
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ', [$nim]);
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
     }
 }

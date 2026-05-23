@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\SuratLulusGenerator;
 use App\Services\NotifikasiBAKService;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class MahasiswaSuratLulusController extends Controller
 {
@@ -100,7 +103,9 @@ class MahasiswaSuratLulusController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('mahasiswa.surat_lulus.create', compact('latestAkademik'));
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_lulus.create', compact('latestAkademik', 'dataSimpt'));
     }
 
     /**
@@ -133,6 +138,9 @@ class MahasiswaSuratLulusController extends Controller
             return back()->with('failed', 'Fakultas Anda belum ditentukan.');
         }
 
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
+
         $namaTemplate = 'surat_keterangan_lulus';
 
         $template = Template::where('jenis_surat', $namaTemplate)
@@ -161,7 +169,7 @@ class MahasiswaSuratLulusController extends Controller
 
         try {
             // GENERATE FILE WORD
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
             // UPDATE MODEL DENGAN PATH FILE
             $surat->update([
@@ -220,7 +228,9 @@ class MahasiswaSuratLulusController extends Controller
 
         $akademik = TahunAkademik::orderBy('id_akademik', 'desc')->get();
 
-        return view('mahasiswa.surat_lulus.show', compact('surat', 'akademik'));
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_lulus.show', compact('surat', 'akademik', 'dataSimpt'));
     }
 
     /**
@@ -243,7 +253,9 @@ class MahasiswaSuratLulusController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        return view('mahasiswa.surat_lulus.edit', compact('surat', 'latestAkademik'));
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        return view('mahasiswa.surat_lulus.edit', compact('surat', 'latestAkademik', 'dataSimpt'));
     }
 
     /**
@@ -267,6 +279,9 @@ class MahasiswaSuratLulusController extends Controller
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
 
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
+
         $surat->update([
             'akademik_id'         => $request->akademik_id,
             'tempat_lahir'        => $request->tempat_lahir,
@@ -278,7 +293,7 @@ class MahasiswaSuratLulusController extends Controller
 
         try {
             $template = Template::findOrFail($surat->template_id);
-            $generatedFilePath = $generatorService->generateWord($surat, $template);
+            $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
             $surat->update(['file_generated' => $generatedFilePath]);
 
@@ -308,5 +323,41 @@ class MahasiswaSuratLulusController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) return null;
+
+        try {
+            return DB::selectOne('
+                SELECT
+                    b.id_smt,
+                    b.ipk_ketuntasan,
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                    AND b.ipk_ketuntasan IS NOT NULL
+                LEFT JOIN (
+                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
+                    FROM dbsimpt.tbbak_kuliah_mahasiswa
+                    GROUP BY id_mahasiswa_pt
+                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ', [$nim]);
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
     }
 }

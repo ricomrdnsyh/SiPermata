@@ -161,6 +161,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-observasi/data', [SuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
         Route::resource('surat-observasi', SuratObservasiController::class)->except(['destroy']);
 
+        Route::get('surat-keterangan-lulus/simpt/{nim}', [SuratLulusController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-keterangan-lulus.simpt');
         Route::get('/surat-keterangan-lulus/data', [SuratLulusController::class, 'getSuratLulus'])->name('surat-keterangan-lulus.data');
         Route::resource('surat-keterangan-lulus', SuratLulusController::class)->except(['destroy']);
 
@@ -270,6 +272,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-observasi/data', [BAKSuratObservasiController::class, 'getSuratObservasi'])->name('surat-observasi.data');
         Route::resource('surat-observasi', BAKSuratObservasiController::class)->except(['destroy']);
 
+        Route::get('surat-keterangan-lulus/simpt/{nim}', [BAKSuratLulusController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-keterangan-lulus.simpt');
         Route::get('/surat-keterangan-lulus/data', [BAKSuratLulusController::class, 'getSuratLulus'])->name('surat-keterangan-lulus.data');
         Route::resource('surat-keterangan-lulus', BAKSuratLulusController::class)->except(['destroy']);
 

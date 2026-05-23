@@ -22,12 +22,9 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
-                                                    data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                    data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                                    data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">
-                                                        Pilih Mahasiswa...</option>
+                                                <select id="select-nim" class="form-select form-select-sm w-100"
+                                                    data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim" required>
+                                                    <option value="">Pilih Mahasiswa...</option>
                                                     @foreach ($mahasiswa as $mhs)
                                                         <option value="{{ $mhs->nim }}"
                                                             {{ old('nim', $surat->nim) == $mhs->nim ? 'selected' : '' }}>
@@ -51,6 +48,25 @@
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="fv-row mb-3">
+                                                <label class="required fw-semibold fs-6 mb-2">
+                                                    IPK
+                                                    <span id="ipk-loading"
+                                                        class="spinner-border spinner-border-sm ms-2 text-primary d-none"></span>
+                                                </label>
+                                                <input id="field-ipk" type="text"
+                                                    class="form-control form-control-sm bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa"
+                                                    value="{{ $dataSimpt?->ipk_ketuntasan ? number_format((float) $dataSimpt->ipk_ketuntasan, 2) : '' }}"
+                                                    readonly />
+                                                <small id="simpt-warning" class="text-warning d-none">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Data IPK tidak ditemukan di SIMPT.
+                                                </small>
                                             </div>
                                         </div>
 
@@ -121,6 +137,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+            const selectNim = document.getElementById('select-nim');
+            const fieldIpk = document.getElementById('field-ipk');
+            const ipkSpinner = document.getElementById('ipk-loading');
+            const simptWarn = document.getElementById('simpt-warning');
             const tglEl = document.getElementById('tgl_lahir');
             const tglVal = tglEl.value || null;
 
@@ -137,6 +157,66 @@
                         instance.altInput.placeholder = tglEl.placeholder || '';
                     }
                 }
+            });
+
+            const simptUrl = "{{ route('admin.surat-keterangan-lulus.simpt', '__NIM__') }}";
+
+            function fetchSimpt(nim) {
+                if (!nim) {
+                    fieldIpk.value = '';
+                    simptWarn.classList.add('d-none');
+                    return;
+                }
+
+                ipkSpinner.classList.remove('d-none');
+                simptWarn.classList.add('d-none');
+                fieldIpk.value = '';
+
+                const url = simptUrl.replace('__NIM__', encodeURIComponent(nim));
+
+                fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.is_eligible === false) {
+                            Swal.fire({
+                                text: "Mahasiswa dengan NIM ini belum terdaftar di daftar mahasiswa lulusan (Eligible Lulus). Silakan daftarkan terlebih dahulu sebelum membuat pengajuan.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            }).then(() => {
+                                $('#select-nim').val('').trigger('change.select2');
+                                fieldIpk.value = '';
+                                simptWarn.classList.add('d-none');
+                            });
+                            return;
+                        }
+
+                        if (data.ipk) {
+                            fieldIpk.value = data.ipk;
+                            simptWarn.classList.add('d-none');
+                        } else {
+                            fieldIpk.value = '-';
+                            simptWarn.classList.remove('d-none');
+                        }
+                    })
+                    .catch(() => {
+                        fieldIpk.value = '-';
+                        simptWarn.classList.remove('d-none');
+                    })
+                    .finally(() => {
+                        ipkSpinner.classList.add('d-none');
+                    });
+            }
+
+            $('#select-nim').on('change', function() {
+                fetchSimpt(this.value);
             });
 
             form.addEventListener('submit', function(event) {

@@ -18,9 +18,10 @@ class SuratLulusGenerator
      * Memproses data dan template untuk membuat file Word.
      * * @param SuratLulus
      * @param Template $template Model Template yang sudah dipilih.
+     * @param string|float|null $ipk
      * @return string Path relatif file Word yang berhasil dibuat.
      */
-    public function generateWord(SuratLulus $surat, Template $template)
+    public function generateWord(SuratLulus $surat, Template $template, string|float|null $ipk = null)
     {
         $relativePathTemplate = $template->file;
         $tanggal_SK = $template->tgl_sk;
@@ -46,6 +47,8 @@ class SuratLulusGenerator
         $tempatLahirTitlecase = strtoupper($surat->tempat_lahir ?? '-');
         $judulPenelitianUppercase = strtoupper($surat->judul_penelitian ?? '-');
 
+        $ipkFormatted = $ipk !== null ? number_format((float) $ipk, 2) : '-';
+
         $processor->setValue('NO_SURAT', $this->escapeXml($surat->no_surat));
         $processor->setValue('BULAN_SURAT', $this->escapeXml($bulanSurat));
         $processor->setValue('NAMA_MAHASISWA', $this->escapeXml($surat->mahasiswa?->nama));
@@ -57,6 +60,7 @@ class SuratLulusGenerator
         $processor->setValue('TANGGAL_SURAT', $this->escapeXml($tglSurat));
         $processor->setValue('TGL_SK', $this->escapeXml($tglSK));
         $processor->setValue('JUDUL_PENELITIAN', $this->escapeXml($judulPenelitianUppercase));
+        $processor->setValue('IPK', $this->escapeXml($ipkFormatted));
 
         $outputFileName    = "SURAT_KETERANGAN_LULUS_{$surat->nim}_{$surat->id_surat_lulus}.docx";
         $outputFileRelatif = "surat_lulus/{$outputFileName}";
