@@ -5,6 +5,10 @@
             <td class="text-gray-800">{{ $pengajuan->nama_surat }}</td>
         </tr>
         <tr class="border-bottom border-dashed">
+            <td class="text-gray-400">IPK</td>
+            <td class="text-gray-800">{{ $dataSimpt?->ipk_ketuntasan ? number_format((float) $dataSimpt->ipk_ketuntasan, 2) : '-' }}</td>
+        </tr>
+        <tr class="border-bottom border-dashed">
             <td class="text-gray-400">Tempat, Tanggal Lahir</td>
             <td class="text-gray-800">{{ ucwords($surat->tempat_lahir) }},
                 {{ $surat->tgl_lahir?->locale('id')->isoFormat('D MMMM YYYY') }}</td>

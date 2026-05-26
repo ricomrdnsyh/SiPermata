@@ -59,6 +59,7 @@ class SuratLulusGenerator
         $processor->setValue('TGL_LAHIR', $this->escapeXml($tglLahir));
         $processor->setValue('TANGGAL_SURAT', $this->escapeXml($tglSurat));
         $processor->setValue('TGL_SK', $this->escapeXml($tglSK));
+        $processor->setValue('TAHUN_AKADEMIK', $this->escapeXml($surat->akademik->tahun_akademik ?? '-'));
         $processor->setValue('JUDUL_PENELITIAN', $this->escapeXml($judulPenelitianUppercase));
         $processor->setValue('IPK', $this->escapeXml($ipkFormatted));
 

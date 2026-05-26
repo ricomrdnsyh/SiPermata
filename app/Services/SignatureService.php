@@ -179,11 +179,7 @@ class SignatureService
             $pdfFilter     = 'pdf:writer_pdf_Export:EmbedStandardFonts=true;SelectPdfVersion=1;Quality=100';
             $command       = $this->buildLibreOfficeCommand($pdfFilter, $outputDir, $docxPath, $uniqueProfile);
 
-            Log::info("LibreOffice command: {$command}");
-
             $returnCode = $this->runCommand($command, $output);
-
-            Log::info("LibreOffice exit code: {$returnCode}, output: " . implode(' | ', $output));
 
             $maxWait       = $isWindows ? 10 : 5;
             $waited        = 0.0;
@@ -372,7 +368,6 @@ class SignatureService
         if (file_exists($tempPath) && filesize($tempPath) > 0) {
             @unlink($docxPath);
             rename($tempPath, $docxPath);
-            Log::info("repairDocx: berhasil memperbaiki DOCX: {$docxPath}");
         } else {
             @unlink($tempPath);
             Log::warning("repairDocx: file repair kosong, skip.");
