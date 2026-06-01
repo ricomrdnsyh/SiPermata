@@ -10,7 +10,6 @@ use App\Models\SuratObservasi;
 use App\Models\SuratPenelitian;
 use App\Models\SuratPKL;
 use App\Models\SuratRekomendasi;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -126,7 +125,8 @@ class MahasiswaHistoryPegajuan extends Controller
             'fileGeneratedPath',
             'jumlahPengajuan',
             'jumlahDitolak',
-            'jumlahDiterima'
+            'jumlahDiterima',
+            'dataSimpt'
         ));
     }
 
