@@ -16,6 +16,7 @@ class MahasiswaEligibleLulusImport implements ToCollection, WithHeadingRow
 
     public int $imported = 0;
     public int $skipped = 0;
+    public int $updated = 0;
     public int $failed = 0;
     public array $errors = [];
 
@@ -59,21 +60,31 @@ class MahasiswaEligibleLulusImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            // Cek duplikasi
-            $exists = MahasiswaEligibleLulus::where('nim', $nim)
-                ->where('akademik_id', $this->akademikId)
-                ->exists();
+            $judulPenelitian = trim($row['judul_penelitian'] ?? trim($row['judul'] ?? ''));
 
-            if ($exists) {
-                $this->skipped++;
+            // Cek duplikasi
+            $existing = MahasiswaEligibleLulus::where('nim', $nim)
+                ->where('akademik_id', $this->akademikId)
+                ->first();
+
+            if ($existing) {
+                if ($judulPenelitian !== '') {
+                    $existing->update([
+                        'judul_penelitian' => $judulPenelitian,
+                    ]);
+                    $this->updated++;
+                } else {
+                    $this->skipped++;
+                }
                 continue;
             }
 
             MahasiswaEligibleLulus::create([
-                'nim'         => $nim,
-                'fakultas_id' => $mahasiswa->fakultas_id,
-                'akademik_id' => $this->akademikId,
-                'added_by'    => $this->addedBy,
+                'nim'              => $nim,
+                'fakultas_id'      => $mahasiswa->fakultas_id,
+                'akademik_id'      => $this->akademikId,
+                'added_by'         => $this->addedBy,
+                'judul_penelitian' => $judulPenelitian ?: null,
             ]);
 
             $this->imported++;

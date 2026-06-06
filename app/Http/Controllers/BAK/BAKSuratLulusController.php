@@ -137,13 +137,22 @@ class BAKSuratLulusController extends Controller
         $mahasiswa = Mahasiswa::where('nim', $nim)->first();
         $isEligible = $mahasiswa ? $mahasiswa->isEligibleLulus() : false;
 
+        $judulPenelitian = null;
+        if ($mahasiswa) {
+            $eligibleRecord = \App\Models\MahasiswaEligibleLulus::where('nim', $nim)->orderBy('created_at', 'desc')->first();
+            if ($eligibleRecord) {
+                $judulPenelitian = $eligibleRecord->judul_penelitian;
+            }
+        }
+
         $dataSimpt = $this->getDataSimpt($nim);
 
         if (!$dataSimpt) {
             return response()->json([
-                'ipk'         => null,
-                'is_eligible' => $isEligible,
-                'message'     => 'Data SIMPT tidak ditemukan untuk mahasiswa ini.',
+                'ipk'              => null,
+                'is_eligible'      => $isEligible,
+                'judul_penelitian' => $judulPenelitian,
+                'message'          => 'Data SIMPT tidak ditemukan untuk mahasiswa ini.',
             ]);
         }
 
@@ -152,6 +161,7 @@ class BAKSuratLulusController extends Controller
                 ? number_format((float) $dataSimpt->ipk_ketuntasan, 2)
                 : null,
             'is_eligible' => $isEligible,
+            'judul_penelitian' => $judulPenelitian,
         ]);
     }
 

@@ -102,7 +102,10 @@ class AdminEligibleLulusController extends Controller
                 return $row->addedByUser?->nama ?? '-';
             })
             ->addColumn('tanggal_ditambahkan', function ($row) {
-                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm') ?? '—';
+                return Carbon::parse($row->updated_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm') ?? '—';
+            })
+            ->addColumn('judul_penelitian', function ($row) {
+                return $row->judul_penelitian ?? '-';
             })
             ->addColumn('action', function ($row) {
                 return '<div class="text-center">
@@ -126,8 +129,9 @@ class AdminEligibleLulusController extends Controller
         }
 
         $request->validate([
-            'nim'         => 'required|string',
-            'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
+            'nim'              => 'required|string',
+            'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
+            'judul_penelitian' => 'nullable|string',
         ]);
 
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
@@ -148,10 +152,11 @@ class AdminEligibleLulusController extends Controller
         }
 
         MahasiswaEligibleLulus::create([
-            'nim'         => $request->nim,
-            'fakultas_id' => $fakultasId,
-            'akademik_id' => $request->akademik_id,
-            'added_by'    => Auth::user()->id,
+            'nim'              => $request->nim,
+            'fakultas_id'      => $fakultasId,
+            'akademik_id'      => $request->akademik_id,
+            'added_by'         => Auth::user()->id,
+            'judul_penelitian' => $request->judul_penelitian,
         ]);
 
         return back()->with('success', 'Mahasiswa berhasil ditambahkan ke daftar mahasiswa lulusan.');
@@ -179,7 +184,7 @@ class AdminEligibleLulusController extends Controller
 
         Excel::import($import, $request->file('file'));
 
-        $message = "Import selesai! Berhasil: {$import->imported}, Dilewati (duplikat): {$import->skipped}, Gagal: {$import->failed}.";
+        $message = "Import selesai! Baru: {$import->imported}, Diperbarui: {$import->updated}, Dilewati (duplikat): {$import->skipped}, Gagal: {$import->failed}.";
 
         if (!empty($import->errors)) {
             $errorList = implode(' | ', array_slice($import->errors, 0, 5));
@@ -189,7 +194,7 @@ class AdminEligibleLulusController extends Controller
             }
         }
 
-        if ($import->imported > 0) {
+        if ($import->imported > 0 || $import->updated > 0) {
             return back()->with('success', $message);
         }
 
@@ -225,16 +230,20 @@ class AdminEligibleLulusController extends Controller
 
         $sheet->setCellValue('A1', 'nim');
         $sheet->setCellValue('B1', 'nama');
-        $sheet->getStyle('A1:B1')->getFont()->setBold(true);
+        $sheet->setCellValue('C1', 'judul_penelitian');
+        $sheet->getStyle('A1:C1')->getFont()->setBold(true);
 
         // Contoh data
         $sheet->setCellValue('A2', '2021001001');
         $sheet->setCellValue('B2', 'Ahmad Ridho');
+        $sheet->setCellValue('C2', 'Sistem Informasi A');
         $sheet->setCellValue('A3', '2021001002');
         $sheet->setCellValue('B3', 'Siti Aminah');
+        $sheet->setCellValue('C3', 'Pengembangan Web B');
 
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 

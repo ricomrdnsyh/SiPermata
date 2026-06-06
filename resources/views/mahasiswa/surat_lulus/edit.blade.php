@@ -86,7 +86,8 @@
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Judul Penelitian/Tugas
                                                     Akhir</label>
-                                                <textarea name="judul_penelitian" class="form-control form-control-sm mb-3 mb-lg-0" rows="3" required>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                                <textarea class="form-control form-control-sm mb-3 mb-lg-0" rows="3" disabled>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                                <input type="hidden" name="judul_penelitian" value="{{ old('judul_penelitian', $surat->judul_penelitian) }}">
                                                 @error('judul_penelitian')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror

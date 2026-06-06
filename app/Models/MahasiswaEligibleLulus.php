@@ -14,6 +14,7 @@ class MahasiswaEligibleLulus extends Model
         'akademik_id',
         'added_by',
         'keterangan',
+        'judul_penelitian',
     ];
 
     public function mahasiswa()

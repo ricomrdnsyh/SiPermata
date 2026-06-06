@@ -104,6 +104,7 @@
                                     <th class="min-w-125px">Fakultas</th>
                                     <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Tahun Akademik</th>
+                                    <th class="min-w-200px">Judul Penelitian</th>
                                     <th class="min-w-125px">Ditambahkan Oleh</th>
                                     <th class="min-w-125px">Tanggal Ditambahkan</th>
                                 </tr>
@@ -150,6 +151,10 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="fv-row mb-4">
+                            <label class="fw-semibold fs-6 mb-2">Judul Penelitian</label>
+                            <textarea name="judul_penelitian" class="form-control form-control-sm" rows="3" placeholder="Masukkan Judul Penelitian (Opsional)"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -319,6 +324,10 @@
                     {
                         data: 'tahun_akademik',
                         name: 'tahun_akademik'
+                    },
+                    {
+                        data: 'judul_penelitian',
+                        name: 'judul_penelitian'
                     },
                     {
                         data: 'ditambahkan_oleh',

@@ -103,9 +103,14 @@ class MahasiswaSuratLulusController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
+        $eligibleData = MahasiswaEligibleLulus::where('nim', $mahasiswa->nim)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $judulPenelitian = $eligibleData ? $eligibleData->judul_penelitian : null;
+
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
-        return view('mahasiswa.surat_lulus.create', compact('latestAkademik', 'dataSimpt'));
+        return view('mahasiswa.surat_lulus.create', compact('latestAkademik', 'dataSimpt', 'judulPenelitian'));
     }
 
     /**
