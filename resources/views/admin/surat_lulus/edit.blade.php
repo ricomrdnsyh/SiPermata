@@ -73,9 +73,11 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tempat Lahir</label>
-                                                <input type="text" name="tempat_lahir"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ old('tempat_lahir', $surat->tempat_lahir) }}" required />
+                                                <input id="field-tempat-lahir" type="text"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0 bg-light"
+                                                    placeholder="Otomatis terisi setelah memilih mahasiswa"
+                                                    value="{{ old('tempat_lahir', $surat->tempat_lahir) }}" disabled />
+                                                <input type="hidden" id="hidden-tempat-lahir" name="tempat_lahir" value="{{ old('tempat_lahir', $surat->tempat_lahir) }}">
                                                 @error('tempat_lahir')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -89,11 +91,11 @@
                                                     <span class="input-group-text">
                                                         <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span> 
-                                                    <input id="tgl_lahir" type="text" name="tgl_lahir"
-                                                        class="form-control form-control-sm"
-                                                        placeholder="Pilih tanggal lahir" autocomplete="off"
-                                                        value="{{ old('tgl_lahir', $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '') }}"
-                                                        required />
+                                                    <input id="field-tgl-lahir" type="text"
+                                                        class="form-control form-control-sm bg-light"
+                                                        placeholder="Otomatis terisi" autocomplete="off"
+                                                        value="{{ old('tgl_lahir', $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '') }}" disabled />
+                                                    <input type="hidden" id="hidden-tgl-lahir" name="tgl_lahir" value="{{ old('tgl_lahir', $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '') }}">
                                                 </div>
                                                 @error('tgl_lahir')
                                                     <small class="text-danger">{{ $message }}</small>
@@ -142,23 +144,7 @@
             const fieldIpk = document.getElementById('field-ipk');
             const ipkSpinner = document.getElementById('ipk-loading');
             const simptWarn = document.getElementById('simpt-warning');
-            const tglEl = document.getElementById('tgl_lahir');
-            const tglVal = tglEl.value || null;
 
-            flatpickr(tglEl, {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d/m/Y",
-                altInputClass: "form-control form-control-sm",
-                allowInput: true,
-                defaultDate: tglVal,
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.altInput) {
-                        instance.altInput.required = true;
-                        instance.altInput.placeholder = tglEl.placeholder || '';
-                    }
-                }
-            });
 
             const simptUrl = "{{ route('admin.surat-keterangan-lulus.simpt', '__NIM__') }}";
 
@@ -213,6 +199,22 @@
                         } else {
                             document.getElementById('field-judul-penelitian').value = '';
                             document.getElementById('hidden-judul-penelitian').value = '';
+                        }
+                        
+                        if (data.tempat_lahir) {
+                            document.getElementById('field-tempat-lahir').value = data.tempat_lahir;
+                            document.getElementById('hidden-tempat-lahir').value = data.tempat_lahir;
+                        } else {
+                            document.getElementById('field-tempat-lahir').value = '-';
+                            document.getElementById('hidden-tempat-lahir').value = '';
+                        }
+                        
+                        if (data.tanggal_lahir) {
+                            document.getElementById('field-tgl-lahir').value = data.tanggal_lahir;
+                            document.getElementById('hidden-tgl-lahir').value = data.tanggal_lahir;
+                        } else {
+                            document.getElementById('field-tgl-lahir').value = '-';
+                            document.getElementById('hidden-tgl-lahir').value = '';
                         }
                     })
                     .catch(() => {

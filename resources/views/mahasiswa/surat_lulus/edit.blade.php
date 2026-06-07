@@ -54,9 +54,10 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tempat Lahir</label>
-                                                <input type="text" name="tempat_lahir"
+                                                <input type="text"
                                                     class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ old('tempat_lahir', $surat->tempat_lahir) }}" required />
+                                                    value="{{ auth()->user()->mahasiswa?->tempat_lahir ?? '-' }}" disabled />
+                                                <input type="hidden" name="tempat_lahir" value="{{ auth()->user()->mahasiswa?->tempat_lahir }}">
                                                 @error('tempat_lahir')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -70,11 +71,10 @@
                                                     <span class="input-group-text">
                                                         <i class="fas fa-calendar-alt fs-5"></i>
                                                     </span>
-                                                    <input id="tgl_lahir" type="text" name="tgl_lahir"
+                                                    <input type="text"
                                                         class="form-control form-control-sm"
-                                                        placeholder="Pilih tanggal lahir" autocomplete="off"
-                                                        value="{{ old('tgl_lahir', $surat->tgl_lahir ? $surat->tgl_lahir->format('Y-m-d') : '') }}"
-                                                        required />
+                                                        value="{{ auth()->user()->mahasiswa?->tanggal_lahir ? \Carbon\Carbon::parse(auth()->user()->mahasiswa->tanggal_lahir)->format('d/m/Y') : '-' }}" disabled />
+                                                    <input type="hidden" name="tgl_lahir" value="{{ auth()->user()->mahasiswa?->tanggal_lahir }}">
                                                 </div>
                                                 @error('tgl_lahir')
                                                     <small class="text-danger">{{ $message }}</small>
@@ -123,23 +123,7 @@
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
 
-            const tglEl = document.getElementById('tgl_lahir');
-            const tglVal = tglEl.value || null;
 
-            flatpickr(tglEl, {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d/m/Y",
-                altInputClass: "form-control form-control-sm",
-                allowInput: true,
-                defaultDate: tglVal,
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.altInput) {
-                        instance.altInput.required = true;
-                        instance.altInput.placeholder = tglEl.placeholder || '';
-                    }
-                }
-            });
 
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {

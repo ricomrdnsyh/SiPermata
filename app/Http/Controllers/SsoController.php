@@ -27,6 +27,8 @@ class SsoController extends Controller
             if (isset($responseData['nim'])) {
                 $save['nama'] = $responseData['nama'];
                 $save['jenis_kelamin'] = $responseData['jenis_kelamin'];
+                $save['tempat_lahir'] = $responseData['tempat_lahir'] ?? null;
+                $save['tanggal_lahir'] = $responseData['tanggal_lahir'] ?? null;
                 $save['nim'] = $responseData['nim'];
                 $save['prodi_id'] = $responseData['id_prodi'];
                 $save['fakultas_id'] = $responseData['id_fakultas'];

@@ -16,6 +16,8 @@ class Mahasiswa extends Model
         'fakultas_id',
         'nama',
         'jenis_kelamin',
+        'tempat_lahir',
+        'tanggal_lahir',
         'email',
         'no_hp',
     ];

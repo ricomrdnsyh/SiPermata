@@ -159,6 +159,8 @@ class SuratLulusController extends Controller
                 : null,
             'is_eligible' => $isEligible,
             'judul_penelitian' => $judulPenelitian,
+            'tempat_lahir' => $mahasiswa ? $mahasiswa->tempat_lahir : null,
+            'tanggal_lahir' => $mahasiswa && $mahasiswa->tanggal_lahir ? \Carbon\Carbon::parse($mahasiswa->tanggal_lahir)->format('d/m/Y') : null,
         ]);
     }
 
