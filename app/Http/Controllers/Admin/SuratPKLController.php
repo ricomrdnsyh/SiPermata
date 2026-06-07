@@ -123,7 +123,7 @@ class SuratPKLController extends Controller
         $template = $this->resolveTemplatePKL($fakultasId, $isKelompok);
         if (!$template) { return back()->with('failed', $this->missingTemplateMessage($isKelompok)); }
 
-        $noSurat = SuratPKL::getNextNoSurat($template->id_template);
+        $noSurat = SuratPKL::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $payload = [
             'template_id' => $template->id_template, 'no_surat' => $noSurat,

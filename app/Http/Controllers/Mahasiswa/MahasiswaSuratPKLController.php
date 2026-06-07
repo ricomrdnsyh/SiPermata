@@ -171,7 +171,7 @@ class MahasiswaSuratPKLController extends Controller
             }
 
             // Generate nomor surat
-            $noSurat = SuratPKL::getNextNoSurat($template->id_template);
+            $noSurat = SuratPKL::getNextNoSurat($template->id_template, $request->akademik_id);
 
             $payload = [
                 'template_id'         => $template->id_template,

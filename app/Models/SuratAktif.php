@@ -60,7 +60,7 @@ class SuratAktif extends Model
         return $map[$nama] ?? '00';
     }
 
-    public static function getNextNoSurat($templateId): string
+    public static function getNextNoSurat($templateId, $akademikId): string
     {
         $template = Template::with('fakultas')->findOrFail($templateId);
 
@@ -77,10 +77,9 @@ class SuratAktif extends Model
         $suffix = "/SKAK/{$bulan}.{$tahun}";
 
         $last = self::where('template_id', $templateId)
-            ->whereYear('created_at', $tahun)
-            ->whereMonth('created_at', $bulan)
-            ->where('no_surat', 'like', $prefix . '%' . $suffix)
-            ->orderBy('id_surat_aktif', 'desc')
+            ->where('akademik_id', $akademikId)
+            ->where('no_surat', 'like', $prefix . '%/SKAK/%')
+            ->orderBy('no_surat', 'desc')
             ->first();
 
         if ($last) {

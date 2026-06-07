@@ -214,7 +214,7 @@ class BAKSuratRekomendasiController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        $noSurat = SuratRekomendasi::getNextNoSurat($template->id_template);
+        $noSurat = SuratRekomendasi::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratRekomendasi::create([
             'template_id'     => $template->id_template,

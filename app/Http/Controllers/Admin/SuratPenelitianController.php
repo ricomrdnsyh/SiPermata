@@ -181,7 +181,7 @@ class SuratPenelitianController extends Controller
         }
 
         // Generate nomor surat
-        $noSurat = SuratPenelitian::getNextNoSurat($template->id_template);
+        $noSurat = SuratPenelitian::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratPenelitian::create([
             'template_id'         => $template->id_template,

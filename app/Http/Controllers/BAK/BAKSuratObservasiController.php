@@ -236,7 +236,7 @@ class BAKSuratObservasiController extends Controller
         }
 
         // Generate nomor surat
-        $noSurat = SuratObservasi::getNextNoSurat($template->id_template);
+        $noSurat = SuratObservasi::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $payload = [
             'template_id'         => $template->id_template,

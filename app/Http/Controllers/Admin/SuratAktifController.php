@@ -232,7 +232,7 @@ class SuratAktifController extends Controller
         }
 
         // Generate nomor surat
-        $noSurat = SuratAktif::getNextNoSurat($template->id_template);
+        $noSurat = SuratAktif::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratAktif::create([
             'template_id'          => $template->id_template,

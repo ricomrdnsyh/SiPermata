@@ -243,7 +243,7 @@ class BAKSuratLulusController extends Controller
         }
 
         // Generate nomor surat
-        $noSurat = SuratLulus::getNextNoSurat($template->id_template);
+        $noSurat = SuratLulus::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratLulus::create([
             'template_id'         => $template->id_template,
