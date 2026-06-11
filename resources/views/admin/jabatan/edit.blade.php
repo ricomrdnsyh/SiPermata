@@ -7,7 +7,7 @@
                 <div id="kt_app_content_container" class="app-container container-fluid">
                     <div class="row g-7 ">
                         <div class="col-xl-6 py-3 py-lg-6 mb-5 w-100">
-                            <div class="card card-flush h-lg-100" id="kt_contacts_main">
+                            <div class="card card-flush h-lg-100 shadow-sm border border-dashed border-dark rounded" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
                                         <h2>Edit Jabatan</h2>
@@ -22,16 +22,16 @@
                                         @method('PUT')
                                         <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Nama Penduduk</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                            <select class="form-select form-select-sm w-100"
                                                 data-control="select2" data-placeholder="Pilih Penduduk" name="penduduk_id"
-                                                id="penduduk_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1" required>
-                                                <option value="" data-select2-id="select2-data-74-9zwr">
+                                                id="penduduk_id"
+                                                required>
+                                                <option value="">
                                                     Pilih Penduduk...</option>
                                                 @foreach ($penduduk as $penduduk)
                                                     <option value="{{ $penduduk->id_penduduk }}"
                                                         {{ $data->penduduk_id == $penduduk->id_penduduk ? 'selected' : '' }}>
-                                                        {{ $penduduk->nidn }} - {{ $penduduk->nama_penduduk }}
+                                                        {{ $penduduk->fakultas?->nama_fakultas ?? 'Fakultas belum diisi' }} - {{ $penduduk->nama_penduduk }}
                                                     </option>
                                                 @endforeach
                                             </select>

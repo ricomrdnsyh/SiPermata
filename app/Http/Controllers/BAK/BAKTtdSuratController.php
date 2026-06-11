@@ -60,11 +60,11 @@ class BAKTtdSuratController extends Controller
             })
             ->editColumn('status', function ($row) {
                 if ($row->status == 'aktif') {
-                    return '<span class="badge bg-success">Aktif</span>';
+                    return '<span class="badge text-white bg-success">Aktif</span>';
                 } elseif ($row->status == 'nonaktif') {
-                    return '<span class="badge bg-danger">Nonaktif</span>';
+                    return '<span class="badge text-white bg-danger">Nonaktif</span>';
                 } else {
-                    return '<span class="badge bg-secondary">' . $row->status . '</span>';
+                    return '<span class="badge text-white bg-secondary">' . $row->status . '</span>';
                 }
             })
             ->addColumn('action', function ($row) {
@@ -72,9 +72,9 @@ class BAKTtdSuratController extends Controller
             data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '<a href="' . route('bak.ttdSurat.edit', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-            data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+            data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . '</div>';
             })
             ->rawColumns(['nama_fakultas', 'template', 'status', 'action'])
             ->make(true);

@@ -1,47 +1,133 @@
 @extends('layout.main')
 @section('title', 'Rekapitulasi Surat')
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" type="text/css" />
-    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables/responsive.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables/buttons.dataTables.min.css') }}">
     <style>
-        .table-row-dashed tr { border-bottom: 1px dashed #cccccc !important; }
-        #rekap-table thead tr th { vertical-align: middle; border-bottom: 1px dashed #cccccc !important; }
-        .filter-container { margin-bottom: 2rem; padding-bottom: 0 !important; }
-        .btn-export { border-radius: 8px; font-weight: 600; }
+        .table-row-dashed tr {
+            border-bottom: 1px dashed #cccccc !important;
+        }
+
+        .dataTable thead tr th {
+            vertical-align: middle;
+            border-bottom: 1px dashed #cccccc !important;
+        }
+
+        .dataTable th,
+        .dataTable td {
+            vertical-align: middle !important;
+        }
+
+        .dataTable td.dt-control:before,
+        .dataTable th.dt-control:before {
+            display: none !important;
+            content: "" !important;
+        }
+
+        table.dataTable td.dt-control,
+        table.dataTable th.dt-control {
+            position: relative !important;
+            width: 28px !important;
+            min-width: 28px !important;
+            padding: 0 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        table.dataTable.collapsed tbody tr:not(.child) td.dt-control:before,
+        table.dataTable.collapsed tbody tr:not(.child) th.dt-control:before {
+            display: inline-flex !important;
+            content: "+" !important;
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, calc(-50% + 7px)) !important;
+            width: 18px !important;
+            height: 18px !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 999px !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+            font-size: 13px !important;
+            line-height: 1 !important;
+            background: #0d6efd !important;
+            box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(0, 0, 0, .18) !important;
+        }
+
+        table.dataTable.collapsed tbody tr.parent:not(.child) td.dt-control:before,
+        table.dataTable.collapsed tbody tr.parent:not(.child) th.dt-control:before {
+            content: "-" !important;
+            background: #dc3545 !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.child,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>th.child,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.dataTables_empty {
+            cursor: default !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.child:before,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>th.child:before,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.dataTables_empty:before {
+            display: none !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+        }
+
+        .dt-buttons .btn-export-primary,
+        .dt-buttons .btn-export-primary:focus,
+        .dt-buttons .btn-export-primary:hover,
+        .dt-buttons .btn-export-primary:active {
+            background: #004289 !important;
+            border-color: #004289 !important;
+            color: #fff !important;
+        }
+
+        .dt-buttons .btn-export-primary:focus {
+            box-shadow: none !important;
+        }
+
+        .dt-buttons .btn-export-primary i {
+            color: #fff !important;
+        }
     </style>
 @endsection
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
 
-                {{-- Summary Cards --}}
-                @php
-                    $gradients = [
-                        ['bg' => 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)', 'icon' => 'fas fa-file-alt'],
-                        ['bg' => 'linear-gradient(135deg, #22c55e 0%, #4ade80 100%)', 'icon' => 'fas fa-envelope-open-text'],
-                        ['bg' => 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%)', 'icon' => 'fas fa-envelope-open-text'],
-                        ['bg' => 'linear-gradient(135deg, #f59e0b 0%, #fb923c 100%)', 'icon' => 'fas fa-envelope-open-text'],
-                        ['bg' => 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)', 'icon' => 'fas fa-envelope-open-text'],
-                        ['bg' => 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)', 'icon' => 'fas fa-envelope-open-text'],
-                        ['bg' => 'linear-gradient(135deg, #334155 0%, #475569 100%)', 'icon' => 'fas fa-envelope-open-text'],
+                                @php
+
+                    $colors = [
+                        ['class' => 'primary', 'icon' => 'fas fa-envelope-circle-check'],
+                        ['class' => 'success', 'icon' => 'fas fa-file-signature'],
+                        ['class' => 'warning', 'icon' => 'fas fa-file-alt'],
+                        ['class' => 'danger', 'icon' => 'fas fa-file-contract'],
+                        ['class' => 'info', 'icon' => 'fas fa-envelope-open-text'],
+                        ['class' => 'dark', 'icon' => 'fas fa-file-invoice'],
                     ];
                 @endphp
                 <div class="row g-4 g-xl-6 mb-7">
                     <div class="col-xl-3 col-md-6">
-                        <div class="card card-flush h-md-100 hover-elevate-up text-white"
-                            style="background: {{ $gradients[0]['bg'] }};">
-                            <div class="card-body p-4 d-flex flex-column">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <span class="symbol symbol-38px">
-                                        <span class="symbol-label bg-white bg-opacity-20">
-                                            <i class="{{ $gradients[0]['icon'] }} text-white"></i>
-                                        </span>
+                        <div class="card border border-dashed border-gray-300 shadow-sm hover-elevate-up">
+                            <div class="card-body p-4 d-flex align-items-center">
+                                <div class="symbol symbol-50px me-4">
+                                    <span class="symbol-label bg-light-primary">
+                                        <i class="fas fa-check-circle text-primary fs-2x"></i>
                                     </span>
                                 </div>
-                                <div class="pt-6">
-                                    <div class="fw-semibold fs-2x text-white">{{ number_format($totalSelesai) }}</div>
-                                    <div class="fw-semibold text-white text-opacity-75 mt-1">Total Surat Selesai</div>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bolder fs-2 text-gray-900">{{ number_format($totalSelesai) }}</span>
+                                    <span class="fw-semibold text-gray-500 fs-7">Total Surat Selesai</span>
                                 </div>
                             </div>
                         </div>
@@ -49,20 +135,21 @@
                     @php $gi = 1; @endphp
                     @foreach ($breakdownSurat as $nama => $count)
                         @if ($count > 0)
+                        @php
+                            $color = $colors[$gi % count($colors)]['class'];
+                            $icon = $colors[$gi % count($colors)]['icon'];
+                        @endphp
                         <div class="col-xl-3 col-md-6">
-                            <div class="card card-flush h-md-100 hover-elevate-up text-white"
-                                style="background: {{ $gradients[$gi % count($gradients)]['bg'] }};">
-                                <div class="card-body p-4 d-flex flex-column">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <span class="symbol symbol-38px">
-                                            <span class="symbol-label bg-white bg-opacity-20">
-                                                <i class="{{ $gradients[$gi % count($gradients)]['icon'] }} text-white"></i>
-                                            </span>
+                            <div class="card border border-dashed border-gray-300 shadow-sm hover-elevate-up">
+                                <div class="card-body p-4 d-flex align-items-center">
+                                    <div class="symbol symbol-50px me-4">
+                                        <span class="symbol-label bg-light-{{ $color }}">
+                                            <i class="{{ $icon }} text-{{ $color }} fs-2x"></i>
                                         </span>
                                     </div>
-                                    <div class="pt-6">
-                                        <div class="fw-semibold fs-2x text-white">{{ number_format($count) }}</div>
-                                        <div class="fw-semibold text-white text-opacity-75 mt-1">{{ $nama }}</div>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bolder fs-2 text-gray-900">{{ number_format($count) }}</span>
+                                        <span class="fw-semibold text-gray-500 fs-7">{{ $nama }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -72,13 +159,12 @@
                     @endforeach
                 </div>
 
-                {{-- Main Card --}}
-                <div class="card">
+                                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-header border-0 pt-6">
                         <div class="card-title">
                             <h3 class="card-title align-items-start flex-column">
                                 <span class="card-label fw-bolder fs-3 mb-1">Rekapitulasi Surat Admin</span>
-                                <span class="text-muted mt-1 fw-semibold fs-7">Menampilkan surat dari seluruh fakultas dengan status <span class="badge bg-primary">Selesai</span></span>
+                                <span class="text-muted mt-1 fw-semibold fs-7">Menampilkan surat dari seluruh fakultas dengan status <span class="badge text-white bg-primary">Selesai</span></span>
                             </h3>
                         </div>
                         <div class="card-toolbar gap-2">
@@ -142,6 +228,7 @@
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="rekap-table">
                                 <thead>
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center p-0" style="width:28px; min-width:28px;"></th>
                                         <th class="text-center" style="width:50px;">No</th>
                                         <th class="min-w-125px">Nama Mahasiswa</th>
                                         <th class="min-w-100px">NIM</th>
@@ -161,13 +248,26 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 @section('js')
-    <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
-    <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
+    
+    <script src="{{ asset('assets/plugins/custom/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/lodash.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.colReorder.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.buttons.min.js') }}"></script>
+
+    <script src="{{ asset('assets/plugins/custom/datatables/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/print.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/responsive.bootstrap.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // Dependent Prodi on Fakultas
+
             $('#filter-fakultas').on('change', function() {
                 let fakultasId = $(this).val();
                 let $prodi = $('#filter-prodi');
@@ -191,14 +291,30 @@
             let table = $('#rekap-table').DataTable({
                 processing: false,
                 serverSide: true,
-                responsive: true,
-                pagingType: "simple_numbers",
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
-                dom: '<"row align-items-center"<"col-md-6"l>>' +
-                     '<"row mb-4 mt-2"<"col-md-6 d-flex justify-content-start">' +
-                     '<"col-md-6 d-flex justify-content-end"f>>' +
-                     'rt' +
-                     '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 0
+                    }
+                },
+                columnDefs: [{
+                        targets: 0,
+                        className: 'dt-control',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        targets: 1,
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                lengthMenu: [
+                    [10, 15, 20, 25],
+                    [10, 15, 20, 25]
+                ],
+                searchHighlight: true,
+                dom: 'lfrtip',
                 ajax: {
                     url: '{{ route("admin.rekapitulasi.data") }}',
                     data: function(d) {
@@ -209,6 +325,7 @@
                     }
                 },
                 columns: [
+                    { data: null, defaultContent: '', orderable: false, searchable: false },
                     { data: null, name: 'no', orderable: false, searchable: false, className: 'text-center',
                       render: function(data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }
                     },
@@ -221,12 +338,7 @@
                     { data: 'tanggal', name: 'created_at' },
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ],
-                language: {
-                    search: "Search :_INPUT_",
-                    searchPlaceholder: "Search...",
-                    lengthMenu: "Show _MENU_ entries",
-                    paginate: { previous: "Previous", next: "Next" }
-                },
+                
                 drawCallback: function() {
                     $('#rekap-table [data-bs-toggle="tooltip"]').tooltip();
                 }

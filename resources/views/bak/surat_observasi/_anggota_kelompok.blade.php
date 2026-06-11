@@ -26,7 +26,7 @@
                     Tambahkan anggota kelompok dengan memilih mahasiswa dari fakultas Anda.
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline btn-outline-primary" id="add-anggota-kelompok-bak"
+            <button type="button" class="btn btn-sm btn-light-primary" id="add-anggota-kelompok-bak"
                 onclick="window.addAnggotaKelompokBakRow && window.addAnggotaKelompokBakRow()">
                 <i class="fas fa-plus me-2"></i>
                 Tambah Anggota

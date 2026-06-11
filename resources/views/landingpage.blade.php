@@ -214,7 +214,7 @@
                             </p>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3">
                             <a href="https://sso.unuja.ac.id"
                                 class="inline-flex items-center justify-center px-6 py-3 rounded-2xl font-semibold text-white text-sm
                                 bg-primary hover:bg-primary-dark shadow-soft hover:shadow-lift transition">

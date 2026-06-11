@@ -2,9 +2,10 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
 
                 <div class="card card-flush mb-7">
                     <div class="card-header pt-6 pb-4">
@@ -29,10 +30,11 @@
 
                         <div class="card-toolbar">
                             <div class="d-flex align-items-center gap-3">
-                                <span class="badge badge-light fw-semibold px-4 py-3">
-                                    <i class="fas fa-filter me-2 text-gray-600"></i>Tahun Akademik
-                                </span>
+                                <div class="d-flex align-items-center fw-bold px-4 py-2" style="background-color: #F8F9FA; color: #64748B; border-radius: 6px; font-size: 0.95rem; height: 38px;">
+                                    <i class="fas fa-filter me-2" style="color: #64748B;"></i>Tahun Akademik
+                                </div>
                                 <div class="w-180px">
+                                    <style> .select2-container--bootstrap5 .select2-selection { border-color: #E2E8F0 !important; color: #64748B !important; font-weight: 500 !important; border-radius: 6px !important; } .select2-container--bootstrap5 .select2-selection__rendered { color: #64748B !important; } </style>
                                     <select class="form-select form-select-sm" data-control="select2"
                                         data-hide-search="true" data-placeholder="Tahun Akademik" id="filter_akademik_id">
                                         @foreach ($tahunAkademikList as $id => $tahun)
@@ -308,11 +310,11 @@
                                                 </div>
                                             </td>
                                             <td class="text-center"><span class="text-gray-900 fw-semibold">{{ $surat['total'] }}</span></td>
-                                            <td class="text-center"><span class="badge badge-light-warning fw-semibold px-3 py-2">{{ $surat['pengajuan'] }}</span></td>
-                                            <td class="text-center"><span class="badge badge-light-info fw-semibold px-3 py-2">{{ $surat['proses'] }}</span></td>
-                                            <td class="text-center"><span class="badge badge-light-success fw-semibold px-3 py-2">{{ $surat['diterima'] }}</span></td>
-                                            <td class="text-center"><span class="badge badge-light-primary fw-semibold px-3 py-2">{{ $surat['selesai'] }}</span></td>
-                                            <td class="text-center"><span class="badge badge-light-danger fw-semibold px-3 py-2">{{ $surat['ditolak'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-warning fw-bold px-3 py-2">{{ $surat['pengajuan'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-info fw-bold px-3 py-2">{{ $surat['proses'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-success fw-bold px-3 py-2">{{ $surat['diterima'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-primary fw-bold px-3 py-2">{{ $surat['selesai'] }}</span></td>
+                                            <td class="text-center"><span class="badge badge-light-danger fw-bold px-3 py-2">{{ $surat['ditolak'] }}</span></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -560,4 +562,5 @@
             }
         });
     </script>
+</div>
 @endsection

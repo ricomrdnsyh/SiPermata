@@ -112,12 +112,12 @@ class SuratAktifController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge bg-success">Disetujui</span>',
-                    'selesai'  => '<span class="badge bg-primary">Selesai</span>',
-                    'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
-                    default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
+                    'selesai'  => '<span class="badge text-white bg-primary">Selesai</span>',
+                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('action', function ($row) {
@@ -125,9 +125,9 @@ class SuratAktifController extends Controller
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '<a href="' . route('admin.surat-aktif.edit', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . '</div>';
             })
             ->rawColumns(['nama_mahasiswa', 'prodi', 'kategori', 'tanggal_pengajuan', 'status', 'catatan', 'action'])
             ->make(true);

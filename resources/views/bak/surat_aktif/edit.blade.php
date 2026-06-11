@@ -12,10 +12,11 @@
     </style>
 @endsection
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
@@ -34,11 +35,11 @@
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                    data-select2-id="select2-data-72-r5i2" tabindex="-1" aria-hidden="true"
-                                                    data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                   
+                                                    required>
+                                                    <option value="">
                                                         Pilih Mahasiswa...</option>
                                                     @foreach ($mahasiswa as $mhs)
                                                         <option value="{{ $mhs->nim }}"
@@ -119,11 +120,11 @@
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                    data-select2-id="select2-data-72-r5i9" tabindex="-1" aria-hidden="true"
-                                                    data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                   
+                                                    required>
+                                                    <option value="">
                                                         Pilih Mahasiswa...</option>
                                                     @foreach ($mahasiswa as $mhsw)
                                                         <option value="{{ $mhsw->nim }}"
@@ -351,11 +352,11 @@
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa"
-                                                    name="nim" data-select2-id="select2-data-72-r5i1" tabindex="-1"
-                                                    aria-hidden="true" data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">
+                                                    name="nim"
+                                                    required>
+                                                    <option value="">
                                                         Pilih Mahasiswa...</option>
                                                     @foreach ($mahasiswa as $mhswa)
                                                         <option value="{{ $mhswa->nim }}"
@@ -580,6 +581,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 @section('js')
     <script>
@@ -640,7 +642,6 @@
 
             });
 
-            // === AJAX Semester Auto-fill dari SIM-PT ===
             const simptUrl = "{{ route('bak.surat-aktif.simpt', '__NIM__') }}";
 
             function fetchSimpt(nim, suffix) {

@@ -26,7 +26,7 @@
                     Tambahkan anggota kelompok dengan memilih mahasiswa dari seluruh data mahasiswa.
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline btn-outline-primary" id="add-anggota-kelompok-admin"
+            <button type="button" class="btn btn-sm btn-light-primary" id="add-anggota-kelompok-admin"
                 onclick="window.addAnggotaKelompokAdminRow && window.addAnggotaKelompokAdminRow()">
                 <i class="fas fa-plus me-2"></i>
                 Tambah Anggota

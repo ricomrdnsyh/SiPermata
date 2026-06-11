@@ -36,7 +36,7 @@ class PendudukController extends Controller
                 $showBtn = '<a href="' . route('admin.penduduk.show', $row->id_penduduk) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
             ->rawColumns(['nama_fakultas', 'nama_prodi', 'action'])
             ->make(true);

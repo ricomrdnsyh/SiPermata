@@ -1,18 +1,86 @@
 @extends('layout.main')
 @section('title', 'Fakultas')
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables1/datatables.min.css') }}" rel="stylesheet"
-        type="text/css" />
+    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables/responsive.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/datatables/buttons.dataTables.min.css') }}">
     <style>
         .table-row-dashed tr {
             border-bottom: 1px dashed #cccccc !important;
         }
-        #users-table thead tr th {
+
+        .dataTable thead tr th {
             vertical-align: middle;
             border-bottom: 1px dashed #cccccc !important;
         }
+
+        .dataTable th,
+        .dataTable td {
+            vertical-align: middle !important;
+        }
+
+        .dataTable td.dt-control:before,
+        .dataTable th.dt-control:before {
+            display: none !important;
+            content: "" !important;
+        }
+
+        table.dataTable td.dt-control,
+        table.dataTable th.dt-control {
+            position: relative !important;
+            width: 28px !important;
+            min-width: 28px !important;
+            padding: 0 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        table.dataTable.collapsed tbody tr:not(.child) td.dt-control:before,
+        table.dataTable.collapsed tbody tr:not(.child) th.dt-control:before {
+            display: inline-flex !important;
+            content: "+" !important;
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, calc(-50% + 7px)) !important;
+            width: 18px !important;
+            height: 18px !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 999px !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+            font-size: 13px !important;
+            line-height: 1 !important;
+            background: #0d6efd !important;
+            box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(0, 0, 0, .18) !important;
+        }
+
+        table.dataTable.collapsed tbody tr.parent:not(.child) td.dt-control:before,
+        table.dataTable.collapsed tbody tr.parent:not(.child) th.dt-control:before {
+            content: "-" !important;
+            background: #dc3545 !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.child,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>th.child,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.dataTables_empty {
+            cursor: default !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.child:before,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>th.child:before,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.dataTables_empty:before {
+            display: none !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control,
+        table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+        }
+
         .dt-buttons .btn-export-primary,
         .dt-buttons .btn-export-primary:focus,
         .dt-buttons .btn-export-primary:hover,
@@ -21,16 +89,22 @@
             border-color: #004289 !important;
             color: #fff !important;
         }
+
         .dt-buttons .btn-export-primary:focus {
             box-shadow: none !important;
+        }
+
+        .dt-buttons .btn-export-primary i {
+            color: #fff !important;
         }
     </style>
 @endsection
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-header border-0 pt-6">
                         <div class="card-title">
                             <div class="d-flex align-items-center position-relative my-1">
@@ -62,6 +136,7 @@
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="fakultas-table">
                             <thead class="">
                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="text-center p-0" style="width:28px; min-width:28px;"></th>
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">Nama Fakultas</th>
                                     <th class="min-w-125px">Singkatan Fakultas</th>
@@ -76,42 +151,81 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 @section('js')
-    <script src="{{ asset('assets/plugins/custom/datatables1/datatables.js') }}"></script>
-    <script src="{{ asset('assets/plugins/custom/datatables1/datatables.min.js') }}"></script>
+    
+    <script src="{{ asset('assets/plugins/custom/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/lodash.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.colReorder.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/dataTables.buttons.min.js') }}"></script>
+
+    <script src="{{ asset('assets/plugins/custom/datatables/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/print.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/responsive.bootstrap.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             let table = $('#fakultas-table').DataTable({
                 processing: false,
                 serverSide: true,
-                responsive: true,
-                pagingType: "simple_numbers",
-                lengthMenu: [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, 'All']
-                ],
-                dom: '<"row align-items-center"<"col-md-6"l>>' +
-                    '<"row mb-4 mt-2"<"col-md-6 d-flex justify-content-start"B><"col-md-6 d-flex justify-content-end"f>>' +
-                    'rt' +
-                    '<"row"<"col-sm-5"i><"col-sm-7 d-flex justify-content-end"p>>',
-                buttons: [{
-                        extend: 'colvis',
-                        text: 'Column Visibility',
-                        className: 'btn btn-sm me-2 rounded-2 btn-export-primary fw-bold'
-                    }, {
-                        extend: 'excelHtml5',
-                        title: 'SiPermata Universitas Nurul Jadid',
-                        className: 'btn btn-sm me-2 rounded-2 btn-export-primary fw-bold'
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 0
+                    }
+                },
+                columnDefs: [{
+                        targets: 0,
+                        className: 'dt-control',
+                        orderable: false,
+                        searchable: false
                     },
                     {
-                        extend: 'csvHtml5',
-                        title: 'SiPermata Universitas Nurul Jadid',
-                        className: 'btn btn-sm rounded-2 btn-export-primary fw-bold'
+                        targets: 1,
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                lengthMenu: [
+                    [10, 15, 20, 25],
+                    [10, 15, 20, 25]
+                ],
+                searchHighlight: true,
+                dom: 'lBfrtip',
+                buttons: [{
+                        extend: 'colvis',
+                        collectionLayout: 'fixed columns',
+                        collectionTitle: 'Pengaturan Kolom',
+                        className: 'btn btn-sm btn-primary mt-2 rounded-2',
+                        columns: ':not(.noVis)'
+                    },
+                    {
+                        extend: 'csv',
+                        titleAttr: 'Csv',
+                        title: 'Data SiPermata',
+                        action: newexportaction,
+                        className: 'btn btn-sm btn-primary mt-2 rounded-2'
+                    },
+                    {
+                        extend: 'excel',
+                        titleAttr: 'Excel',
+                        title: 'Data SiPermata',
+                        action: newexportaction,
+                        className: 'btn btn-sm btn-primary mt-2 rounded-2'
                     }
                 ],
                 ajax: '{{ route('admin.fakultas.data') }}',
                 columns: [{
+                    data: null,
+                    defaultContent: '',
+                    orderable: false,
+                    searchable: false
+                }, {
                         data: 'action',
                         name: 'action',
                         orderable: false,
@@ -129,15 +243,7 @@
                         name: 'status'
                     }
                 ],
-                language: {
-                    search: "Search :_INPUT_",
-                    searchPlaceholder: "Search...",
-                    lengthMenu: "Show _MENU_ entries",
-                    paginate: {
-                        previous: "Previous",
-                        next: "Next"
-                    }
-                },
+                
                 drawCallback: function() {
                     $('#fakultas-table [data-bs-toggle="tooltip"]').tooltip();
                 }
@@ -158,7 +264,7 @@
                 cancelButtonText: "Batal",
                 customClass: {
                     confirmButton: "btn btn-danger",
-                    cancelButton: 'btn btn-light text-black'
+                    cancelButton: 'btn btn-secondary'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -170,7 +276,9 @@
                         },
                         beforeSend: function() {
                             Swal.fire({
-                                text: 'Mohon tunggu sebentar...',
+                                title: 'Tunggu Sebentar..',
+                                icon: 'info',
+                                text: 'Sedang memproses...',
                                 allowOutsideClick: false,
                                 didOpen: () => {
                                     Swal.showLoading()

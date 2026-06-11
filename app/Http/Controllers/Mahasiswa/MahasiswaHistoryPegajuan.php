@@ -69,8 +69,8 @@ class MahasiswaHistoryPegajuan extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'selesai'  => '<span class="badge bg-primary">Selesai</span>',
-                    default    => '<span class="badge bg-secondary">Tidak Diketahui</span>'
+                    'selesai'  => '<span class="badge text-white bg-primary">Selesai</span>',
+                    default    => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('catatan', function ($row) {
@@ -80,7 +80,7 @@ class MahasiswaHistoryPegajuan extends Controller
                 $showBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

@@ -34,12 +34,12 @@ class MitraController extends Controller
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '<a href="' . route('admin.mitra.edit', $row->id_mitra) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_mitra . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
             ->rawColumns(['action'])
             ->make(true);

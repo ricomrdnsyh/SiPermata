@@ -1,10 +1,11 @@
 @extends('layout.main')
 @section('title', 'Surat Keterangan Lulus')
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
@@ -132,6 +133,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 @section('js')
     <script>
@@ -142,7 +144,6 @@
             const fieldIpk = document.getElementById('field-ipk');
             const ipkSpinner = document.getElementById('ipk-loading');
             const simptWarn = document.getElementById('simpt-warning');
-
 
             const simptUrl = "{{ route('admin.surat-keterangan-lulus.simpt', '__NIM__') }}";
 

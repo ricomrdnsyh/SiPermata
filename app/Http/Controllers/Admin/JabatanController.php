@@ -35,11 +35,11 @@ class JabatanController extends Controller
             })
             ->editColumn('status', function ($row) {
                 if ($row->status == 'BAK') {
-                    return '<span class="badge bg-warning">BAK</span>';
+                    return '<span class="badge text-white bg-warning">BAK</span>';
                 } elseif ($row->status == 'DEKAN') {
-                    return '<span class="badge bg-primary">Dekan</span>';
+                    return '<span class="badge text-white bg-primary">Dekan</span>';
                 } else {
-                    return '<span class="badge bg-secondary">' . $row->status . '</span>';
+                    return '<span class="badge text-white bg-secondary">' . $row->status . '</span>';
                 }
             })
             ->addColumn('nama_penduduk', function ($row) {
@@ -53,12 +53,12 @@ class JabatanController extends Controller
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '<a href="' . route('admin.jabatan.edit', $row->id_jabatan) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-pen"></i></a>';
+                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_jabatan . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
             ->rawColumns(['status', 'nama_fakultas', 'nama_penduduk', 'action'])
             ->make(true);

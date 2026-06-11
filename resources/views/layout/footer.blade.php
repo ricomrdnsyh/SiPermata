@@ -1,9 +1,8 @@
-<div class="footer py-4 d-flex flex-lg-column" id="kt_footer">
-    <div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
-        <div class="text-dark order-2 order-md-1">
-            <span class="text-muted fw-bold me-1">2025 &copy;</span>
-            <span class="text-gray-800 text-hover-primary">PDSI Universitas Nurul
-                Jadid</span>
+<div id="kt_app_footer" class="app-footer">
+    <div class="app-container container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3">
+        <div class="text-gray-900 order-2 order-md-1">
+            <span class="text-muted fw-semibold me-1">2026&copy;</span>
+            <span class="text-gray-800 text-hover-primary">PDSI Universitas Nurul Jadid</span>
         </div>
     </div>
 </div>

@@ -106,7 +106,7 @@
         }
 
         .profile-card {
-            border: 1px solid #eef0f7;
+            
             border-radius: 14px;
             overflow: hidden;
             background: #fff;
@@ -187,9 +187,10 @@
 @endsection
 
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
 
                 @php
                     $latestLog = $pengajuan->statusLogs?->sortByDesc('created_at')->first();
@@ -201,7 +202,7 @@
                 <div class="row g-5 g-xl-8">
                     <div class="col-xl-8 order-2 order-xl-1">
 
-                        <div class="card card-flush mb-6">
+                        <div class="card card-flush mb-6 shadow-sm border border-dashed border-dark rounded">
                             <div class="card-header pt-6 pb-4">
                                 <div class="card-title d-flex flex-column">
                                     <div class="d-flex align-items-center gap-3">
@@ -223,28 +224,28 @@
                                 <div class="card-toolbar">
                                     @switch($pengajuan->status)
                                         @case('pengajuan')
-                                            <span class="badge badge-light-warning fw-semibold px-4 py-3">Menunggu Verifikasi</span>
+                                            <span class="badge badge-light-warning fw-bold px-4 py-3">Menunggu Verifikasi</span>
                                         @break
 
                                         @case('proses')
-                                            <span class="badge badge-light-info fw-semibold px-4 py-3">Diproses</span>
+                                            <span class="badge badge-light-info fw-bold px-4 py-3">Diproses</span>
                                         @break
 
                                         @case('diterima')
-                                            <span class="badge badge-light-success fw-semibold px-4 py-3">Disetujui Dekan</span>
+                                            <span class="badge badge-light-success fw-bold px-4 py-3">Disetujui Dekan</span>
                                         @break
 
                                         @case('selesai')
-                                            <span class="badge badge-light-primary fw-semibold px-4 py-3">Selesai</span>
+                                            <span class="badge badge-light-primary fw-bold px-4 py-3">Selesai</span>
                                         @break
 
                                         @case('ditolak')
-                                            <span class="badge badge-light-danger fw-semibold px-4 py-3">Ditolak</span>
+                                            <span class="badge badge-light-danger fw-bold px-4 py-3">Ditolak</span>
                                         @break
 
                                         @default
                                             <span
-                                                class="badge badge-light fw-semibold px-4 py-3">{{ ucfirst($pengajuan->status) }}</span>
+                                                class="badge badge-light fw-bold px-4 py-3">{{ ucfirst($pengajuan->status) }}</span>
                                     @endswitch
                                 </div>
                             </div>
@@ -329,7 +330,7 @@
                             </div>
                         </div>
 
-                        <div class="card card-flush">
+                        <div class="card card-flush shadow-sm border border-dashed border-dark rounded">
                             <div class="card-header pt-6 pb-4">
                                 <div class="card-title d-flex flex-column">
                                     <span class="fw-semibold text-gray-900">Riwayat Proses</span>
@@ -398,29 +399,29 @@
                                                     <div class="d-flex align-items-center flex-wrap gap-2">
                                                         @switch($log->status)
                                                             @case('pengajuan')
-                                                                <span class="badge badge-light-warning fw-semibold">Diajukan</span>
+                                                                <span class="badge badge-light-warning fw-bold">Diajukan</span>
                                                             @break
 
                                                             @case('proses')
-                                                                <span class="badge badge-light-info fw-semibold">Diproses</span>
+                                                                <span class="badge badge-light-info fw-bold">Diproses</span>
                                                             @break
 
                                                             @case('diterima')
-                                                                <span class="badge badge-light-success fw-semibold">Disetujui
+                                                                <span class="badge badge-light-success fw-bold">Disetujui
                                                                     Dekan</span>
                                                             @break
 
                                                             @case('selesai')
-                                                                <span class="badge badge-light-primary fw-semibold">Selesai</span>
+                                                                <span class="badge badge-light-primary fw-bold">Selesai</span>
                                                             @break
 
                                                             @case('ditolak')
-                                                                <span class="badge badge-light-danger fw-semibold">Ditolak</span>
+                                                                <span class="badge badge-light-danger fw-bold">Ditolak</span>
                                                             @break
 
                                                             @default
                                                                 <span
-                                                                    class="badge badge-light fw-semibold">{{ ucfirst($log->status) }}</span>
+                                                                    class="badge badge-light fw-bold">{{ ucfirst($log->status) }}</span>
                                                         @endswitch
                                                     </div>
 
@@ -445,7 +446,7 @@
 
                         <div class="col-xl-4 order-1 order-xl-2">
                             <div class="position-xl-sticky sticky-side">
-                                <div class="profile-card mb-6">
+                                <div class="profile-card mb-6 shadow-sm border border-dashed border-dark">
                                     <div class="profile-head">
                                         <div class="fw-bolder fs-4 text-gray-900">Data Mahasiswa</div>
                                     </div>
@@ -492,4 +493,5 @@
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+        @endsection

@@ -269,8 +269,7 @@
                 </div>
             </div>
         @endif
-    </div>
-@endsection
+    @endsection
 @section('js')
     @if ($message = Session::get('success'))
         <script>

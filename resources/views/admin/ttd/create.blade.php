@@ -7,7 +7,7 @@
                 <div id="kt_app_content_container" class="app-container container-fluid">
                     <div class="row g-7 ">
                         <div class="col-xl-6 py-3 py-lg-6 mb-5 w-100">
-                            <div class="card card-flush h-lg-100" id="kt_contacts_main">
+                            <div class="card card-flush h-lg-100 shadow-sm border border-dashed border-dark rounded" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
                                         <h2>Tambah TTD Surat</h2>
@@ -25,12 +25,12 @@
                                                 <div class="fv-row mb-3">
                                                     <label class="required fw-semibold fs-6 mb-2">Nama Template</label>
                                                     <select
-                                                        class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                        class="form-select form-select-sm w-100"
                                                         data-control="select2" data-placeholder="Pilih Template"
                                                         name="template_id" id="template_id"
-                                                        data-select2-id="select2-data-72-r5i3" tabindex="-1"
-                                                        aria-hidden="true" data-kt-initialized="1" required>
-                                                        <option value="" data-select2-id="select2-data-74-9zwr">
+                                                       
+                                                        required>
+                                                        <option value="">
                                                             Pilih Template...</option>
                                                         @foreach ($template as $tmp)
                                                             <option value="{{ $tmp->id_template }}">
@@ -73,12 +73,12 @@
                                                 <div class="fv-row mb-3">
                                                     <label class="required fw-semibold fs-6 mb-2">Nama Fakultas</label>
                                                     <select
-                                                        class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                        class="form-select form-select-sm w-100"
                                                         data-control="select2" data-placeholder="Pilih Fakultas"
                                                         name="fakultas_id" id="fakultas_id"
-                                                        data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                        aria-hidden="true" data-kt-initialized="1" required>
-                                                        <option value="" data-select2-id="select2-data-74-9zwr">
+                                                       
+                                                        required>
+                                                        <option value="">
                                                             Pilih Fakultas...</option>
                                                         @foreach ($fakultas as $f)
                                                             <option value="{{ $f->id_fakultas }}">

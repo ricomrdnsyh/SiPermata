@@ -10,10 +10,6 @@
         cursor: not-allowed;
     }
 
-    #add-anggota-kelompok:hover,
-    #add-anggota-kelompok:hover i {
-        color: #ffffff !important;
-    }
 </style>
 
 <div class="col-12">
@@ -26,7 +22,7 @@
                     Tambahkan anggota dengan memasukkan NIM. Nama mahasiswa dan prodi akan terisi otomatis dari data mahasiswa.
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline btn-outline-primary" id="add-anggota-kelompok"
+            <button type="button" class="btn btn-sm btn-light-primary" id="add-anggota-kelompok"
                 onclick="window.addAnggotaKelompokRow && window.addAnggotaKelompokRow()">
                 <i class="fas fa-plus me-2"></i>
                 Tambah Anggota

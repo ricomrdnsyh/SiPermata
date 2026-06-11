@@ -35,11 +35,11 @@ class ProdiController extends Controller
         return DataTables::of($prodi)
             ->editColumn('status', function ($row) {
                 if ($row->status == 'aktif') {
-                    return '<span class="badge bg-success">Aktif</span>';
+                    return '<span class="badge text-white bg-success">Aktif</span>';
                 } elseif ($row->status == 'nonaktif') {
-                    return '<span class="badge bg-danger">Nonaktif</span>';
+                    return '<span class="badge text-white bg-danger">Nonaktif</span>';
                 } else {
-                    return '<span class="badge bg-secondary">' . $row->status . '</span>';
+                    return '<span class="badge text-white bg-secondary">' . $row->status . '</span>';
                 }
             })
             ->addColumn('nama_fakultas', function ($row) {
@@ -49,7 +49,7 @@ class ProdiController extends Controller
                 $showBtn = '<a href="' . route('admin.prodi.show', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
             ->rawColumns(['status', 'nama_fakultas', 'action'])
             ->make(true);

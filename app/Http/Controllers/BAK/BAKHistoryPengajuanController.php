@@ -191,19 +191,19 @@ class BAKHistoryPengajuanController extends Controller
             ->addColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—')
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge bg-success">Disetujui</span>',
-                    'selesai'   => '<span class="badge bg-primary">Selesai</span>',
-                    'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
-                    default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
+                    'selesai'   => '<span class="badge text-white bg-primary">Selesai</span>',
+                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('catatan', fn($row) => $row->catatan ?: '<em>Tidak ada catatan</em>')
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('bak.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
-                return '<div class="text-center">' . $showBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
             ->rawColumns(['prodi', 'status', 'action', 'catatan'])
             ->make(true);

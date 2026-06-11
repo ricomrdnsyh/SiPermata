@@ -31,18 +31,18 @@ class AdminController extends Controller
         return DataTables::of($data)
             ->editColumn('type', function ($row) {
                 if ($row->type == 'mahasiswa') {
-                    return '<span class="badge bg-warning">Mahasiswa</span>';
+                    return '<span class="badge text-white bg-warning">Mahasiswa</span>';
                 } elseif ($row->type == 'penduduk') {
-                    return '<span class="badge bg-success">Penduduk</span>';
+                    return '<span class="badge text-white bg-success">Penduduk</span>';
                 } elseif ($row->type == 'admin') {
-                    return '<span class="badge bg-primary">Admin</span>';
+                    return '<span class="badge text-white bg-primary">Admin</span>';
                 }
             })
             ->addColumn('action', function ($row) {
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
-                return '<div class="text-center">' . $deleteBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $deleteBtn . '</div>';
             })
             ->rawColumns(['type', 'action'])
             ->make(true);

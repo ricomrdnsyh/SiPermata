@@ -105,7 +105,7 @@ class DashboardController extends Controller
         }
 
         return TahunAkademik::whereIn('id_akademik', $usedAkademikIds->unique()->filter())
-            ->orderByDesc('tahun_akademik')
+            ->orderByDesc('id_akademik')
             ->pluck('tahun_akademik', 'id_akademik')
             ->toArray();
     }

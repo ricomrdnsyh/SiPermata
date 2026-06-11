@@ -7,7 +7,7 @@
                 <div id="kt_app_content_container" class="app-container container-fluid">
                     <div class="row g-7 ">
                         <div class="col-xl-6 py-3 py-lg-6 mb-5 w-100">
-                            <div class="card card-flush h-lg-100" id="kt_contacts_main">
+                            <div class="card card-flush h-lg-100 shadow-sm border border-dashed border-dark rounded" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
                                         <h2>Edit Mitra</h2>

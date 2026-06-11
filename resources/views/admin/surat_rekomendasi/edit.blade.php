@@ -1,10 +1,11 @@
 @extends('layout.main')
 @section('title', 'Edit Surat Rekomendasi')
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
@@ -20,8 +21,7 @@
                                     @method('PUT')
                                     <div class="row">
 
-                                        {{-- Nama Mahasiswa --}}
-                                        <div class="col-12 col-md-6">
+                                                                                <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Nama Mahasiswa</label>
                                                 <select id="select-nim" class="form-select form-select-sm w-100"
@@ -41,8 +41,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Tahun Akademik --}}
-                                        <div class="col-12 col-md-6">
+                                                                                <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                                 <input type="text" class="form-control form-control-sm"
@@ -55,8 +54,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Semester --}}
-                                        <div class="col-12 col-md-6">
+                                                                                <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">
                                                     Semester
@@ -70,8 +68,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- IPK --}}
-                                        <div class="col-12 col-md-6">
+                                                                                <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="fw-semibold fs-6 mb-2">
                                                     IPK
@@ -89,8 +86,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Tanggal Pelaksanaan --}}
-                                        <div class="col-12">
+                                                                                <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tanggal Pelaksanaan</label>
                                                 <div class="input-group input-group-sm">
@@ -108,8 +104,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Keperluan --}}
-                                        <div class="col-12 col-md-6">
+                                                                                <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Keperluan Rekomendasi</label>
                                                 <textarea name="keperluan" placeholder="Penerima Beasiswa GenBi, MBKM Santri, dll" class="form-control form-control-sm"
@@ -120,8 +115,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Penyelenggara --}}
-                                        <div class="col-12 col-md-6">
+                                                                                <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label>
                                                 <textarea name="penyelenggara" placeholder="Bank Indonesia, LP3M Universitas Nurul Jadid, dll"
@@ -153,6 +147,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @section('js')
@@ -227,13 +222,11 @@
                     });
             }
 
-            // Auto-fetch saat halaman edit load
             const initialNim = document.getElementById('select-nim').value;
             if (initialNim) {
                 fetchSimpt(initialNim);
             }
 
-            // Fetch ulang jika mahasiswa diganti
             $('#select-nim').on('change', function() {
                 fetchSimpt(this.value);
             });

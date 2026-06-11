@@ -13,10 +13,11 @@
             ->values();
     @endphp
 
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
@@ -34,9 +35,9 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Mahasiswa Pengaju</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa" name="nim"
-                                                    id="mahasiswa_pengaju_select" tabindex="-1" aria-hidden="true" required>
+                                                    id="mahasiswa_pengaju_select" required>
                                                     <option value="">Pilih Mahasiswa...</option>
                                                     @foreach ($mahasiswa as $mhs)
                                                         <option value="{{ $mhs->nim }}"
@@ -107,9 +108,9 @@
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Tempat Observasi"
-                                                    name="mitra_id" tabindex="-1" aria-hidden="true" required>
+                                                    name="mitra_id" required>
                                                     <option value="">Pilih Tempat Observasi...</option>
                                                     @foreach ($mitra as $mitra)
                                                         <option value="{{ $mitra->id_mitra }}"
@@ -159,6 +160,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 @section('js')
     <script>

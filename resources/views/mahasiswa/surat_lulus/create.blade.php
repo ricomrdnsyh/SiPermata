@@ -4,7 +4,7 @@
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <div class="post d-flex flex-columnfluid" id="kt_post">
             <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
@@ -112,16 +112,13 @@
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+    @endsection
 
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
-
 
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {

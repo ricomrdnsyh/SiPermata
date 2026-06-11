@@ -1,10 +1,11 @@
 @extends('layout.main')
 @section('title', 'Surat Izin Penelitian')
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
-                <div class="card">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
                             <div class="mb-6 text-center">
@@ -44,11 +45,11 @@
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tempat Penelitian</label>
-                                                <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Tempat Penelitian"
-                                                    name="mitra_id" data-select2-id="select2-data-72-r5i4" tabindex="-1"
-                                                    aria-hidden="true" data-kt-initialized="1" required>
-                                                    <option value="" data-select2-id="select2-data-74-9zwr">Pilih
+                                                    name="mitra_id"
+                                                    required>
+                                                    <option value="">Pilih
                                                         Tempat Penelitian...</option>
                                                     @foreach ($mitra as $mitra)
                                                         <option value="{{ $mitra->id_mitra }}">
@@ -96,7 +97,6 @@
                                             </div>
                                         </div>
 
-
                                         <div class="col-12">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
@@ -128,6 +128,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 @section('js')
     <script>

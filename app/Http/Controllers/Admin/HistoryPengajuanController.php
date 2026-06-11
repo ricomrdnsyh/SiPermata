@@ -195,12 +195,12 @@ class HistoryPengajuanController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge bg-success">Disetujui</span>',
-                    'selesai'   => '<span class="badge bg-primary">Selesai</span>',
-                    'ditolak'   => '<span class="badge bg-danger">Ditolak</span>',
-                    default     => '<span class="badge bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
+                    'selesai'   => '<span class="badge text-white bg-primary">Selesai</span>',
+                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('catatan', function ($row) {
@@ -210,7 +210,7 @@ class HistoryPengajuanController extends Controller
                 $showBtn = '<a href="' . route('admin.history-pengajuan.show', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
             data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                return '<div class="text-center">' . $showBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
             ->rawColumns(['nama_mahasiswa', 'prodi', 'status', 'action'])
             ->make(true);

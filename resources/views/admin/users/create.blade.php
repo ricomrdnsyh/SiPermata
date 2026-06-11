@@ -7,7 +7,7 @@
                 <div id="kt_app_content_container" class="app-container container-fluid">
                     <div class="row g-7 ">
                         <div class="col-xl-6 py-3 py-lg-6 mb-5 w-100">
-                            <div class="card card-flush h-lg-100" id="kt_contacts_main">
+                            <div class="card card-flush h-lg-100 shadow-sm border border-dashed border-dark rounded" id="kt_contacts_main">
                                 <div class="card-header pt-7" id="kt_chat_contacts_header">
                                     <div class="card-title">
                                         <h2>Tambah User</h2>
@@ -21,10 +21,10 @@
                                         @csrf
                                         <div class="fv-row mb-3">
                                             <label class="required fw-semibold fs-6 mb-2">Role</label>
-                                            <select class="form-select form-select-sm select2-hidden-accessible w-100"
+                                            <select class="form-select form-select-sm w-100"
                                                 data-control="select2" data-placeholder="Pilih Role" name="type"
-                                                id="userType" data-select2-id="select2-data-72-r5i3" tabindex="-1"
-                                                aria-hidden="true" data-kt-initialized="1" required>
+                                                id="userType"
+                                                required>
                                                 <option value="">Pilih Role</option>
                                                 <option value="admin" {{ old('type') == 'admin' ? 'selected' : '' }}>Admin
                                                 </option>
@@ -41,10 +41,10 @@
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Mahasiswa</label>
                                                 <select
-                                                    class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Mahasiswa"
-                                                    name="m_reference_id" data-select2-id="select2-data-72-r5i6"
-                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1" required>
+                                                    name="m_reference_id"
+                                                    required>
                                                     <option value="">Pilih Mahasiswa</option>
                                                     @foreach ($mahasiswa as $m)
                                                         <option value="{{ $m->nim }}">{{ $m->nim }} -
@@ -69,10 +69,10 @@
                                             <div class="mb-7">
                                                 <label class="required fw-semibold fs-6 mb-2">Penduduk</label>
                                                 <select
-                                                    class="form-select form-select-sm select2-hidden-accessible w-100"
+                                                    class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Penduduk"
-                                                    name="p_reference_id" data-select2-id="select2-data-72-r5i4"
-                                                    tabindex="-1" aria-hidden="true" data-kt-initialized="1" required>
+                                                    name="p_reference_id"
+                                                    required>
                                                     <option value="">Pilih Penduduk</option>
                                                     @foreach ($penduduk as $p)
                                                         <option value="{{ $p->id_penduduk }}">

@@ -59,12 +59,14 @@
             border-color: var(--bs-dark) !important;
         }
     </style>
+</div>
 @endsection
 
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-column flex-column-fluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
 
                 <div class="card card-flush mb-7">
                     <div class="card-body p-0">
@@ -111,9 +113,9 @@
                             menghubungi BAK Fakultas untuk menambahkan.
                             <span class="d-block mt-1">
                                 Informasi lainnya:
-                                <a href="https://sipermata.unuja.ac.id/" target="_blank"
+                                <a href="https://sipermata.unuja.ac.id/" target="_blank" rel="noopener noreferrer"
                                     class="text-primary fw-bold text-decoration-underline">
-                                    https://sipermata.unuja.ac.id
+                                    https://sipermata.unuja.ac.id/
                                 </a>
                             </span>
                         </span>
