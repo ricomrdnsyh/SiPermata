@@ -176,50 +176,52 @@
                             </a>
                         </div>
                     </div>
-                    <div class="separator mt-6"></div>
-                    <div class="card-body py-4 px-8 filter-container">
-                        <div class="row g-5">
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Fakultas:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Semua Fakultas" data-allow-clear="true" data-filter="fakultas" id="filter-fakultas">
-                                    <option value="">Semua Fakultas</option>
-                                    @foreach ($listFakultas as $fak)
-                                        <option value="{{ $fak->id_fakultas }}">{{ $fak->nama_fakultas }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Program Studi:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi" id="filter-prodi">
-                                    <option value="">Semua Prodi</option>
-                                    @foreach ($listProdi as $prodi)
-                                        <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Jenis Surat:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat" id="filter-nama-surat">
-                                    <option value="">Semua Surat</option>
-                                    @foreach ($listNamaSurat as $tabel => $nama)
-                                        <option value="{{ $tabel }}">{{ $nama }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Pilih Tahun Akademik" data-allow-clear="true" data-filter="tahun_akademik" id="filter-tahun-akademik">
-                                    <option value="">Semua Tahun</option>
-                                    @foreach ($listTahunAkademik as $ta)
-                                        <option value="{{ $ta->id_akademik }}" {{ $ta->tahun_akademik == $currentTahunAkademik ? 'selected' : '' }}>
-                                            {{ $ta->tahun_akademik }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                    <div class="card-body py-4 px-8 filter-container mt-4">
+                        <div class="border border-dashed rounded p-5 mb-5" style="border-color: #b5b5c3 !important;">
+                            <h5 class="text-primary mb-4"><i class="fas fa-filter text-primary me-2"></i>Filter Data</h5>
+                            <div class="row g-5">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Fakultas:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Semua Fakultas" data-allow-clear="true" data-filter="fakultas" id="filter-fakultas">
+                                        <option value="">Semua Fakultas</option>
+                                        @foreach ($listFakultas as $fak)
+                                            <option value="{{ $fak->id_fakultas }}">{{ $fak->nama_fakultas }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Program Studi:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi" id="filter-prodi">
+                                        <option value="">Semua Prodi</option>
+                                        @foreach ($listProdi as $prodi)
+                                            <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Jenis Surat:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat" id="filter-nama-surat">
+                                        <option value="">Semua Surat</option>
+                                        @foreach ($listNamaSurat as $tabel => $nama)
+                                            <option value="{{ $tabel }}">{{ $nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Pilih Tahun Akademik" data-allow-clear="true" data-filter="tahun_akademik" id="filter-tahun-akademik">
+                                        <option value="">Semua Tahun</option>
+                                        @foreach ($listTahunAkademik as $ta)
+                                            <option value="{{ $ta->id_akademik }}" {{ $ta->tahun_akademik == $currentTahunAkademik ? 'selected' : '' }}>
+                                                {{ $ta->tahun_akademik }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>

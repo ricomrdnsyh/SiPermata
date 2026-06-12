@@ -130,33 +130,35 @@
                             </div>
                         </div>
                     </div>
-                    <div class="separator mt-6"></div>
-                    <div class="card-body py-4 px-8 filter-container">
-                        <div class="row g-5">
-                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Program Studi:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
-                                    id="filter-prodi">
-                                    <option value="">Semua Prodi</option>
-                                    @foreach ($listProdi as $prodi)
-                                        <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
-                                    data-placeholder="Pilih Tahun Akademik" data-allow-clear="true"
-                                    data-filter="tahun_akademik" id="filter-tahun-akademik">
-                                    <option value="">Semua Tahun</option>
-                                    @foreach ($listTahunAkademik as $tahunAkademik)
-                                        <option value="{{ $tahunAkademik->id_akademik }}"
-                                            {{ $currentTahunAkademik && $tahunAkademik->id_akademik == $currentTahunAkademik->id_akademik ? 'selected' : '' }}>
-                                            {{ $tahunAkademik->tahun_akademik }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                    <div class="card-body py-4 px-8 filter-container mt-4">
+                        <div class="border border-dashed rounded p-5 mb-5" style="border-color: #b5b5c3 !important;">
+                            <h5 class="text-primary mb-4"><i class="fas fa-filter text-primary me-2"></i>Filter Data</h5>
+                            <div class="row g-5">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Program Studi:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
+                                        id="filter-prodi">
+                                        <option value="">Semua Prodi</option>
+                                        @foreach ($listProdi as $prodi)
+                                            <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Pilih Tahun Akademik" data-allow-clear="true"
+                                        data-filter="tahun_akademik" id="filter-tahun-akademik">
+                                        <option value="">Semua Tahun</option>
+                                        @foreach ($listTahunAkademik as $tahunAkademik)
+                                            <option value="{{ $tahunAkademik->id_akademik }}"
+                                                {{ $currentTahunAkademik && $tahunAkademik->id_akademik == $currentTahunAkademik->id_akademik ? 'selected' : '' }}>
+                                                {{ $tahunAkademik->tahun_akademik }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
