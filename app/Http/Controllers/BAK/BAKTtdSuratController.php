@@ -17,7 +17,13 @@ class BAKTtdSuratController extends Controller
      */
     public function index()
     {
-        return view('bak.ttd.index');
+        $user = Auth::user();
+        $fakultasId = $user->penduduk?->fakultas_id;
+        
+        $template = Template::where('fakultas_id', $fakultasId)->get();
+        $fakultas = Fakultas::all();
+
+        return view('bak.ttd.index', compact('template', 'fakultas'));
     }
 
     public function getTtdSurat()
@@ -44,7 +50,7 @@ class BAKTtdSuratController extends Controller
                     $q->where('nama_fakultas', 'like', "%{$keyword}%");
                 });
             })
-            ->filterColumn('template', function ($query, $keyword) {
+            ->filterColumn('nama_template', function ($query, $keyword) {
                 $query->whereHas('template', function ($q) use ($keyword) {
                     $q->where('nama_template', 'like', "%{$keyword}%");
                 });
@@ -55,7 +61,7 @@ class BAKTtdSuratController extends Controller
             ->addColumn('nama_fakultas', function ($row) {
                 return $row->template?->fakultas?->nama_fakultas ?? '—';
             })
-            ->addColumn('template', function ($row) {
+            ->addColumn('nama_template', function ($row) {
                 return $row->template ? $row->template->nama_template : '—';
             })
             ->editColumn('status', function ($row) {
@@ -68,16 +74,35 @@ class BAKTtdSuratController extends Controller
                 }
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('bak.ttdSurat.show', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-            data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nama_ttd = htmlspecialchars($row->nama_ttd ?? '-');
+                $nidn = htmlspecialchars($row->nidn ?? '-');
+                $status = htmlspecialchars($row->status ?? '-');
+                $template_id = $row->template_id ?? '';
+                $fakultas_id = $row->fakultas_id ?? '';
+                $nama_template = htmlspecialchars($row->template ? $row->template->nama_template : '-');
+                $nama_fakultas = htmlspecialchars($row->fakultas ? $row->fakultas->nama_fakultas : '-');
 
-                $editBtn = '<a href="' . route('bak.ttdSurat.edit', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-            data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama_ttd.'" data-nidn="'.$nidn.'" data-status="'.$status.'" data-template="'.$nama_template.'" data-fakultas="'.$nama_fakultas.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+
+                $editBtn = '<a href="javascript:void(0)" onclick="editModal(this)" data-id="'.$row->id_ttd.'" data-nama="'.$nama_ttd.'" data-nidn="'.$nidn.'" data-status="'.$status.'" data-template="'.$template_id.'" data-fakultas="'.$fakultas_id.'" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . '</div>';
             })
-            ->rawColumns(['nama_fakultas', 'template', 'status', 'action'])
+            ->rawColumns(['nama_fakultas', 'nama_template', 'status', 'action'])
             ->make(true);
+    }
+
+    public function destroy(string $id)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'BAK') { abort(403); }
+
+        $ttd = TtdSurat::findOrFail($id);
+        $ttd->delete();
+
+        return response()->json([
+            'message' => 'Data berhasil dihapus!'
+        ]);
     }
 
     /**
@@ -115,13 +140,14 @@ class BAKTtdSuratController extends Controller
             abort(403);
         }
 
-        $request->validate(
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
             [
                 'template_id'   => 'required|exists:template,id_template',
                 'nama_ttd'      => 'required',
                 'nidn'          => 'required',
                 'fakultas_id'   => 'required|exists:fakultas,id_fakultas',
-                'status'         => 'required',
+                'status'        => 'required',
             ],
             [
                 'template_id.required'   => 'Template wajib dipilih.',
@@ -131,6 +157,16 @@ class BAKTtdSuratController extends Controller
             ]
         );
 
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'Validation error',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
         TtdSurat::create([
             'template_id'   => $request->template_id,
             'nama_ttd'      => $request->nama_ttd,
@@ -138,6 +174,13 @@ class BAKTtdSuratController extends Controller
             'fakultas_id'   => $request->fakultas_id,
             'status'        => $request->status,
         ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('bak.ttdSurat.index'),
+            ], 201);
+        }
 
         return redirect()->route('bak.ttdSurat.index')->with('success', 'Data berhasil ditambahkan!');
     }
@@ -197,7 +240,8 @@ class BAKTtdSuratController extends Controller
             abort(403);
         }
 
-        $request->validate(
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
             [
                 'template_id'   => 'required|exists:template,id_template',
                 'nama_ttd'      => 'required',
@@ -213,6 +257,16 @@ class BAKTtdSuratController extends Controller
             ]
         );
 
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'Validation error',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
         $ttd = TtdSurat::findOrFail($id);
         $ttd->update([
             'template_id'   => $request->template_id,
@@ -221,6 +275,13 @@ class BAKTtdSuratController extends Controller
             'fakultas_id'   => $request->fakultas_id,
             'status'        => $request->status,
         ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('bak.ttdSurat.index'),
+            ], 200);
+        }
 
         return redirect()->route('bak.ttdSurat.index')->with('success', 'Data berhasil diperbarui!');
     }

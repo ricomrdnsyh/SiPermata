@@ -120,12 +120,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="separator mt-6"></div>
-                    <div class="card-body py-4 px-8 filter-container">
+                    <div class="card-body py-4 px-8 filter-container mt-4">
+                        <div class="border border-dashed rounded p-5 mb-5" style="border-color: #b5b5c3 !important;">
+                            <h5 class="text-primary mb-4"><i class="fas fa-filter text-primary me-2"></i>Filter Data</h5>
                         <div class="row g-5">
                             <div class="col-lg-4 col-md-4 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Program Studi:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                <select class="form-select form-select-sm" data-control="select2"
                                     data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
                                     id="filter-prodi">
                                     <option value="">Semua Prodi</option>
@@ -136,7 +137,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Status:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                <select class="form-select form-select-sm" data-control="select2"
                                     data-placeholder="Semua Status" data-allow-clear="true" data-filter="status"
                                     id="filter-status">
                                     <option value="">Semua Status</option>
@@ -149,7 +150,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12">
                                 <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
-                                <select class="form-select form-select-sm form-select-solid" data-control="select2"
+                                <select class="form-select form-select-sm" data-control="select2"
                                     data-placeholder="Pilih Tahun Akademik" data-allow-clear="true"
                                     data-filter="tahun_akademik" id="filter-tahun-akademik">
                                     <option value="">Semua Tahun</option>
@@ -163,6 +164,9 @@
                             </div>
                         </div>
                     </div>
+
+                    </div>
+
                     <div class="card-body pt-0">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="surat-keterangan-lulus-table">
                             <thead class="">

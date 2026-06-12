@@ -115,8 +115,9 @@
                         </div>
                         <div class="card-toolbar">
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <a href="{{ route('bak.ttdSurat.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add TTD Surat</a>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#form_create">
+                                    <i class="fas fa-plus"></i> Add TTD Surat
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -143,6 +144,9 @@
         </div>
     </div>
 </div>
+@include('bak.ttd.create')
+@include('bak.ttd.edit')
+@include('bak.ttd.show')
 @endsection
 @section('js')
     
@@ -159,127 +163,9 @@
     <script src="{{ asset('assets/plugins/custom/datatables/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables/print.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables/responsive.bootstrap.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            let table = $('#ttdSurat-table').DataTable({
-                processing: false,
-                serverSide: true,
-                responsive: {
-                    details: {
-                        type: 'column',
-                        target: 0
-                    }
-                },
-                columnDefs: [{
-                        targets: 0,
-                        className: 'dt-control',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        targets: 1,
-                        orderable: false,
-                        searchable: false
-                    }
-                ],
-                lengthMenu: [
-                    [10, 15, 20, 25],
-                    [10, 15, 20, 25]
-                ],
-                searchHighlight: true,
-                dom: 'lBfrtip',
-                buttons: [{
-                        extend: 'colvis',
-                        collectionLayout: 'fixed columns',
-                        collectionTitle: 'Pengaturan Kolom',
-                        className: 'btn btn-sm btn-primary mt-2 rounded-2',
-                        columns: ':not(.noVis)'
-                    },
-                    {
-                        extend: 'csv',
-                        titleAttr: 'Csv',
-                        title: 'Data SiPermata',
-                        action: newexportaction,
-                        className: 'btn btn-sm btn-primary mt-2 rounded-2'
-                    },
-                    {
-                        extend: 'excel',
-                        titleAttr: 'Excel',
-                        title: 'Data SiPermata',
-                        action: newexportaction,
-                        className: 'btn btn-sm btn-primary mt-2 rounded-2'
-                    }
-                ],
-                ajax: '{{ route('bak.ttdSurat.data') }}',
-                columns: [{
-                    data: null,
-                    defaultContent: '',
-                    orderable: false,
-                    searchable: false
-                }, {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }, {
-                        data: 'template',
-                        name: 'template',
-                        searchable: true
-                    },
-                    {
-                        data: 'nama_ttd',
-                        name: 'nama_ttd',
-                        searchable: true
-                    },
-                    {
-                        data: 'nidn',
-                        name: 'nidn',
-                        searchable: true
-                    },
-                    {
-                        data: 'nama_fakultas',
-                        name: 'nama_fakultas'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
-                        searchable: true
-                    }
-                ],
-                
-                drawCallback: function() {
-                    $('#ttdSurat-table [data-bs-toggle="tooltip"]').tooltip();
-                }
-            });
-            table.on('draw', function() {
-                $('#ttdSurat-table [data-bs-toggle="tooltip"]').tooltip();
-            });
-        });
-    </script>
-    @if ($message = Session::get('success'))
-        <script>
-            Swal.fire({
-                text: "{{ $message }}",
-                icon: "success",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-primary"
-                }
-            });
-        </script>
-    @endif
-    @if ($message = Session::get('failed'))
-        <script>
-            Swal.fire({
-                text: "{{ $message }}",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                customClass: {
-                    confirmButton: "btn btn-danger"
-                }
-            });
-        </script>
-    @endif
+    
+    @include('bak.ttd.script.index')
+    @include('bak.ttd.script.create')
+    @include('bak.ttd.script.edit')
+    @include('bak.ttd.script.show')
 @endsection

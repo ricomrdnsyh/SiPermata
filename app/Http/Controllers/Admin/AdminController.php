@@ -20,8 +20,10 @@ class AdminController extends Controller
     public function index()
     {
         $data = User::with('mahasiswa', 'penduduk.jabatan')->get();
+        $mahasiswa = Mahasiswa::all();
+        $penduduk  = Penduduk::with('jabatan')->get();
 
-        return view('admin.users.index', compact('data'));
+        return view('admin.users.index', compact('data', 'mahasiswa', 'penduduk'));
     }
 
     public function getAdmin()
@@ -48,16 +50,7 @@ class AdminController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $mahasiswa = Mahasiswa::all();
-        $penduduk  = Penduduk::with('jabatan')->get(); // untuk tahu BAK/Dekan
 
-        return view('admin.users.create', compact('mahasiswa', 'penduduk'));
-    }
 
     /**
      * Store a newly created resource in storage.

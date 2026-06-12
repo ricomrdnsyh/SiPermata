@@ -155,6 +155,7 @@
         </div>
     </div>
 </div>
+@include('admin.penduduk.show')
 @endsection
 @section('js')
     
@@ -309,4 +310,5 @@
             });
         </script>
     @endif
+    @include('admin.penduduk.script.show')
 @endsection

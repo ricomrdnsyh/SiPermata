@@ -193,7 +193,7 @@
         </div>
     </div>
 
-        <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel">
+        <div class="modal fade" id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalTambahLabel">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <form action="{{ route('admin.eligible-lulus.store') }}" method="POST">
@@ -248,7 +248,7 @@
         </div>
     </div>
 
-        <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel">
+        <div class="modal fade" id="modalImport" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalImportLabel">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <form action="{{ route('admin.eligible-lulus.import') }}" method="POST" enctype="multipart/form-data">

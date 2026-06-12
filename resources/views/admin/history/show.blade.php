@@ -517,7 +517,7 @@
         </div>
     </div>
 
-        <div class="modal fade" id="rejectReasonModal" tabindex="-1">
+        <div class="modal fade" id="rejectReasonModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered mw-500px">
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">

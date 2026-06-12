@@ -115,8 +115,9 @@
                         </div>
                         <div class="card-toolbar">
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                                <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i> Add User</a>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#form_create">
+                                    <i class="fas fa-plus"></i> Add User
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -141,6 +142,9 @@
         </div>
     </div>
 </div>
+
+@include('admin.users.create')
+
 @endsection
 @section('js')
     
@@ -320,4 +324,5 @@
             });
         </script>
     @endif
+    @include('admin.users.script.create')
 @endsection

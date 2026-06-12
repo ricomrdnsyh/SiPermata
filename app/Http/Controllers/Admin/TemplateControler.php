@@ -19,8 +19,10 @@ class TemplateControler extends Controller
     public function index()
     {
         $data = Template::with(['fakultas', 'prodi'])->get();
+        $fakultas = Fakultas::all();
+        $prodi = Prodi::all();
 
-        return view('admin.template.index', compact('data'));
+        return view('admin.template.index', compact('data', 'fakultas', 'prodi'));
     }
 
     public function getTemplate()
@@ -57,14 +59,21 @@ class TemplateControler extends Controller
                 return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.template.show', $row->id_template) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nama = htmlspecialchars($row->nama_template ?? '-');
+                $jenis = htmlspecialchars($row->jenis_surat ?? '-');
+                $fakultas_id = $row->fakultas_id ?? '';
+                $prodi_id = $row->prodi_id ?? '';
+                $tgl_sk = $row->tgl_sk ?? '';
+                $nama_fakultas = htmlspecialchars($row->fakultas ? $row->fakultas->nama_fakultas : '-');
+                $nama_prodi = htmlspecialchars($row->prodi ? $row->prodi->nama_prodi : '-');
+                $file = $row->file ? true : false;
+                $downloadUrl = $file ? route('admin.template.download', $row->id_template) : '';
 
-                $editBtn = '<a href="' . route('admin.template.edit', $row->id_template) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama.'" data-jenis="'.$jenis.'" data-fakultas="'.$nama_fakultas.'" data-prodi="'.$nama_prodi.'" data-tgl="'.$tgl_sk.'" data-file="'.$file.'" data-download="'.$downloadUrl.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $deleteBtn = '<a href="javascript:void(0)" data-id="' . $row->id_template . '" class="btn btn-sm btn-light btn-active-light-danger text-center delete-btn" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
+                $editBtn = '<a href="javascript:void(0)" onclick="editModal(this)" data-id="'.$row->id_template.'" data-nama="'.$nama.'" data-jenis="'.$jenis.'" data-fakultas="'.$fakultas_id.'" data-prodi="'.$prodi_id.'" data-tgl="'.$tgl_sk.'" data-file="'.$file.'" data-download="'.$downloadUrl.'" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+
+                $deleteBtn = '<a href="javascript:void(0)" data-id="' . $row->id_template . '" class="btn btn-sm btn-light btn-active-light-danger text-center delete-btn" data-bs-toggle="tooltip" data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
@@ -144,6 +153,13 @@ class TemplateControler extends Controller
             'prodi_id'      => $request->prodi_id,
         ]);
 
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('admin.template.index'),
+            ], 201);
+        }
+
         return redirect()->route('admin.template.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
@@ -212,6 +228,13 @@ class TemplateControler extends Controller
             'fakultas_id'   => $request->fakultas_id,
             'prodi_id'      => $request->prodi_id,
         ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('admin.template.index'),
+            ], 200);
+        }
 
         return redirect()->route('admin.template.index')->with('success', 'Data berhasil diupdate!');
     }

@@ -18,14 +18,16 @@ class JabatanController extends Controller
     public function index()
     {
         $data = Jabatan::with(['penduduk', 'fakultas'])->get();
+        $penduduk = Penduduk::with('fakultas')->get();
 
-        return view('admin.jabatan.index', compact('data'));
+        return view('admin.jabatan.index', compact('data', 'penduduk'));
     }
 
     public function getJabatan()
     {
         $data = Jabatan::select(['id_jabatan', 'penduduk_id', 'status', 'fakultas_id'])
-            ->with('penduduk', 'fakultas');
+            ->with('penduduk', 'fakultas')
+            ->orderBy('id_jabatan', 'desc');
 
         return DataTables::of($data)
             ->filterColumn('nama_penduduk', function ($query, $keyword) {
@@ -49,10 +51,14 @@ class JabatanController extends Controller
                 return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.jabatan.show', $row->id_jabatan) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $nama_penduduk = $row->penduduk ? htmlspecialchars($row->penduduk->nama_penduduk) : '—';
+                $nama_fakultas = $row->fakultas ? htmlspecialchars($row->fakultas->nama_fakultas) : '—';
+                $status = htmlspecialchars($row->status);
+                
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama_penduduk.'" data-fakultas="'.$nama_fakultas.'" data-status="'.$status.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('admin.jabatan.edit', $row->id_jabatan) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                $editBtn = '<a href="javascript:void(0)" onclick="editModal(this)" data-id="'.$row->id_jabatan.'" data-penduduk_id="'.$row->penduduk_id.'" data-status="'.$status.'" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_jabatan . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 

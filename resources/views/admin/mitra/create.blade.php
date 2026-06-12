@@ -1,130 +1,30 @@
-@extends('layout.main')
-@section('title', 'Tambah Mitra')
-@section('content')
-    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid ">
-                <div id="kt_app_content_container" class="app-container container-fluid">
-                    <div class="row g-7 ">
-                        <div class="col-xl-6 py-3 py-lg-6 mb-5 w-100">
-                            <div class="card card-flush h-lg-100 shadow-sm border border-dashed border-dark rounded" id="kt_contacts_main">
-                                <div class="card-header pt-7" id="kt_chat_contacts_header">
-                                    <div class="card-title">
-                                        <h2>Tambah Mitra</h2>
-                                    </div>
-                                </div>
-                                <div class="separator border-gray-200 mt-4"></div>
-                                <div class="card-body pt-5">
-                                    <form id="kt_ecommerce_settings_general_form" class="form"
-                                        action="{{ route('admin.mitra.store') }}" method="POST" novalidate>
-                                        @csrf
-                                        <div class="fv-row mb-7">
-                                            <label class="required fw-semibold fs-6 mb-2">Nama Mitra</label>
-                                            <input type="text" name="nama_mitra" id="nama_mitra"
-                                                class="form-control form-control-sm mb-1" required>
-                                            <div id="error-nama_mitra" class="invalid-feedback d-block"
-                                                style="display:none;"></div>
-                                        </div>
-                                        <div class="d-flex justify-content-end">
-                                            <a href="{{ route('admin.mitra.index') }}"
-                                                class="btn btn-sm btn-light me-3">Batal</a>
-
-                                            <button type="submit" data-kt-contacts-type="submit"
-                                                class="btn btn-sm btn-primary">
-                                                <span class="indicator-label">Tambah</span>
-                                                <span class="indicator-progress" style="display:none;">
-                                                    Tunggu sebentar...
-                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                </div>
-                            </div>
-                        </div>
+<div class="modal fade" id="form_create" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Mitra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form_create_mitra" action="{{ route('admin.mitra.store') }}" method="POST" novalidate>
+                @csrf
+                <div class="modal-body">
+                    <div class="fv-row mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Nama Mitra</label>
+                        <input type="text" name="nama_mitra" id="create_nama_mitra" class="form-control form-control-sm mb-1" required>
+                        <div id="error-create_nama_mitra" class="invalid-feedback d-block" style="display:none;"></div>
                     </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary">
+                        <span class="indicator-label">Simpan</span>
+                        <span class="indicator-progress" style="display:none;">
+                            Tunggu sebentar...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-@endsection
-@section('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('kt_ecommerce_settings_general_form');
-            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
-
-            const inputNama = document.getElementById('nama_mitra');
-            const errNama = document.getElementById('error-nama_mitra');
-
-            const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            function setLoading(on) {
-                submitButton.disabled = on;
-                submitButton.querySelector('.indicator-label').style.display = on ? 'none' : 'inline-block';
-                submitButton.querySelector('.indicator-progress').style.display = on ? 'inline-block' : 'none';
-            }
-
-            function clearNamaError() {
-                inputNama.classList.remove('is-invalid');
-                errNama.style.display = 'none';
-                errNama.textContent = '';
-            }
-
-            function showNamaError(msg) {
-                inputNama.classList.add('is-invalid');
-                errNama.textContent = msg;
-                errNama.style.display = 'block';
-            }
-
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                clearNamaError();
-
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    return;
-                }
-
-                setLoading(true);
-
-                try {
-                    const res = await fetch(form.action, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': csrf,
-                        },
-                        body: new FormData(form),
-                        credentials: 'same-origin',
-                    });
-
-                    const ct = res.headers.get('content-type') || '';
-                    const data = ct.includes('application/json') ? await res.json() : null;
-
-                    if (res.status === 422) {
-                        const msg = data?.errors?.nama_mitra?.[0] || 'Data tidak valid.';
-                        showNamaError(msg);
-                        inputNama.focus();
-                        setLoading(false);
-                        return;
-                    }
-
-                    if (!res.ok) {
-                        showNamaError('Terjadi kesalahan. Silakan coba lagi.');
-                        setLoading(false);
-                        return;
-                    }
-
-                    window.location.href = data?.redirect || "{{ route('admin.mitra.index') }}";
-
-                } catch (err) {
-                    showNamaError('Gagal mengirim data. Silakan coba lagi.');
-                    setLoading(false);
-                }
-            });
-        });
-    </script>
-@endsection
+</div>

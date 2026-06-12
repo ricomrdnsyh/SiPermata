@@ -16,7 +16,9 @@ class TtdSuratConroller extends Controller
      */
     public function index()
     {
-        return view('admin.ttd.index');
+        $fakultas = Fakultas::all();
+        $template = Template::with('fakultas')->get();
+        return view('admin.ttd.index', compact('fakultas', 'template'));
     }
 
     public function getTtdSurat()
@@ -46,14 +48,19 @@ class TtdSuratConroller extends Controller
                 }
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.ttdSurat.show', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nama_ttd = htmlspecialchars($row->nama_ttd ?? '-');
+                $nidn = htmlspecialchars($row->nidn ?? '-');
+                $status = htmlspecialchars($row->status ?? '-');
+                $template_id = $row->template_id ?? '';
+                $fakultas_id = $row->fakultas_id ?? '';
+                $nama_template = htmlspecialchars($row->template ? $row->template->nama_template : '-');
+                $nama_fakultas = htmlspecialchars($row->fakultas ? $row->fakultas->nama_fakultas : '-');
 
-                $editBtn = '<a href="' . route('admin.ttdSurat.edit', $row->id_ttd) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama_ttd.'" data-nidn="'.$nidn.'" data-status="'.$status.'" data-template="'.$nama_template.'" data-fakultas="'.$nama_fakultas.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_ttd . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
+                $editBtn = '<a href="javascript:void(0)" onclick="editModal(this)" data-id="'.$row->id_ttd.'" data-nama="'.$nama_ttd.'" data-nidn="'.$nidn.'" data-status="'.$status.'" data-template="'.$template_id.'" data-fakultas="'.$fakultas_id.'" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+
+                $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_ttd . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
             })
@@ -100,6 +107,13 @@ class TtdSuratConroller extends Controller
             'fakultas_id'   => $request->fakultas_id,
             'status'        => $request->status,
         ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('admin.ttdSurat.index'),
+            ], 201);
+        }
 
         return redirect()->route('admin.ttdSurat.index')->with('success', 'Data berhasil ditambahkan!');
     }
@@ -157,6 +171,13 @@ class TtdSuratConroller extends Controller
             'fakultas_id'   => $request->fakultas_id,
             'status'        => $request->status,
         ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message'  => 'OK',
+                'redirect' => route('admin.ttdSurat.index'),
+            ], 200);
+        }
 
         return redirect()->route('admin.ttdSurat.index')->with('success', 'Data berhasil diperbarui!');
     }

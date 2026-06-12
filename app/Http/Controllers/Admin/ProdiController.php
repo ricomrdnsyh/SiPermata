@@ -46,8 +46,12 @@ class ProdiController extends Controller
                 return $row->fakultas ? $row->fakultas->nama_fakultas : '—';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.prodi.show', $row->id_prodi) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nama_prodi = htmlspecialchars($row->nama_prodi ?? '-');
+                $nama_fakultas = $row->fakultas ? htmlspecialchars($row->fakultas->nama_fakultas) : '-';
+                $singkatan = htmlspecialchars($row->singkatan ?? '-');
+                $status = htmlspecialchars($row->status ?? '-');
+
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama_prodi.'" data-fakultas="'.$nama_fakultas.'" data-singkatan="'.$singkatan.'" data-status="'.$status.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })

@@ -33,8 +33,14 @@ class PendudukController extends Controller
                 return $row->prodi ? $row->prodi->nama_prodi : '-';
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.penduduk.show', $row->id_penduduk) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nidn = htmlspecialchars($row->nidn ?? '-');
+                $nama_penduduk = htmlspecialchars($row->nama_penduduk ?? '-');
+                $nama_fakultas = $row->fakultas ? htmlspecialchars($row->fakultas->nama_fakultas) : '-';
+                $nama_prodi = $row->prodi ? htmlspecialchars($row->prodi->nama_prodi) : 'Tidak Ada Prodi';
+                $email = htmlspecialchars($row->email ?? '-');
+                $no_hp = htmlspecialchars($row->no_hp ?? '-');
+
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nidn="'.$nidn.'" data-nama="'.$nama_penduduk.'" data-fakultas="'.$nama_fakultas.'" data-prodi="'.$nama_prodi.'" data-email="'.$email.'" data-nohp="'.$no_hp.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })

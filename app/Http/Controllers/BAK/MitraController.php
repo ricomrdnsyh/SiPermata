@@ -30,16 +30,25 @@ class MitraController extends Controller
                 $query->orderBy('created_at', 'desc');
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('bak.mitra.show', $row->id_mitra) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nama_mitra = htmlspecialchars($row->nama_mitra ?? '-');
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama_mitra.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('bak.mitra.edit', $row->id_mitra) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+                $editBtn = '<a href="javascript:void(0)" onclick="editModal(this)" data-id="'.$row->id_mitra.'" data-nama="'.$nama_mitra.'" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . '</div>';
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+
+    public function destroy(string $id)
+    {
+        $mitra = Mitra::findOrFail($id);
+        $mitra->delete();
+
+        return response()->json([
+            'message' => 'Data berhasil dihapus!'
+        ]);
     }
 
     /**

@@ -25,11 +25,12 @@ class AkademikController extends Controller
 
         return DataTables::of($data)
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.akademik.show', $row->id_akademik) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $kode = htmlspecialchars($row->kode_akademik ?? '-');
+                $tahun = htmlspecialchars($row->tahun_akademik ?? '-');
 
-                $editBtn = '<a href="' . route('admin.akademik.edit', $row->id_akademik) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-kode="'.$kode.'" data-tahun="'.$tahun.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+
+                $editBtn = '<a href="javascript:void(0)" onclick="editModal(this)" data-id="'.$row->id_akademik.'" data-kode="'.$kode.'" data-tahun="'.$tahun.'" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 $deleteBtn = '<a href="javascript:void(0)" onclick="confirmDelete(' . $row->id_akademik . ')" class="btn btn-sm btn-light btn-active-light-danger text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Hapus"><i class="fas fa-trash-alt"></i></a>';

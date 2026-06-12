@@ -35,8 +35,11 @@ class FakultasController extends Controller
                 }
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.fakultas.show', $row->id_fakultas) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
-                data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $nama_fakultas = htmlspecialchars($row->nama_fakultas ?? '-');
+                $singkatan = htmlspecialchars($row->singkatan ?? '-');
+                $status = htmlspecialchars($row->status ?? '-');
+
+                $showBtn = '<a href="javascript:void(0)" onclick="showModal(this)" data-nama="'.$nama_fakultas.'" data-singkatan="'.$singkatan.'" data-status="'.$status.'" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
