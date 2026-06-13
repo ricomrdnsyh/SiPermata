@@ -198,10 +198,11 @@
                                     <th class="text-center">Actions</th>
                                     <th class="min-w-125px">NIM</th>
                                     <th class="min-w-125px">Nama Mahasiswa</th>
+                                    <th class="min-w-125px">Fakultas</th>
                                     <th class="min-w-125px">Program Studi</th>
                                     <th class="min-w-125px">Nama Surat Pengajuan</th>
-                                    <th class="min-w-125px">Tanggal Pengajuan</th>
                                     <th class="min-w-125px">Status Pengajuan</th>
+                                    <th class="min-w-125px">Tanggal Pengajuan</th>
                                     <th class="min-w-125px">Catatan</th>
                                 </tr>
                             </thead>
@@ -346,6 +347,11 @@
                         searchable: true
                     },
                     {
+                        data: 'fakultas',
+                        name: 'fakultas',
+                        searchable: true
+                    },
+                    {
                         data: 'prodi',
                         name: 'prodi',
                         searchable: true
@@ -356,12 +362,12 @@
                         searchable: true
                     },
                     {
-                        data: 'tanggal_pengajuan',
-                        name: 'created_at'
-                    },
-                    {
                         data: 'status',
                         name: 'status'
+                    },
+                    {
+                        data: 'tanggal_pengajuan',
+                        name: 'created_at'
                     },
                     {
                         data: 'catatan',

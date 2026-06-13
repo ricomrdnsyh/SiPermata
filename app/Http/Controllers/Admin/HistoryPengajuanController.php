@@ -64,7 +64,7 @@ class HistoryPengajuanController extends Controller
             abort(403);
         }
 
-        $query = HistoryPengajuan::with(['mahasiswa.prodi']);
+        $query = HistoryPengajuan::with(['mahasiswa.prodi', 'mahasiswa.fakultas']);
 
         $tahunAkademikFilter = $request->input('tahun_akademik_filter');
         $tabelNames = array_keys($this->listSurat);
@@ -155,6 +155,11 @@ class HistoryPengajuanController extends Controller
                     $q->where('nama_prodi', 'like', "%{$keyword}%");
                 });
             })
+            ->filterColumn('fakultas', function ($query, $keyword) {
+                $query->whereHas('mahasiswa.fakultas', function ($q) use ($keyword) {
+                    $q->where('nama_fakultas', 'like', "%{$keyword}%");
+                });
+            })
             ->filterColumn('nama_surat', function ($query, $keyword) {
                 $keyword = strtolower($keyword);
 
@@ -187,6 +192,9 @@ class HistoryPengajuanController extends Controller
             ->addColumn('prodi', function ($row) {
                 return $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim;
             })
+            ->addColumn('fakultas', function ($row) {
+                return $row->mahasiswa?->fakultas?->nama_fakultas ?? '—';
+            })
             ->addColumn('nama_surat', function ($row) {
                 return $row->nama_surat;
             })
@@ -212,7 +220,7 @@ class HistoryPengajuanController extends Controller
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
-            ->rawColumns(['nama_mahasiswa', 'prodi', 'status', 'action'])
+            ->rawColumns(['nama_mahasiswa', 'prodi', 'fakultas', 'status', 'action'])
             ->make(true);
     }
 
