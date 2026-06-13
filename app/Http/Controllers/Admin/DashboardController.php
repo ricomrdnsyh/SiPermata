@@ -240,7 +240,6 @@ class DashboardController extends Controller
                     })
                     ->count();
             }
-            // Only include prodi that have submissions
             if ($total > 0) {
                 $labels[] = $prodi->nama_prodi;
                 $dataCounts[] = $total;

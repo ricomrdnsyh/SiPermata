@@ -4,6 +4,7 @@ namespace App\Http\Controllers\BAK;
 
 use App\Models\SuratPKL;
 use App\Models\Mahasiswa;
+use App\Models\Prodi;
 use App\Models\SuratAktif;
 use App\Models\SuratLulus;
 use Illuminate\Http\Request;
@@ -74,6 +75,7 @@ class DashboardController extends Controller
         $globalStats = $this->getGlobalStats($currentAkademikId, $validNimList);
         $detailedStatus = $this->getDetailedStatusData($currentAkademikId, $validNimList);
         $chartData = $this->getChartData($currentAkademikId, $validNimList);
+        $prodiChartData = $this->getProdiChartData($currentAkademikId, $userFakultasId, $validNimList);
 
         return view('bak.dashboard.index', [
             'user_name'         => $userBAK->nama_penduduk,
@@ -83,6 +85,7 @@ class DashboardController extends Controller
             'globalStats'       => $globalStats,
             'detailedStatus'    => $detailedStatus,
             'chartData'         => $chartData,
+            'prodiChartData'    => $prodiChartData,
             'chartColors'       => $this->chartColors,
         ]);
     }
@@ -185,6 +188,36 @@ class DashboardController extends Controller
                 ->count();
             $labels[] = $label;
             $dataCounts[] = $count;
+        }
+
+        return [
+            'labels' => $labels,
+            'data'   => $dataCounts,
+        ];
+    }
+
+    private function getProdiChartData($akademikId, $userFakultasId, $validNimList)
+    {
+        $prodiList = Prodi::where('fakultas_id', $userFakultasId)->orderBy('nama_prodi')->get();
+        $labels = [];
+        $dataCounts = [];
+
+        if (empty($validNimList)) return ['labels' => [], 'data' => []];
+
+        foreach ($prodiList as $prodi) {
+            $total = 0;
+            foreach ($this->suratModels as $model) {
+                $total += $model::where('akademik_id', $akademikId)
+                    ->whereIn('nim', $validNimList)
+                    ->whereHas('mahasiswa', function ($q) use ($prodi) {
+                        $q->where('prodi_id', $prodi->id_prodi);
+                    })
+                    ->count();
+            }
+            if ($total > 0) {
+                $labels[] = $prodi->nama_prodi;
+                $dataCounts[] = $total;
+            }
         }
 
         return [
