@@ -14,7 +14,7 @@
             top: 2px;
             bottom: 2px;
             width: 2px;
-            background: #eef0f7;
+            background: var(--bs-border-color, #eef0f7);
             border-radius: 2px;
         }
 
@@ -35,8 +35,7 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: #fff;
-            border: 2px solid #e4e6ef;
+            border: 2px solid var(--bs-border-color, #e4e6ef);
         }
 
         .timeline-soft-dot.dot-warning {
@@ -89,14 +88,13 @@
 
         .meta-value {
             font-weight: 600;
-            color: #181c32;
+            color: inherit;
             word-break: break-word;
             overflow-wrap: anywhere;
         }
 
         .soft-panel {
-            background: #f8f9fc;
-            border: 1px solid #eef0f7;
+            border: 1px solid var(--bs-border-color, #eef0f7);
             border-radius: .75rem;
         }
 
@@ -106,10 +104,8 @@
         }
 
         .profile-card {
-            
             border-radius: 14px;
             overflow: hidden;
-            background: #fff;
         }
 
         .profile-head {
@@ -122,7 +118,7 @@
 
         .profile-sep {
             height: 1px;
-            background: #eef0f7;
+            background: var(--bs-border-color, #eef0f7);
             margin: 14px 0;
         }
 
@@ -135,7 +131,7 @@
         }
 
         .profile-name {
-            color: #181c32;
+            color: inherit;
             word-break: break-word;
             overflow-wrap: anywhere;
         }
@@ -145,7 +141,7 @@
         }
 
         .profile-value {
-            color: #3f4254;
+            color: inherit;
             word-break: break-word;
             overflow-wrap: anywhere;
             line-height: 1.35rem;
@@ -158,10 +154,9 @@
         }
 
         .stats-item {
-            border: 1px solid #eef0f7;
+            border: 1px solid var(--bs-border-color, #eef0f7);
             border-radius: 12px;
             padding: 10px 12px;
-            background: #fff;
         }
 
         .stats-k {
@@ -174,7 +169,7 @@
         .stats-v {
             font-size: 1.15rem;
             font-weight: 900;
-            color: #181c32;
+            color: inherit;
             line-height: 1.35rem;
         }
 
@@ -251,7 +246,7 @@
                             </div>
 
                             <div class="card-body pt-4">
-                                <div class="soft-panel p-5 mb-6">
+                                <div class="soft-panel bg-light p-5 mb-6">
                                     <div class="row g-4">
                                         <div class="col-md-6">
                                             <div class="meta-label mb-1">Jenis Surat</div>
@@ -277,7 +272,7 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-white border border-gray-200 rounded p-5">
+                                <div class="bg-body border border-gray-200 rounded p-5">
                                     @if ($pengajuan->tabel === 'surat_aktif')
                                         @include('admin.history.partials.surat_aktif', ['surat' => $surat])
                                     @elseif($pengajuan->tabel === 'surat_izin_penelitian')
@@ -360,15 +355,15 @@
                             <div class="card-body pt-4">
                                 @isset($jumlahPengajuan)
                                     <div class="stats-grid mb-6">
-                                        <div class="stats-item">
+                                        <div class="stats-item bg-body">
                                             <div class="stats-k mb-1">Total Diajukan</div>
                                             <div class="stats-v">{{ $jumlahPengajuan }}</div>
                                         </div>
-                                        <div class="stats-item" style="border-color: rgba(80,205,137,.35);">
+                                        <div class="stats-item bg-body" style="border-color: rgba(80,205,137,.35);">
                                             <div class="stats-k mb-1">Disetujui</div>
                                             <div class="stats-v text-success">{{ $jumlahDiterima ?? 0 }}</div>
                                         </div>
-                                        <div class="stats-item" style="border-color: rgba(241,65,108,.35);">
+                                        <div class="stats-item bg-body" style="border-color: rgba(241,65,108,.35);">
                                             <div class="stats-k mb-1">Ditolak</div>
                                             <div class="stats-v text-danger">{{ $jumlahDitolak ?? 0 }}</div>
                                         </div>
@@ -409,10 +404,10 @@
 
                                         <div class="timeline-soft-item">
                                             <div
-                                                class="timeline-soft-dot {{ $dotType }} {{ $isActive ? 'is-active' : '' }}">
+                                                class="timeline-soft-dot bg-body {{ $dotType }} {{ $isActive ? 'is-active' : '' }}">
                                             </div>
 
-                                            <div class="soft-panel p-4">
+                                            <div class="soft-panel bg-light p-4">
                                                 <div
                                                     class="d-flex flex-column flex-sm-row gap-2 align-items-sm-center justify-content-between mb-2">
                                                     <div class="d-flex align-items-center flex-wrap gap-2">
@@ -470,7 +465,7 @@
 
                         <div class="col-xl-4 order-1 order-xl-2">
                             <div class="position-xl-sticky sticky-side">
-                                <div class="profile-card mb-6 shadow-sm border border-dashed border-dark">
+                                <div class="profile-card bg-body mb-6 shadow-sm border border-dashed border-dark">
                                     <div class="profile-head">
                                         <div class="fw-bolder fs-4 text-gray-900">Data Mahasiswa</div>
                                     </div>
