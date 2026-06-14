@@ -7,7 +7,7 @@
             <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
                 <div id="kt_app_content_container" class="app-container container-fluid">
 
-                <div class="card card-flush mb-7">
+                <div class="card border border-dashed border-gray-400 card-flush mb-7">
                     <div class="card-header pt-6 pb-4">
                         <div class="card-title d-flex flex-column">
                             <div class="d-flex align-items-center gap-3">
@@ -169,7 +169,7 @@
 
                 <div class="row g-5 g-xl-8 mb-8">
                     <div class="col-xl-8">
-                        <div class="card card-flush h-100">
+                        <div class="card border border-dashed border-gray-400 card-flush h-100">
                             <div class="card-header pt-7">
                                 <div class="card-title d-flex flex-column">
                                     <span class="fw-semibold fs-3 text-gray-900">Perbandingan Pengajuan Per Jenis
@@ -204,7 +204,7 @@
                     </div>
 
                     <div class="col-xl-4">
-                        <div class="card card-flush h-100">
+                        <div class="card border border-dashed border-gray-400 card-flush h-100">
                             <div class="card-header pt-7">
                                 <div class="card-title d-flex flex-column">
                                     <span class="fw-semibold fs-3 text-gray-900">Komposisi Status Pengajuan</span>
@@ -264,7 +264,7 @@
                     </div>
                 </div>
 
-                <div class="card card-flush mb-8">
+                <div class="card border border-dashed border-gray-400 card-flush mb-8">
                     <div class="card-header pt-7 pb-0 border-0">
                         <div class="card-title d-flex flex-column gap-1">
                             <span class="text-uppercase fw-semibold text-gray-500" style="font-size: 10px; letter-spacing: .08em;">Distribusi</span>
@@ -291,7 +291,7 @@
                     </div>
                 </div>
 
-                <div class="card card-flush mb-5">
+                <div class="card border border-dashed border-gray-400 card-flush mb-5">
                     <div class="card-header pt-7">
                         <div class="card-title d-flex flex-column">
                             <span class="fw-semibold fs-3 text-gray-900">Status Detail Pengajuan Per Jenis Surat</span>

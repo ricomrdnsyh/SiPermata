@@ -125,7 +125,7 @@
 
                 <div class="row g-5 g-xl-8">
                     <div class="col-xl-4 col-md-6">
-                        <div class="card h-100 border border-gray-300 border-opacity-50 shadow-sm hover-elevate-up">
+                        <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
                             <div class="card-body p-6">
                                 <div class="d-flex align-items-center mb-5">
                                     <div class="symbol symbol-50px me-4">
@@ -180,7 +180,7 @@
                     </div>
 
                     <div class="col-xl-4 col-md-6">
-                        <div class="card h-100 border border-gray-300 border-opacity-50 shadow-sm hover-elevate-up">
+                        <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
                             <div class="card-body p-6">
                                 <div class="d-flex align-items-center mb-5">
                                     <div class="symbol symbol-50px me-4">
@@ -235,7 +235,7 @@
                     </div>
 
                     <div class="col-xl-4 col-md-6">
-                        <div class="card h-100 border border-gray-300 border-opacity-50 shadow-sm hover-elevate-up">
+                        <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
                             <div class="card-body p-6">
                                 <div class="d-flex align-items-center mb-5">
                                     <div class="symbol symbol-50px me-4">
@@ -290,7 +290,7 @@
                     </div>
 
                     <div class="col-xl-4 col-md-6">
-                        <div class="card h-100 border border-gray-300 border-opacity-50 shadow-sm hover-elevate-up">
+                        <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
                             <div class="card-body p-6">
                                 <div class="d-flex align-items-center mb-5">
                                     <div class="symbol symbol-50px me-4">
@@ -345,7 +345,7 @@
                     </div>
 
                     <div class="col-xl-4 col-md-6">
-                        <div class="card h-100 border border-gray-300 border-opacity-50 shadow-sm hover-elevate-up">
+                        <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
                             <div class="card-body p-6">
                                 <div class="d-flex align-items-center mb-5">
                                     <div class="symbol symbol-50px me-4">
@@ -400,7 +400,7 @@
                     </div>
 
                     <div class="col-xl-4 col-md-6">
-                        <div class="card h-100 border border-gray-300 border-opacity-50 shadow-sm hover-elevate-up">
+                        <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
                             <div class="card-body p-6">
                                 <div class="d-flex align-items-center mb-5">
                                     <div class="symbol symbol-50px me-4">
