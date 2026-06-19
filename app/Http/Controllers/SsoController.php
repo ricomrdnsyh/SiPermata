@@ -13,9 +13,9 @@ class SsoController extends Controller
 {
     public function sso(Request $request)
     {
-        $url = 'http://sso.unuja.ac.id:8080/portal/me/8ZiVo95nM1xUJzhA';
+        $url = config('services.sso.me_url');
         $access_token = $request->access_token;
-        $xToken = 'FLVtfNC5KrTxVHOJ';
+        $xToken = config('services.sso.x_token');
         $UserAgent = $request->header('User-Agent');
         if (!$access_token) {
             return response()->json(['error' => 'Access token is missing'], 400);
@@ -45,13 +45,13 @@ class SsoController extends Controller
                 );
 
                 if (Auth::attempt(['identifier' => $responseData['nim'], 'password' => $responseData['nim']])) {
-                    $callbackUrl = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['callback_session']);
-                    $logoutUrl = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['logout_session']);
+                    $callbackUrl = str_replace(config('services.sso.public_url'), config('services.sso.api_url'), $responseData['callback_session']);
+                    $logoutUrl = str_replace(config('services.sso.public_url'), config('services.sso.api_url'), $responseData['logout_session']);
 
                     $phpSessionId = $request->session()->getId();
 
                     $data = [
-                        "logout" => "http://sipermata.unuja.ac.id:8080/sso/logout/" . $phpSessionId,
+                        "logout" => url('/sso/logout/' . $phpSessionId),
                     ];
                     $this->makeCurlRequest($callbackUrl, $access_token, $xToken, $UserAgent, $data);
                     $request->session()->put('logout_session', $logoutUrl);
@@ -69,13 +69,13 @@ class SsoController extends Controller
 
                 Auth::login($user, $request->boolean('remember'));
 
-                $callbackUrl = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['callback_session']);
-                $logoutUrl   = str_replace("https://sso.unuja.ac.id", "http://sso.unuja.ac.id:8080", $responseData['logout_session']);
+                $callbackUrl = str_replace(config('services.sso.public_url'), config('services.sso.api_url'), $responseData['callback_session']);
+                $logoutUrl   = str_replace(config('services.sso.public_url'), config('services.sso.api_url'), $responseData['logout_session']);
 
                 $phpSessionId = $request->session()->getId();
 
                 $data = [
-                    "logout" => "http://sipermata.unuja.ac.id:8080/sso/logout/" . $phpSessionId,
+                    "logout" => url('/sso/logout/' . $phpSessionId),
                 ];
 
                 $this->makeCurlRequest($callbackUrl, $access_token, $xToken, $UserAgent, $data);

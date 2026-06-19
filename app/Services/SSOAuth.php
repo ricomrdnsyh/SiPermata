@@ -9,9 +9,16 @@ class SSOAuth
 {
     protected string $cacheKey = 'sso_auth';
 
-    private string $authUrl    = 'http://sso.unuja.ac.id:8080/portal/data/authorize';
-    private string $XToken     = 'FLVtfNC5KrTxVHOJ';
-    private string $devId      = '8ZiVo95nM1xUJzhA';
+    private string $authUrl;
+    private string $XToken;
+    private string $devId;
+
+    public function __construct()
+    {
+        $this->XToken = config('services.sso.x_token');
+        $this->devId  = config('services.sso.dev_id');
+        $this->authUrl = config('services.sso.authorize_url');
+    }
 
     public function getAuth(): array
     {
@@ -52,7 +59,7 @@ class SSOAuth
             throw new \Exception('Data URL atau X-Token tidak ditemukan di response authorize.');
         }
 
-        $newBase = 'http://sso.unuja.ac.id:8080/portal/data/data';
+        $newBase = config('services.sso.data_url');
 
         $path      = parse_url($dataUrl, PHP_URL_PATH);
         $tokenPart = $path ? basename($path) : null;
