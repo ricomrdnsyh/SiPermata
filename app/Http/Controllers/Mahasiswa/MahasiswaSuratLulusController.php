@@ -153,6 +153,7 @@ class MahasiswaSuratLulusController extends Controller
         
         $noSurat = SuratLulus::getNextNoSurat($template->id_template, $request->akademik_id);
 
+        \Illuminate\Support\Facades\DB::beginTransaction();
         $surat = SuratLulus::create([
             'template_id'         => $template->id_template,
             'no_surat'            => $noSurat,
@@ -175,7 +176,7 @@ class MahasiswaSuratLulusController extends Controller
                 'file_generated' => $generatedFilePath,
             ]);
         } catch (\Exception $e) {
-            $surat->delete();
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
@@ -196,6 +197,10 @@ class MahasiswaSuratLulusController extends Controller
             'user_id'    => $user->id,
             'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
         ]);
+
+        \Illuminate\Support\Facades\DB::commit();
+
+        \Illuminate\Support\Facades\DB::commit();
 
         $namaSurat = "Surat Keterangan Lulus";
 
@@ -275,6 +280,7 @@ class MahasiswaSuratLulusController extends Controller
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
         $ipk       = $dataSimpt?->ipk_ketuntasan ?? null;
 
+        \Illuminate\Support\Facades\DB::beginTransaction();
         $surat->update([
             'akademik_id'         => $request->akademik_id,
             'tempat_lahir'        => $request->tempat_lahir,
@@ -288,6 +294,7 @@ class MahasiswaSuratLulusController extends Controller
             $template = Template::findOrFail($surat->template_id);
             $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
             $surat->update(['file_generated' => $generatedFilePath]);
 
             $pengajuan->update([
@@ -303,9 +310,12 @@ class MahasiswaSuratLulusController extends Controller
                 'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
             ]);
 
-            return redirect()->route('mahasiswa.surat-keterangan-lulus.index')
+            \Illuminate\Support\Facades\DB::commit();
+
+                return redirect()->route('mahasiswa.surat-keterangan-lulus.index')
                 ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
         }
     }

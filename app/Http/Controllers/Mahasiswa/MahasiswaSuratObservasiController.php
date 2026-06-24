@@ -197,6 +197,7 @@ class MahasiswaSuratObservasiController extends Controller
                 $payload['anggota_kelompok'] = $anggotaKelompok;
             }
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
             $surat = SuratObservasi::create($payload);
 
             try {
@@ -208,7 +209,7 @@ class MahasiswaSuratObservasiController extends Controller
                     'file_generated' => $generatedFilePath,
                 ]);
             } catch (\Exception $e) {
-                $surat->delete();
+                \Illuminate\Support\Facades\DB::rollBack();
                 return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
             }
 
@@ -229,6 +230,8 @@ class MahasiswaSuratObservasiController extends Controller
                 'user_id'    => $user->id,
                 'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
             ]);
+
+            \Illuminate\Support\Facades\DB::commit();
 
             $namaSurat = "Surat Permohonan Observasi";
 
@@ -366,12 +369,14 @@ class MahasiswaSuratObservasiController extends Controller
                 $payload['anggota_kelompok'] = $anggotaKelompok;
             }
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
             $surat->update($payload);
 
             try {
                 $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-                $surat->update(['file_generated' => $generatedFilePath]);
+                \Illuminate\Support\Facades\DB::beginTransaction();
+            $surat->update(['file_generated' => $generatedFilePath]);
 
                 $pengajuan->update([
                     'status'  => 'pengajuan',
@@ -386,9 +391,12 @@ class MahasiswaSuratObservasiController extends Controller
                     'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
                 ]);
 
+                \Illuminate\Support\Facades\DB::commit();
+
                 return redirect()->route('mahasiswa.surat-observasi.index')
                     ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
             } catch (\Exception $e) {
+                \Illuminate\Support\Facades\DB::rollBack();
                 return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
             }
         } catch (ValidationException $e) {

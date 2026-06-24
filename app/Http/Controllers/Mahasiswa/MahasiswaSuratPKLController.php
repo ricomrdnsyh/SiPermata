@@ -346,12 +346,14 @@ class MahasiswaSuratPKLController extends Controller
                 $payload['anggota_kelompok'] = $anggotaKelompok;
             }
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
             $surat->update($payload);
 
             try {
                 $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-                $surat->update(['file_generated' => $generatedFilePath]);
+                \Illuminate\Support\Facades\DB::beginTransaction();
+            $surat->update(['file_generated' => $generatedFilePath]);
 
                 $pengajuan->update([
                     'status'  => 'pengajuan',
@@ -366,9 +368,12 @@ class MahasiswaSuratPKLController extends Controller
                     'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
                 ]);
 
+                \Illuminate\Support\Facades\DB::commit();
+
                 return redirect()->route('mahasiswa.surat-pkl.index')
                     ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
             } catch (\Exception $e) {
+                \Illuminate\Support\Facades\DB::rollBack();
                 return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
             }
         } catch (ValidationException $e) {

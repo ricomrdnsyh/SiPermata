@@ -159,6 +159,7 @@ class MahasiswaSuratAktifController extends Controller
         
         $noSurat = SuratAktif::getNextNoSurat($template->id_template, $request->akademik_id);
 
+        \Illuminate\Support\Facades\DB::beginTransaction();
         $surat = SuratAktif::create([
             'template_id'         => $template->id_template,
             'no_surat'            => $noSurat,
@@ -187,7 +188,7 @@ class MahasiswaSuratAktifController extends Controller
                 'file_generated' => $generatedFilePath,
             ]);
         } catch (\Exception $e) {
-            $surat->delete();
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
@@ -208,6 +209,8 @@ class MahasiswaSuratAktifController extends Controller
             'user_id'    => $user->id,
             'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
         ]);
+
+        \Illuminate\Support\Facades\DB::commit();
 
         $namaSurat = "Surat Keterangan Aktif";
 
@@ -279,6 +282,7 @@ class MahasiswaSuratAktifController extends Controller
 
         $template = Template::findOrFail($surat->template_id);
 
+        \Illuminate\Support\Facades\DB::beginTransaction();
         $surat->update([
             'akademik_id'         => $request->akademik_id,
             'semester'            => $semester,
@@ -301,6 +305,7 @@ class MahasiswaSuratAktifController extends Controller
                 'file_generated' => $generatedFilePath,
             ]);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('failed', 'Gagal memproses template dokumen setelah update. Error: ' . $e->getMessage());
         }
 
@@ -317,6 +322,8 @@ class MahasiswaSuratAktifController extends Controller
             'user_id'    => $user->id,
             'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
         ]);
+
+        \Illuminate\Support\Facades\DB::commit();
 
         return redirect()->route('mahasiswa.surat-aktif.index')->with('success', 'Pengajuan berhasil diperbarui! Silakan tunggu proses persetujuan.');
     }

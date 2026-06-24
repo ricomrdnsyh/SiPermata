@@ -126,6 +126,7 @@ class MahasiswaSuratPenelitianController extends Controller
         
         $noSurat = SuratPenelitian::getNextNoSurat($template->id_template, $request->akademik_id);
 
+        \Illuminate\Support\Facades\DB::beginTransaction();
         $surat = SuratPenelitian::create([
             'template_id'         => $template->id_template,
             'no_surat'            => $noSurat,
@@ -149,7 +150,7 @@ class MahasiswaSuratPenelitianController extends Controller
                 'file_generated' => $generatedFilePath,
             ]);
         } catch (\Exception $e) {
-            $surat->delete();
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
         }
 
@@ -170,6 +171,10 @@ class MahasiswaSuratPenelitianController extends Controller
             'user_id'    => $user->id,
             'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
         ]);
+
+        \Illuminate\Support\Facades\DB::commit();
+
+        \Illuminate\Support\Facades\DB::commit();
 
         $namaSurat = "Surat Izin Penelitian";
 
@@ -244,6 +249,7 @@ class MahasiswaSuratPenelitianController extends Controller
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
 
+        \Illuminate\Support\Facades\DB::beginTransaction();
         $surat->update([
             'akademik_id'      => $request->akademik_id,
             'mitra_id'         => $request->mitra_id,
@@ -258,6 +264,7 @@ class MahasiswaSuratPenelitianController extends Controller
             $template = Template::findOrFail($surat->template_id);
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
             $surat->update(['file_generated' => $generatedFilePath]);
 
             $pengajuan->update([
@@ -273,9 +280,12 @@ class MahasiswaSuratPenelitianController extends Controller
                 'catatan'    => 'Pengajuan ulang dibuat oleh mahasiswa.',
             ]);
 
-            return redirect()->route('mahasiswa.surat-izin-penelitian.index')
+            \Illuminate\Support\Facades\DB::commit();
+
+                return redirect()->route('mahasiswa.surat-izin-penelitian.index')
                 ->with('success', 'Pengajuan surat berhasil diperbarui! Silakan tunggu proses persetujuan.');
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('failed', 'Gagal memperbarui dokumen. Error: ' . $e->getMessage());
         }
     }
