@@ -12,9 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BAKTtdSuratController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -105,9 +103,7 @@ class BAKTtdSuratController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -129,9 +125,7 @@ class BAKTtdSuratController extends Controller
         return view('bak.ttd.create', compact('template', 'fakultas'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -185,9 +179,7 @@ class BAKTtdSuratController extends Controller
         return redirect()->route('bak.ttdSurat.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -204,9 +196,7 @@ class BAKTtdSuratController extends Controller
         return view('bak.ttd.show', compact('ttd', 'template', 'fakultas'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -229,9 +219,7 @@ class BAKTtdSuratController extends Controller
         return view('bak.ttd.edit', compact('ttd', 'template', 'fakultas'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         $user = Auth::user();

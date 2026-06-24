@@ -12,9 +12,7 @@ use App\Models\Fakultas;
 
 class JabatanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = Jabatan::with(['penduduk', 'fakultas'])->get();
@@ -70,9 +68,7 @@ class JabatanController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $penduduk = Penduduk::with('fakultas')->get();
@@ -80,9 +76,7 @@ class JabatanController extends Controller
         return view('admin.jabatan.create', compact('penduduk'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -108,9 +102,7 @@ class JabatanController extends Controller
         return redirect()->route('admin.jabatan.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $data = Jabatan::with(['penduduk', 'fakultas'])->findOrFail($id);
@@ -118,9 +110,7 @@ class JabatanController extends Controller
         return view('admin.jabatan.show', compact('data'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $data = Jabatan::findOrFail($id);
@@ -129,9 +119,7 @@ class JabatanController extends Controller
         return view('admin.jabatan.edit', compact('data', 'penduduk'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -144,7 +132,7 @@ class JabatanController extends Controller
 
         $jabatan = Jabatan::findOrFail($id);
 
-        // Ambil data penduduk untuk dapatkan fakultas_id
+        
         $penduduk = Penduduk::where('id_penduduk', $request->penduduk_id)->first();
         if (!$penduduk || !$penduduk->fakultas_id) {
             throw ValidationException::withMessages([
@@ -161,9 +149,7 @@ class JabatanController extends Controller
         return redirect()->route('admin.jabatan.index')->with('success', 'Data berhasil diupdate!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         $jabatan = Jabatan::findOrFail($id);

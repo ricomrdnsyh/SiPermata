@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class MitraController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = Mitra::all();
@@ -51,17 +49,13 @@ class MitraController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         return view('bak.mitra.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
 
     public function store(Request $request)
     {
@@ -117,9 +111,7 @@ class MitraController extends Controller
         return redirect()->route('bak.mitra.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $mitra = Mitra::findOrFail($id);
@@ -127,9 +119,7 @@ class MitraController extends Controller
         return view('bak.mitra.show', compact('mitra'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $mitra = Mitra::findOrFail($id);

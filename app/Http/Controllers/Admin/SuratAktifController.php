@@ -23,9 +23,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SuratAktifController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -133,9 +131,7 @@ class SuratAktifController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -172,9 +168,7 @@ class SuratAktifController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratAktifGenerator $generatorService)
     {
         $request->validate([
@@ -210,7 +204,7 @@ class SuratAktifController extends Controller
             return back()->with('failed', 'Fakultas Anda belum ditentukan.');
         }
 
-        // Ambil semester otomatis dari SIM-PT
+        
         $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
         $semester = $dataSimpt?->semester ?? null;
 
@@ -222,7 +216,7 @@ class SuratAktifController extends Controller
 
         $namaTemplate = $kategoriToTemplate[$request->kategori];
 
-        // Cari template berdasarkan kategori + fakultas
+        
         $template = Template::where('jenis_surat', $namaTemplate)
             ->where('fakultas_id', $fakultasId)
             ->first();
@@ -231,7 +225,7 @@ class SuratAktifController extends Controller
             return back()->with('failed', "Template untuk kategori {$request->kategori} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratAktif::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratAktif::create([
@@ -286,9 +280,7 @@ class SuratAktifController extends Controller
         return redirect()->route('admin.surat-aktif.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -304,9 +296,7 @@ class SuratAktifController extends Controller
         return view('admin.surat_aktif.show', compact('surat'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -322,9 +312,7 @@ class SuratAktifController extends Controller
         return view('admin.surat_aktif.edit', compact('surat', 'mahasiswa', 'latestAkademik'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratAktifGenerator $generatorService)
     {
         $user = Auth::user();
@@ -398,9 +386,7 @@ class SuratAktifController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id) {}
 
     private function getDataSimpt(?string $nim): ?object

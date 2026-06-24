@@ -24,9 +24,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaSuratPKLController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         return view('mahasiswa.surat_pkl.index');
@@ -41,7 +39,7 @@ class MahasiswaSuratPKLController extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = SuratPKL::with([])->where('nim', $nim)
+        $query = SuratPKL::with(['akademik', 'mahasiswa', 'mahasiswa.prodi', 'mitra'])->where('nim', $nim)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
@@ -111,9 +109,7 @@ class MahasiswaSuratPKLController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user     = Auth::user();
@@ -127,9 +123,7 @@ class MahasiswaSuratPKLController extends Controller
         return view('mahasiswa.surat_pkl.create', compact('latestAkademik', 'mitra'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratPKLGenerator $generatorService)
     {
         try {
@@ -170,7 +164,7 @@ class MahasiswaSuratPKLController extends Controller
                 return back()->with('failed', $this->missingTemplateMessage($isKelompok));
             }
 
-            // Generate nomor surat
+            
             $noSurat = SuratPKL::getNextNoSurat($template->id_template, $request->akademik_id);
 
             $payload = [
@@ -190,18 +184,20 @@ class MahasiswaSuratPKLController extends Controller
                 $payload['anggota_kelompok'] = $anggotaKelompok;
             }
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
+
             $surat = SuratPKL::create($payload);
 
             try {
-                // GENERATE FILE WORD
+                
                 $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-                // UPDATE MODEL DENGAN PATH FILE
+                
                 $surat->update([
                     'file_generated' => $generatedFilePath,
                 ]);
             } catch (\Exception $e) {
-                $surat->delete();
+                \Illuminate\Support\Facades\DB::rollBack();
                 return back()->with('failed', 'Gagal memproses template dokumen. Silakan coba lagi atau hubungi admin. Error: ' . $e->getMessage());
             }
 
@@ -222,6 +218,8 @@ class MahasiswaSuratPKLController extends Controller
                 'user_id'    => $user->id,
                 'catatan'    => 'Pengajuan baru dibuat oleh mahasiswa.',
             ]);
+
+            \Illuminate\Support\Facades\DB::commit();
 
             $namaSurat = "Surat Permohonan PKL";
 
@@ -249,9 +247,7 @@ class MahasiswaSuratPKLController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -268,9 +264,7 @@ class MahasiswaSuratPKLController extends Controller
         return view('mahasiswa.surat_pkl.show', compact('surat', 'mitra'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -292,9 +286,7 @@ class MahasiswaSuratPKLController extends Controller
         return view('mahasiswa.surat_pkl.edit', compact('surat', 'latestAkademik', 'mitra'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratPKLGenerator $generatorService)
     {
         try {
@@ -393,12 +385,10 @@ class MahasiswaSuratPKLController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 
     private function rules(): array

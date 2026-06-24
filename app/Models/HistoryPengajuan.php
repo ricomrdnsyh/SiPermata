@@ -142,10 +142,10 @@ class HistoryPengajuan extends Model
         'surat_pkl'              => SuratPKL::class,
         'surat_observasi'        => SuratObservasi::class,
         'surat_keterangan_lulus' => SuratLulus::class,
-        // tambahkan jenis surat lain di sini
+        
     ];
 
-    // Akses data surat dinamis
+    
     public function getSuratAttribute()
     {
         if (!$this->tabel || !$this->id_tabel_surat) {
@@ -160,7 +160,7 @@ class HistoryPengajuan extends Model
         return $modelClass::find($this->id_tabel_surat);
     }
 
-    // 🔥 Nama surat dinamis
+    
     public function getNamaSuratAttribute()
     {
         $surat = $this->surat;
@@ -178,7 +178,7 @@ class HistoryPengajuan extends Model
             'surat_pkl'              => 'Surat Permohonan PKL',
             'surat_observasi'        => 'Surat Permohonan Observasi',
             'surat_keterangan_lulus' => 'Surat Keterangan Lulus',
-            // 'surat_pindah'           => 'Surat Keterangan Pindah',
+            
             default                  => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
         };
     }

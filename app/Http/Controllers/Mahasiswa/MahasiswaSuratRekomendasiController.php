@@ -20,9 +20,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaSuratRekomendasiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         return view('mahasiswa.surat_rekomendasi.index');
@@ -37,7 +35,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = SuratRekomendasi::with([])->where('nim', $nim)
+        $query = SuratRekomendasi::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])->where('nim', $nim)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
@@ -78,9 +76,7 @@ class MahasiswaSuratRekomendasiController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();

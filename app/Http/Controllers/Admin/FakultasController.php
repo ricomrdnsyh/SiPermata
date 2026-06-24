@@ -10,9 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FakultasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = Fakultas::all();

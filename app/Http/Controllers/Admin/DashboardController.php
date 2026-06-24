@@ -35,7 +35,7 @@ class DashboardController extends Controller
         'ditolak'   => ['ditolak'],
     ];
 
-    // Warna untuk Chart dan Card
+    
     private $chartColors = [
         'rgba(25, 118, 210, 0.7)',
         'rgba(255, 193, 7, 0.7)',
@@ -54,16 +54,16 @@ class DashboardController extends Controller
             return redirect()->back()->with('error', 'Akses ditolak. Hanya untuk Admin.');
         }
 
-        // Tentukan ID Akademik yang aktif
+        
         $defaultAkademikId = $this->getDefaultAkademikId();
         $currentAkademikId = $request->input('id_akademik', $defaultAkademikId);
 
-        // Ambil Daftar Tahun Akademik Global (Semua yang pernah ada pengajuan)
+        
         $tahunAkademikList = $this->getTahunAkademikList();
 
         $currentYearLabel = TahunAkademik::where('id_akademik', $currentAkademikId)->first()->tahun_akademik ?? 'N/A';
 
-        // Ambil Data Statistik Global (Tanpa filter NIM)
+        
         $globalStats = $this->getGlobalStats($currentAkademikId);
         $detailedStatus = $this->getDetailedStatusData($currentAkademikId);
         $chartData = $this->getChartData($currentAkademikId);
@@ -84,16 +84,14 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Helper Functions
+    
 
     private function getDefaultAkademikId()
     {
         return TahunAkademik::latest('id_akademik')->first()->id_akademik ?? null;
     }
 
-    /**
-     * Mengambil daftar Tahun Akademik yang memiliki pengajuan secara GLOBAL
-     */
+    
     private function getTahunAkademikList()
     {
         $usedAkademikIds = collect();
@@ -110,9 +108,7 @@ class DashboardController extends Controller
             ->toArray();
     }
 
-    /**
-     * Mengambil Statistik Global tanpa filter NIM (keseluruhan data)
-     */
+    
     private function getGlobalStats($akademikId)
     {
         $totalMasuk     = 0;
@@ -123,13 +119,13 @@ class DashboardController extends Controller
         $totalDitolak   = 0;
 
         foreach ($this->suratModels as $model) {
-            // Query tanpa filter NIM
+            
             $baseQuery = $model::where('akademik_id', $akademikId);
 
-            // Menghitung BARIS/RECORD surat.
+            
             $totalMasuk += $baseQuery->count();
 
-            // Menghitung berdasarkan status
+            
             $totalPengajuan += $baseQuery->clone()->whereIn('status', $this->statusMapping['pengajuan'])->count();
             $totalProses    += $baseQuery->clone()->whereIn('status', $this->statusMapping['proses'])->count();
             $totalDiterima  += $baseQuery->clone()->whereIn('status', $this->statusMapping['diterima'])->count();
@@ -140,15 +136,13 @@ class DashboardController extends Controller
         return compact('totalMasuk', 'totalPengajuan', 'totalProses', 'totalDiterima', 'totalSelesai', 'totalDitolak');
     }
 
-    /**
-     * Mengambil data detail status per jenis surat tanpa filter NIM
-     */
+    
     private function getDetailedStatusData($akademikId)
     {
         $data = [];
 
         foreach ($this->suratModels as $label => $model) {
-            // Query tanpa filter NIM
+            
             $baseQuery = $model::where('akademik_id', $akademikId);
 
             $total = $baseQuery->count();
@@ -172,16 +166,14 @@ class DashboardController extends Controller
         return $data;
     }
 
-    /**
-     * Mengambil data chart total per jenis surat tanpa filter NIM
-     */
+    
     private function getChartData($akademikId)
     {
         $labels = [];
         $dataCounts = [];
 
         foreach ($this->suratModels as $label => $model) {
-            // Query tanpa filter NIM
+            
             $count = $model::where('akademik_id', $akademikId)->count();
 
             $labels[] = $label;
@@ -194,9 +186,7 @@ class DashboardController extends Controller
         ];
     }
 
-    /**
-     * Mengambil data chart jumlah pengajuan per Fakultas
-     */
+    
     private function getFakultasChartData($akademikId)
     {
         $fakultasList = Fakultas::orderBy('nama_fakultas')->get();
@@ -222,9 +212,7 @@ class DashboardController extends Controller
         ];
     }
 
-    /**
-     * Mengambil data chart jumlah pengajuan per Program Studi
-     */
+    
     private function getProdiChartData($akademikId)
     {
         $prodiList = Prodi::with('fakultas')->orderBy('nama_prodi')->get();

@@ -9,9 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AkademikController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = TahunAkademik::all();
@@ -41,17 +39,13 @@ class AkademikController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         return view('admin.akademik.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $request->validate(
@@ -73,9 +67,7 @@ class AkademikController extends Controller
         return redirect()->route('admin.akademik.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $akademik = TahunAkademik::findOrFail($id);
@@ -83,9 +75,7 @@ class AkademikController extends Controller
         return view('admin.akademik.show', compact('akademik'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $akademik = TahunAkademik::findOrFail($id);
@@ -93,9 +83,7 @@ class AkademikController extends Controller
         return view('admin.akademik.edit', compact('akademik'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -112,9 +100,7 @@ class AkademikController extends Controller
         return redirect()->route('admin.akademik.index')->with('success', 'Data berhasil diupdate!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         $akademik = TahunAkademik::findOrFail($id);

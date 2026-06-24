@@ -13,9 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = Mahasiswa::all();

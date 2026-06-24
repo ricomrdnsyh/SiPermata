@@ -21,9 +21,7 @@ use Throwable;
 
 class BAKSuratLulusController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -52,7 +50,7 @@ class BAKSuratLulusController extends Controller
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
+        
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $query = SuratLulus::whereHas('mahasiswa', function ($q) use ($fakultasId) {
@@ -167,9 +165,7 @@ class BAKSuratLulusController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user     = Auth::user();
@@ -190,9 +186,7 @@ class BAKSuratLulusController extends Controller
         return view('bak.surat_lulus.create', compact('latestAkademik', 'mahasiswa'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratLulusGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -201,7 +195,7 @@ class BAKSuratLulusController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        // Tentukan ID Fakultas BAK yang login
+        
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
 
         if (!$fakultasIdBak) {
@@ -242,7 +236,7 @@ class BAKSuratLulusController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratLulus::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratLulus::create([
@@ -259,10 +253,10 @@ class BAKSuratLulusController extends Controller
         ]);
 
         try {
-            // GENERATE FILE WORD
+            
             $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
-            // UPDATE MODEL DENGAN PATH FILE
+            
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -292,9 +286,7 @@ class BAKSuratLulusController extends Controller
         return redirect()->route('bak.surat-keterangan-lulus.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -318,9 +310,7 @@ class BAKSuratLulusController extends Controller
         return view('bak.surat_lulus.show', compact('surat', 'dataSimpt'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -347,9 +337,7 @@ class BAKSuratLulusController extends Controller
         return view('bak.surat_lulus.edit', compact('surat', 'latestAkademik', 'mahasiswa', 'dataSimpt'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratLulusGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -430,12 +418,10 @@ class BAKSuratLulusController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 
     private function getDataSimpt(?string $nim): ?object

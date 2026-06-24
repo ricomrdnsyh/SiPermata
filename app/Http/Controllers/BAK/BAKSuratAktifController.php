@@ -21,9 +21,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BAKSuratAktifController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -52,7 +50,7 @@ class BAKSuratAktifController extends Controller
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
+        
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $query = SuratAktif::whereHas('mahasiswa', function ($q) use ($fakultasId) {
@@ -135,9 +133,7 @@ class BAKSuratAktifController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -181,9 +177,7 @@ class BAKSuratAktifController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratAktifGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -192,14 +186,14 @@ class BAKSuratAktifController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        // Tentukan ID Fakultas BAK yang login
+        
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
 
         if (!$fakultasIdBak) {
             return back()->with('failed', 'Data BAK tidak terhubung ke fakultas manapun.');
         }
 
-        // Validasi Input (Tambahkan Validasi NIM)
+        
         $request->validate([
             'nim'                       => 'required|exists:mahasiswa,nim',
             'kategori'                  => 'required|in:UMUM,PNS,PPPK',
@@ -215,14 +209,14 @@ class BAKSuratAktifController extends Controller
             'keperluan'                 => 'required',
         ]);
 
-        // Identifikasi Mahasiswa Pemohon
+        
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
 
         if ($mahasiswa->fakultas_id != $fakultasIdBak) {
             return back()->with('failed', 'Mahasiswa tersebut bukan bagian dari fakultas Anda.');
         }
 
-        // Ambil semester otomatis dari SIM-PT
+        
         $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
         $semester = $dataSimpt?->semester ?? null;
 
@@ -242,7 +236,7 @@ class BAKSuratAktifController extends Controller
             return back()->with('failed', "Template untuk kategori {$request->kategori} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratAktif::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratAktif::create([
@@ -298,9 +292,7 @@ class BAKSuratAktifController extends Controller
         return redirect()->route('bak.surat-aktif.index')->with('success', 'Pengajuan surat berhasil dibuat!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -322,9 +314,7 @@ class BAKSuratAktifController extends Controller
         return view('bak.surat_aktif.show', compact('surat'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $userBak = Auth::user();
@@ -359,9 +349,7 @@ class BAKSuratAktifController extends Controller
         return view('bak.surat_aktif.edit', compact('surat', 'mahasiswa', 'latestAkademik'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratAktifGenerator $generatorService)
     {
         $userBak = Auth::user();

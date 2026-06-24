@@ -19,9 +19,7 @@ use App\Services\SuratPenelitianGenerator;
 
 class BAKSuratPenelitianController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -50,7 +48,7 @@ class BAKSuratPenelitianController extends Controller
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
+        
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $query = SuratPenelitian::whereHas('mahasiswa', function ($q) use ($fakultasId) {
@@ -124,9 +122,7 @@ class BAKSuratPenelitianController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user     = Auth::user();
@@ -148,9 +144,7 @@ class BAKSuratPenelitianController extends Controller
         return view('bak.surat_penelitian.create', compact('latestAkademik', 'mitra', 'mahasiswa'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratPenelitianGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -159,7 +153,7 @@ class BAKSuratPenelitianController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        // Tentukan ID Fakultas BAK yang login
+        
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
 
         if (!$fakultasIdBak) {
@@ -190,7 +184,7 @@ class BAKSuratPenelitianController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratPenelitian::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratPenelitian::create([
@@ -208,10 +202,10 @@ class BAKSuratPenelitianController extends Controller
         ]);
 
         try {
-            // GENERATE FILE WORD
+            
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-            // UPDATE MODEL DENGAN PATH FILE
+            
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -241,9 +235,7 @@ class BAKSuratPenelitianController extends Controller
         return redirect()->route('bak.surat-izin-penelitian.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -265,9 +257,7 @@ class BAKSuratPenelitianController extends Controller
         return view('bak.surat_penelitian.show', compact('surat'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -293,9 +283,7 @@ class BAKSuratPenelitianController extends Controller
         return view('bak.surat_penelitian.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratPenelitianGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -362,11 +350,9 @@ class BAKSuratPenelitianController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 }

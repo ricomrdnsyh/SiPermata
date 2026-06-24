@@ -20,9 +20,7 @@ use App\Services\SuratPenelitianGenerator;
 
 class SuratPenelitianController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -121,9 +119,7 @@ class SuratPenelitianController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -139,9 +135,7 @@ class SuratPenelitianController extends Controller
         return view('admin.surat_penelitian.create', compact('mahasiswa', 'latestAkademik', 'mitra'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratPenelitianGenerator $generatorService)
     {
         $user = Auth::user();
@@ -180,7 +174,7 @@ class SuratPenelitianController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratPenelitian::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratPenelitian::create([
@@ -198,10 +192,10 @@ class SuratPenelitianController extends Controller
         ]);
 
         try {
-            // GENERATE FILE WORD
+            
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-            // UPDATE MODEL DENGAN PATH FILE
+            
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -231,9 +225,7 @@ class SuratPenelitianController extends Controller
         return redirect()->route('admin.surat-izin-penelitian.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -249,9 +241,7 @@ class SuratPenelitianController extends Controller
         return view('admin.surat_penelitian.show', compact('surat'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -271,9 +261,7 @@ class SuratPenelitianController extends Controller
         return view('admin.surat_penelitian.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratPenelitianGenerator $generatorService)
     {
         $user = Auth::user();
@@ -334,11 +322,9 @@ class SuratPenelitianController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 }

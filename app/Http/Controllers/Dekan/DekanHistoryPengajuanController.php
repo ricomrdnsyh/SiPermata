@@ -76,7 +76,7 @@ class DekanHistoryPengajuanController extends Controller
             return DataTables::of(HistoryPengajuan::whereRaw('1=0'))->make(true);
         }
 
-        $query = HistoryPengajuan::with([])
+        $query = HistoryPengajuan::with(['mahasiswa', 'mahasiswa.prodi'])
             ->where('fakultas_id', $fakultasId)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
@@ -861,7 +861,7 @@ class DekanHistoryPengajuanController extends Controller
         $filePath = $surat->file_generated;
         $disk = 'local';
 
-        // Cek keberadaan file
+        
         if (!Storage::disk($disk)->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }
@@ -888,7 +888,7 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Jenis surat tidak valid.'], 404);
         }
 
-        // Ambil data Surat dan Mahasiswa
+        
         $surat = $modelClass::find($id);
 
         $mahasiswa = Mahasiswa::where('nim', $surat->nim)->first();
@@ -897,7 +897,7 @@ class DekanHistoryPengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Surat atau data mahasiswa tidak valid.'], 404);
         }
 
-        $filePath = $surat->file_generated;      // sekarang 'surat/aktif/surat_1.pdf'
+        $filePath = $surat->file_generated;      
         if (!Storage::disk('local')->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }

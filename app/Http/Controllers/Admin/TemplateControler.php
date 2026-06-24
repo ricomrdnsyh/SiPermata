@@ -13,9 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TemplateControler extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = Template::with(['fakultas', 'prodi'])->get();
@@ -105,9 +103,7 @@ class TemplateControler extends Controller
         return response()->json($prodi);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $fakultas = Fakultas::all();
@@ -115,9 +111,7 @@ class TemplateControler extends Controller
         return view('admin.template.create', compact('fakultas', 'prodi'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -163,9 +157,7 @@ class TemplateControler extends Controller
         return redirect()->route('admin.template.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $data = Template::with(['fakultas', 'prodi'])->findOrFail($id);
@@ -173,9 +165,7 @@ class TemplateControler extends Controller
         return view('admin.template.show', compact('data'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $data     = Template::findOrFail($id);
@@ -185,9 +175,7 @@ class TemplateControler extends Controller
         return view('admin.template.edit', compact('data', 'fakultas', 'prodi'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         $template = Template::findOrFail($id);
@@ -206,9 +194,9 @@ class TemplateControler extends Controller
             'fakultas_id.required'   => 'Fakultas harus diisi.',
         ]);
 
-        $filePath = $template->file; // Simpan path file lama
+        $filePath = $template->file; 
         if ($request->hasFile('file')) {
-            // Hapus file lama jika ada
+            
             if ($template->file && Storage::disk('local')->exists($template->file)) {
                 Storage::disk()->delete($template->file);
             }
@@ -239,13 +227,11 @@ class TemplateControler extends Controller
         return redirect()->route('admin.template.index')->with('success', 'Data berhasil diupdate!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         $data = Template::findOrFail($id);
-        // Hapus file dari storage jika ada
+        
         if ($data->file && Storage::disk('local')->exists($data->file)) {
             Storage::disk()->delete($data->file);
         }

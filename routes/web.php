@@ -178,13 +178,13 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/prodi-by-fakultas/{fakultas_id}', [HistoryPengajuanController::class, 'getProdiByFakultas'])->name('prodi.byFakultas');
 
-        // Rekapitulasi Surat
+        
         Route::get('/rekapitulasi-surat', [AdminRekapitulasiSuratController::class, 'index'])->name('rekapitulasi.index');
         Route::get('/rekapitulasi-surat/data', [AdminRekapitulasiSuratController::class, 'getData'])->name('rekapitulasi.data');
         Route::get('/rekapitulasi-surat/export-excel', [AdminRekapitulasiSuratController::class, 'exportExcel'])->name('rekapitulasi.exportExcel');
         Route::get('/rekapitulasi-surat/download-bulk', [AdminRekapitulasiSuratController::class, 'downloadBulkPdf'])->name('rekapitulasi.downloadBulk');
 
-        // Eligible Lulus (Data Mahasiswa Lulusan)
+        
         Route::get('/eligible-lulus', [AdminEligibleLulusController::class, 'index'])->name('eligible-lulus.index');
         Route::get('/eligible-lulus/data', [AdminEligibleLulusController::class, 'getData'])->name('eligible-lulus.data');
         Route::post('/eligible-lulus', [AdminEligibleLulusController::class, 'store'])->name('eligible-lulus.store');
@@ -288,13 +288,13 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/bak/history/bulk-approve', [BAKHistoryPengajuanController::class, 'bulkApprove'])->name('history.bulkApprove');
 
-        // Rekapitulasi Surat
+        
         Route::get('/rekapitulasi-surat', [BAKRekapitulasiSuratController::class, 'index'])->name('rekapitulasi.index');
         Route::get('/rekapitulasi-surat/data', [BAKRekapitulasiSuratController::class, 'getData'])->name('rekapitulasi.data');
         Route::get('/rekapitulasi-surat/export-excel', [BAKRekapitulasiSuratController::class, 'exportExcel'])->name('rekapitulasi.exportExcel');
         Route::get('/rekapitulasi-surat/download-bulk', [BAKRekapitulasiSuratController::class, 'downloadBulkPdf'])->name('rekapitulasi.downloadBulk');
 
-        // Eligible Lulus
+        
         Route::get('/eligible-lulus', [BAKEligibleLulusController::class, 'index'])->name('eligible-lulus.index');
         Route::get('/eligible-lulus/data', [BAKEligibleLulusController::class, 'getData'])->name('eligible-lulus.data');
         Route::post('/eligible-lulus', [BAKEligibleLulusController::class, 'store'])->name('eligible-lulus.store');

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    // Daftar Model Surat
+    
     private $suratModels = [
         'Surat Keterangan Aktif'        => SuratAktif::class,
         'Surat Izin Penelitian'         => SuratPenelitian::class,
@@ -36,7 +36,7 @@ class DashboardController extends Controller
         'ditolak'   => ['ditolak'],
     ];
 
-    // Warna untuk Chart dan Card
+    
     private $chartColors = [
         'rgba(25, 118, 210, 0.7)',
         'rgba(255, 193, 7, 0.7)',
@@ -59,19 +59,19 @@ class DashboardController extends Controller
             return redirect()->back()->with('error', 'Akses ditolak atau akun DEKAN belum terasosiasi dengan Fakultas.');
         }
 
-        // Filter Mahasiswa Fakultas
+        
         $validNimList = Mahasiswa::where('fakultas_id', $userFakultasId)->pluck('nim')->toArray();
 
-        // Tentukan ID Akademik yang aktif
+        
         $defaultAkademikId = $this->getDefaultAkademikId();
         $currentAkademikId = $request->input('id_akademik', $defaultAkademikId);
 
-        // Ambil Daftar Tahun Akademik dan Label
+        
         $tahunAkademikList = $this->getTahunAkademikList($validNimList);
 
         $currentYearLabel = TahunAkademik::where('id_akademik', $currentAkademikId)->first()->tahun_akademik ?? 'N/A';
 
-        // Ambil Data Statistik
+        
         $globalStats = $this->getGlobalStats($currentAkademikId, $validNimList);
         $detailedStatus = $this->getDetailedStatusData($currentAkademikId, $validNimList);
         $chartData = $this->getChartData($currentAkademikId, $validNimList);
@@ -90,7 +90,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Helper Functions
+    
 
     private function getDefaultAkademikId()
     {
@@ -131,10 +131,10 @@ class DashboardController extends Controller
             $baseQuery = $model::where('akademik_id', $akademikId)
                 ->whereIn('nim', $validNimList);
 
-            // Menghitung BARIS/RECORD surat.
+            
             $totalMasuk += $baseQuery->count();
 
-            // Menghitung berdasarkan status
+            
             $totalPengajuan += $baseQuery->clone()->whereIn('status', $this->statusMapping['pengajuan'])->count();
             $totalProses    += $baseQuery->clone()->whereIn('status', $this->statusMapping['proses'])->count();
             $totalDiterima  += $baseQuery->clone()->whereIn('status', $this->statusMapping['diterima'])->count();

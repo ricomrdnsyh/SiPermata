@@ -22,9 +22,7 @@ use Throwable;
 
 class SuratLulusController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -164,9 +162,7 @@ class SuratLulusController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -181,9 +177,7 @@ class SuratLulusController extends Controller
         return view('admin.surat_lulus.create', compact('mahasiswa', 'latestAkademik'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratLulusGenerator $generatorService)
     {
         $user = Auth::user();
@@ -228,7 +222,7 @@ class SuratLulusController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratLulus::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratLulus::create([
@@ -245,10 +239,10 @@ class SuratLulusController extends Controller
         ]);
 
         try {
-            // GENERATE FILE WORD
+            
             $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
-            // UPDATE MODEL DENGAN PATH FILE
+            
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -278,9 +272,7 @@ class SuratLulusController extends Controller
         return redirect()->route('admin.surat-keterangan-lulus.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -298,9 +290,7 @@ class SuratLulusController extends Controller
         return view('admin.surat_lulus.show', compact('surat', 'dataSimpt'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -321,9 +311,7 @@ class SuratLulusController extends Controller
         return view('admin.surat_lulus.edit', compact('surat', 'latestAkademik', 'mahasiswa', 'dataSimpt'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratLulusGenerator $generatorService)
     {
         $user = Auth::user();
@@ -394,12 +382,10 @@ class SuratLulusController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 
     private function getDataSimpt(?string $nim): ?object

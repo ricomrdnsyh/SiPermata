@@ -25,9 +25,7 @@ use App\Services\SuratObservasiGenerator;
 
 class SuratObservasiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -152,9 +150,7 @@ class SuratObservasiController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -172,9 +168,7 @@ class SuratObservasiController extends Controller
         return view('admin.surat_observasi.create', compact('mahasiswa', 'latestAkademik', 'mitra'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratObservasiGenerator $generatorService)
     {
         $user = Auth::user();
@@ -223,7 +217,7 @@ class SuratObservasiController extends Controller
             return back()->with('failed', $this->missingTemplateMessage($isKelompok));
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratObservasi::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $payload = [
@@ -247,10 +241,10 @@ class SuratObservasiController extends Controller
         $surat = SuratObservasi::create($payload);
 
         try {
-            // GENERATE FILE WORD
+            
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-            // UPDATE MODEL DENGAN PATH FILE
+            
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -280,9 +274,7 @@ class SuratObservasiController extends Controller
         return redirect()->route('admin.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -298,9 +290,7 @@ class SuratObservasiController extends Controller
         return view('admin.surat_observasi.show', compact('surat'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -322,9 +312,7 @@ class SuratObservasiController extends Controller
         return view('admin.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratObservasiGenerator $generatorService)
     {
         $user = Auth::user();
@@ -420,12 +408,10 @@ class SuratObservasiController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 
     private function rules(): array

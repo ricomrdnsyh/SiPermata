@@ -35,7 +35,7 @@ class MahasiswaHistoryPegajuan extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = HistoryPengajuan::with([])->where('nim', $nim)
+        $query = HistoryPengajuan::with(['mahasiswa', 'mahasiswa.prodi'])->where('nim', $nim)
             ->whereIn('status', ['selesai']);
 
         return DataTables::of($query)
@@ -172,7 +172,7 @@ class MahasiswaHistoryPegajuan extends Controller
         $filePath = $surat->file_generated;
         $disk = 'local';
 
-        // Cek keberadaan file
+        
         if (!Storage::disk($disk)->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }

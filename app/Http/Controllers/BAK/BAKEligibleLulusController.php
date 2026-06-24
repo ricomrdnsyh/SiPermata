@@ -16,9 +16,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BAKEligibleLulusController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -45,9 +43,7 @@ class BAKEligibleLulusController extends Controller
         return view('bak.eligible_lulus.index', compact('listProdi', 'listTahunAkademik', 'currentTahunAkademik', 'mahasiswa'));
     }
 
-    /**
-     * Get data for DataTables.
-     */
+    
     public function getData(Request $request)
     {
         $user = Auth::user();
@@ -115,9 +111,7 @@ class BAKEligibleLulusController extends Controller
             ->make(true);
     }
 
-    /**
-     * Store a new eligible mahasiswa (manual).
-     */
+    
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -138,7 +132,7 @@ class BAKEligibleLulusController extends Controller
             return back()->with('failed', 'Anda belum terhubung ke fakultas manapun.');
         }
 
-        // Validasi NIM ada di tabel mahasiswa dan sesuai fakultas
+        
         $mahasiswa = Mahasiswa::where('nim', $request->nim)
             ->where('fakultas_id', $fakultasId)
             ->first();
@@ -147,7 +141,7 @@ class BAKEligibleLulusController extends Controller
             return back()->with('failed', 'NIM tidak ditemukan atau bukan mahasiswa fakultas Anda.');
         }
 
-        // Cek duplikasi
+        
         $exists = MahasiswaEligibleLulus::where('nim', $request->nim)
             ->where('akademik_id', $request->akademik_id)
             ->exists();
@@ -167,9 +161,7 @@ class BAKEligibleLulusController extends Controller
         return back()->with('success', 'Mahasiswa berhasil ditambahkan ke daftar mahasiswa lulusan.');
     }
 
-    /**
-     * Import eligible mahasiswa from Excel.
-     */
+    
     public function import(Request $request)
     {
         $user = Auth::user();
@@ -213,9 +205,7 @@ class BAKEligibleLulusController extends Controller
         return back()->with('failed', $message);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         $user = Auth::user();
@@ -236,9 +226,7 @@ class BAKEligibleLulusController extends Controller
         return response()->json(['success' => true, 'message' => 'Data mahasiswa lulusan berhasil dihapus.']);
     }
 
-    /**
-     * Download import template.
-     */
+    
     public function downloadTemplate()
     {
         $user = Auth::user();
@@ -255,7 +243,7 @@ class BAKEligibleLulusController extends Controller
         $sheet->setCellValue('C1', 'judul_penelitian');
         $sheet->getStyle('A1:C1')->getFont()->setBold(true);
 
-        // Contoh data
+        
         $sheet->setCellValue('A2', '2021001001');
         $sheet->setCellValue('B2', 'Ahmad Ridho');
         $sheet->setCellValue('C2', 'Sistem Informasi A');

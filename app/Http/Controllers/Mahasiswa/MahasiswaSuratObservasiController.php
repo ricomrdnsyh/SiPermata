@@ -25,9 +25,7 @@ use App\Services\SuratObservasiGenerator;
 
 class MahasiswaSuratObservasiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         return view('mahasiswa.surat_observasi.index');
@@ -42,7 +40,7 @@ class MahasiswaSuratObservasiController extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = SuratObservasi::with([])->where('nim', $nim)
+        $query = SuratObservasi::with(['akademik', 'mahasiswa', 'mahasiswa.prodi', 'mitra'])->where('nim', $nim)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
@@ -112,9 +110,7 @@ class MahasiswaSuratObservasiController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user = Auth::user();
@@ -130,9 +126,7 @@ class MahasiswaSuratObservasiController extends Controller
         return view('mahasiswa.surat_observasi.create', compact('latestAkademik', 'mitra', 'dataSimpt'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratObservasiGenerator $generatorService)
     {
         try {
@@ -182,7 +176,7 @@ class MahasiswaSuratObservasiController extends Controller
                 return back()->with('failed', $this->missingTemplateMessage($isKelompok));
             }
 
-            // Generate nomor surat
+            
             $noSurat = SuratObservasi::getNextNoSurat($template->id_template, $request->akademik_id);
 
             $payload = [
@@ -206,10 +200,10 @@ class MahasiswaSuratObservasiController extends Controller
             $surat = SuratObservasi::create($payload);
 
             try {
-                // GENERATE FILE WORD
+                
                 $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-                // UPDATE MODEL DENGAN PATH FILE
+                
                 $surat->update([
                     'file_generated' => $generatedFilePath,
                 ]);
@@ -262,9 +256,7 @@ class MahasiswaSuratObservasiController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         $user = Auth::user();
@@ -281,9 +273,7 @@ class MahasiswaSuratObservasiController extends Controller
         return view('mahasiswa.surat_observasi.show', compact('surat', 'mitra'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -306,9 +296,7 @@ class MahasiswaSuratObservasiController extends Controller
         return view('mahasiswa.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'dataSimpt'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratObservasiGenerator $generatorService)
     {
         try {
@@ -417,12 +405,10 @@ class MahasiswaSuratObservasiController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 
     private function rules(): array

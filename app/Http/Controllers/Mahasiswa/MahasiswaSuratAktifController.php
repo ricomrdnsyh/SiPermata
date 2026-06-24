@@ -34,7 +34,7 @@ class MahasiswaSuratAktifController extends Controller
             return response()->json(['error' => 'Data mahasiswa tidak ditemukan.'], 403);
         }
 
-        $query = SuratAktif::with([])->where('nim', $nim)
+        $query = SuratAktif::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])->where('nim', $nim)
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
 
         return DataTables::of($query)
@@ -123,7 +123,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
         }
 
-        // Ambil semester otomatis dari SIM-PT
+        
         $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
         $semester = $dataSimpt?->semester;
 
@@ -147,7 +147,7 @@ class MahasiswaSuratAktifController extends Controller
 
         $namaTemplate = $kategoriToTemplate[$request->kategori];
 
-        // Cari template berdasarkan kategori + fakultas
+        
         $template = Template::where('jenis_surat', $namaTemplate)
             ->where('fakultas_id', $fakultasId)
             ->first();
@@ -156,7 +156,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', "Template untuk kategori {$request->kategori} belum tersedia untuk fakultas Anda.");
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratAktif::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratAktif::create([
@@ -267,7 +267,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Data surat tidak ditemukan.');
         }
 
-        // Ambil semester otomatis dari SIM-PT
+        
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
         $semester = $dataSimpt?->semester;
 
@@ -304,7 +304,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen setelah update. Error: ' . $e->getMessage());
         }
 
-        // Update history pengajuan
+        
         $pengajuan->update([
             'status'  => 'pengajuan',
             'catatan' => 'Diajukan ulang oleh mahasiswa'

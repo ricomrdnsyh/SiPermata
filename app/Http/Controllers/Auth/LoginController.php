@@ -48,14 +48,14 @@ class LoginController extends Controller
             $ch = curl_init();
             curl_setopt_array($ch, [
                 CURLOPT_URL => $logoutUrls,
-                CURLOPT_RETURNTRANSFER => false, // Tidak perlu respons
-                CURLOPT_HEADER => false,        // Abaikan header
-                CURLOPT_TIMEOUT => 10,          // Timeout 10 detik
-                CURLOPT_CUSTOMREQUEST => 'GET', // Metode GET
+                CURLOPT_RETURNTRANSFER => false, 
+                CURLOPT_HEADER => false,        
+                CURLOPT_TIMEOUT => 10,          
+                CURLOPT_CUSTOMREQUEST => 'GET', 
             ]);
 
-            curl_exec($ch); // Eksekusi cURL
-            curl_close($ch); // Tutup handle
+            curl_exec($ch); 
+            curl_close($ch); 
         }
 
         Auth::logout();

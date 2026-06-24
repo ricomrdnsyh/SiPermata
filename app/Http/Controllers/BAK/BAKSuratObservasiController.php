@@ -24,9 +24,7 @@ use App\Services\SuratObservasiGenerator;
 
 class BAKSuratObservasiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $user = Auth::user();
@@ -55,7 +53,7 @@ class BAKSuratObservasiController extends Controller
             abort(403);
         }
 
-        // Ambil fakultas_id dari data penduduk BAK
+        
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $query = SuratObservasi::whereHas('mahasiswa', function ($q) use ($fakultasId) {
@@ -155,9 +153,7 @@ class BAKSuratObservasiController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         $user     = Auth::user();
@@ -182,9 +178,7 @@ class BAKSuratObservasiController extends Controller
         return view('bak.surat_observasi.create', compact('latestAkademik', 'mitra', 'mahasiswa'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request, SuratObservasiGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -193,7 +187,7 @@ class BAKSuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        // Tentukan ID Fakultas BAK yang login
+        
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
 
         if (!$fakultasIdBak) {
@@ -235,7 +229,7 @@ class BAKSuratObservasiController extends Controller
             return back()->with('failed', $this->missingTemplateMessage($isKelompok));
         }
 
-        // Generate nomor surat
+        
         $noSurat = SuratObservasi::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $payload = [
@@ -259,10 +253,10 @@ class BAKSuratObservasiController extends Controller
         $surat = SuratObservasi::create($payload);
 
         try {
-            // GENERATE FILE WORD
+            
             $generatedFilePath = $generatorService->generateWord($surat, $template);
 
-            // UPDATE MODEL DENGAN PATH FILE
+            
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -292,9 +286,7 @@ class BAKSuratObservasiController extends Controller
         return redirect()->route('bak.surat-observasi.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
 
@@ -317,9 +309,7 @@ class BAKSuratObservasiController extends Controller
         return view('bak.surat_observasi.show', compact('surat'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -348,9 +338,7 @@ class BAKSuratObservasiController extends Controller
         return view('bak.surat_observasi.edit', compact('surat', 'latestAkademik', 'mitra', 'mahasiswa'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id, SuratObservasiGenerator $generatorService)
     {
         $userBak = Auth::user();
@@ -449,12 +437,10 @@ class BAKSuratObservasiController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        
     }
 
     private function rules(): array

@@ -302,7 +302,7 @@ class HistoryPengajuanController extends Controller
         'surat_pkl'              => SuratPKL::class,
         'surat_observasi'        => SuratObservasi::class,
         'surat_keterangan_lulus' => SuratLulus::class,
-        // Tambahkan jenis surat lain di sini
+        
     ];
 
     private function getModelClass($tableName)
@@ -676,7 +676,7 @@ class HistoryPengajuanController extends Controller
         $filePath = $surat->file_generated;
         $disk = 'local';
 
-        // Cek keberadaan file
+        
         if (!Storage::disk($disk)->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }

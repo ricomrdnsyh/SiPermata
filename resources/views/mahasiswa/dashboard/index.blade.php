@@ -71,7 +71,7 @@
                 <div class="card border-0 mb-7 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);">
                     <div class="card-body p-0">
                         <div class="row g-0">
-                            <!-- Kiri: Welcome & User -->
+                            
                             <div class="col-lg-6">
                                 <div class="p-8 h-100 d-flex flex-column justify-content-center">
                                     <div class="d-flex align-items-start gap-4">
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
 
-                            <!-- Kanan: Informasi Penting -->
+                            
                             <div class="col-lg-6">
                                 <div class="p-8 h-100 d-flex flex-column justify-content-center border-start border-white border-opacity-10" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);">
                                     <div class="d-flex align-items-start gap-4">

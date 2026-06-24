@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = User::with('mahasiswa', 'penduduk.jabatan')->get();
@@ -52,9 +50,7 @@ class AdminController extends Controller
 
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $rules = [

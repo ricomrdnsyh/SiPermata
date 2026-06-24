@@ -80,7 +80,7 @@ class BAKHistoryPengajuanController extends Controller
             ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
         $tahunAkademikFilter = $request->input('tahun_akademik_filter');
-        $tabelNames = array_keys($this->listSurat); // nama tabel surat
+        $tabelNames = array_keys($this->listSurat); 
 
         if (!$request->has('tahun_akademik_filter')) {
             $currentTahunAkademik = TahunAkademik::orderBy('id_akademik', 'desc')->first();
@@ -264,7 +264,7 @@ class BAKHistoryPengajuanController extends Controller
         'surat_pkl'              => SuratPKL::class,
         'surat_observasi'        => SuratObservasi::class,
         'surat_keterangan_lulus' => SuratLulus::class,
-        // Tambahkan jenis surat lain di sini
+        
     ];
 
     public function approve($id)
@@ -285,7 +285,7 @@ class BAKHistoryPengajuanController extends Controller
             return redirect()->back()->with('failed', 'Surat ini sudah diproses.');
         }
 
-        $jenisTabel   = $pengajuan->tabel;         // contoh: 'surat_aktif'
+        $jenisTabel   = $pengajuan->tabel;         
         $idSuratUtama = $pengajuan->id_tabel_surat;
 
         if (!isset($this->suratModels[$jenisTabel])) {
@@ -707,7 +707,7 @@ class BAKHistoryPengajuanController extends Controller
         $filePath = $surat->file_generated;
         $disk = 'local';
 
-        // Cek keberadaan file
+        
         if (!Storage::disk($disk)->exists($filePath)) {
             abort(404, 'File di server tidak ditemukan.');
         }

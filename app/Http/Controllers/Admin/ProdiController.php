@@ -11,9 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProdiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $data = Prodi::with('fakultas')->get();

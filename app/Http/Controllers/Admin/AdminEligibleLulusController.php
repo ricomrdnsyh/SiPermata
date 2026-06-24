@@ -17,9 +17,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AdminEligibleLulusController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         if (Auth::user()->role !== 'admin') {
@@ -41,9 +39,7 @@ class AdminEligibleLulusController extends Controller
         ));
     }
 
-    /**
-     * Get data for DataTables.
-     */
+    
     public function getData(Request $request)
     {
         if (Auth::user()->role !== 'admin') {
@@ -119,9 +115,7 @@ class AdminEligibleLulusController extends Controller
             ->make(true);
     }
 
-    /**
-     * Store a new eligible mahasiswa (manual).
-     */
+    
     public function store(Request $request)
     {
         if (Auth::user()->role !== 'admin') {
@@ -142,7 +136,7 @@ class AdminEligibleLulusController extends Controller
 
         $fakultasId = $mahasiswa->fakultas_id;
 
-        // Cek duplikasi
+        
         $exists = MahasiswaEligibleLulus::where('nim', $request->nim)
             ->where('akademik_id', $request->akademik_id)
             ->exists();
@@ -162,9 +156,7 @@ class AdminEligibleLulusController extends Controller
         return back()->with('success', 'Mahasiswa berhasil ditambahkan ke daftar mahasiswa lulusan.');
     }
 
-    /**
-     * Import eligible mahasiswa from Excel.
-     */
+    
     public function import(Request $request)
     {
         if (Auth::user()->role !== 'admin') {
@@ -177,7 +169,7 @@ class AdminEligibleLulusController extends Controller
         ]);
 
         $import = new MahasiswaEligibleLulusImport(
-            null, // null for admin to automatically resolve per-student faculty from DB
+            null, 
             $request->akademik_id,
             Auth::user()->id
         );
@@ -201,9 +193,7 @@ class AdminEligibleLulusController extends Controller
         return back()->with('failed', $message);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         if (Auth::user()->role !== 'admin') {
@@ -216,9 +206,7 @@ class AdminEligibleLulusController extends Controller
         return response()->json(['success' => true, 'message' => 'Data mahasiswa lulusan berhasil dihapus.']);
     }
 
-    /**
-     * Download import template.
-     */
+    
     public function downloadTemplate()
     {
         if (Auth::user()->role !== 'admin') {
@@ -233,7 +221,7 @@ class AdminEligibleLulusController extends Controller
         $sheet->setCellValue('C1', 'judul_penelitian');
         $sheet->getStyle('A1:C1')->getFont()->setBold(true);
 
-        // Contoh data
+        
         $sheet->setCellValue('A2', '2021001001');
         $sheet->setCellValue('B2', 'Ahmad Ridho');
         $sheet->setCellValue('C2', 'Sistem Informasi A');
