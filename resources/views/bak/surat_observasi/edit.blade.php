@@ -146,9 +146,9 @@
                                     </div>
                                     <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-sm btn-primary w-250px">
+                                            class="btn btn-primary w-250px">
                                             <span class="indicator-label">
-                                                Update Pengajuan
+                                                <i class="fas fa-save me-2"></i> Update Pengajuan
                                             </span>
                                             <span class="indicator-progress">
                                                 Tunggu sebentar...
@@ -278,7 +278,7 @@
             function buildAnggotaRow(index) {
                 return '' +
                     '<tr>' +
-                    '    <td>' +
+                    '    <td class="ps-3">' +
                     '        <select name="anggota_kelompok[' + index + '][nim]" class="form-select form-select-sm anggota-nim-select" data-control="select2" data-placeholder="Pilih mahasiswa">' +
                     buildMahasiswaOptions('') +
                     '        </select>' +
@@ -292,8 +292,8 @@
                     '        <input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-prodi-input" placeholder="Prodi mahasiswa" disabled />' +
                     '        <input type="hidden" name="anggota_kelompok[' + index + '][prodi]" class="anggota-prodi-hidden-input" />' +
                     '    </td>' +
-                    '    <td class="text-center">' +
-                    '        <button type="button" class="btn btn-sm btn-danger remove-anggota-kelompok" title="Hapus anggota" aria-label="Hapus anggota"><i class="fas fa-trash-alt"></i></button>' +
+                    '    <td class="pe-4 text-center">' +
+                    '        <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-anggota-kelompok hover-elevate-up" title="Hapus anggota" aria-label="Hapus anggota"><i class="fas fa-trash-alt"></i></button>' +
                     '    </td>' +
                     '</tr>';
             }

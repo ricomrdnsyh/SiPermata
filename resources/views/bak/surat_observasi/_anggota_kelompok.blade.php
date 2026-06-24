@@ -2,51 +2,35 @@
     $anggotaKelompok = collect($anggotaKelompok ?? [])->values();
 @endphp
 
-<style>
-    .anggota-autofill-input[disabled] {
-        background-color: #f5f8fa !important;
-        color: #7e8299 !important;
-        opacity: 1 !important;
-        cursor: not-allowed;
-    }
-
-    #add-anggota-kelompok-bak:hover,
-    #add-anggota-kelompok-bak:hover i {
-        color: #ffffff !important;
-    }
-</style>
-
-<div class="col-12">
-    <div class="separator border-gray-200 my-4"></div>
-    <div class="fv-row mb-3">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-            <div>
-                <label class="fw-semibold fs-6 mb-1 d-block">Anggota Kelompok</label>
-                <div class="text-muted fs-7">
-                    Tambahkan anggota kelompok dengan memilih mahasiswa dari fakultas Anda.
-                </div>
+<div class="col-12 mt-5">
+    <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-4 p-4">
+        <i class="fas fa-users fs-2x text-primary me-4 mt-1"></i>
+        <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+            <div class="mb-3 mb-md-0 fw-semibold">
+                <h5 class="text-gray-900 fw-bold mb-1">Pengajuan Kelompok? (Opsional)</h5>
+                <div class="fs-7 text-gray-700 pe-7">Tambahkan anggota kelompok dengan memilih mahasiswa dari fakultas Anda. Nama dan Prodi akan terisi otomatis.</div>
             </div>
-            <button type="button" class="btn btn-sm btn-light-primary" id="add-anggota-kelompok-bak"
-                onclick="window.addAnggotaKelompokBakRow && window.addAnggotaKelompokBakRow()">
-                <i class="fas fa-plus me-2"></i>
-                Tambah Anggota
+            <button type="button" class="btn btn-primary btn-sm px-4 py-2 align-self-center text-nowrap hover-elevate-up shadow-sm" id="add-anggota-kelompok-bak" onclick="window.addAnggotaKelompokBakRow && window.addAnggotaKelompokBakRow()">
+                <i class="fas fa-user-plus me-1"></i> Tambah Anggota
             </button>
         </div>
+    </div>
 
-        <div class="table-responsive">
-            <table class="table table-sm align-middle table-row-dashed mb-0">
+    <div class="fv-row mb-3">
+        <div class="table-responsive border rounded bg-body shadow-sm">
+            <table class="table table-sm table-row-bordered table-row-gray-200 align-middle gs-0 gy-3 mb-0">
                 <thead>
-                    <tr class="text-muted fw-bold">
-                        <th style="width: 30%">Mahasiswa</th>
+                    <tr class="fw-bold text-muted bg-light fs-7">
+                        <th class="ps-3 rounded-start" style="width: 30%">NIM Anggota</th>
                         <th style="width: 30%">Nama Mahasiswa</th>
-                        <th style="width: 24%">Prodi</th>
-                        <th style="width: 16%" class="text-center">Aksi</th>
+                        <th style="width: 25%">Program Studi</th>
+                        <th class="pe-4 text-center rounded-end" style="width: 15%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="anggota-kelompok-container">
                     @foreach ($anggotaKelompok as $index => $anggota)
                         <tr>
-                            <td>
+                            <td class="ps-3">
                                 <select name="anggota_kelompok[{{ $index }}][nim]"
                                     class="form-select form-select-sm anggota-nim-select" data-control="select2"
                                     data-placeholder="Pilih mahasiswa">
@@ -84,8 +68,8 @@
                                     class="anggota-prodi-hidden-input"
                                     value="{{ old("anggota_kelompok.$index.prodi", data_get($anggota, 'prodi')) }}" />
                             </td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-danger remove-anggota-kelompok"
+                            <td class="pe-4 text-center">
+                                <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-anggota-kelompok hover-elevate-up"
                                     title="Hapus anggota" aria-label="Hapus anggota">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>

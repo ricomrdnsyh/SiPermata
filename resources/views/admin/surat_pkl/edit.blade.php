@@ -76,8 +76,10 @@
                                         @include('admin.surat_pkl._anggota_kelompok', ['anggotaKelompok' => old('anggota_kelompok', $surat->anggota_kelompok ?? []), 'mahasiswa' => $mahasiswa])
                                     </div>
                                     <div class="text-center mt-4">
-                                        <button type="submit" data-kt-contacts-type="submit" class="btn btn-sm btn-primary w-250px">
-                                            <span class="indicator-label">Update Pengajuan</span>
+                                        <button type="submit" data-kt-contacts-type="submit" class="btn btn-primary w-250px">
+                                            <span class="indicator-label">
+                                                <i class="fas fa-save me-2"></i> Update Pengajuan
+                                            </span>
                                             <span class="indicator-progress">Tunggu sebentar...<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                         </button>
                                     </div>
@@ -123,7 +125,7 @@
                 return html;
             }
             function buildAnggotaRow(index) {
-                return '<tr><td><select name="anggota_kelompok[' + index + '][nim]" class="form-select form-select-sm anggota-nim-select" data-control="select2" data-placeholder="Pilih mahasiswa">' + buildMahasiswaOptions('') + '</select><div class="invalid-feedback anggota-nim-feedback"></div></td><td><input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-nama-input" placeholder="Nama mahasiswa" disabled /><input type="hidden" name="anggota_kelompok[' + index + '][nama]" class="anggota-nama-hidden-input" /></td><td><input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-prodi-input" placeholder="Prodi mahasiswa" disabled /><input type="hidden" name="anggota_kelompok[' + index + '][prodi]" class="anggota-prodi-hidden-input" /></td><td class="text-center"><button type="button" class="btn btn-sm btn-danger remove-anggota-kelompok" title="Hapus anggota"><i class="fas fa-trash-alt"></i></button></td></tr>';
+                return '<tr><td class="ps-3"><select name="anggota_kelompok[' + index + '][nim]" class="form-select form-select-sm anggota-nim-select" data-control="select2" data-placeholder="Pilih mahasiswa">' + buildMahasiswaOptions('') + '</select><div class="invalid-feedback anggota-nim-feedback"></div></td><td><input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-nama-input" placeholder="Nama mahasiswa" disabled /><input type="hidden" name="anggota_kelompok[' + index + '][nama]" class="anggota-nama-hidden-input" /></td><td><input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-prodi-input" placeholder="Prodi mahasiswa" disabled /><input type="hidden" name="anggota_kelompok[' + index + '][prodi]" class="anggota-prodi-hidden-input" /></td><td class="pe-4 text-center"><button type="button" class="btn btn-icon btn-sm btn-light-danger remove-anggota-kelompok hover-elevate-up" title="Hapus anggota"><i class="fas fa-trash-alt"></i></button></td></tr>';
             }
             function fillAnggotaRow(row, data) { data = data || {}; row.querySelector('.anggota-nama-input').value = data.nama || ''; row.querySelector('.anggota-prodi-input').value = data.prodi || ''; row.querySelector('.anggota-nama-hidden-input').value = data.nama || ''; row.querySelector('.anggota-prodi-hidden-input').value = data.prodi || ''; }
             function setAnggotaError(row, msg) { const s = row.querySelector('.anggota-nim-select'); const f = row.querySelector('.anggota-nim-feedback'); s.classList.toggle('is-invalid', Boolean(msg)); f.textContent = msg || ''; }

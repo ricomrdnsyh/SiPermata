@@ -115,9 +115,9 @@
                                     </div>
                                     <div class="text-center mt-4">
                                         <button type="submit" data-kt-contacts-type="submit"
-                                            class="btn btn-sm btn-primary w-250px">
+                                            class="btn btn-primary w-250px">
                                             <span class="indicator-label">
-                                                Buat Pengajuan
+                                                <i class="fas fa-save me-2"></i> Buat Pengajuan
                                             </span>
                                             <span class="indicator-progress">
                                                 Tunggu sebentar...
