@@ -79,8 +79,7 @@
                                                 <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
                                                 <select class="form-select form-select-sm w-100"
                                                     data-control="select2" data-placeholder="Pilih Tempat Observasi"
-                                                    name="mitra_id"
-                                                    required>
+                                                    name="mitra_id">
                                                     <option value="">
                                                         Pilih Tempat Observasi...</option>
                                                     @foreach ($mitra as $m)
@@ -382,6 +381,9 @@
 
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    form.reportValidity();
                     return;
                 }
 

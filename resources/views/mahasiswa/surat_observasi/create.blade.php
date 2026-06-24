@@ -78,7 +78,7 @@
                                                 <div class="fv-row mb-3">
                                                     <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
                                                     <select class="form-select form-select-sm w-100" data-control="select2"
-                                                        data-placeholder="Pilih Tempat Observasi" name="mitra_id" required>
+                                                        data-placeholder="Pilih Tempat Observasi" name="mitra_id">
                                                         <option value="">
                                                             Pilih Tempat Observasi...</option>
                                                         @foreach ($mitra as $mitra)
@@ -111,12 +111,12 @@
                                         </div>
 
                                         <div class="text-center mt-4">
-                                            <button type="submit" data-kt-contacts-type="submit"
-                                                class="btn  btn-primary w-250px">
+                                            <button type="button" id="btn-submit-pengajuan"
+                                                class="btn btn-primary w-250px">
                                                 <span class="indicator-label">
                                                     <i class="fas fa-save me-2"></i> Buat Pengajuan
                                                 </span>
-                                                <span class="indicator-progress">
+                                                <span class="indicator-progress" style="display: none;">
                                                     Tunggu sebentar...
                                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                                 </span>
@@ -141,7 +141,7 @@
                 return;
             }
 
-            const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+            const submitButton = document.getElementById('btn-submit-pengajuan');
             const anggotaContainer = document.getElementById('anggota-kelompok-container');
             const lookupBaseUrl = @json(url('/mahasiswa/surat-observasi/anggota'));
             const lookupDelay = 180;
@@ -384,21 +384,28 @@
                 });
             }
 
-            form.addEventListener('submit', function(event) {
+            submitButton.addEventListener('click', function(event) {
+                event.preventDefault();
                 if (!form.checkValidity()) {
+                    form.reportValidity();
                     return;
                 }
 
-                event.preventDefault();
+                submitButton.disabled = true;
+                submitButton.querySelector('.indicator-label').style.display = 'none';
+                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+
                 validateAnggotaRows().then(function(anggotaValid) {
                     if (!anggotaValid) {
+                        submitButton.disabled = false;
+                        submitButton.querySelector('.indicator-label').style.display = 'inline-block';
+                        submitButton.querySelector('.indicator-progress').style.display = 'none';
                         return;
                     }
-
-                    submitButton.disabled = true;
-                    submitButton.querySelector('.indicator-label').style.display = 'none';
-                    submitButton.querySelector('.indicator-progress').style.display =
-                    'inline-block';
+                    form.submit();
+                }).catch(function(error) {
+                    console.error("Error validasi anggota:", error);
+                    // Lanjutkan submit agar tidak hang
                     form.submit();
                 });
             });
