@@ -38,11 +38,11 @@ return [
     'sso' => [
         'x_token' => env('SSO_X_TOKEN'),
         'dev_id' => env('SSO_DEV_ID'),
-        'api_url' => env('SSO_API_URL', 'http://sso.unuja.ac.id:8080'),
-        'public_url' => env('SSO_PUBLIC_URL', 'https://sso.unuja.ac.id'),
-        'authorize_url' => env('SSO_AUTHORIZE_URL', 'http://sso.unuja.ac.id:8080/portal/data/authorize'),
-        'data_url' => env('SSO_DATA_URL', 'http://sso.unuja.ac.id:8080/portal/data/data'),
-        'me_url' => env('SSO_ME_URL', 'http://sso.unuja.ac.id:8080/portal/me/' . env('SSO_DEV_ID', '8ZiVo95nM1xUJzhA')),
+        'api_url' => env('SSO_API_URL'),
+        'public_url' => env('SSO_PUBLIC_URL'),
+        'authorize_url' => env('SSO_AUTHORIZE_URL'),
+        'data_url' => env('SSO_DATA_URL'),
+        'me_url' => env('SSO_ME_URL'),
     ],
 
 ];
