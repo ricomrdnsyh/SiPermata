@@ -49,7 +49,12 @@
                     className: 'btn btn-sm btn-primary mt-2 rounded-2'
                 }
             ],
-            ajax: '{{ route('admin.ttdSurat.data') }}',
+            ajax: {
+                url: '{{ route('admin.ttdSurat.data') }}',
+                data: function(d) {
+                    d.fakultas_filter = $('#filter-fakultas').val();
+                }
+            },
             columns: [{
                 data: null,
                 defaultContent: '',
@@ -89,6 +94,10 @@
         });
         table.on('draw', function() {
             $('#ttdSurat-table [data-bs-toggle="tooltip"]').tooltip();
+        });
+
+        $('#filter-fakultas').on('change', function() {
+            table.draw();
         });
     });
 </script>

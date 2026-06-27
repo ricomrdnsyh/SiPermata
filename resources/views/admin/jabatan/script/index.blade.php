@@ -50,7 +50,12 @@
                     className: 'btn btn-sm btn-primary mt-2 rounded-2'
                 }
             ],
-            ajax: '{{ route('admin.jabatan.data') }}',
+            ajax: {
+                url: '{{ route('admin.jabatan.data') }}',
+                data: function(d) {
+                    d.fakultas_filter = $('#filter-fakultas').val();
+                }
+            },
             columns: [{
                 data: null,
                 defaultContent: '',
@@ -85,6 +90,11 @@
         table.on('draw', function() {
             $('#jabatan-table [data-bs-toggle="tooltip"]').tooltip();
         });
+
+        $('#filter-fakultas').on('change', function() {
+            table.draw();
+        });
+
         $('#jabatan-table').on('click', '.btn-active-light-danger', function(e) {
             e.preventDefault();
             let button = $(this);

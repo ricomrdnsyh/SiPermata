@@ -19,10 +19,14 @@ class TtdSuratConroller extends Controller
         return view('admin.ttd.index', compact('fakultas', 'template'));
     }
 
-    public function getTtdSurat()
+    public function getTtdSurat(Request $request)
     {
         $data = TtdSurat::select(['id_ttd', 'template_id', 'nama_ttd', 'nidn', 'fakultas_id', 'status'])
-            ->with('fakultas', 'fakultas');
+            ->with('template', 'fakultas');
+
+        if ($request->has('fakultas_filter') && $request->fakultas_filter != '') {
+            $data->where('fakultas_id', $request->fakultas_filter);
+        }
 
         return DataTables::of($data)
             ->addColumn('nama_fakultas', function ($row) {

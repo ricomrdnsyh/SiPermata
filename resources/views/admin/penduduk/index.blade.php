@@ -131,7 +131,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="separator my-5"></div>
+                    <div class="card-body py-4 px-8 filter-container mt-4">
+                        <div class="border border-dashed rounded p-5 mb-5" style="border-color: #b5b5c3 !important;">
+                            <h5 class="text-primary mb-4"><i class="fas fa-filter text-primary me-2"></i>Filter Data</h5>
+                            <div class="row g-5">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <label class="form-label fw-bold mb-2">Fakultas:</label>
+                                    <select class="form-select form-select-sm" data-control="select2"
+                                        data-placeholder="Semua Fakultas" data-allow-clear="true" data-filter="fakultas"
+                                        id="filter-fakultas">
+                                        <option value="">Semua Fakultas</option>
+                                        @foreach ($listFakultas as $fakultas)
+                                            <option value="{{ $fakultas->id_fakultas }}">{{ $fakultas->nama_fakultas }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body pt-0">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="penduduk-table">
                             <thead class="">
@@ -223,7 +240,12 @@
                         className: 'btn btn-sm btn-primary mt-2 rounded-2'
                     }
                 ],
-                ajax: '{{ route('admin.penduduk.data') }}',
+                ajax: {
+                    url: '{{ route('admin.penduduk.data') }}',
+                    data: function(d) {
+                        d.fakultas_filter = $('#filter-fakultas').val();
+                    }
+                },
                 columns: [{
                     data: null,
                     defaultContent: '',
@@ -267,6 +289,10 @@
             });
             table.on('draw', function() {
                 $('#penduduk-table [data-bs-toggle="tooltip"]').tooltip();
+            });
+
+            $('#filter-fakultas').on('change', function() {
+                table.draw();
             });
         });
     </script>

@@ -15,13 +15,18 @@ class PendudukController extends Controller
     
     public function index()
     {
-        return view('admin.penduduk.index');
+        $listFakultas = Fakultas::all();
+        return view('admin.penduduk.index', compact('listFakultas'));
     }
 
-    public function getPenduduk()
+    public function getPenduduk(Request $request)
     {
         $data = Penduduk::select(['id_penduduk', 'fakultas_id', 'prodi_id', 'nama_penduduk', 'nidn', 'email', 'no_hp'])
             ->with('fakultas', 'prodi');
+
+        if ($request->has('fakultas_filter') && $request->fakultas_filter != '') {
+            $data->where('fakultas_id', $request->fakultas_filter);
+        }
 
         return DataTables::of($data)
             ->addColumn('nama_fakultas', function ($row) {

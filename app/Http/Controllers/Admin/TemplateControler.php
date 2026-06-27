@@ -23,10 +23,14 @@ class TemplateControler extends Controller
         return view('admin.template.index', compact('data', 'fakultas', 'prodi'));
     }
 
-    public function getTemplate()
+    public function getTemplate(Request $request)
     {
         $data = Template::select(['id_template', 'nama_template', 'jenis_surat', 'file', 'tgl_sk', 'fakultas_id', 'prodi_id'])
             ->with('fakultas', 'prodi');
+
+        if ($request->has('fakultas_filter') && $request->fakultas_filter != '') {
+            $data->where('fakultas_id', $request->fakultas_filter);
+        }
 
         return DataTables::of($data)
             ->order(function ($query) {

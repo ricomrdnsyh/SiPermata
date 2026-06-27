@@ -17,15 +17,20 @@ class JabatanController extends Controller
     {
         $data = Jabatan::with(['penduduk', 'fakultas'])->get();
         $penduduk = Penduduk::with('fakultas')->get();
+        $listFakultas = Fakultas::all();
 
-        return view('admin.jabatan.index', compact('data', 'penduduk'));
+        return view('admin.jabatan.index', compact('data', 'penduduk', 'listFakultas'));
     }
 
-    public function getJabatan()
+    public function getJabatan(Request $request)
     {
         $data = Jabatan::select(['id_jabatan', 'penduduk_id', 'status', 'fakultas_id'])
             ->with('penduduk', 'fakultas')
             ->orderBy('id_jabatan', 'desc');
+
+        if ($request->has('fakultas_filter') && $request->fakultas_filter != '') {
+            $data->where('fakultas_id', $request->fakultas_filter);
+        }
 
         return DataTables::of($data)
             ->filterColumn('nama_penduduk', function ($query, $keyword) {

@@ -15,11 +15,12 @@ class ProdiController extends Controller
     public function index()
     {
         $data = Prodi::with('fakultas')->get();
+        $listFakultas = Fakultas::all();
 
-        return view('admin.prodi.index', compact('data'));
+        return view('admin.prodi.index', compact('data', 'listFakultas'));
     }
 
-    public function getProdi()
+    public function getProdi(Request $request)
     {
         $prodi = Prodi::select([
             'prodi.id_prodi',
@@ -29,6 +30,10 @@ class ProdiController extends Controller
             'prodi.status'
         ])
             ->with('fakultas');
+
+        if ($request->has('fakultas_filter') && $request->fakultas_filter != '') {
+            $prodi->where('prodi.fakultas_id', $request->fakultas_filter);
+        }
 
         return DataTables::of($prodi)
             ->editColumn('status', function ($row) {
