@@ -1,5 +1,4 @@
 <style>
-    /* Clean Sidebar Enhancements */
     #kt_app_sidebar_user .user-card {
         background: rgba(255, 255, 255, 0.03);
         border: none;
@@ -51,7 +50,6 @@
         justify-content: center !important
     }
 
-    /* Clean Logout Button */
     #kt_app_sidebar_footer .btn {
         background: rgba(255, 255, 255, 0.04) !important;
         border: none !important;
@@ -69,7 +67,6 @@
 
     #kt_app_sidebar_footer .btn:hover {
         background: rgba(220, 53, 69, 0.85) !important;
-        /* Soft crimson hover */
         color: #ffffff !important;
         box-shadow: 0 4px 15px rgba(220, 53, 69, 0.25);
         transform: translateY(-1px);
@@ -78,10 +75,8 @@
     #kt_app_sidebar_footer .btn:hover i {
         color: #ffffff !important;
         transform: translateX(3px);
-        /* Subtle slide effect */
     }
 
-    /* Thin Custom Scrollbar */
     #kt_app_sidebar_menu_scroll::-webkit-scrollbar {
         width: 4px;
     }
@@ -138,7 +133,7 @@
             height: 24px !important;
         }
     }
-    /* Custom Menu Arrow + and - */
+
     #kt_app_sidebar_menu .menu-item .menu-arrow:after {
         content: "+" !important;
         background: none !important;
@@ -154,24 +149,94 @@
         transition: all 0.3s ease;
     }
 
-    #kt_app_sidebar_menu .menu-item.show > .menu-link .menu-arrow:after,
-    #kt_app_sidebar_menu .menu-item.here > .menu-link .menu-arrow:after {
+    #kt_app_sidebar_menu .menu-item.show>.menu-link .menu-arrow:after,
+    #kt_app_sidebar_menu .menu-item.here>.menu-link .menu-arrow:after {
         content: "-" !important;
+    }
+
+    #kt_app_sidebar_menu .menu-title {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        display: block;
     }
 </style>
 
 @php
     $currentUser = Auth::user();
     $roleName = 'Pengguna';
+    $unapprovedCount = 0;
+
     if ($currentUser) {
-        if ($currentUser->role == 'admin') {
-            $roleName = 'Administrator';
-        } elseif ($currentUser->role == 'DEKAN') {
-            $roleName = 'Dekan';
-        } elseif ($currentUser->role == 'BAK') {
-            $roleName = 'BAK';
-        } elseif ($currentUser->role == 'mahasiswa') {
+        if ($currentUser->role == 'mahasiswa') {
             $roleName = 'Mahasiswa';
+        } elseif (in_array($currentUser->role, ['admin', 'DEKAN', 'BAK'])) {
+            $roleName = match ($currentUser->role) {
+                'admin' => 'Administrator',
+                'DEKAN' => 'Dekan',
+                'BAK' => 'BAK',
+            };
+
+            $currentTahunAkademik = \App\Models\TahunAkademik::orderBy('id_akademik', 'desc')->first();
+            if ($currentTahunAkademik) {
+                $tahunAkademikId = $currentTahunAkademik->id_akademik;
+
+                $query = \App\Models\HistoryPengajuan::query();
+
+                $tabelNames = [
+                    'surat_aktif',
+                    'surat_izin_penelitian',
+                    'surat_observasi',
+                    'surat_rekomendasi',
+                    'surat_pkl',
+                    'surat_keterangan_lulus',
+                ];
+                $idsPerTable = [];
+
+                foreach ($tabelNames as $tabel) {
+                    $pkColumn = match ($tabel) {
+                        'surat_aktif' => 'id_surat_aktif',
+                        'surat_izin_penelitian' => 'id_surat_izin_penelitian',
+                        'surat_observasi' => 'id_surat_observasi',
+                        'surat_rekomendasi' => 'id_surat_rekomendasi',
+                        'surat_pkl' => 'id_surat_pkl',
+                        'surat_keterangan_lulus' => 'id_surat_lulus',
+                        default => 'id',
+                    };
+
+                    $ids = \Illuminate\Support\Facades\DB::table($tabel)
+                        ->where('akademik_id', $tahunAkademikId)
+                        ->pluck($pkColumn)
+                        ->toArray();
+
+                    if (!empty($ids)) {
+                        $idsPerTable[$tabel] = $ids;
+                    }
+                }
+
+                if (!empty($idsPerTable)) {
+                    $query->where(function ($q) use ($idsPerTable) {
+                        foreach ($idsPerTable as $tabel => $ids) {
+                            $q->orWhere(function ($sub) use ($tabel, $ids) {
+                                $sub->where('tabel', $tabel)->whereIn('id_tabel_surat', $ids);
+                            });
+                        }
+                    });
+
+                    if ($currentUser->role == 'admin') {
+                        $unapprovedCount = $query->where('status', 'pengajuan')->count();
+                    } else {
+                        $fakultasId = $currentUser->penduduk?->fakultas_id;
+                        if ($fakultasId) {
+                            $statusFilter = $currentUser->role == 'DEKAN' ? 'proses' : 'pengajuan';
+                            $unapprovedCount = $query
+                                ->where('status', $statusFilter)
+                                ->where('fakultas_id', $fakultasId)
+                                ->count();
+                        }
+                    }
+                }
+            }
         }
     }
 @endphp
@@ -276,7 +341,8 @@
                                 <span class="menu-section text-muted text-uppercase fs-8 ls-1">Master</span>
                             </div>
                         </div>
-                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::is('admin/penduduk*', 'admin/jabatan*', 'admin/fakultas*', 'admin/prodi*', 'admin/akademik*', 'admin/mitra*', 'admin/template*', 'admin/ttdSurat*', 'admin/eligible-lulus*') ? 'here show' : '' }}">
+                        <div data-kt-menu-trigger="click"
+                            class="menu-item menu-accordion {{ Request::is('admin/penduduk*', 'admin/jabatan*', 'admin/fakultas*', 'admin/prodi*', 'admin/akademik*', 'admin/mitra*', 'admin/template*', 'admin/ttdSurat*', 'admin/eligible-lulus*') ? 'here show' : '' }}">
                             <span class="menu-link">
                                 <span class="menu-icon">
                                     <span class="svg-icon svg-icon-2">
@@ -382,7 +448,8 @@
                                 <span class="menu-section text-muted text-uppercase fs-8 ls-1">Surat</span>
                             </div>
                         </div>
-                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::is('admin/surat-aktif*', 'admin/surat-izin-penelitian*', 'admin/surat-observasi*', 'admin/surat-rekomendasi*', 'admin/surat-pkl*', 'admin/surat-keterangan-lulus*') ? 'here show' : '' }}">
+                        <div data-kt-menu-trigger="click"
+                            class="menu-item menu-accordion {{ Request::is('admin/surat-aktif*', 'admin/surat-izin-penelitian*', 'admin/surat-observasi*', 'admin/surat-rekomendasi*', 'admin/surat-pkl*', 'admin/surat-keterangan-lulus*') ? 'here show' : '' }}">
                             <span class="menu-link">
                                 <span class="menu-icon">
                                     <span class="svg-icon svg-icon-2">
@@ -482,6 +549,12 @@
                                     </span>
                                 </span>
                                 <span class="menu-title">Pengajuan Mahasiswa</span>
+                                @if ($unapprovedCount > 0)
+                                    <span class="menu-badge">
+                                        <span
+                                            class="badge badge-circle badge-danger text-white">{{ $unapprovedCount }}</span>
+                                    </span>
+                                @endif
                             </a>
                         </div>
                         <div class="menu-item">
@@ -532,15 +605,21 @@
                                     <span class="svg-icon svg-icon-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
                                             <path
-                                                d="M13 5.91517C15.8 6.41517 18 8.81519 18 11.8152C18 12.5152 17.9 13.2152 17.6 13.9152L20.1 15.3152C20.6 15.6152 21.4 15.4152 21.6 14.8152C21.9 13.9152 22.1 12.9152 22.1 11.8152C22.1 7.01519 18.8 3.11521 14.3 2.01521C13.7 1.91521 13.1 2.31521 13.1 3.01521V5.91517H13Z"
+                                                d="M17.5 11H6.5C4 11 2 9 2 6.5C2 4 4 2 6.5 2H17.5C20 2 22 4 22 6.5C22 9 20 11 17.5 11ZM15 6.5C15 7.9 16.1 9 17.5 9C18.9 9 20 7.9 20 6.5C20 5.1 18.9 4 17.5 4C16.1 4 15 5.1 15 6.5Z"
                                                 fill="currentColor"></path>
                                             <path opacity="0.3"
-                                                d="M19.1 17.0152C19.7 17.3152 19.8 18.1152 19.3 18.5152C17.5 20.5152 14.9 21.7152 12 21.7152C9.1 21.7152 6.50001 20.5152 4.70001 18.5152C4.30001 18.0152 4.39999 17.3152 4.89999 17.0152L7.39999 15.6152C8.49999 16.9152 10.2 17.8152 12 17.8152C13.8 17.8152 15.5 17.0152 16.6 15.6152L19.1 17.0152ZM6.39999 13.9151C6.19999 13.2151 6 12.5152 6 11.8152C6 8.81517 8.2 6.41515 11 5.91515V3.01519C11 2.41519 10.4 1.91519 9.79999 2.01519C5.29999 3.01519 2 7.01517 2 11.8152C2 12.8152 2.2 13.8152 2.5 14.8152C2.7 15.4152 3.4 15.7152 4 15.3152L6.39999 13.9151Z"
+                                                d="M17.5 22H6.5C4 22 2 20 2 17.5C2 15 4 13 6.5 13H17.5C20 13 22 15 22 17.5C22 20 20 22 17.5 22ZM4 17.5C4 18.9 5.1 20 6.5 20C7.9 20 9 18.9 9 17.5C9 16.1 7.9 15 6.5 15C5.1 15 4 16.1 4 17.5Z"
                                                 fill="currentColor"></path>
                                         </svg>
                                     </span>
                                 </span>
                                 <span class="menu-title">Pengajuan Mahasiswa</span>
+                                @if ($unapprovedCount > 0)
+                                    <span class="menu-badge">
+                                        <span
+                                            class="badge badge-circle badge-danger text-white">{{ $unapprovedCount }}</span>
+                                    </span>
+                                @endif
                             </a>
                         </div>
                     @endif
@@ -570,7 +649,8 @@
                                 <span class="menu-section text-muted text-uppercase fs-8 ls-1">Master</span>
                             </div>
                         </div>
-                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::is('bak/mitra*', 'bak/ttdSurat*', 'bak/eligible-lulus*') ? 'here show' : '' }}">
+                        <div data-kt-menu-trigger="click"
+                            class="menu-item menu-accordion {{ Request::is('bak/mitra*', 'bak/ttdSurat*', 'bak/eligible-lulus*') ? 'here show' : '' }}">
                             <span class="menu-link">
                                 <span class="menu-icon">
                                     <span class="svg-icon svg-icon-2">
@@ -626,7 +706,8 @@
                                 <span class="menu-section text-muted text-uppercase fs-8 ls-1">Surat</span>
                             </div>
                         </div>
-                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::is('bak/surat-aktif*', 'bak/surat-izin-penelitian*', 'bak/surat-observasi*', 'bak/surat-rekomendasi*', 'bak/surat-pkl*', 'bak/surat-keterangan-lulus*') ? 'here show' : '' }}">
+                        <div data-kt-menu-trigger="click"
+                            class="menu-item menu-accordion {{ Request::is('bak/surat-aktif*', 'bak/surat-izin-penelitian*', 'bak/surat-observasi*', 'bak/surat-rekomendasi*', 'bak/surat-pkl*', 'bak/surat-keterangan-lulus*') ? 'here show' : '' }}">
                             <span class="menu-link">
                                 <span class="menu-icon">
                                     <span class="svg-icon svg-icon-2">
@@ -726,6 +807,12 @@
                                     </span>
                                 </span>
                                 <span class="menu-title">Pengajuan Mahasiswa</span>
+                                @if ($unapprovedCount > 0)
+                                    <span class="menu-badge">
+                                        <span
+                                            class="badge badge-circle badge-danger text-white">{{ $unapprovedCount }}</span>
+                                    </span>
+                                @endif
                             </a>
                         </div>
                         <div class="menu-item">
