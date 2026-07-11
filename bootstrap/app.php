@@ -70,7 +70,7 @@ return Application::configure(basePath: dirname(__DIR__))
             } elseif ($e instanceof TokenMismatchException || $e instanceof AuthenticationException) {
                 session()->invalidate();
                 session()->regenerateToken();
-                $redirect = redirect()->route('login')->with('error', $e instanceof TokenMismatchException ? 'Sesi Anda telah berakhir. Silakan login kembali.' : 'Anda harus login untuk mengakses halaman ini.');
+                $redirect = redirect('https://sso.unuja.ac.id');
 
                 return $request->wantsJson() ? response()->json(['message' => $e instanceof TokenMismatchException ? 'Token mismatch.' : 'Unauthenticated.'], $e instanceof TokenMismatchException ? 419 : 401) : $redirect;
             } elseif ($e instanceof AccessDeniedHttpException || $e instanceof AuthorizationException || $e instanceof UnauthorizedException) {

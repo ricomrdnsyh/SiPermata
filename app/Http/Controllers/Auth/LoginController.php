@@ -42,22 +42,6 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-
-        $logoutUrls = $request->session()->get('logout_session', null);
-        if ($logoutUrls != null) {
-            $ch = curl_init();
-            curl_setopt_array($ch, [
-                CURLOPT_URL => $logoutUrls,
-                CURLOPT_RETURNTRANSFER => false, 
-                CURLOPT_HEADER => false,        
-                CURLOPT_TIMEOUT => 10,          
-                CURLOPT_CUSTOMREQUEST => 'GET', 
-            ]);
-
-            curl_exec($ch); 
-            curl_close($ch); 
-        }
-
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
