@@ -1,61 +1,91 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SiPermata (Sistem Informasi Pelayanan Persuratan Mahasiswa)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SiPermata adalah aplikasi berbasis web yang dikembangkan menggunakan framework Laravel untuk memfasilitasi dan mengotomatisasi proses pengajuan, verifikasi, dan penerbitan berbagai jenis surat akademik bagi mahasiswa. Aplikasi ini juga terintegrasi dengan Single Sign-On (SSO) untuk autentikasi yang lebih aman dan terpusat.
 
-## About Laravel
+## 🚀 Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Pengajuan Surat Mandiri**: Mahasiswa dapat mengajukan berbagai jenis surat secara online.
+- **Sistem Verifikasi Bertingkat**: Proses persetujuan surat melibatkan alur yang jelas mulai dari Admin, BAK, hingga Dekan.
+- **Tanda Tangan Elektronik & QR Code**: Dilengkapi dengan QR code untuk verifikasi keaslian dokumen secara online.
+- **Integrasi SSO (Single Sign-On)**: Menggunakan akun SSO Universitas untuk login ke dalam sistem.
+- **Sinkronisasi Data API**: Tersedia fitur sinkronisasi data mahasiswa, program studi, fakultas, dan penduduk langsung dari API pusat (SIMPT).
+- **Generate Dokumen Otomatis**: Mendukung pengisian dan ekspor surat otomatis sesuai template institusi ke dalam format dokumen standar (`phpoffice/phpword`).
+- **Rekapitulasi & Ekspor Laporan**: Fitur unduh rekapitulasi surat dan ekspor seluruh log pengajuan ke file Excel (`maatwebsite/excel`).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📑 Jenis Surat yang Dilayani
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Surat Keterangan Aktif Kuliah
+2. Surat Izin Penelitian
+3. Surat Rekomendasi
+4. Surat Pengantar PKL (Praktik Kerja Lapangan)
+5. Surat Izin Observasi
+6. Surat Keterangan Lulus (SKL)
 
-## Learning Laravel
+## 👥 Hak Akses (Roles)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Sistem ini memiliki 4 peran (roles) utama dengan akses dashboard dan wewenang yang berbeda:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. **Mahasiswa**: Dapat mengajukan permohonan surat, melihat progres (riwayat) pengajuan, serta mengunduh (download) surat yang telah selesai disetujui.
+2. **Admin**: Mengelola pengaturan sistem, data master (template surat, jabatan, TTD), menjalankan sinkronisasi data API, mengelola kelayakan kelulusan mahasiswa, dan bisa menyetujui/menolak pengajuan surat dari mahasiswa.
+3. **BAK (Biro Administrasi Akademik/Kemahasiswaan)**: Bertanggung jawab mengecek kelengkapan dan memvalidasi pengajuan surat, merekapitulasi data persuratan, dan manajemen mitra.
+4. **Dekan**: Melakukan tinjauan dan persetujuan akhir (*approve* / *bulk approve*) pada pengajuan surat dan selanjutnya mengirimkan notifikasi via email ke mahasiswa.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Tech Stack
 
-## Laravel Sponsors
+- **Framework Backend**: Laravel 12.x
+- **Bahasa Pemrograman**: PHP ^8.2
+- **Database**: MySQL / SQLite (Bisa disesuaikan pada file env)
+- **Library Tambahan**:
+  - `phpoffice/phpword` (Manajemen dan Template Microsoft Word)
+  - `maatwebsite/excel` (Ekspor/Impor ke Microsoft Excel)
+  - `chillerlan/php-qrcode` (Pembuatan kode unik QR untuk verifikasi)
+  - `rap2hpoutre/laravel-log-viewer` (Pemantauan Log Aplikasi secara GUI)
+  - `yajra/laravel-datatables-oracle` (Optimalisasi manajemen query tabel)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ⚙️ Persyaratan Sistem
 
-### Premium Partners
+- PHP >= 8.2
+- Composer versi terbaru
+- Node.js & NPM (untuk modul *build* aset frontend)
+- Web Server (Apache/Nginx) atau Laragon/XAMPP
+- Ekstensi PHP yang dibutuhkan: `mbstring`, `zip`, `gd`, `xml`, `curl`
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 💻 Panduan Instalasi & Konfigurasi
 
-## Contributing
+1. **Clone repositori** atau letakkan source code di dalam direktori server Anda (misalnya: `htdocs` atau `www`).
+2. Masuk ke direktori proyek dan buka terminal.
+3. **Install semua dependensi backend via Composer**:
+   ```bash
+   composer install
+   ```
+4. **Install dependensi Frontend**:
+   ```bash
+   npm install && npm run build
+   ```
+5. **Konfigurasi Environment (*Environment Variables*)**:
+   - Salin dan ubah nama file `.env.example` menjadi `.env`.
+   - Sesuaikan konfigurasi `DB_*` dengan database milik Anda.
+   - Perhatikan pengaturan SSO pada file `.env` (misal variabel `SSO_ME_URL`, `SSO_API_URL`, dll).
+6. **Generate Application Key**:
+   ```bash
+   php artisan key:generate
+   ```
+7. **Jalankan Migrasi Database**:
+   Pastikan Anda sudah membuat *schema* database, lalu jalankan perintah:
+   ```bash
+   php artisan migrate
+   ```
+8. **Jalankan Aplikasi Lokal**:
+   ```bash
+   php artisan serve
+   ```
+   Akses aplikasi pada alamat: `http://localhost:8000`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🔐 Alur Integrasi SSO (Single Sign-On)
 
-## Code of Conduct
+Aplikasi SiPermata bergantung kuat pada SSO pusat untuk memverifikasi autentikasi user (Mahasiswa, BAK, Dekan, dll).
+* **Login**: Jika pengguna mengakses rute yang dilindungi dan belum memiliki sesi (termasuk jika sesi *expired*), sistem akan mengarahkan (*redirect*) ke `https://sso.unuja.ac.id`.
+* **Logout**: Fitur logout SiPermata difungsikan khusus sebagai **Local Logout**. Ketika Anda menekan logout di SiPermata, hanya sesi lokal aplikasi yang akan dihancurkan, dan selanjutnya Anda kembali ke halaman SSO tanpa keluar dari *session* global SSO tersebut.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+*Dikembangkan menggunakan kerangka Laravel dan dirancang untuk mengoptimalkan layanan administrasi persuratan akademik.*
