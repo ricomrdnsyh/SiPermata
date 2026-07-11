@@ -25,23 +25,27 @@ SiPermata adalah aplikasi berbasis web yang dikembangkan menggunakan framework L
 ## 👥 Hak Akses per Role
 
 **MAHASISWA**
+
 - Dapat mengajukan permohonan berbagai jenis surat
 - Dapat melihat progres dan riwayat pengajuan surat miliknya
 - Dapat mengunduh (download) surat yang telah selesai disetujui
 - Tidak dapat melakukan _approve_/_reject_ data pengajuan apa pun
 
 **ADMIN**
+
 - Mengelola pengaturan sistem dan data master (template surat, jabatan, TTD)
 - Menjalankan sinkronisasi data dari API pusat (SIMPT)
 - Mengelola data kelayakan kelulusan mahasiswa
 - Dapat melakukan _approve_/_reject_ pengajuan surat dari mahasiswa
 
-**BAK (Biro Administrasi Akademik/Kemahasiswaan)**
+**BAK Fakultas (Biro Administrasi Akademik/Kemahasiswaan Fakultas)**
+
 - Bertanggung jawab mengecek kelengkapan dan memvalidasi pengajuan surat
 - Mengelola rekapitulasi data persuratan dan manajemen mitra
 - Merupakan tahap pertama dalam alur persetujuan surat
 
 **DEKAN**
+
 - Melakukan tinjauan dan persetujuan akhir (_approve_ / _bulk approve_) pada pengajuan surat
 - Secara otomatis memicu pengiriman notifikasi via email ke mahasiswa setelah disetujui
 - Menjadi penentu akhir terbitnya dokumen surat
