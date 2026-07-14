@@ -536,6 +536,7 @@ class DekanHistoryPengajuanController extends Controller
 
                 $pengajuan = HistoryPengajuan::lockForUpdate()->find($id);
                 if (!$pengajuan || $pengajuan->fakultas_id !== $fakultasId || $pengajuan->status !== 'proses') {
+                    Log::warning("Bulk approve gagal (id {$id}): Pengajuan tidak valid (tidak ditemukan, fakultas beda, atau status bukan proses). Fakultas ID Dekan: {$fakultasId}");
                     DB::rollBack();
                     $failed[] = $id;
                     continue;
@@ -543,6 +544,7 @@ class DekanHistoryPengajuanController extends Controller
 
                 $modelClass = $this->getModelClass($pengajuan->tabel);
                 if (!$modelClass) {
+                    Log::warning("Bulk approve gagal (id {$id}): Tabel surat tidak dikenali ({$pengajuan->tabel}).");
                     DB::rollBack();
                     $failed[] = $id;
                     continue;
@@ -550,6 +552,7 @@ class DekanHistoryPengajuanController extends Controller
 
                 $detailSurat = $modelClass::find($pengajuan->id_tabel_surat);
                 if (!$detailSurat || empty($detailSurat->file_generated)) {
+                    Log::warning("Bulk approve gagal (id {$id}): Detail surat tidak ditemukan atau file_generated kosong.");
                     DB::rollBack();
                     $failed[] = $id;
                     continue;
@@ -561,6 +564,7 @@ class DekanHistoryPengajuanController extends Controller
                     ->first();
 
                 if (!$ttdDekan) {
+                    Log::warning("Bulk approve gagal (id {$id}): TtdSurat aktif untuk fakultas {$pengajuan->fakultas_id} dan template {$detailSurat->template_id} tidak ditemukan.");
                     DB::rollBack();
                     $failed[] = $id;
                     continue;
@@ -649,6 +653,7 @@ class DekanHistoryPengajuanController extends Controller
 
         foreach ($data['items'] as $item) {
             if ($item['status_raw'] !== 'diterima') {
+                Log::warning("Bulk send gagal (id {$item['id_surat']}): Status bukan diterima ({$item['status_raw']}).");
                 $failed[] = $item;
                 continue;
             }
@@ -657,29 +662,34 @@ class DekanHistoryPengajuanController extends Controller
 
                 $modelClass = $this->getModelClass($item['tabel']);
                 if (!$modelClass) {
+                    Log::warning("Bulk send gagal (id {$item['id_surat']}): Tabel tidak valid.");
                     $failed[] = $item;
                     continue;
                 }
 
                 $surat = $modelClass::find($item['id_surat']);
                 if (!$surat || empty($surat->file_generated)) {
+                    Log::warning("Bulk send gagal (id {$item['id_surat']}): Surat tidak ditemukan atau file_generated kosong.");
                     $failed[] = $item;
                     continue;
                 }
 
                 if ($surat->mahasiswa->fakultas_id !== $fakultasId) {
+                    Log::warning("Bulk send gagal (id {$item['id_surat']}): Fakultas mahasiswa berbeda dengan fakultas Dekan.");
                     $failed[] = $item;
                     continue;
                 }
 
                 $mahasiswa = Mahasiswa::where('nim', $surat->nim)->first();
                 if (!$mahasiswa || !$mahasiswa->email) {
+                    Log::warning("Bulk send gagal (id {$item['id_surat']}): Email mahasiswa kosong.");
                     $failed[] = $item;
                     continue;
                 }
 
                 $filePath = $surat->file_generated;
                 if (!Storage::disk('local')->exists($filePath)) {
+                    Log::warning("Bulk send gagal (id {$item['id_surat']}): File fisik tidak ditemukan di storage ({$filePath}).");
                     $failed[] = $item;
                     continue;
                 }
@@ -689,6 +699,7 @@ class DekanHistoryPengajuanController extends Controller
                     ->first();
 
                 if (!$pengajuanHistory || $pengajuanHistory->status !== 'diterima') {
+                    Log::warning("Bulk send gagal (id {$item['id_surat']}): History tidak ditemukan atau status bukan diterima.");
                     $failed[] = $item;
                     continue;
                 }

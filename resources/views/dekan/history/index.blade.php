@@ -104,115 +104,118 @@
         <div class="d-flex flex-column flex-column-fluid">
             <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
                 <div id="kt_app_content_container" class="app-container container-fluid">
-                <div class="card shadow-sm border border-dashed border-dark rounded">
-                    <div class="card-header border-0 pt-6">
-                        <div class="card-title">
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <h3 class="card-title align-items-start flex-column">
-                                    <span class="card-label fw-bolder fs-3 mb-1">List Pengajuan</span>
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="card-toolbar">
-                            <button type="button" class="btn btn-sm btn-success fw-bold me-2" id="btn-bulk-approve"
-                                disabled>
-                                <i class="fas fa-check-circle"></i> Terima Pengajuan Terpilih (<span
-                                    id="selected-count">0</span>)
-                            </button>
-                            <button type="button" class="btn btn-sm btn-primary fw-bold" id="btn-bulk-send" disabled>
-                                <i class="fas fa-paper-plane"></i> Kirim Surat Ke Mahasiswa Terpilih
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body py-4 px-8 filter-container mt-4">
-                        <div class="border border-dashed rounded p-5 mb-5" style="border-color: #b5b5c3 !important;">
-                            <h5 class="text-primary mb-4"><i class="fas fa-filter text-primary me-2"></i>Filter Data</h5>
-                            <div class="row g-5">
-                                <div class="col-lg-6 col-md-6 col-sm-12">
-                                    <label class="form-label fw-bold mb-2">Program Studi:</label>
-                                    <select class="form-select form-select-sm" data-control="select2"
-                                        data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
-                                        id="filter-prodi">
-                                        <option value="">Semua Prodi</option>
-                                        @foreach ($listProdi as $prodi)
-                                            <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12">
-                                    <label class="form-label fw-bold mb-2">Nama Surat:</label>
-                                    <select class="form-select form-select-sm" data-control="select2"
-                                        data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat"
-                                        id="filter-nama-surat">
-                                        <option value="">Semua Surat</option>
-                                        @foreach ($listNamaSurat as $tabel => $nama)
-                                            <option value="{{ $tabel }}">{{ $nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12">
-                                    <label class="form-label fw-bold mb-2">Status:</label>
-                                    <select class="form-select form-select-sm" data-control="select2"
-                                        data-placeholder="Semua Status" data-allow-clear="true" data-filter="status"
-                                        id="filter-status">
-                                        <option value="">Semua Status</option>
-                                        <option value="pengajuan">Menunggu BAK</option>
-                                        <option value="proses">Menunggu Dekan</option>
-                                        <option value="diterima">Disetujui</option>
-                                        <option value="selesai">Selesai</option>
-                                        <option value="ditolak">Ditolak</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12">
-                                    <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
-                                    <select class="form-select form-select-sm" data-control="select2"
-                                        data-placeholder="Pilih Tahun Akademik" data-allow-clear="true"
-                                        data-filter="tahun_akademik" id="filter-tahun-akademik">
-                                        <option value="">Semua Tahun</option>
-                                        @foreach ($listTahunAkademik as $tahunAkademik)
-                                            <option value="{{ $tahunAkademik->id_akademik }}"
-                                                {{ $tahunAkademik->tahun_akademik == $currentTahunAkademik ? 'selected' : '' }}>
-                                                {{ $tahunAkademik->tahun_akademik }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                    <div class="card shadow-sm border border-dashed border-dark rounded">
+                        <div class="card-header border-0 pt-6">
+                            <div class="card-title">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <h3 class="card-title align-items-start flex-column">
+                                        <span class="card-label fw-bolder fs-3 mb-1">List Pengajuan</span>
+                                    </h3>
                                 </div>
                             </div>
+                            <div class="card-toolbar">
+                                <button type="button" class="btn btn-sm btn-success fw-bold me-2"
+                                    id="btn-bulk-approve-send" disabled>
+                                    <i class="fas fa-paper-plane"></i> Terima & Kirim Terpilih (<span
+                                        id="selected-count">0</span>)
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary fw-bold" id="btn-bulk-send" disabled
+                                    style="display: none;">
+                                    <i class="fas fa-paper-plane"></i> Kirim Surat Ke Mahasiswa Terpilih (<span
+                                        id="selected-count-send">0</span>)
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body pt-0">
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
-                            <thead class="">
-                                <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="text-center p-0" style="width:28px; min-width:28px;"></th>
-                                    <th class="text-center" style="width:40px;">
-                                        <div
-                                            class="form-check form-check-sm form-check-custom form-check-solid d-flex justify-content-center">
-                                            <input class="form-check-input" type="checkbox" id="select-all">
-                                        </div>
-                                    </th>
-                                    <th class="text-center">Actions</th>
-                                    <th class="min-w-125px">NIM</th>
-                                    <th class="min-w-125px">Nama Mahasiswa</th>
-                                    <th class="min-w-125px">Program Studi</th>
-                                    <th class="min-w-125px">Nama Surat Pengajuan</th>
-                                    <th class="min-w-125px">Status Pengajuan</th>
-                                    <th class="min-w-125px">Tanggal Pengajuan</th>
-                                    <th class="min-w-125px">Catatan</th>
-                                </tr>
-                            </thead>
-                            <tbody class="fw-bold text-gray-800">
-                            </tbody>
-                        </table>
+                        <div class="card-body py-4 px-8 filter-container mt-4">
+                            <div class="border border-dashed rounded p-5 mb-5" style="border-color: #b5b5c3 !important;">
+                                <h5 class="text-primary mb-4"><i class="fas fa-filter text-primary me-2"></i>Filter Data
+                                </h5>
+                                <div class="row g-5">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <label class="form-label fw-bold mb-2">Program Studi:</label>
+                                        <select class="form-select form-select-sm" data-control="select2"
+                                            data-placeholder="Semua Prodi" data-allow-clear="true" data-filter="prodi"
+                                            id="filter-prodi">
+                                            <option value="">Semua Prodi</option>
+                                            @foreach ($listProdi as $prodi)
+                                                <option value="{{ $prodi->id_prodi }}">{{ $prodi->nama_prodi }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <label class="form-label fw-bold mb-2">Nama Surat:</label>
+                                        <select class="form-select form-select-sm" data-control="select2"
+                                            data-placeholder="Semua Surat" data-allow-clear="true" data-filter="nama_surat"
+                                            id="filter-nama-surat">
+                                            <option value="">Semua Surat</option>
+                                            @foreach ($listNamaSurat as $tabel => $nama)
+                                                <option value="{{ $tabel }}">{{ $nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <label class="form-label fw-bold mb-2">Status:</label>
+                                        <select class="form-select form-select-sm" data-control="select2"
+                                            data-placeholder="Semua Status" data-allow-clear="true" data-filter="status"
+                                            id="filter-status">
+                                            <option value="">Semua Status</option>
+                                            <option value="pengajuan">Menunggu BAK</option>
+                                            <option value="proses">Menunggu Dekan</option>
+                                            <option value="diterima">Disetujui</option>
+                                            <option value="selesai">Selesai</option>
+                                            <option value="ditolak">Ditolak</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <label class="form-label fw-bold mb-2">Tahun Akademik:</label>
+                                        <select class="form-select form-select-sm" data-control="select2"
+                                            data-placeholder="Pilih Tahun Akademik" data-allow-clear="true"
+                                            data-filter="tahun_akademik" id="filter-tahun-akademik">
+                                            <option value="">Semua Tahun</option>
+                                            @foreach ($listTahunAkademik as $tahunAkademik)
+                                                <option value="{{ $tahunAkademik->id_akademik }}"
+                                                    {{ $tahunAkademik->tahun_akademik == $currentTahunAkademik ? 'selected' : '' }}>
+                                                    {{ $tahunAkademik->tahun_akademik }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="history-table">
+                                <thead class="">
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="text-center p-0" style="width:28px; min-width:28px;"></th>
+                                        <th class="text-center" style="width:40px;">
+                                            <div
+                                                class="form-check form-check-sm form-check-custom form-check-solid d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" id="select-all">
+                                            </div>
+                                        </th>
+                                        <th class="text-center">Actions</th>
+                                        <th class="min-w-125px">NIM</th>
+                                        <th class="min-w-125px">Nama Mahasiswa</th>
+                                        <th class="min-w-125px">Program Studi</th>
+                                        <th class="min-w-125px">Nama Surat Pengajuan</th>
+                                        <th class="min-w-125px">Status Pengajuan</th>
+                                        <th class="min-w-125px">Tanggal Pengajuan</th>
+                                        <th class="min-w-125px">Catatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="fw-bold text-gray-800">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 @section('js')
-    
+
     <script src="{{ asset('assets/plugins/custom/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables/lodash.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/custom/datatables/dataTables.bootstrap5.min.js') }}"></script>
@@ -231,17 +234,26 @@
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let selected = new Map();
             const $count = $('#selected-count');
-            const $btnApprove = $('#btn-bulk-approve');
+            const $btnApproveSend = $('#btn-bulk-approve-send');
             const $btnSend = $('#btn-bulk-send');
+
             function refreshUI() {
                 const items = Array.from(selected.values());
                 const count = items.length;
-                $count.text(count);
                 const allProses = count > 0 && items.every(x => x.status_raw === 'proses');
                 const allDiterima = count > 0 && items.every(x => x.status_raw === 'diterima');
-                $btnApprove.prop('disabled', !allProses);
-                $btnSend.prop('disabled', !allDiterima);
+
+                if (allDiterima) {
+                    $btnApproveSend.hide();
+                    $btnSend.show().prop('disabled', false);
+                    $('#selected-count-send').text(count);
+                } else {
+                    $btnSend.hide();
+                    $btnApproveSend.show().prop('disabled', !allProses);
+                    $('#selected-count').text(count);
+                }
             }
+
             function clearSelection() {
                 selected.clear();
                 $('#select-all').prop('checked', false);
@@ -306,11 +318,11 @@
                     }
                 },
                 columns: [{
-                    data: null,
-                    defaultContent: '',
-                    orderable: false,
-                    searchable: false
-                }, {
+                        data: null,
+                        defaultContent: '',
+                        orderable: false,
+                        searchable: false
+                    }, {
                         data: 'id_history',
                         name: 'id_history',
                         orderable: false,
@@ -419,14 +431,16 @@
                 });
                 refreshUI();
             });
-            $btnApprove.on('click', function() {
+            $btnApproveSend.on('click', function() {
                 const ids = Array.from(selected.keys());
+                const items = Array.from(selected.values());
+
                 Swal.fire({
-                    title: "Konfirmasi Terima Pengajuan",
-                    text: `Terima ${ids.length} pengajuan terpilih? Ini akan generate surat (TTD+QR).`,
+                    title: "Konfirmasi Terima & Kirim",
+                    text: `Terima dan kirim ${ids.length} pengajuan terpilih ke email mahasiswa? Ini akan generate surat (TTD+QR).`,
                     icon: "question",
                     showCancelButton: true,
-                    confirmButtonText: "Ya, Terima Pengajuan!",
+                    confirmButtonText: "Ya, Terima & Kirim!",
                     cancelButtonText: "Batal",
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -437,10 +451,11 @@
                     Swal.fire({
                         icon: "info",
                         title: 'Mohon tunggu...',
-                        text: 'Memproses generate surat...',
+                        text: 'Memproses persetujuan dan pengiriman email...',
                         allowOutsideClick: false,
                         didOpen: () => Swal.showLoading()
                     });
+
                     fetch("{{ route('dekan.history.bulkApprove') }}", {
                             method: 'POST',
                             headers: {
@@ -453,14 +468,55 @@
                         })
                         .then(r => r.json())
                         .then(data => {
-                            if (data.success) {
-                                Swal.fire("Berhasil!", data.message, "success").then(() => {
-                                    clearSelection();
-                                    table.ajax.reload(null, false);
-                                });
-                            } else {
+                            if (!data.success || data.success_count === 0) {
                                 Swal.fire("Gagal!", data.message || "Bulk approve gagal.",
                                     "error");
+                                return null;
+                            }
+
+                            const failedIds = data.failed_ids || [];
+                            const successfulItems = [];
+
+                            selected.forEach((item, id) => {
+                                if (!failedIds.includes(Number(id)) && !failedIds
+                                    .includes(String(id))) {
+                                    successfulItems.push({
+                                        ...item,
+                                        status_raw: 'diterima'
+                                    });
+                                }
+                            });
+
+                            if (successfulItems.length === 0) {
+                                Swal.fire("Gagal!", "Semua pengajuan gagal disetujui.",
+                                    "error");
+                                return null;
+                            }
+
+                            return fetch("{{ route('dekan.history.bulkSend') }}", {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    items: successfulItems
+                                })
+                            }).then(r => r.json());
+                        })
+                        .then(sendData => {
+                            if (!sendData) return;
+
+                            if (sendData.success && sendData.success_count > 0) {
+                                Swal.fire("Berhasil!", sendData.message, "success").then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire("Sebagian Berhasil", sendData.message ||
+                                    "Pengajuan disetujui, namun gagal mengirim email.",
+                                    "warning").then(() => {
+                                    window.location.reload();
+                                });
                             }
                         })
                         .catch(() => Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
@@ -501,10 +557,9 @@
                         })
                         .then(r => r.json())
                         .then(data => {
-                            if (data.success) {
+                            if (data.success && data.success_count > 0) {
                                 Swal.fire("Berhasil!", data.message, "success").then(() => {
-                                    clearSelection();
-                                    table.ajax.reload(null, false);
+                                    window.location.reload();
                                 });
                             } else {
                                 Swal.fire("Gagal!", data.message || "Bulk send gagal.",
