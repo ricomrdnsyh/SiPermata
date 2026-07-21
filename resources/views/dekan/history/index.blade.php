@@ -404,7 +404,8 @@
                     selected.set(id, {
                         status_raw: $(this).data('status'),
                         tabel: $(this).data('tabel'),
-                        id_surat: $(this).data('id-surat')
+                        id_surat: $(this).data('id-surat'),
+                        id_history: id
                     });
                 } else {
                     selected.delete(id);
@@ -423,7 +424,8 @@
                         selected.set(id, {
                             status_raw: $(this).data('status'),
                             tabel: $(this).data('tabel'),
-                            id_surat: $(this).data('id-surat')
+                            id_surat: $(this).data('id-surat'),
+                            id_history: id
                         });
                     } else {
                         selected.delete(id);
@@ -482,6 +484,7 @@
                                     .includes(String(id))) {
                                     successfulItems.push({
                                         ...item,
+                                        id_history: id,
                                         status_raw: 'diterima'
                                     });
                                 }

@@ -535,7 +535,7 @@ class DekanHistoryPengajuanController extends Controller
                 DB::beginTransaction();
 
                 $pengajuan = HistoryPengajuan::lockForUpdate()->find($id);
-                if (!$pengajuan || $pengajuan->fakultas_id !== $fakultasId || $pengajuan->status !== 'proses') {
+                if (!$pengajuan || $pengajuan->fakultas_id != $fakultasId || $pengajuan->status !== 'proses') {
                     Log::warning("Bulk approve gagal (id {$id}): Pengajuan tidak valid (tidak ditemukan, fakultas beda, atau status bukan proses). Fakultas ID Dekan: {$fakultasId}");
                     DB::rollBack();
                     $failed[] = $id;
@@ -643,6 +643,7 @@ class DekanHistoryPengajuanController extends Controller
             'items' => ['required', 'array', 'min:1'],
             'items.*.tabel' => ['required', 'string'],
             'items.*.id_surat' => ['required', 'integer'],
+            'items.*.id_history' => ['required'],
             'items.*.status_raw' => ['required', 'string'],
         ]);
 
@@ -674,7 +675,7 @@ class DekanHistoryPengajuanController extends Controller
                     continue;
                 }
 
-                if ($surat->mahasiswa->fakultas_id !== $fakultasId) {
+                if ($surat->mahasiswa->fakultas_id != $fakultasId) {
                     Log::warning("Bulk send gagal (id {$item['id_surat']}): Fakultas mahasiswa berbeda dengan fakultas Dekan.");
                     $failed[] = $item;
                     continue;
@@ -694,9 +695,7 @@ class DekanHistoryPengajuanController extends Controller
                     continue;
                 }
 
-                $pengajuanHistory = HistoryPengajuan::where('tabel', $item['tabel'])
-                    ->where('id_tabel_surat', $item['id_surat'])
-                    ->first();
+                $pengajuanHistory = HistoryPengajuan::find($item['id_history']);
 
                 if (!$pengajuanHistory || $pengajuanHistory->status !== 'diterima') {
                     Log::warning("Bulk send gagal (id {$item['id_surat']}): History tidak ditemukan atau status bukan diterima.");
