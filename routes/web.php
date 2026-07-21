@@ -51,7 +51,6 @@ use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardCont
 
 Route::get('/sso', [SsoController::class, 'sso']);
 Route::get('/sso/logout/{sessionId}', [SsoController::class, 'logout']);
-Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer');
 
 Route::get('/', function () {
     return view('landingpage');
@@ -98,6 +97,8 @@ Route::get('/verifikasi/surat-keterangan-lulus/{id}/preview', [VerifikasiControl
     ->name('verifikasi.lulus.preview');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer')->middleware('role:admin');
+
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
