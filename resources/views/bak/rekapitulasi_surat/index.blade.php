@@ -105,57 +105,44 @@
             <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
                 <div id="kt_app_content_container" class="app-container container-fluid">
 
-                                @php
-
-                    $colors = [
-                        ['class' => 'primary', 'icon' => 'fas fa-envelope-circle-check'],
-                        ['class' => 'success', 'icon' => 'fas fa-file-signature'],
-                        ['class' => 'warning', 'icon' => 'fas fa-file-alt'],
-                        ['class' => 'danger', 'icon' => 'fas fa-file-contract'],
-                        ['class' => 'info', 'icon' => 'fas fa-envelope-open-text'],
-                        ['class' => 'dark', 'icon' => 'fas fa-file-invoice'],
+                @php
+                    $suratIcons = [
+                        'Surat Keterangan Aktif' => 'fas fa-file-alt',
+                        'Surat Izin Penelitian' => 'fas fa-flask',
+                        'Surat Permohonan Observasi' => 'fas fa-eye',
+                        'Surat Rekomendasi' => 'fas fa-thumbs-up',
+                        'Surat Permohonan PKL' => 'fas fa-briefcase',
+                        'Surat Keterangan Lulus' => 'fas fa-graduation-cap',
                     ];
                 @endphp
-                <div class="row g-4 g-xl-6 mb-7">
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card border border-dashed border-gray-300 shadow-sm hover-elevate-up">
-                            <div class="card-body p-4 d-flex align-items-center">
-                                <div class="symbol symbol-50px me-4">
-                                    <span class="symbol-label bg-light-primary">
-                                        <i class="fas fa-check-circle text-primary fs-2x"></i>
-                                    </span>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <span class="fw-bolder fs-2 text-gray-900">{{ number_format($totalSelesai) }}</span>
-                                    <span class="fw-semibold text-gray-500 fs-7">Total Surat Selesai</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @php $gi = 1; @endphp
+                <div class="row g-5 g-xl-8 mb-7">
                     @foreach ($breakdownSurat as $nama => $count)
-                        @if ($count > 0)
                         @php
-                            $color = $colors[$gi % count($colors)]['class'];
-                            $icon = $colors[$gi % count($colors)]['icon'];
+                            $icon = $suratIcons[$nama] ?? 'fas fa-file';
                         @endphp
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card border border-dashed border-gray-300 shadow-sm hover-elevate-up">
-                                <div class="card-body p-4 d-flex align-items-center">
-                                    <div class="symbol symbol-50px me-4">
-                                        <span class="symbol-label bg-light-{{ $color }}">
-                                            <i class="{{ $icon }} text-{{ $color }} fs-2x"></i>
-                                        </span>
+                        <div class="col-xl-4 col-md-6">
+                            <div class="card h-100 border border-dashed border-gray-400 shadow-sm hover-elevate-up">
+                                <div class="card-body p-6">
+                                    <div class="d-flex align-items-center mb-5">
+                                        <div class="symbol symbol-50px me-4">
+                                            <div class="symbol-label bg-light-primary rounded-3">
+                                                <i class="{{ $icon }} text-primary fs-2"></i>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <span class="text-gray-900 fw-bolder fs-4 mb-1">{{ $nama }}</span>
+                                            <span class="text-gray-500 fw-semibold fs-7">Total disetujui</span>
+                                        </div>
                                     </div>
-                                    <div class="d-flex flex-column">
-                                        <span class="fw-bolder fs-2 text-gray-900">{{ number_format($count) }}</span>
-                                        <span class="fw-semibold text-gray-500 fs-7">{{ $nama }}</span>
+                                    <div class="border border-dashed border-gray-300 rounded p-4">
+                                        <div class="d-flex flex-stack mb-0">
+                                            <span class="text-gray-600 fw-bold fs-6">Total Surat Selesai</span>
+                                            <span class="text-primary fw-bolder fs-3">{{ number_format($count) }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        @php $gi++; @endphp
-                        @endif
                     @endforeach
                 </div>
 
