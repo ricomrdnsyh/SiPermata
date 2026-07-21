@@ -309,7 +309,7 @@ class BAKHistoryPengajuanController extends Controller
         $pengajuan->update([
             'status'     => 'proses',
             'catatan'    => 'Disetujui oleh BAK',
-            'jabatan_id' => $user->penduduk->jabatan->id_jabatan
+            'jabatan_id' => $user->penduduk?->jabatan?->id_jabatan
         ]);
 
         $suratUtama->update([
@@ -373,7 +373,7 @@ class BAKHistoryPengajuanController extends Controller
         }
 
         $data = $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
+            'ids' => ['required', 'array', 'min:1', 'max:20'],
             'ids.*' => ['integer'],
         ]);
 
@@ -408,7 +408,7 @@ class BAKHistoryPengajuanController extends Controller
                 $pengajuan->update([
                     'status'     => 'proses',
                     'catatan'    => 'Disetujui oleh BAK',
-                    'jabatan_id' => $user->penduduk->jabatan->id_jabatan
+                    'jabatan_id' => $user->penduduk?->jabatan?->id_jabatan
                 ]);
 
                 $suratUtama->update([
@@ -525,7 +525,7 @@ class BAKHistoryPengajuanController extends Controller
         $pengajuan->update([
             'status'     => 'ditolak',
             'catatan'    => $catatanPenolakan,
-            'jabatan_id' => $user->penduduk->jabatan->id_jabatan
+            'jabatan_id' => $user->penduduk?->jabatan?->id_jabatan
         ]);
 
         $suratUtama->update([
