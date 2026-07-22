@@ -71,7 +71,7 @@
                     </div>
 
                     <div class="col-xl-2 col-md-4">
-                        <a href="{{ route('admin.history-pengajuan.index') }}"
+                        <a href="{{ route('admin.history-pengajuan.index', ['status' => 'pengajuan']) }}"
                             class="card bg-light-warning border border-dashed border-gray-400 shadow-sm hover-elevate-up text-decoration-none h-md-100">
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -90,7 +90,7 @@
                     </div>
 
                     <div class="col-xl-2 col-md-4">
-                        <a href="{{ route('admin.history-pengajuan.index') }}"
+                        <a href="{{ route('admin.history-pengajuan.index', ['status' => 'proses']) }}"
                             class="card bg-light-primary border border-dashed border-gray-400 shadow-sm hover-elevate-up text-decoration-none h-md-100">
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -109,7 +109,7 @@
                     </div>
 
                     <div class="col-xl-2 col-md-4">
-                        <a href="{{ route('admin.history-pengajuan.index') }}"
+                        <a href="{{ route('admin.history-pengajuan.index', ['status' => 'diterima']) }}"
                             class="card bg-light-success border border-dashed border-gray-400 shadow-sm hover-elevate-up text-decoration-none h-md-100">
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -128,7 +128,7 @@
                     </div>
 
                     <div class="col-xl-2 col-md-4">
-                        <a href="{{ route('admin.history-pengajuan.index') }}"
+                        <a href="{{ route('admin.history-pengajuan.index', ['status' => 'selesai']) }}"
                             class="card border border-dashed border-gray-400 shadow-sm hover-elevate-up text-decoration-none h-md-100"
                             style="background-color: rgba(114, 57, 234, 0.12) !important;">
                             <div class="card-body p-4 d-flex flex-column">
@@ -148,7 +148,7 @@
                     </div>
 
                     <div class="col-xl-2 col-md-4">
-                        <a href="{{ route('admin.history-pengajuan.index') }}"
+                        <a href="{{ route('admin.history-pengajuan.index', ['status' => 'ditolak']) }}"
                             class="card bg-light-danger border border-dashed border-gray-400 shadow-sm hover-elevate-up text-decoration-none h-md-100">
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between">

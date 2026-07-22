@@ -233,6 +233,12 @@
     <script src="{{ asset('assets/plugins/custom/datatables/responsive.bootstrap.min.js') }}"></script>
     <script>
         $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const statusParam = urlParams.get('status');
+            if (statusParam) {
+                $('#filter-status').val(statusParam).trigger('change');
+            }
+
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let selectedIds = new Set();
 
