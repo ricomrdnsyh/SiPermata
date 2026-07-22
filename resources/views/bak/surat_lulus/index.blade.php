@@ -116,7 +116,7 @@
                         <div class="card-toolbar">
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <a href="{{ route('bak.surat-keterangan-lulus.create') }}" class="btn btn-sm btn-primary"><i
-                                        class="fas fa-plus"></i>Add Pengajuan</a>
+                                        class="fas fa-plus"></i>Tambah Pengajuan</a>
                             </div>
                         </div>
                     </div>

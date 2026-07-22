@@ -116,7 +116,7 @@
                         <div class="card-toolbar">
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#form_create">
-                                    <i class="fas fa-plus"></i> Add Template
+                                    <i class="fas fa-plus"></i> Tambah Template
                                 </button>
                             </div>
                         </div>

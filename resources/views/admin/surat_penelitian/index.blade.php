@@ -116,7 +116,7 @@
                         <div class="card-toolbar">
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 <a href="{{ route('admin.surat-izin-penelitian.create') }}"
-                                    class="btn btn-sm btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
+                                    class="btn btn-sm btn-primary"><i class="fas fa-plus"></i>Tambah Pengajuan</a>
                             </div>
                         </div>
                     </div>

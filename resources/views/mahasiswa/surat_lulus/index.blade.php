@@ -117,7 +117,7 @@
                             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                                 @if ($isEligible)
                                     <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}"
-                                        class="btn btn-sm  btn-primary"><i class="fas fa-plus"></i>Add Pengajuan</a>
+                                        class="btn btn-sm  btn-primary"><i class="fas fa-plus"></i>Tambah Pengajuan</a>
                                 @endif
                             </div>
                         </div>
