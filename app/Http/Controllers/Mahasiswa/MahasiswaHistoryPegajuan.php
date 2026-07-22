@@ -65,7 +65,10 @@ class MahasiswaHistoryPegajuan extends Controller
                 return $row->nama_surat;
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
+                $date = \Carbon\Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
+                $diff = $date->diffForHumans();
+                return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
@@ -82,7 +85,7 @@ class MahasiswaHistoryPegajuan extends Controller
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['status', 'action', 'tanggal_pengajuan'])
             ->make(true);
     }
 

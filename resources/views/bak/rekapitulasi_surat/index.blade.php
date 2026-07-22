@@ -221,7 +221,7 @@
                                             <th class="min-w-125px">Program Studi</th>
                                             <th class="min-w-150px">Jenis Surat</th>
                                             <th class="min-w-150px">No. Surat</th>
-                                            <th class="min-w-100px">Tanggal</th>
+                                            <th class="min-w-100px">Tanggal Pengajuan</th>
                                             <th class="text-center" style="width:80px;">Aksi</th>
                                         </tr>
                                     </thead>

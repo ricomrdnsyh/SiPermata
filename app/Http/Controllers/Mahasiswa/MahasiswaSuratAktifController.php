@@ -51,7 +51,10 @@ class MahasiswaSuratAktifController extends Controller
                 }
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                return Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—';
+                $date = \Carbon\Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
+                $diff = $date->diffForHumans();
+                return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";
             })
             ->addColumn('akademik', function ($row) {
                 return $row?->akademik?->tahun_akademik ?? "-";
@@ -80,7 +83,7 @@ class MahasiswaSuratAktifController extends Controller
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . '</div>';
             })
-            ->rawColumns(['kategori', 'akademik', 'status', 'catatan', 'action'])
+            ->rawColumns(['kategori', 'akademik', 'status', 'catatan', 'action', 'tanggal_pengajuan'])
             ->make(true);
     }
 

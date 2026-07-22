@@ -79,12 +79,17 @@ class AdminRekapitulasiSuratController extends Controller
             ->addColumn('prodi', fn($r) => $r->mahasiswa?->prodi?->nama_prodi ?? '-')
             ->addColumn('nama_surat', fn($r) => $r->nama_surat)
             ->addColumn('no_surat', fn($r) => $r->surat?->no_surat ?? '-')
-            ->addColumn('tanggal', fn($r) => Carbon::parse($r->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY'))
+            ->addColumn('tanggal', function ($r) {
+                $date = Carbon::parse($r->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
+                $diff = $date->diffForHumans();
+                return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";
+            })
             ->addColumn('action', function ($r) {
                 $url = route('admin.surat.lampiran_preview', ['tabel' => $r->tabel, 'id' => $r->id_tabel_surat]);
                 return '<div class="text-center"><a href="' . $url . '" target="_blank" class="btn btn-sm btn-light-primary" data-bs-toggle="tooltip" data-bs-title="Preview PDF"><i class="fas fa-eye"></i></a></div>';
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'tanggal'])
             ->make(true);
     }
 

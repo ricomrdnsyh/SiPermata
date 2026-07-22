@@ -188,7 +188,12 @@ class BAKHistoryPengajuanController extends Controller
             ->addColumn('nama_mahasiswa', fn($row) => $row->mahasiswa?->nama ?? $row->nim)
             ->addColumn('prodi', fn($row) => $row->mahasiswa?->prodi?->nama_prodi ?? $row->nim)
             ->addColumn('nama_surat', fn($row) => $row->nama_surat)
-            ->addColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—')
+            ->addColumn('tanggal_pengajuan', function ($row) {
+                $date = Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
+                $diff = $date->diffForHumans();
+                return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";
+            })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
                     'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
@@ -205,7 +210,7 @@ class BAKHistoryPengajuanController extends Controller
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
             })
-            ->rawColumns(['prodi', 'status', 'action', 'catatan'])
+            ->rawColumns(['prodi', 'status', 'action', 'catatan', 'tanggal_pengajuan'])
             ->make(true);
     }
 

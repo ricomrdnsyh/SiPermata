@@ -63,7 +63,12 @@ class SuratPKLController extends Controller
             ->filterColumn('prodi', fn($q, $k) => $q->whereHas('mahasiswa.prodi', fn($qq) => $qq->where('nama_prodi', 'like', "%{$k}%")))
             ->addColumn('nama_mahasiswa', fn($r) => $r->mahasiswa?->nama ?? $r->nim)
             ->addColumn('prodi', fn($r) => $r->mahasiswa?->prodi?->nama_prodi ?? $r->nim)
-            ->addColumn('tanggal_pengajuan', fn($r) => Carbon::parse($r->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm:ss') ?? '—')
+            ->addColumn('tanggal_pengajuan', function ($r) {
+                $date = \Carbon\Carbon::parse($r->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
+                $diff = $date->diffForHumans();
+                return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";
+            })
             ->addColumn('catatan', fn($r) => $r->catatan ?: '<em>Tidak ada catatan</em>')
             ->addColumn('status', fn($r) => match ($r->status) {
                 'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
