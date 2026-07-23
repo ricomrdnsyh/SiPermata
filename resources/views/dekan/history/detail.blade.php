@@ -726,6 +726,7 @@
                             })
                             .catch(() => Swal.fire("Gagal!",
                                 "Terjadi kesalahan jaringan atau server.", "error"));
+                        });
                     });
                 }
 
