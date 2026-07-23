@@ -51,7 +51,7 @@ class MahasiswaSuratAktifController extends Controller
                 }
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                $date = \Carbon\Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $date = Carbon::parse($row->tanggal_pengajuan_asli)->setTimezone('Asia/Jakarta')->locale('id');
                 $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
                 $diff = $date->diffForHumans();
                 return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";
@@ -72,12 +72,12 @@ class MahasiswaSuratAktifController extends Controller
                 };
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('mahasiswa.surat-aktif.show', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('mahasiswa.surat-aktif.show', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip"
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
                 $editBtn = '';
                 if ($row->status === 'ditolak') {
-                    $editBtn = '<a href="' . route('mahasiswa.surat-aktif.edit', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                    $editBtn = '<a href="' . route('mahasiswa.surat-aktif.edit', $row->id_surat_aktif) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip"
                 data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
                 }
 
@@ -126,7 +126,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
         }
 
-        
+
         $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
         $semester = $dataSimpt?->semester;
 
@@ -150,7 +150,7 @@ class MahasiswaSuratAktifController extends Controller
 
         $namaTemplate = $kategoriToTemplate[$request->kategori];
 
-        
+
         $template = Template::where('jenis_surat', $namaTemplate)
             ->where('fakultas_id', $fakultasId)
             ->first();
@@ -159,7 +159,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', "Template untuk kategori {$request->kategori} belum tersedia untuk fakultas Anda.");
         }
 
-        
+
         $noSurat = SuratAktif::getNextNoSurat($template->id_template, $request->akademik_id);
 
         \Illuminate\Support\Facades\DB::beginTransaction();
@@ -273,7 +273,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Data surat tidak ditemukan.');
         }
 
-        
+
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
         $semester = $dataSimpt?->semester;
 
@@ -312,7 +312,7 @@ class MahasiswaSuratAktifController extends Controller
             return back()->with('failed', 'Gagal memproses template dokumen setelah update. Error: ' . $e->getMessage());
         }
 
-        
+
         $pengajuan->update([
             'status'  => 'pengajuan',
             'catatan' => 'Diajukan ulang oleh mahasiswa'

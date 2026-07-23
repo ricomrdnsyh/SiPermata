@@ -108,4 +108,10 @@ class SuratPenelitian extends Model
         return $this->hasOne(HistoryPengajuan::class, 'id_tabel_surat')
             ->where('tabel', 'surat_izin_penelitian');
     }
+
+    public function getTanggalPengajuanAsliAttribute()
+    {
+        $firstLog = $this->historyPengajuan?->statusLogs()->orderBy('id_log', 'asc')->first();
+        return $firstLog?->created_at ?? $this->created_at;
+    }
 }

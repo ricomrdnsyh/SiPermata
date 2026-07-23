@@ -96,7 +96,7 @@ class BAKRekapitulasiSuratController extends Controller
             ->addColumn('nama_surat', fn($r) => $r->nama_surat)
             ->addColumn('no_surat', fn($r) => $r->surat?->no_surat ?? '-')
             ->addColumn('tanggal', function ($r) {
-                $date = Carbon::parse($r->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $date = Carbon::parse($r->tanggal_pengajuan_asli)->setTimezone('Asia/Jakarta')->locale('id');
                 $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
                 $diff = $date->diffForHumans();
                 return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";

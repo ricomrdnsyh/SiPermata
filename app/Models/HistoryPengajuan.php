@@ -182,4 +182,10 @@ class HistoryPengajuan extends Model
             default                  => 'Surat ' . ucwords(str_replace('_', ' ', $this->tabel))
         };
     }
+
+    public function getTanggalPengajuanAsliAttribute()
+    {
+        $firstLog = $this->statusLogs()->orderBy('id_log', 'asc')->first();
+        return $firstLog?->created_at ?? $this->created_at;
+    }
 }

@@ -43,7 +43,7 @@ class MahasiswaSuratRekomendasiController extends Controller
                 $query->orderBy('created_at', 'desc');
             })
             ->addColumn('tanggal_pengajuan', function ($row) {
-                $date = \Carbon\Carbon::parse($row->created_at)->setTimezone('Asia/Jakarta')->locale('id');
+                $date = \Carbon\Carbon::parse($row->tanggal_pengajuan_asli)->setTimezone('Asia/Jakarta')->locale('id');
                 $formatted = $date->isoFormat('D MMMM YYYY, HH:mm');
                 $diff = $date->diffForHumans();
                 return "<div>{$formatted}</div><div class=\"text-muted fs-7\">{$diff}</div>";

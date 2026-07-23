@@ -110,6 +110,12 @@ class SuratPKL extends Model
             ->where('tabel', 'surat_pkl');
     }
 
+    public function getTanggalPengajuanAsliAttribute()
+    {
+        $firstLog = $this->historyPengajuan?->statusLogs()->orderBy('id_log', 'asc')->first();
+        return $firstLog?->created_at ?? $this->created_at;
+    }
+
     public function getDaftarMahasiswaAttribute()
     {
         $ketua = collect();

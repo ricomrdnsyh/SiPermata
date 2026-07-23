@@ -213,7 +213,7 @@
                                             <span class="fs-3 fw-semibold text-gray-900">{{ $pengajuan->nama_surat }}</span>
                                             <span class="text-gray-600 fw-semibold fs-7">
                                                 Diajukan:
-                                                {{ $pengajuan->created_at?->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm') ?? '—' }}
+                                                {{ $pengajuan->tanggal_pengajuan_asli?->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm') ?? '—' }}
                                             </span>
                                         </div>
                                     </div>
