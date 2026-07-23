@@ -477,53 +477,10 @@
                         .then(r => r.json())
                         .then(data => {
                             if (!data.success || data.success_count === 0) {
-                                Swal.fire("Gagal!", data.message || "Bulk approve gagal.",
+                                Swal.fire("Gagal!", data.message || "Bulk approve & send gagal.",
                                     "error");
-                                return null;
-                            }
-
-                            const failedIds = data.failed_ids || [];
-                            const successfulItems = [];
-
-                            selected.forEach((item, id) => {
-                                if (!failedIds.includes(Number(id)) && !failedIds
-                                    .includes(String(id))) {
-                                    successfulItems.push({
-                                        ...item,
-                                        id_history: id,
-                                        status_raw: 'diterima'
-                                    });
-                                }
-                            });
-
-                            if (successfulItems.length === 0) {
-                                Swal.fire("Gagal!", "Semua pengajuan gagal disetujui.",
-                                    "error");
-                                return null;
-                            }
-
-                            return fetch("{{ route('dekan.history.bulkSend') }}", {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': csrfToken,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    items: successfulItems
-                                })
-                            }).then(r => r.json());
-                        })
-                        .then(sendData => {
-                            if (!sendData) return;
-
-                            if (sendData.success && sendData.success_count > 0) {
-                                Swal.fire("Berhasil!", sendData.message, "success").then(() => {
-                                    window.location.reload();
-                                });
                             } else {
-                                Swal.fire("Sebagian Berhasil", sendData.message ||
-                                    "Pengajuan disetujui, namun gagal mengirim email.",
-                                    "warning").then(() => {
+                                Swal.fire("Berhasil!", data.message, "success").then(() => {
                                     window.location.reload();
                                 });
                             }

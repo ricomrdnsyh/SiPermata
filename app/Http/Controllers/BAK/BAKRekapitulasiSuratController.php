@@ -66,8 +66,13 @@ class BAKRekapitulasiSuratController extends Controller
         }
 
         return view('bak.rekapitulasi_surat.index', compact(
-            'listProdi', 'listNamaSurat', 'listTahunAkademik',
-            'currentTahunAkademik', 'namaFakultas', 'totalSelesai', 'breakdownSurat'
+            'listProdi',
+            'listNamaSurat',
+            'listTahunAkademik',
+            'currentTahunAkademik',
+            'namaFakultas',
+            'totalSelesai',
+            'breakdownSurat'
         ));
     }
 
@@ -174,7 +179,8 @@ class BAKRekapitulasiSuratController extends Controller
         $zip->close();
 
         if ($fileCount === 0) {
-            @unlink($zipPath); @rmdir($tempDir);
+            @unlink($zipPath);
+            @rmdir($tempDir);
             return back()->with('failed', 'Tidak ada file surat tersedia.');
         }
 

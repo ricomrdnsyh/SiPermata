@@ -45,8 +45,8 @@ class RekapitulasiSuratExport implements FromCollection, WithHeadings, WithStyle
             $row['Program Studi'] = $item->mahasiswa?->prodi?->nama_prodi ?? '-';
             $row['Jenis Surat'] = $item->nama_surat;
             $row['No. Surat'] = $this->getNoSurat($item);
-            $row['Tanggal'] = $item->created_at
-                ? \Carbon\Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY')
+            $row['Tanggal Pengajuan'] = $item->tanggal_pengajuan_asli
+                ? \Carbon\Carbon::parse($item->tanggal_pengajuan_asli)->setTimezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY')
                 : '-';
             $row['Status'] = ucfirst($item->status);
 
@@ -64,7 +64,7 @@ class RekapitulasiSuratExport implements FromCollection, WithHeadings, WithStyle
             $headings[] = 'Fakultas';
         }
 
-        $headings = array_merge($headings, ['Program Studi', 'Jenis Surat', 'No. Surat', 'Tanggal', 'Status']);
+        $headings = array_merge($headings, ['Program Studi', 'Jenis Surat', 'No. Surat', 'Tanggal Pengajuan', 'Status']);
 
         return $headings;
     }

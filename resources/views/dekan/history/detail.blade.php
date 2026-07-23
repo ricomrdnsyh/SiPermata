@@ -711,38 +711,21 @@
                         }).then((result) => {
                             if (!result.isConfirmed) return;
 
-                            showLoading('Memproses persetujuan & pengiriman email...');
-                            postJson(approveUrl)
-                                .then(data => {
-                                    if (!data.success) {
-                                        Swal.fire("Gagal!", data.message ||
-                                            "Gagal menyetujui pengajuan.", "error");
-                                        return null;
-                                    }
-                                    return postJson(sendUrl);
-                                })
-                                .then(sendRes => {
-                                    if (!sendRes) return;
-
-                                    if (sendRes.success) {
-                                        Swal.fire("Berhasil!",
-                                                "Pengajuan disetujui dan surat berhasil dikirim ke email mahasiswa.",
-                                                "success")
-                                            .then(() => window.location.href = historyIndexUrl);
-                                        return;
-                                    }
-
-                                    Swal.fire(
-                                        "Sebagian Berhasil",
-                                        (sendRes.message ||
-                                            "Pengajuan sudah disetujui, tetapi pengiriman email gagal. Silakan coba tombol 'Kirim Surat ke Mahasiswa' setelah ini."
-                                        ),
-                                        "warning"
-                                    ).then(() => window.location.href = historyIndexUrl);
-                                })
-                                .catch(() => Swal.fire("Gagal!",
-                                    "Terjadi kesalahan jaringan atau server.", "error"));
-                        });
+                        showLoading('Memproses persetujuan & pengiriman email...');
+                        postJson(approveUrl)
+                            .then(data => {
+                                if (!data.success) {
+                                    Swal.fire("Gagal!", data.message ||
+                                        "Gagal menyetujui pengajuan.", "error");
+                                    return;
+                                }
+                                Swal.fire("Berhasil!",
+                                        "Pengajuan disetujui dan surat berhasil dikirim ke email mahasiswa.",
+                                        "success")
+                                    .then(() => window.location.href = historyIndexUrl);
+                            })
+                            .catch(() => Swal.fire("Gagal!",
+                                "Terjadi kesalahan jaringan atau server.", "error"));
                     });
                 }
 

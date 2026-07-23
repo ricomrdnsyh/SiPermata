@@ -365,14 +365,14 @@ class DekanHistoryPengajuanController extends Controller
             $pdfFilePath = $signatureService->convertDocxToPdf($docxFilePath);
 
             $detailSurat->update([
-                'status'        => 'diterima',
-                'catatan'       => "Disetujui oleh Dekan: {$namaDekan}",
+                'status'        => 'selesai',
+                'catatan'       => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
                 'file_generated' => $pdfFilePath,
             ]);
 
             $pengajuan->update([
-                'status'     => 'diterima',
-                'catatan'    => 'Disetujui oleh Dekan: ' . $namaDekan,
+                'status'     => 'selesai',
+                'catatan'    => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
                 'jabatan_id' => $idJabatan,
             ]);
 
@@ -382,6 +382,14 @@ class DekanHistoryPengajuanController extends Controller
                 'user_role'  => 'DEKAN',
                 'user_id'    => $user->id,
                 'catatan'    => 'Disetujui oleh Dekan: ' . $namaDekan,
+            ]);
+
+            PengajuanStatusLog::create([
+                'history_id' => $pengajuan->id_history,
+                'status'     => 'selesai',
+                'user_role'  => 'DEKAN',
+                'user_id'    => $user->id,
+                'catatan'    => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
             ]);
 
             DB::commit();
@@ -399,13 +407,10 @@ class DekanHistoryPengajuanController extends Controller
             $mahasiswa = Mahasiswa::where('nim', $detailSurat->nim)->first();
 
             if ($mahasiswa && $mahasiswa->email) {
+                $namaSurat = $pengajuan->nama_surat;
+                $fileName = strtoupper(str_replace(' ', '_', $pengajuan->tabel)) . '_' . ($detailSurat->nim ?? 'NoNIM') . '.pdf';
                 Mail::to($mahasiswa->email)->send(
-                    new NotifikasiStatusSurat(
-                        $mahasiswa,
-                        $pengajuan,
-                        'disetujui',
-                        "Disetujui oleh Dekan: {$namaDekan}"
-                    )
+                    new SuratSelesai($mahasiswa, $detailSurat, $pdfFilePath, $fileName, $namaSurat)
                 );
             }
         } catch (\Exception $e) {
@@ -414,7 +419,7 @@ class DekanHistoryPengajuanController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Pengajuan berhasil disetujui dan notifikasi email telah dikirim!'
+            'message' => 'Pengajuan berhasil disetujui, ditandatangani, dan dikirim ke email mahasiswa!'
         ], 200);
     }
 
@@ -582,14 +587,14 @@ class DekanHistoryPengajuanController extends Controller
                 $pdfFilePath  = $signatureService->convertDocxToPdf($docxFilePath);
 
                 $detailSurat->update([
-                    'status' => 'diterima',
-                    'catatan' => "Disetujui oleh Dekan: {$namaDekan}",
+                    'status' => 'selesai',
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
                     'file_generated' => $pdfFilePath,
                 ]);
 
                 $pengajuan->update([
-                    'status' => 'diterima',
-                    'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
+                    'status' => 'selesai',
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
                     'jabatan_id' => $idJabatan,
                 ]);
 
@@ -601,14 +606,24 @@ class DekanHistoryPengajuanController extends Controller
                     'catatan' => 'Disetujui oleh Dekan: ' . $namaDekan,
                 ]);
 
+                PengajuanStatusLog::create([
+                    'history_id' => $pengajuan->id_history,
+                    'status' => 'selesai',
+                    'user_role' => 'DEKAN',
+                    'user_id' => $user->id,
+                    'catatan' => 'Surat sudah ditandatangani dan dikirim ke email mahasiswa oleh Dekan.',
+                ]);
+
                 DB::commit();
                 $success++;
 
                 try {
                     $mahasiswa = Mahasiswa::where('nim', $detailSurat->nim)->first();
                     if ($mahasiswa && $mahasiswa->email) {
+                        $namaSurat = $pengajuan->nama_surat;
+                        $fileName = strtoupper(str_replace(' ', '_', $pengajuan->tabel)) . '_' . ($detailSurat->nim ?? 'NoNIM') . '.pdf';
                         Mail::to($mahasiswa->email)->send(
-                            new NotifikasiStatusSurat($mahasiswa, $pengajuan, 'disetujui', "Disetujui oleh Dekan: {$namaDekan}")
+                            new SuratSelesai($mahasiswa, $detailSurat, $pdfFilePath, $fileName, $namaSurat)
                         );
                     }
                 } catch (\Exception $e) {

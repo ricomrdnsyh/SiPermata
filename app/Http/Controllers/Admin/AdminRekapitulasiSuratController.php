@@ -54,8 +54,13 @@ class AdminRekapitulasiSuratController extends Controller
         }
 
         return view('admin.rekapitulasi_surat.index', compact(
-            'listFakultas', 'listProdi', 'listNamaSurat', 'listTahunAkademik',
-            'currentTahunAkademik', 'totalSelesai', 'breakdownSurat'
+            'listFakultas',
+            'listProdi',
+            'listNamaSurat',
+            'listTahunAkademik',
+            'currentTahunAkademik',
+            'totalSelesai',
+            'breakdownSurat'
         ));
     }
 
@@ -148,7 +153,8 @@ class AdminRekapitulasiSuratController extends Controller
         $zip->close();
 
         if ($fileCount === 0) {
-            @unlink($zipPath); @rmdir($tempDir);
+            @unlink($zipPath);
+            @rmdir($tempDir);
             return back()->with('failed', 'Tidak ada file surat tersedia.');
         }
 

@@ -401,10 +401,62 @@
                 }).toString();
             }
 
+            function downloadWithLoading(url, title, text) {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Download failed');
+
+                        let filename = '';
+                        const disposition = response.headers.get('Content-Disposition');
+                        if (disposition && disposition.indexOf('attachment') !== -1) {
+                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+                            if (matches != null && matches[1]) {
+                                filename = matches[1].replace(/['"]/g, '');
+                            }
+                        }
+                        return response.blob().then(blob => ({
+                            blob,
+                            filename
+                        }));
+                    })
+                    .then(({
+                        blob,
+                        filename
+                    }) => {
+                        if (!filename) {
+                            filename = url.includes('export') ? 'Rekapitulasi.xlsx' : 'Surat.zip';
+                        }
+                        const urlBlob = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = urlBlob;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(urlBlob);
+                        a.remove();
+
+                        Swal.close();
+                    })
+                    .catch(error => {
+                        console.error('Download error:', error);
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat mengunduh file.', 'error');
+                    });
+            }
+
             $('#btn-export-excel').on('click', function(e) {
                 e.preventDefault();
-                window.location.href = '{{ route('admin.rekapitulasi.exportExcel') }}?' +
-                    getFilterParams();
+                const url = '{{ route('admin.rekapitulasi.exportExcel') }}?' + getFilterParams();
+                downloadWithLoading(url, 'Mengekspor Excel',
+                    'Mohon tunggu, sedang menyiapkan file Excel...');
             });
 
             $('#btn-download-bulk').on('click', function(e) {
@@ -422,8 +474,10 @@
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = '{{ route('admin.rekapitulasi.downloadBulk') }}?' +
+                        const url = '{{ route('admin.rekapitulasi.downloadBulk') }}?' +
                             getFilterParams();
+                        downloadWithLoading(url, 'Mengompres PDF',
+                            'Mohon tunggu, sedang menyiapkan file ZIP...');
                     }
                 });
             });
