@@ -279,29 +279,29 @@
                         </p>
                     </div>
                 </div>
-            @elseif($current_file && count($logs) > 0)
+            @else
                 <div class="flex-1 overflow-auto p-6 lg:p-8">
                     <div
                         class="bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200 dark:border-slate-700 p-2 overflow-x-auto">
-                        <div class="min-w-[800px]">
-                            <table id="logTable" class="w-full display responsive nowrap !border-collapse">
-                                <thead>
-                                    <tr class="text-left bg-slate-50 dark:bg-slate-900/50">
-                                        <th
-                                            class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider rounded-tl-xl w-[120px]">
-                                            Level</th>
-                                        <th
-                                            class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[180px]">
-                                            Context</th>
-                                        <th
-                                            class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[180px]">
-                                            Date & Time</th>
-                                        <th
-                                            class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider rounded-tr-xl">
-                                            Content</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                        <table id="logTable" class="w-full display responsive nowrap !border-collapse">
+                            <thead>
+                                <tr class="text-left bg-slate-50 dark:bg-slate-900/50">
+                                    <th
+                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider rounded-tl-xl w-[120px]">
+                                        Level</th>
+                                    <th
+                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[180px]">
+                                        Context</th>
+                                    <th
+                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[180px]">
+                                        Date & Time</th>
+                                    <th
+                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider rounded-tr-xl">
+                                        Content</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                                @if ($logs)
                                     @foreach ($logs as $key => $log)
                                         <tr data-stack="stack{{ $key }}"
                                             class="hover:bg-blue-50/50 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
@@ -350,20 +350,10 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                @endif
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-            @elseif($current_file)
-                <div class="flex-1 flex flex-col items-center justify-center p-8 text-center opacity-70">
-                    <div
-                        class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl text-slate-300 dark:text-slate-600">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">Log is Empty</h3>
-                    <p class="text-slate-500 dark:text-slate-400 max-w-sm">There are no entries in this log file.
-                        Everything seems to be running smoothly!</p>
                 </div>
             @endif
 
@@ -411,6 +401,7 @@
                         }
                     ],
                     language: {
+                        emptyTable: '<div class="flex flex-col items-center justify-center p-8 text-center opacity-70"><div class="w-16 h-16 mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-3xl text-slate-300 dark:text-slate-600"><i class="fas fa-check-circle"></i></div><h3 class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-1">Log is Empty</h3><p class="text-slate-500 dark:text-slate-400 max-w-sm text-sm">Tidak ada data di log ini.</p></div>',
                         search: '',
                         searchPlaceholder: 'Search logs...',
                         lengthMenu: 'Show _MENU_',
