@@ -12,6 +12,9 @@ use App\Models\HistoryPengajuan;
 use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 use App\Services\NotifikasiBAKService;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\SuratPenelitianGenerator;
@@ -88,7 +91,14 @@ class MahasiswaSuratPenelitianController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
-        return view('mahasiswa.surat_penelitian.create', compact('latestAkademik', 'mitra'));
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+
+        if ($dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
+            return redirect()->route('mahasiswa.surat-izin-penelitian.index')
+                ->with('failed', 'Anda belum mengisi KRS pada semester aktif, sehingga tidak dapat mengajukan surat.');
+        }
+
+        return view('mahasiswa.surat_penelitian.create', compact('latestAkademik', 'mitra', 'dataSimpt'));
     }
 
     
@@ -108,6 +118,22 @@ class MahasiswaSuratPenelitianController extends Controller
 
         if (!$mahasiswa) {
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
+        $semester = $dataSimpt?->semester;
+
+        if (blank($semester)) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
+        }
+
+        $akademik = TahunAkademik::find($request->akademik_id);
+        if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
         }
 
         $fakultasId = $mahasiswa->fakultas_id;
@@ -228,8 +254,14 @@ class MahasiswaSuratPenelitianController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
-        return view('mahasiswa.surat_penelitian.edit', compact('surat', 'latestAkademik', 'mitra'));
+        if ($dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
+            return redirect()->route('mahasiswa.surat-izin-penelitian.index')
+                ->with('failed', 'Anda belum mengisi KRS pada semester aktif, sehingga tidak dapat mengajukan surat.');
+        }
+
+        return view('mahasiswa.surat_penelitian.edit', compact('surat', 'latestAkademik', 'mitra', 'dataSimpt'));
     }
 
     
@@ -251,6 +283,22 @@ class MahasiswaSuratPenelitianController extends Controller
 
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
+
+        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        $semester = $dataSimpt?->semester;
+
+        if (blank($semester)) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
+        }
+
+        $akademik = TahunAkademik::find($request->akademik_id);
+        if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
+        }
 
         \Illuminate\Support\Facades\DB::beginTransaction();
         $surat->update([
@@ -298,4 +346,51 @@ class MahasiswaSuratPenelitianController extends Controller
     {
         
     }
+
+    private function getDataSimpt(?string $nim): ?object
+    {
+        if (!$nim) {
+            return null;
+        }
+
+        try {
+            return DB::selectOne(
+                '
+                                SELECT
+                    b.id_smt,
+                    
+                    IFNULL(
+                        b.ipk_ketuntasan,
+                        (SELECT tkm.ipk_ketuntasan 
+                         FROM dbsimpt.tbbak_kuliah_mahasiswa tkm 
+                         WHERE tkm.id_mahasiswa_pt = b.id_mahasiswa_pt 
+                           AND tkm.ipk_ketuntasan IS NOT NULL 
+                           AND tkm.id_smt < b.id_smt 
+                         ORDER BY tkm.id_smt DESC 
+                         LIMIT 1)
+                    ) AS ipk_ketuntasan,
+                    
+                    (
+                        (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
+                        + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
+                        + 1
+                    ) AS semester
+                FROM dbsimpt.tbmas_mahasiswa_pt a
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b 
+                    ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
+                WHERE a.nipd = ?
+                ORDER BY b.id_smt DESC
+                LIMIT 1
+            ',
+                [$nim]
+            );
+        } catch (Throwable $e) {
+            Log::warning("Gagal mengambil data SIMPT untuk NIM: {$nim}", [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
 }
+

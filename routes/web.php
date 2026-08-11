@@ -146,6 +146,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-aktif/data', [SuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', SuratAktifController::class);
 
+        Route::get('surat-izin-penelitian/simpt/{nim}', [SuratPenelitianController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-izin-penelitian.simpt');
         Route::get('/surat-izin-penelitian/data', [SuratPenelitianController::class, 'getSuratPenelitian'])->name('surat-izin-penelitian.data');
         Route::resource('surat-izin-penelitian', SuratPenelitianController::class)->except(['destroy']);
 
@@ -154,6 +156,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-rekomendasi/data', [SuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
         Route::resource('surat-rekomendasi', SuratRekomendasiController::class)->except(['destroy']);
 
+        Route::get('surat-pkl/simpt/{nim}', [SuratPKLController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-pkl.simpt');
         Route::get('/surat-pkl/data', [SuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', SuratPKLController::class)->except(['destroy']);
 
@@ -257,6 +261,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-aktif/data', [BAKSuratAktifController::class, 'getSuratAktif'])->name('surat-aktif.data');
         Route::resource('surat-aktif', BAKSuratAktifController::class)->except(['destroy']);
 
+        Route::get('surat-izin-penelitian/simpt/{nim}', [BAKSuratPenelitianController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-izin-penelitian.simpt');
         Route::get('/surat-izin-penelitian/data', [BAKSuratPenelitianController::class, 'getSuratPenelitian'])->name('surat-izin-penelitian.data');
         Route::resource('surat-izin-penelitian', BAKSuratPenelitianController::class)->except(['destroy']);
 
@@ -265,6 +271,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/surat-rekomendasi/data', [BAKSuratRekomendasiController::class, 'getSuratRekomendasi'])->name('surat-rekomendasi.data');
         Route::resource('surat-rekomendasi', BAKSuratRekomendasiController::class)->except(['destroy']);
 
+        Route::get('surat-pkl/simpt/{nim}', [BAKSuratPKLController::class, 'getDataMahasiswaSimpt'])
+            ->name('surat-pkl.simpt');
         Route::get('/surat-pkl/data', [BAKSuratPKLController::class, 'getSuratPKL'])->name('surat-pkl.data');
         Route::resource('surat-pkl', BAKSuratPKLController::class)->except(['destroy']);
 

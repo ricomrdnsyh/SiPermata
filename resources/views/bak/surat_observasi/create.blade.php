@@ -244,6 +244,25 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        if (data.is_valid_krs === false) {
+                            Swal.fire({
+                                text: "Mahasiswa belum mengisi KRS pada semester ini. Pembuatan surat tidak dapat dilanjutkan.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, mengerti",
+                                customClass: {
+                                    confirmButton: "btn btn-danger"
+                                }
+                            }).then(() => {
+                                if (pengajuSelect) {
+                                    $(pengajuSelect).val(null).trigger('change.select2');
+                                }
+                                fieldSemester.value = '';
+                                simptWarning.classList.add('d-none');
+                            });
+                            return;
+                        }
+
                         if (data.semester) {
                             fieldSemester.value = data.semester;
                             simptWarning.classList.add('d-none');

@@ -156,6 +156,45 @@
                 submitButton.querySelector('.indicator-label').style.display = 'none';
                 submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
             });
+            
+            const nimSelect = document.querySelector('select[name="nim"]');
+            const simptUrl = "{{ route('bak.surat-penelitian.simpt', '__NIM__') }}";
+            
+            function validateSimpt(nim) {
+                if (!nim) return;
+                
+                fetch(simptUrl.replace('__NIM__', encodeURIComponent(nim)), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.is_valid_krs === false) {
+                        Swal.fire({
+                            text: "Mahasiswa belum mengisi KRS pada semester ini. Pembuatan surat tidak dapat dilanjutkan.",
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, mengerti",
+                            customClass: {
+                                confirmButton: "btn btn-danger"
+                            }
+                        }).then(() => {
+                            $(nimSelect).val(null).trigger('change.select2');
+                        });
+                    }
+                });
+            }
+            
+            if (nimSelect) {
+                if (window.jQuery) {
+                    $(nimSelect).on('change', function() {
+                        validateSimpt(this.value);
+                    });
+                } else {
+                    nimSelect.addEventListener('change', function() {
+                        validateSimpt(this.value);
+                    });
+                }
+            }
         });
     </script>
 

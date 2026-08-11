@@ -138,7 +138,34 @@
             }
             window.addAnggotaKelompokBakRow = function() { if (!anggotaContainer) return; anggotaContainer.insertAdjacentHTML('beforeend', buildAnggotaRow(anggotaIndex)); const row = anggotaContainer.lastElementChild; anggotaIndex += 1; initSelect2(row.querySelector('.anggota-nim-select')); syncAnggotaRow(row); };
 
-            if (pengajuSelect) initSelect2(pengajuSelect);
+            const simptUrl = "{{ route('bak.surat-pkl.simpt', '__NIM__') }}";
+            function validateSimpt(nim) {
+                if (!nim) return;
+                fetch(simptUrl.replace('__NIM__', encodeURIComponent(nim)), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.is_valid_krs === false) {
+                        Swal.fire({
+                            text: "Mahasiswa belum mengisi KRS pada semester ini. Pembuatan surat tidak dapat dilanjutkan.",
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, mengerti",
+                            customClass: { confirmButton: "btn btn-danger" }
+                        }).then(() => {
+                            $(pengajuSelect).val(null).trigger('change.select2');
+                        });
+                    }
+                });
+            }
+
+            if (pengajuSelect) {
+                initSelect2(pengajuSelect);
+                if (window.jQuery) {
+                    $(pengajuSelect).on('change', function() { validateSimpt(this.value); });
+                } else {
+                    pengajuSelect.addEventListener('change', function() { validateSimpt(this.value); });
+                }
+            }
             if (anggotaContainer) {
                 anggotaContainer.querySelectorAll('.anggota-nim-select').forEach(function(s) { initSelect2(s); syncAnggotaRow(s.closest('tr')); });
                 anggotaContainer.addEventListener('change', function(e) { const s = e.target.closest('.anggota-nim-select'); if (s) syncAnggotaRow(s.closest('tr')); });

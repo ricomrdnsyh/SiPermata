@@ -98,6 +98,11 @@ class MahasiswaSuratAktifController extends Controller
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
+        if ($dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
+            return redirect()->route('mahasiswa.surat-aktif.index')
+                ->with('failed', 'Anda belum mengisi KRS pada semester aktif, sehingga tidak dapat mengajukan surat.');
+        }
+
         return view('mahasiswa.surat_aktif.create', compact('latestAkademik', 'dataSimpt'));
     }
 
@@ -134,6 +139,13 @@ class MahasiswaSuratAktifController extends Controller
             return back()
                 ->withInput()
                 ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
+        }
+
+        $akademik = TahunAkademik::find($request->akademik_id);
+        if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
         }
 
         $fakultasId = $mahasiswa->fakultas_id;
@@ -243,6 +255,11 @@ class MahasiswaSuratAktifController extends Controller
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
+        if ($dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
+            return redirect()->route('mahasiswa.surat-aktif.index')
+                ->with('failed', 'Anda belum mengisi KRS pada semester aktif, sehingga tidak dapat mengajukan surat.');
+        }
+
         return view('mahasiswa.surat_aktif.edit', compact('surat', 'latestAkademik', 'dataSimpt'));
     }
 
@@ -281,6 +298,13 @@ class MahasiswaSuratAktifController extends Controller
             return back()
                 ->withInput()
                 ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
+        }
+
+        $akademik = TahunAkademik::find($request->akademik_id);
+        if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
+            return back()
+                ->withInput()
+                ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
         }
 
         $template = Template::findOrFail($surat->template_id);
@@ -354,24 +378,28 @@ class MahasiswaSuratAktifController extends Controller
         try {
             return DB::selectOne(
                 '
-                SELECT
+                                SELECT
                     b.id_smt,
-                    b.ipk_ketuntasan,
+                    
+                    IFNULL(
+                        b.ipk_ketuntasan,
+                        (SELECT tkm.ipk_ketuntasan 
+                         FROM dbsimpt.tbbak_kuliah_mahasiswa tkm 
+                         WHERE tkm.id_mahasiswa_pt = b.id_mahasiswa_pt 
+                           AND tkm.ipk_ketuntasan IS NOT NULL 
+                           AND tkm.id_smt < b.id_smt 
+                         ORDER BY tkm.id_smt DESC 
+                         LIMIT 1)
+                    ) AS ipk_ketuntasan,
+                    
                     (
                         (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
                         + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
                         + 1
-                        + IF(max_smt.id_smt > b.id_smt, 1, 0)
                     ) AS semester
                 FROM dbsimpt.tbmas_mahasiswa_pt a
-                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b 
                     ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
-                    AND b.ipk_ketuntasan IS NOT NULL
-                LEFT JOIN (
-                    SELECT id_mahasiswa_pt, MAX(id_smt) AS id_smt
-                    FROM dbsimpt.tbbak_kuliah_mahasiswa
-                    GROUP BY id_mahasiswa_pt
-                ) max_smt ON a.id_mahasiswa_pt = max_smt.id_mahasiswa_pt
                 WHERE a.nipd = ?
                 ORDER BY b.id_smt DESC
                 LIMIT 1
@@ -387,3 +415,4 @@ class MahasiswaSuratAktifController extends Controller
         }
     }
 }
+
