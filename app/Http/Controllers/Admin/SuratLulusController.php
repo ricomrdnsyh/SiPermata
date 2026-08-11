@@ -137,9 +137,10 @@ class SuratLulusController extends Controller
 
         $judulPenelitian = null;
         if ($mahasiswa) {
-            $eligibleRecord = \App\Models\MahasiswaEligibleLulus::where('nim', $nim)->orderBy('created_at', 'desc')->first();
+            $eligibleRecord = \App\Models\MahasiswaEligibleLulus::with('akademik')->where('nim', $nim)->orderBy('created_at', 'desc')->first();
             if ($eligibleRecord) {
                 $judulPenelitian = $eligibleRecord->judul_penelitian;
+                $akademik = $eligibleRecord->akademik;
             }
         }
 
@@ -162,6 +163,8 @@ class SuratLulusController extends Controller
             'judul_penelitian' => $judulPenelitian,
             'tempat_lahir' => $mahasiswa ? $mahasiswa->tempat_lahir : null,
             'tanggal_lahir' => $mahasiswa && $mahasiswa->tanggal_lahir ? \Carbon\Carbon::parse($mahasiswa->tanggal_lahir)->format('d/m/Y') : null,
+            'akademik_id' => isset($akademik) && $akademik ? $akademik->id_akademik : null,
+            'tahun_akademik' => isset($akademik) && $akademik ? $akademik->tahun_akademik : null,
         ]);
     }
 

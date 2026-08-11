@@ -1,9 +1,10 @@
 @extends('layout.main')
 @section('title', 'Surat Keterangan Lulus')
 @section('content')
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-        <div class="post d-flex flex-columnfluid" id="kt_post">
-            <div id="kt_content_container" class="container-fluid">
+    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
+                <div id="kt_app_content_container" class="app-container container-fluid">
                 <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
@@ -32,9 +33,9 @@
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                                 <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                    value="{{ $akademikLulusan ? $akademikLulusan->tahun_akademik : $latestAkademik?->tahun_akademik }}" disabled />
                                                 <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                    value="{{ $akademikLulusan ? $akademikLulusan->id_akademik : $latestAkademik?->id_akademik }}">
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -112,7 +113,9 @@
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+</div>
+@endsection
 
 @section('js')
     <script>

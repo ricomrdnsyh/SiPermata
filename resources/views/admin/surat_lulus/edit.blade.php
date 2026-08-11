@@ -42,10 +42,10 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
-                                                <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                <input id="field-tahun-akademik" type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                    value="{{ $surat->akademik?->tahun_akademik ?? $latestAkademik?->tahun_akademik }}" disabled />
+                                                <input id="hidden-akademik-id" type="hidden" name="akademik_id"
+                                                    value="{{ $surat->akademik_id ?? $latestAkademik?->id_akademik }}">
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -216,6 +216,14 @@
                         } else {
                             document.getElementById('field-tgl-lahir').value = '-';
                             document.getElementById('hidden-tgl-lahir').value = '';
+                        }
+
+                        if (data.akademik_id) {
+                            document.getElementById('hidden-akademik-id').value = data.akademik_id;
+                            document.getElementById('field-tahun-akademik').value = data.tahun_akademik;
+                        } else {
+                            document.getElementById('hidden-akademik-id').value = "{{ $latestAkademik?->id_akademik }}";
+                            document.getElementById('field-tahun-akademik').value = "{{ $latestAkademik?->tahun_akademik }}";
                         }
                     })
                     .catch(() => {

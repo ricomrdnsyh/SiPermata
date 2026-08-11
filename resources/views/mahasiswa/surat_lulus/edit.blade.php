@@ -34,9 +34,9 @@
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
                                                 <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                    value="{{ $akademikLulusan ? $akademikLulusan->tahun_akademik : $latestAkademik?->tahun_akademik }}" disabled />
                                                 <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                    value="{{ $akademikLulusan ? $akademikLulusan->id_akademik : $latestAkademik?->id_akademik }}">
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror

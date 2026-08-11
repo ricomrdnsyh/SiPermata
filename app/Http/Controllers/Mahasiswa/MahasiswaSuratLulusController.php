@@ -102,14 +102,15 @@ class MahasiswaSuratLulusController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
-        $eligibleData = MahasiswaEligibleLulus::where('nim', $mahasiswa->nim)
+        $eligibleData = MahasiswaEligibleLulus::with('akademik')->where('nim', $mahasiswa->nim)
             ->orderBy('created_at', 'desc')
             ->first();
         $judulPenelitian = $eligibleData ? $eligibleData->judul_penelitian : null;
+        $akademikLulusan = $eligibleData ? $eligibleData->akademik : null;
 
-        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
 
-        return view('mahasiswa.surat_lulus.create', compact('latestAkademik', 'dataSimpt', 'judulPenelitian'));
+        return view('mahasiswa.surat_lulus.create', compact('latestAkademik', 'judulPenelitian', 'dataSimpt', 'akademikLulusan'));
     }
 
     
@@ -256,9 +257,15 @@ class MahasiswaSuratLulusController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
+        $eligibleData = MahasiswaEligibleLulus::with('akademik')->where('nim', $user->mahasiswa?->nim)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $judulPenelitian = $eligibleData ? $eligibleData->judul_penelitian : null;
+        $akademikLulusan = $eligibleData ? $eligibleData->akademik : null;
+
         $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
 
-        return view('mahasiswa.surat_lulus.edit', compact('surat', 'latestAkademik', 'dataSimpt'));
+        return view('mahasiswa.surat_lulus.edit', compact('surat', 'latestAkademik', 'judulPenelitian', 'dataSimpt', 'akademikLulusan'));
     }
 
     
