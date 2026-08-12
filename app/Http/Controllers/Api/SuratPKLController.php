@@ -21,7 +21,7 @@ class SuratPKLController extends Controller
             ], 404);
         }
 
-        $suratPkl = SuratPKL::with(['mitra'])
+        $suratPkl = SuratPKL::with(['mitra', 'mahasiswa.prodi'])
             ->where(function($query) use ($nim) {
                 $query->where('nim', $nim)
                       ->orWhere('anggota_kelompok', 'LIKE', '%"nim":' . $nim . '%')
@@ -51,6 +51,7 @@ class SuratPKLController extends Controller
                     'catatan' => null,
                     'is_ketua' => null,
                     'tanggal_pengajuan' => null,
+                    'kelompok' => [],
                 ])
             ]);
         }
@@ -68,6 +69,7 @@ class SuratPKLController extends Controller
                 'catatan' => $suratPkl->catatan,
                 'is_ketua' => $suratPkl->nim === $nim,
                 'tanggal_pengajuan' => $suratPkl->created_at->format('Y-m-d H:i:s'),
+                'kelompok' => $suratPkl->daftar_mahasiswa,
             ])
         ]);
     }
