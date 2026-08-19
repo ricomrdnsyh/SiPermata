@@ -155,6 +155,7 @@
                 altInput: true,
                 altFormat: "d/m/Y",
                 allowInput: true,
+                minDate: "today",
                 onChange: function(selectedDates, dateStr) {
                     if (fpSelesai) fpSelesai.set("minDate", dateStr);
                 }
@@ -165,6 +166,7 @@
                 altInput: true,
                 altFormat: "d/m/Y",
                 allowInput: true,
+                minDate: "today",
                 onChange: function(selectedDates, dateStr) {
                     if (fpMulai) fpMulai.set("maxDate", dateStr);
                 }

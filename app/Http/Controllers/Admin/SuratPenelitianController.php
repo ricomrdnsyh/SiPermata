@@ -183,9 +183,12 @@ class SuratPenelitianController extends Controller
         $request->validate([
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'tgl_mulai'        => 'required',
-            'tgl_selesai'      => 'required',
+            'tgl_mulai'        => 'required|date|after_or_equal:today',
+            'tgl_selesai'      => 'required|date|after_or_equal:tgl_mulai',
             'judul_penelitian' => 'required',
+        ], [
+            'tgl_mulai.after_or_equal' => 'Tanggal mulai minimal hari ini.',
+            'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
         $mahasiswa = Mahasiswa::where('nim', $request->nim)->first();
@@ -325,9 +328,12 @@ class SuratPenelitianController extends Controller
         $request->validate([
             'akademik_id'      => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id'         => 'required|exists:mitra,id_mitra',
-            'tgl_mulai'        => 'required',
-            'tgl_selesai'      => 'required',
+            'tgl_mulai'        => 'required|date|after_or_equal:today',
+            'tgl_selesai'      => 'required|date|after_or_equal:tgl_mulai',
             'judul_penelitian' => 'required',
+        ], [
+            'tgl_mulai.after_or_equal' => 'Tanggal mulai minimal hari ini.',
+            'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
         $surat = SuratPenelitian::findOrFail($id);
