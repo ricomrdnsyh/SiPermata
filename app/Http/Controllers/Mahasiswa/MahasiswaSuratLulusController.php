@@ -100,6 +100,12 @@ class MahasiswaSuratLulusController extends Controller
                 ->with('failed', 'Anda belum terdaftar sebagai mahasiswa lulusan. Silakan hubungi BAK Fakultas.');
         }
 
+        $existingSurat = SuratLulus::where('nim', $mahasiswa->nim)->exists();
+        if ($existingSurat) {
+            return redirect()->route('mahasiswa.surat-keterangan-lulus.index')
+                ->with('failed', 'Anda sudah mengajukan Surat Keterangan Lulus. Jika ditolak, gunakan fitur edit. Jika sedang diproses atau disetujui, Anda tidak perlu mengajukan lagi.');
+        }
+
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
 
         $eligibleData = MahasiswaEligibleLulus::with('akademik')->where('nim', $mahasiswa->nim)
@@ -133,6 +139,11 @@ class MahasiswaSuratLulusController extends Controller
 
         if (!$mahasiswa->isEligibleLulus()) {
             return back()->with('failed', 'Anda belum terdaftar sebagai mahasiswa lulusan. Silakan hubungi BAK Fakultas.');
+        }
+
+        $existingSurat = SuratLulus::where('nim', $mahasiswa->nim)->exists();
+        if ($existingSurat) {
+            return back()->with('failed', 'Anda sudah mengajukan Surat Keterangan Lulus. Jika ditolak, gunakan fitur edit. Jika sedang diproses atau disetujui, Anda tidak perlu mengajukan lagi.');
         }
 
         $fakultasId = $mahasiswa->fakultas_id;

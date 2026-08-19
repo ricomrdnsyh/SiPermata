@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Prodi;
-use App\Models\Fakultas;
-use App\Models\Template;
-use App\Models\Mahasiswa;
-use App\Models\SuratLulus;
-use Illuminate\Http\Request;
-use App\Models\TahunAkademik;
-use Illuminate\Support\Carbon;
-use App\Models\HistoryPengajuan;
-use App\Models\PengajuanStatusLog;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Fakultas;
+use App\Models\HistoryPengajuan;
+use App\Models\Mahasiswa;
+use App\Models\MahasiswaEligibleLulus;
+use App\Models\PengajuanStatusLog;
+use App\Models\Prodi;
+use App\Models\SuratLulus;
+use App\Models\TahunAkademik;
+use App\Models\Template;
 use App\Services\SuratLulusGenerator;
-use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use Yajra\DataTables\Facades\DataTables;
 
 class SuratLulusController extends Controller
 {
-    
+
     public function index()
     {
         $user = Auth::user();
@@ -112,10 +113,10 @@ class SuratLulusController extends Controller
                 };
             })
             ->addColumn('action', function ($row) {
-                $showBtn = '<a href="' . route('admin.surat-keterangan-lulus.show', $row->id_surat_lulus) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
+                $showBtn = '<a href="' . route('admin.surat-keterangan-lulus.show', $row->id_surat_lulus) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip"
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
 
-                $editBtn = '<a href="' . route('admin.surat-keterangan-lulus.edit', $row->id_surat_lulus) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip" 
+                $editBtn = '<a href="' . route('admin.surat-keterangan-lulus.edit', $row->id_surat_lulus) . '" class="btn btn-sm btn-light btn-active-light-warning text-center" data-bs-toggle="tooltip"
                 data-bs-title="Edit"><i class="fas fa-edit"></i></a>';
 
                 return '<div class="d-flex justify-content-center gap-2">' . $showBtn . ' ' . $editBtn . '</div>';
@@ -134,10 +135,11 @@ class SuratLulusController extends Controller
 
         $mahasiswa = Mahasiswa::where('nim', $nim)->first();
         $isEligible = $mahasiswa ? $mahasiswa->isEligibleLulus() : false;
+        $isAlreadyApplied = SuratLulus::where('nim', $nim)->exists();
 
         $judulPenelitian = null;
         if ($mahasiswa) {
-            $eligibleRecord = \App\Models\MahasiswaEligibleLulus::with('akademik')->where('nim', $nim)->orderBy('created_at', 'desc')->first();
+            $eligibleRecord = MahasiswaEligibleLulus::with('akademik')->where('nim', $nim)->orderBy('created_at', 'desc')->first();
             if ($eligibleRecord) {
                 $judulPenelitian = $eligibleRecord->judul_penelitian;
                 $akademik = $eligibleRecord->akademik;
@@ -160,6 +162,7 @@ class SuratLulusController extends Controller
                 ? number_format((float) $dataSimpt->ipk_ketuntasan, 2)
                 : null,
             'is_eligible' => $isEligible,
+            'is_already_applied' => $isAlreadyApplied,
             'judul_penelitian' => $judulPenelitian,
             'tempat_lahir' => $mahasiswa ? $mahasiswa->tempat_lahir : null,
             'tanggal_lahir' => $mahasiswa && $mahasiswa->tanggal_lahir ? \Carbon\Carbon::parse($mahasiswa->tanggal_lahir)->format('d/m/Y') : null,
@@ -168,7 +171,7 @@ class SuratLulusController extends Controller
         ]);
     }
 
-    
+
     public function create()
     {
         $user = Auth::user();
@@ -183,7 +186,7 @@ class SuratLulusController extends Controller
         return view('admin.surat_lulus.create', compact('mahasiswa', 'latestAkademik'));
     }
 
-    
+
     public function store(Request $request, SuratLulusGenerator $generatorService)
     {
         $user = Auth::user();
@@ -209,6 +212,11 @@ class SuratLulusController extends Controller
             return back()->with('failed', 'Mahasiswa dengan NIM ini belum terdaftar di daftar mahasiswa lulusan.');
         }
 
+        $existingSurat = SuratLulus::where('nim', $mahasiswa->nim)->exists();
+        if ($existingSurat) {
+            return back()->with('failed', 'Mahasiswa ini sudah memiliki Surat Keterangan Lulus. Jika ditolak, silakan gunakan fitur edit.');
+        }
+
         $fakultasId = $mahasiswa->fakultas_id;
 
         if (!$fakultasId) {
@@ -228,7 +236,7 @@ class SuratLulusController extends Controller
             return back()->with('failed', "Template untuk {$namaTemplate} belum tersedia untuk fakultas Anda.");
         }
 
-        
+
         $noSurat = SuratLulus::getNextNoSurat($template->id_template, $request->akademik_id);
 
         $surat = SuratLulus::create([
@@ -245,10 +253,10 @@ class SuratLulusController extends Controller
         ]);
 
         try {
-            
+
             $generatedFilePath = $generatorService->generateWord($surat, $template, $ipk);
 
-            
+
             $surat->update([
                 'file_generated' => $generatedFilePath,
             ]);
@@ -278,7 +286,7 @@ class SuratLulusController extends Controller
         return redirect()->route('admin.surat-keterangan-lulus.index')->with('success', 'Pengajuan surat berhasil diajukan! Silakan tunggu proses persetujuan.');
     }
 
-    
+
     public function show(string $id)
     {
         $user = Auth::user();
@@ -296,7 +304,7 @@ class SuratLulusController extends Controller
         return view('admin.surat_lulus.show', compact('surat', 'dataSimpt'));
     }
 
-    
+
     public function edit(string $id)
     {
         $user = Auth::user();
@@ -317,7 +325,7 @@ class SuratLulusController extends Controller
         return view('admin.surat_lulus.edit', compact('surat', 'latestAkademik', 'mahasiswa', 'dataSimpt'));
     }
 
-    
+
     public function update(Request $request, string $id, SuratLulusGenerator $generatorService)
     {
         $user = Auth::user();
@@ -388,11 +396,8 @@ class SuratLulusController extends Controller
         }
     }
 
-    
-    public function destroy(string $id)
-    {
-        
-    }
+
+    public function destroy(string $id) {}
 
     private function getDataSimpt(?string $nim): ?object
     {
@@ -402,25 +407,25 @@ class SuratLulusController extends Controller
             return DB::selectOne('
                                 SELECT
                     b.id_smt,
-                    
+
                     IFNULL(
                         b.ipk_ketuntasan,
-                        (SELECT tkm.ipk_ketuntasan 
-                         FROM dbsimpt.tbbak_kuliah_mahasiswa tkm 
-                         WHERE tkm.id_mahasiswa_pt = b.id_mahasiswa_pt 
-                           AND tkm.ipk_ketuntasan IS NOT NULL 
-                           AND tkm.id_smt < b.id_smt 
-                         ORDER BY tkm.id_smt DESC 
+                        (SELECT tkm.ipk_ketuntasan
+                         FROM dbsimpt.tbbak_kuliah_mahasiswa tkm
+                         WHERE tkm.id_mahasiswa_pt = b.id_mahasiswa_pt
+                           AND tkm.ipk_ketuntasan IS NOT NULL
+                           AND tkm.id_smt < b.id_smt
+                         ORDER BY tkm.id_smt DESC
                          LIMIT 1)
                     ) AS ipk_ketuntasan,
-                    
+
                     (
                         (LEFT(b.id_smt, 4) - LEFT(a.mulai_smt, 4)) * 2
                         + (RIGHT(b.id_smt, 1) - RIGHT(a.mulai_smt, 1))
                         + 1
                     ) AS semester
                 FROM dbsimpt.tbmas_mahasiswa_pt a
-                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b 
+                LEFT JOIN dbsimpt.tbbak_kuliah_mahasiswa b
                     ON a.id_mahasiswa_pt = b.id_mahasiswa_pt
                 WHERE a.nipd = ?
                 ORDER BY b.id_smt DESC

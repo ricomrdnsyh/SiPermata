@@ -167,6 +167,23 @@
                     })
                     .then(res => res.json())
                     .then(data => {
+                        if (data.is_already_applied === true) {
+                            Swal.fire({
+                                text: "Mahasiswa ini sudah pernah diajukan Surat Keterangan Lulus. Jika ditolak, silakan gunakan fitur edit.",
+                                icon: "warning",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-warning"
+                                }
+                            }).then(() => {
+                                $('#select-nim').val('').trigger('change.select2');
+                                fieldIpk.value = '';
+                                simptWarn.classList.add('d-none');
+                            });
+                            return;
+                        }
+
                         if (data.is_eligible === false) {
                             Swal.fire({
                                 text: "Mahasiswa dengan NIM ini belum terdaftar di daftar mahasiswa lulusan (Eligible Lulus). Silakan daftarkan terlebih dahulu sebelum membuat pengajuan.",
