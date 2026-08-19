@@ -171,7 +171,7 @@
                                     <a href="{{ route('mahasiswa.surat-aktif.create') }}" class="btn btn-primary flex-fill btn-sm fw-bolder">
                                         <i class="fas fa-plus me-1"></i> Ajukan
                                     </a>
-                                    <a href="{{ route('mahasiswa.surat-aktif.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
+                                    <a href="{{ route('mahasiswa.history.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
                                         <i class="fas fa-history me-1"></i> Riwayat
                                     </a>
                                 </div>
@@ -226,7 +226,7 @@
                                     <a href="{{ route('mahasiswa.surat-izin-penelitian.create') }}" class="btn btn-primary flex-fill btn-sm fw-bolder">
                                         <i class="fas fa-plus me-1"></i> Ajukan
                                     </a>
-                                    <a href="{{ route('mahasiswa.surat-izin-penelitian.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
+                                    <a href="{{ route('mahasiswa.history.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
                                         <i class="fas fa-history me-1"></i> Riwayat
                                     </a>
                                 </div>
@@ -281,7 +281,7 @@
                                     <a href="{{ route('mahasiswa.surat-observasi.create') }}" class="btn btn-primary flex-fill btn-sm fw-bolder">
                                         <i class="fas fa-plus me-1"></i> Ajukan
                                     </a>
-                                    <a href="{{ route('mahasiswa.surat-observasi.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
+                                    <a href="{{ route('mahasiswa.history.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
                                         <i class="fas fa-history me-1"></i> Riwayat
                                     </a>
                                 </div>
@@ -336,7 +336,7 @@
                                     <a href="{{ route('mahasiswa.surat-rekomendasi.create') }}" class="btn btn-primary flex-fill btn-sm fw-bolder">
                                         <i class="fas fa-plus me-1"></i> Ajukan
                                     </a>
-                                    <a href="{{ route('mahasiswa.surat-rekomendasi.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
+                                    <a href="{{ route('mahasiswa.history.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
                                         <i class="fas fa-history me-1"></i> Riwayat
                                     </a>
                                 </div>
@@ -391,7 +391,7 @@
                                     <a href="{{ route('mahasiswa.surat-pkl.create') }}" class="btn btn-primary flex-fill btn-sm fw-bolder">
                                         <i class="fas fa-plus me-1"></i> Ajukan
                                     </a>
-                                    <a href="{{ route('mahasiswa.surat-pkl.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
+                                    <a href="{{ route('mahasiswa.history.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
                                         <i class="fas fa-history me-1"></i> Riwayat
                                     </a>
                                 </div>
@@ -446,7 +446,7 @@
                                     <a href="{{ route('mahasiswa.surat-keterangan-lulus.create') }}" class="btn btn-primary flex-fill btn-sm fw-bolder">
                                         <i class="fas fa-plus me-1"></i> Ajukan
                                     </a>
-                                    <a href="{{ route('mahasiswa.surat-keterangan-lulus.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
+                                    <a href="{{ route('mahasiswa.history.index') }}" class="btn btn-light-primary btn-sm flex-fill fw-bolder btn-riwayat-hover">
                                         <i class="fas fa-history me-1"></i> Riwayat
                                     </a>
                                 </div>

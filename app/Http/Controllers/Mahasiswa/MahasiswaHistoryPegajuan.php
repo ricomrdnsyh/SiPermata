@@ -82,8 +82,10 @@ class MahasiswaHistoryPegajuan extends Controller
             ->addColumn('action', function ($row) {
                 $showBtn = '<a href="' . route('mahasiswa.history.detail', $row->id_history) . '" class="btn btn-sm btn-light btn-active-light-info text-center" data-bs-toggle="tooltip" 
                 data-bs-title="Detail"><i class="fa fa-file-alt"></i></a>';
+                $viewBtn = '<a href="' . route('mahasiswa.surat.view', ['tabel' => $row->tabel, 'id' => $row->id_tabel_surat]) . '" target="_blank" class="btn btn-sm btn-primary text-center" data-bs-toggle="tooltip" 
+                data-bs-title="Unduh/Lihat Surat"><i class="fa fa-download"></i></a>';
 
-                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . '</div>';
+                return '<div class="d-flex justify-content-center gap-2">' . $showBtn . $viewBtn . '</div>';
             })
             ->rawColumns(['status', 'action', 'tanggal_pengajuan'])
             ->make(true);
