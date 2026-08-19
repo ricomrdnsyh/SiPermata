@@ -206,7 +206,7 @@
             });
             
             const nimSelect = document.querySelector('select[name="nim"]');
-            const simptUrl = "{{ route('admin.surat-penelitian.simpt', '__NIM__') }}";
+            const simptUrl = "{{ route('admin.surat-izin-penelitian.simpt', '__NIM__') }}";
             
             function validateSimpt(nim) {
                 if (!nim) return;
