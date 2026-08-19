@@ -189,7 +189,9 @@ class SuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $request->validate($this->rules());
+        $request->validate($this->rules(), [
+            'tgl_observasi.after_or_equal' => 'Tanggal observasi minimal hari ini.'
+        ]);
 
         $mahasiswa = Mahasiswa::with('prodi')
             ->where('nim', $request->nim)
@@ -346,7 +348,9 @@ class SuratObservasiController extends Controller
             abort(403, 'Akses Ditolak.');
         }
 
-        $request->validate($this->rules());
+        $request->validate($this->rules(), [
+            'tgl_observasi.after_or_equal' => 'Tanggal observasi minimal hari ini.'
+        ]);
 
         $surat = SuratObservasi::findOrFail($id);
         $mahasiswa = Mahasiswa::with('prodi')
@@ -458,7 +462,7 @@ class SuratObservasiController extends Controller
             'nim' => 'required|string|max:50',
             'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id' => 'required|exists:mitra,id_mitra',
-            'tgl_observasi' => 'required',
+            'tgl_observasi' => 'required|date|after_or_equal:today',
             'keperluan' => 'required',
             'anggota_kelompok' => 'nullable|array',
             'anggota_kelompok.*.nim' => 'nullable|string|max:50',
