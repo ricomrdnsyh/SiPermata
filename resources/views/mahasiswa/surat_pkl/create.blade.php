@@ -5,115 +5,117 @@
         <div class="d-flex flex-column flex-column-fluid">
             <div id="kt_app_content" class="app-content flex-column-fluid mt-7">
                 <div id="kt_app_content_container" class="app-container container-fluid">
-                <div class="card shadow-sm border border-dashed border-dark rounded">
-                    <div class="card-body p-lg-8">
-                        <div class="d-flex flex-column">
-                            <div class="mb-6 text-center">
-                                <h1 class="fs-2hx fw-bolder mb-3">Surat Permohonan PKL</h1>
-                                <div class="text-gray-400 fw-bold fs-5">Mohon untuk mengisi semua data dengan benar.</div>
-                            </div>
-                            <div class="separator border-gray-200 mb-8"></div>
-                            <div id="form-container" class="mt-2">
-                                <form id="kt_ecommerce_settings_general_form"
-                                    class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
-                                    action="{{ route('mahasiswa.surat-pkl.store') }}">
-                                    @csrf
-
-                                    <div class="row">
-                                        <div class="col-12 col-md-6">
-                                            <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                <input type="text" name="nim"
-                                                    class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ auth()->user()->reference_id }}" disabled required />
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 col-md-6">
-                                            <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
-                                                <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
-                                                @error('akademik_id')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 col-md-6">
-                                            <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-calendar-alt fs-5"></i>
-                                                    </span>
-                                                    <input id="tgl_mulai" type="text" name="tgl_mulai"
-                                                        class="form-control form-control-sm"
-                                                        placeholder="Pilih tanggal mulai" autocomplete="off" required />
-                                                </div>
-                                                @error('tgl_mulai')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 col-md-6">
-                                            <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-calendar-alt fs-5"></i>
-                                                    </span>
-                                                    <input id="tgl_selesai" type="text" name="tgl_selesai"
-                                                        class="form-control form-control-sm"
-                                                        placeholder="Pilih tanggal selesai" autocomplete="off" required />
-                                                </div>
-                                                @error('tgl_selesai')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="fv-row mb-3">
-                                                <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
-                                                <select class="form-select form-select-sm w-100"
-                                                    data-control="select2" data-placeholder="Pilih Tempat PKL"
-                                                    name="mitra_id">
-                                                    <option value="">
-                                                        Pilih Tempat PKL...</option>
-                                                    @foreach ($mitra as $mitra)
-                                                        <option value="{{ $mitra->id_mitra }}">
-                                                            {{ $mitra->nama_mitra }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('mitra_id')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        @include('mahasiswa.surat_pkl._anggota_kelompok', [
-                                            'anggotaKelompok' => old('anggota_kelompok', []),
-                                        ])
+                    <div class="card shadow-sm border border-dashed border-dark rounded">
+                        <div class="card-body p-lg-8">
+                            <div class="d-flex flex-column">
+                                <div class="mb-6 text-center">
+                                    <h1 class="fs-2hx fw-bolder mb-3">Surat Permohonan PKL</h1>
+                                    <div class="text-gray-400 fw-bold fs-5">Mohon untuk mengisi semua data dengan benar.
                                     </div>
+                                </div>
+                                <div class="separator border-gray-200 mb-8"></div>
+                                <div id="form-container" class="mt-2">
+                                    <form id="kt_ecommerce_settings_general_form"
+                                        class="form fv-plugins-bootstrap5 fv-plugins-framework" method="POST"
+                                        action="{{ route('mahasiswa.surat-pkl.store') }}">
+                                        @csrf
 
-                                    <div class="text-center mt-4">
-                                        <button type="button" id="btn-submit-pengajuan"
-                                            class="btn btn-primary w-250px">
-                                            <span class="indicator-label">
-                                                <i class="fas fa-save me-2"></i> Buat Pengajuan
-                                            </span>
-                                            <span class="indicator-progress" style="display: none;">
-                                                Tunggu sebentar...
-                                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                            </span>
-                                        </button>
-                                    </div>
-                                </form>
+                                        <div class="row">
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">NIM</label>
+                                                    <input type="text" name="nim"
+                                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        value="{{ auth()->user()->reference_id }}" disabled required />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
+                                                    <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
+                                                        value="{{ $latestAkademik?->tahun_akademik }}" disabled />
+                                                    <input type="hidden" name="akademik_id"
+                                                        value="{{ $latestAkademik?->id_akademik }}">
+                                                    @error('akademik_id')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">
+                                                            <i class="fas fa-calendar-alt fs-5"></i>
+                                                        </span>
+                                                        <input id="tgl_mulai" type="text" name="tgl_mulai"
+                                                            class="form-control form-control-sm"
+                                                            placeholder="Pilih tanggal mulai" autocomplete="off" required />
+                                                    </div>
+                                                    @error('tgl_mulai')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">
+                                                            <i class="fas fa-calendar-alt fs-5"></i>
+                                                        </span>
+                                                        <input id="tgl_selesai" type="text" name="tgl_selesai"
+                                                            class="form-control form-control-sm"
+                                                            placeholder="Pilih tanggal selesai" autocomplete="off"
+                                                            required />
+                                                    </div>
+                                                    @error('tgl_selesai')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="fv-row mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
+                                                    <select class="form-select form-select-sm w-100" data-control="select2"
+                                                        data-placeholder="Pilih Tempat PKL" name="mitra_id">
+                                                        <option value="">
+                                                            Pilih Tempat PKL...</option>
+                                                        @foreach ($mitra as $mitra)
+                                                            <option value="{{ $mitra->id_mitra }}">
+                                                                {{ $mitra->nama_mitra }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('mitra_id')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            @include('mahasiswa.surat_pkl._anggota_kelompok', [
+                                                'anggotaKelompok' => old('anggota_kelompok', []),
+                                            ])
+                                        </div>
+
+                                        <div class="text-center mt-4">
+                                            <button type="button" id="btn-submit-pengajuan"
+                                                class="btn btn-primary w-250px">
+                                                <span class="indicator-label">
+                                                    <i class="fas fa-save me-2"></i> Buat Pengajuan
+                                                </span>
+                                                <span class="indicator-progress" style="display: none;">
+                                                    Tunggu sebentar...
+                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -121,7 +123,6 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('js')
@@ -153,6 +154,7 @@
                 altInputClass: "form-control form-control-sm",
                 allowInput: true,
                 defaultDate: mulaiVal,
+                minDate: "today",
                 maxDate: selesaiVal,
                 onReady: function(selectedDates, dateStr, instance) {
                     if (instance.altInput) {
@@ -172,7 +174,7 @@
                 altInputClass: "form-control form-control-sm",
                 allowInput: true,
                 defaultDate: selesaiVal,
-                minDate: mulaiVal,
+                minDate: mulaiVal || "today",
                 onReady: function(selectedDates, dateStr, instance) {
                     if (instance.altInput) {
                         instance.altInput.required = true;
@@ -188,16 +190,19 @@
                 return '' +
                     '<tr>' +
                     '    <td class="ps-3">' +
-                    '        <input type="text" name="anggota_kelompok[' + index + '][nim]" class="form-control form-control-sm anggota-nim-input" placeholder="Masukkan NIM..." autocomplete="off" />' +
+                    '        <input type="text" name="anggota_kelompok[' + index +
+                    '][nim]" class="form-control form-control-sm anggota-nim-input" placeholder="Masukkan NIM..." autocomplete="off" />' +
                     '        <div class="invalid-feedback anggota-nim-feedback"></div>' +
                     '    </td>' +
                     '    <td>' +
                     '        <input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-nama-input" placeholder="Otomatis terisi..." readonly disabled />' +
-                    '        <input type="hidden" name="anggota_kelompok[' + index + '][nama]" class="anggota-nama-hidden-input" />' +
+                    '        <input type="hidden" name="anggota_kelompok[' + index +
+                    '][nama]" class="anggota-nama-hidden-input" />' +
                     '    </td>' +
                     '    <td>' +
                     '        <input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-prodi-input" placeholder="Otomatis terisi..." readonly disabled />' +
-                    '        <input type="hidden" name="anggota_kelompok[' + index + '][prodi]" class="anggota-prodi-hidden-input" />' +
+                    '        <input type="hidden" name="anggota_kelompok[' + index +
+                    '][prodi]" class="anggota-prodi-hidden-input" />' +
                     '    </td>' +
                     '    <td class="pe-4 text-center">' +
                     '        <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-anggota-kelompok hover-elevate-up" title="Hapus anggota" aria-label="Hapus anggota"><i class="fas fa-trash-alt"></i></button>' +
@@ -279,20 +284,22 @@
                 row._lookupAbortController = abortController;
 
                 return fetch(lookupBaseUrl + '/' + encodeURIComponent(nim), {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    signal: abortController.signal,
-                })
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        signal: abortController.signal,
+                    })
                     .then(function(response) {
                         return response.json().then(function(result) {
-                            if (row.dataset.lookupRequestId !== requestId || nimInput.value.trim() !== nim) {
+                            if (row.dataset.lookupRequestId !== requestId || nimInput.value.trim() !==
+                                nim) {
                                 return;
                             }
 
                             if (!response.ok || !result.success) {
-                                throw new Error(result.message || ('NIM ' + nim + ' tidak ditemukan pada data mahasiswa.'));
+                                throw new Error(result.message || ('NIM ' + nim +
+                                    ' tidak ditemukan pada data mahasiswa.'));
                             }
 
                             lookupCache.set(nim, result.data);
@@ -408,7 +415,8 @@
                 validateAnggotaRows().then(function(anggotaValid) {
                     if (!anggotaValid) {
                         submitButton.disabled = false;
-                        submitButton.querySelector('.indicator-label').style.display = 'inline-block';
+                        submitButton.querySelector('.indicator-label').style.display =
+                            'inline-block';
                         submitButton.querySelector('.indicator-progress').style.display = 'none';
                         return;
                     }

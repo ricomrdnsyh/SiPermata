@@ -134,7 +134,10 @@ class BAKSuratPKLController extends Controller
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
         if (!$fakultasIdBak) { return back()->with('failed', 'Data BAK tidak terhubung ke fakultas manapun.'); }
 
-        $request->validate($this->rules());
+        $request->validate($this->rules(), [
+            'tgl_mulai.after_or_equal' => 'Tanggal mulai minimal hari ini.',
+            'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
+        ]);
 
         $mahasiswa = Mahasiswa::with('prodi')->where('nim', $request->nim)->where('fakultas_id', $fakultasIdBak)->first();
         if (!$mahasiswa) { return back()->with('failed', 'Mahasiswa tersebut bukan bagian dari fakultas Anda.'); }
@@ -237,7 +240,10 @@ class BAKSuratPKLController extends Controller
         $fakultasIdBak = $userBak->penduduk?->fakultas_id;
         if (!$fakultasIdBak) { return back()->with('failed', 'Data BAK tidak terhubung ke fakultas manapun.'); }
 
-        $request->validate($this->rules());
+        $request->validate($this->rules(), [
+            'tgl_mulai.after_or_equal' => 'Tanggal mulai minimal hari ini.',
+            'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
+        ]);
 
         $surat = SuratPKL::findOrFail($id);
         $mahasiswa = Mahasiswa::with('prodi')->where('nim', $request->nim)->where('fakultas_id', $fakultasIdBak)->first();
@@ -311,7 +317,7 @@ class BAKSuratPKLController extends Controller
             'nim' => 'required|string|max:50',
             'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id' => 'required|exists:mitra,id_mitra',
-            'tgl_mulai' => 'required', 'tgl_selesai' => 'required',
+            'tgl_mulai' => 'required|date|after_or_equal:today', 'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
             'anggota_kelompok' => 'nullable|array',
             'anggota_kelompok.*.nim' => 'nullable|string|max:50',
         ];
