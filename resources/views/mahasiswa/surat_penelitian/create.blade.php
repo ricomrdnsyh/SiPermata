@@ -11,6 +11,12 @@
             transition: all 0.3s ease;
         }
 
+        @media (max-width: 767.98px) {
+            .form-group-box {
+                padding: 1.25rem 1rem;
+            }
+        }
+
         .form-group-box:hover {
             border-color: var(--bs-gray-400);
             background-color: var(--bs-gray-200);
