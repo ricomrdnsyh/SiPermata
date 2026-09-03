@@ -115,10 +115,18 @@
                                                     <textarea name="judul_penelitian" class="form-control" rows="3" disabled>{{ $surat->judul_penelitian }}</textarea>
                                                 </div>
 
+                                                @if ($surat->catatan)
                                                 <div class="col-md-12">
-                                                    <label class="required fw-semibold fs-6 mb-2">Catatan</label>
-                                                    <textarea name="catatan" class="form-control" rows="3" disabled>{{ $surat->catatan }}</textarea>
+                                                    <label class="fw-semibold fs-6 mb-2">Catatan Verifikator</label>
+                                                    <div class="alert alert-dismissible bg-light-warning border border-warning border-dashed d-flex align-items-start w-100 p-4 p-sm-5 mb-0">
+                                                        <i class="fas fa-exclamation-circle fs-2hx text-warning me-4"></i>
+                                                        <div class="d-flex flex-column pe-0">
+                                                            <h5 class="mb-1 text-warning">Catatan dari Verifikator</h5>
+                                                            <span>{{ $surat->catatan }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
 

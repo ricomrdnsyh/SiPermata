@@ -166,14 +166,16 @@
 
                                         
                                     
-                                        <div class="form-group-box">
-                                            <h5 class="mb-5 text-gray-600"><i class="fas fa-comment text-gray-400 me-2"></i> Catatan</h5>
+                                        @if ($surat->catatan)
+                                        <div class="form-group-box border-warning bg-light-warning">
+                                            <h5 class="mb-5 text-warning"><i class="fas fa-exclamation-circle text-warning me-2"></i> Catatan Verifikator</h5>
                                             <div class="row g-5">
                                                 <div class="col-md-12">
-                                                    <textarea class="form-control" rows="2" disabled>{{ $surat->catatan }}</textarea>
+                                                    <span class="fs-6 text-gray-800">{{ $surat->catatan }}</span>
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
 </form>
 
                                     <form id="form-pns" class="form-section" 
@@ -344,14 +346,16 @@
 
                                         
                                     
-                                        <div class="form-group-box">
-                                            <h5 class="mb-5 text-gray-600"><i class="fas fa-comment text-gray-400 me-2"></i> Catatan</h5>
+                                        @if ($surat->catatan)
+                                        <div class="form-group-box border-warning bg-light-warning">
+                                            <h5 class="mb-5 text-warning"><i class="fas fa-exclamation-circle text-warning me-2"></i> Catatan Verifikator</h5>
                                             <div class="row g-5">
                                                 <div class="col-md-12">
-                                                    <textarea class="form-control" rows="2" disabled>{{ $surat->catatan }}</textarea>
+                                                    <span class="fs-6 text-gray-800">{{ $surat->catatan }}</span>
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
 </form>
 
                                     <form id="form-pppk" class="form-section" 
@@ -522,14 +526,16 @@
 
                                         
                                     
-                                        <div class="form-group-box">
-                                            <h5 class="mb-5 text-gray-600"><i class="fas fa-comment text-gray-400 me-2"></i> Catatan</h5>
+                                        @if ($surat->catatan)
+                                        <div class="form-group-box border-warning bg-light-warning">
+                                            <h5 class="mb-5 text-warning"><i class="fas fa-exclamation-circle text-warning me-2"></i> Catatan Verifikator</h5>
                                             <div class="row g-5">
                                                 <div class="col-md-12">
-                                                    <textarea class="form-control" rows="2" disabled>{{ $surat->catatan }}</textarea>
+                                                    <span class="fs-6 text-gray-800">{{ $surat->catatan }}</span>
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
 </form>
                             </div>
                         </div>
