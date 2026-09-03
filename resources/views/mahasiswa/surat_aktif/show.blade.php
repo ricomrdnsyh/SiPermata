@@ -161,21 +161,21 @@
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        
-                                    
-                                        @if ($surat->catatan)
-                                        <div class="form-group-box border-warning bg-light-warning">
-                                            <h5 class="mb-5 text-warning"><i class="fas fa-exclamation-circle text-warning me-2"></i> Catatan Verifikator</h5>
-                                            <div class="row g-5">
-                                                <div class="col-md-12">
-                                                    <span class="fs-6 text-gray-800">{{ $surat->catatan }}</span>
+                                                @if ($surat->catatan)
+                                                <div class="col-md-12 mt-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Catatan Verifikator</label>
+                                                    <div class="alert alert-dismissible bg-light-warning border border-warning border-dashed d-flex align-items-start w-100 p-4 p-sm-5 mb-0">
+                                                        <i class="fas fa-exclamation-circle fs-2hx text-warning me-4"></i>
+                                                        <div class="d-flex flex-column pe-0">
+                                                            <h5 class="mb-1 text-warning">Catatan dari Verifikator</h5>
+                                                            <span>{{ $surat->catatan }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
-                                        @endif
 </form>
 
                                     <form id="form-pns" class="form-section" 
@@ -341,21 +341,21 @@
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        
-                                    
-                                        @if ($surat->catatan)
-                                        <div class="form-group-box border-warning bg-light-warning">
-                                            <h5 class="mb-5 text-warning"><i class="fas fa-exclamation-circle text-warning me-2"></i> Catatan Verifikator</h5>
-                                            <div class="row g-5">
-                                                <div class="col-md-12">
-                                                    <span class="fs-6 text-gray-800">{{ $surat->catatan }}</span>
+                                                @if ($surat->catatan)
+                                                <div class="col-md-12 mt-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Catatan Verifikator</label>
+                                                    <div class="alert alert-dismissible bg-light-warning border border-warning border-dashed d-flex align-items-start w-100 p-4 p-sm-5 mb-0">
+                                                        <i class="fas fa-exclamation-circle fs-2hx text-warning me-4"></i>
+                                                        <div class="d-flex flex-column pe-0">
+                                                            <h5 class="mb-1 text-warning">Catatan dari Verifikator</h5>
+                                                            <span>{{ $surat->catatan }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
-                                        @endif
 </form>
 
                                     <form id="form-pppk" class="form-section" 
@@ -521,21 +521,21 @@
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        
-                                    
-                                        @if ($surat->catatan)
-                                        <div class="form-group-box border-warning bg-light-warning">
-                                            <h5 class="mb-5 text-warning"><i class="fas fa-exclamation-circle text-warning me-2"></i> Catatan Verifikator</h5>
-                                            <div class="row g-5">
-                                                <div class="col-md-12">
-                                                    <span class="fs-6 text-gray-800">{{ $surat->catatan }}</span>
+                                                @if ($surat->catatan)
+                                                <div class="col-md-12 mt-3">
+                                                    <label class="fw-semibold fs-6 mb-2">Catatan Verifikator</label>
+                                                    <div class="alert alert-dismissible bg-light-warning border border-warning border-dashed d-flex align-items-start w-100 p-4 p-sm-5 mb-0">
+                                                        <i class="fas fa-exclamation-circle fs-2hx text-warning me-4"></i>
+                                                        <div class="d-flex flex-column pe-0">
+                                                            <h5 class="mb-1 text-warning">Catatan dari Verifikator</h5>
+                                                            <span>{{ $surat->catatan }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
-                                        @endif
 </form>
                             </div>
                         </div>

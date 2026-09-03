@@ -50,7 +50,8 @@
                                         <i class="fas fa-file-signature fs-2hx text-primary me-2 align-middle"></i>
                                         Surat Permohonan Observasi
                                     </h1>
-                                    <div class="text-muted fw-semibold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
+                                    <div class="text-muted fw-semibold fs-5">Mohon untuk perbarui semua data dengan benar.
+                                    </div>
                                 </div>
                                 <div class="separator border-2 border-dashed mb-10"></div>
                                 <div id="form-container" class="mt-2">
@@ -61,7 +62,9 @@
                                         @method('PUT')
 
                                         <div class="form-group-box">
-                                            <h5 class="mb-5 text-gray-600"><i class="fas fa-graduation-cap text-gray-400 me-2"></i> Data Akademik Mahasiswa</h5>
+                                            <h5 class="mb-5 text-gray-600"><i
+                                                    class="fas fa-graduation-cap text-gray-400 me-2"></i> Data Akademik
+                                                Mahasiswa</h5>
                                             <div class="row g-5">
                                                 <div class="col-md-4">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
@@ -83,14 +86,16 @@
                                                     <input type="text" name="semester" class="form-control"
                                                         value="{{ $dataSimpt?->semester ?? '-' }}" disabled />
                                                     @if (blank($dataSimpt?->semester))
-                                                        <small class="text-warning mt-1 d-block">Data semester belum ditemukan di SIMPT.</small>
+                                                        <small class="text-warning mt-1 d-block">Data semester belum
+                                                            ditemukan di SIMPT.</small>
                                                     @endif
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="form-group-box">
-                                            <h5 class="mb-5 text-gray-600"><i class="fas fa-building text-gray-400 me-2"></i> Detail Observasi</h5>
+                                            <h5 class="mb-5 text-gray-600"><i
+                                                    class="fas fa-building text-gray-400 me-2"></i> Detail Observasi</h5>
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
@@ -112,7 +117,8 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tanggal Observasi</label>
                                                     <div class="position-relative">
-                                                        <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
+                                                        <i
+                                                            class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_observasi" type="text" name="tgl_observasi"
                                                             class="form-control ps-12" placeholder="Pilih tanggal observasi"
                                                             autocomplete="off"
@@ -125,8 +131,10 @@
                                                 </div>
 
                                                 <div class="col-md-12">
-                                                    <label class="required fw-semibold fs-6 mb-2">Keperluan Observasi</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll" required>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                                    <label class="required fw-semibold fs-6 mb-2">Keperluan
+                                                        Observasi</label>
+                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll"
+                                                        required>{{ old('keperluan', $surat->keperluan) }}</textarea>
                                                     @error('keperluan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
@@ -135,15 +143,16 @@
                                         </div>
 
                                         @include('mahasiswa.surat_observasi._anggota_kelompok', [
-                                            'anggotaKelompok' => old('anggota_kelompok', $surat->anggota_kelompok ?? []),
+                                            'anggotaKelompok' => old(
+                                                'anggota_kelompok',
+                                                $surat->anggota_kelompok ?? []),
                                         ])
 
                                         <div class="text-center mt-8">
                                             <button type="submit" data-kt-contacts-type="submit"
                                                 class="btn btn-primary w-100 w-md-auto px-10">
-                                                <span class="indicator-label">
-                                                    <i class="fas fa-save me-2"></i> Update Pengajuan
-                                                </span>
+                                                <span class="indicator-label"><i class="fas fa-paper-plane me-2"></i>
+                                                    Ajukan Ulang</span>
                                                 <span class="indicator-progress" style="display: none;">
                                                     Tunggu sebentar...
                                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -204,18 +213,21 @@
                     '    <div class="row g-3 align-items-center">' +
                     '        <div class="col-12 col-md-3">' +
                     '            <label class="fw-semibold fs-7 mb-1 d-md-none text-muted">NIM Anggota</label>' +
-                    '            <input type="text" name="anggota_kelompok[' + index + '][nim]" class="form-control form-control-sm anggota-nim-input" placeholder="Masukkan NIM..." autocomplete="off" />' +
+                    '            <input type="text" name="anggota_kelompok[' + index +
+                    '][nim]" class="form-control form-control-sm anggota-nim-input" placeholder="Masukkan NIM..." autocomplete="off" />' +
                     '            <div class="invalid-feedback anggota-nim-feedback"></div>' +
                     '        </div>' +
                     '        <div class="col-12 col-md-4">' +
                     '            <label class="fw-semibold fs-7 mb-1 d-md-none text-muted">Nama Mahasiswa</label>' +
                     '            <input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-nama-input" placeholder="Otomatis terisi..." readonly disabled />' +
-                    '            <input type="hidden" name="anggota_kelompok[' + index + '][nama]" class="anggota-nama-hidden-input" />' +
+                    '            <input type="hidden" name="anggota_kelompok[' + index +
+                    '][nama]" class="anggota-nama-hidden-input" />' +
                     '        </div>' +
                     '        <div class="col-12 col-md-4">' +
                     '            <label class="fw-semibold fs-7 mb-1 d-md-none text-muted">Program Studi</label>' +
                     '            <input type="text" class="form-control form-control-sm form-control-solid anggota-autofill-input anggota-prodi-input" placeholder="Otomatis terisi..." readonly disabled />' +
-                    '            <input type="hidden" name="anggota_kelompok[' + index + '][prodi]" class="anggota-prodi-hidden-input" />' +
+                    '            <input type="hidden" name="anggota_kelompok[' + index +
+                    '][prodi]" class="anggota-prodi-hidden-input" />' +
                     '        </div>' +
                     '        <div class="col-12 col-md-1 text-end text-md-center mt-2 mt-md-0">' +
                     '            <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-anggota-kelompok hover-elevate-up" title="Hapus anggota" aria-label="Hapus anggota">' +
@@ -300,20 +312,22 @@
                 row._lookupAbortController = abortController;
 
                 return fetch(lookupBaseUrl + '/' + encodeURIComponent(nim), {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    signal: abortController.signal,
-                })
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        signal: abortController.signal,
+                    })
                     .then(function(response) {
                         return response.json().then(function(result) {
-                            if (row.dataset.lookupRequestId !== requestId || nimInput.value.trim() !== nim) {
+                            if (row.dataset.lookupRequestId !== requestId || nimInput.value.trim() !==
+                                nim) {
                                 return;
                             }
 
                             if (!response.ok || !result.success) {
-                                throw new Error(result.message || ('NIM ' + nim + ' tidak ditemukan pada data mahasiswa.'));
+                                throw new Error(result.message || ('NIM ' + nim +
+                                    ' tidak ditemukan pada data mahasiswa.'));
                             }
 
                             lookupCache.set(nim, result.data);
@@ -431,7 +445,8 @@
 
                     submitButton.disabled = true;
                     submitButton.querySelector('.indicator-label').style.display = 'none';
-                    submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+                    submitButton.querySelector('.indicator-progress').style.display =
+                        'inline-block';
                     form.submit();
                 });
             });

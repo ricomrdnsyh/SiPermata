@@ -50,7 +50,8 @@
                                         <i class="fas fa-file-signature fs-2hx text-primary me-2 align-middle"></i>
                                         Surat Permohonan Izin Penelitian
                                     </h1>
-                                    <div class="text-muted fw-semibold fs-5">Mohon untuk perbarui semua data dengan benar.</div>
+                                    <div class="text-muted fw-semibold fs-5">Mohon untuk perbarui semua data dengan benar.
+                                    </div>
                                 </div>
                                 <div class="separator border-2 border-dashed mb-10"></div>
                                 <div id="form-container" class="mt-2">
@@ -106,10 +107,13 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
                                                     <div class="position-relative">
-                                                        <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
+                                                        <i
+                                                            class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_mulai" type="text" name="tgl_mulai"
                                                             class="form-control ps-12" placeholder="Pilih tanggal mulai"
-                                                            autocomplete="off" value="{{ old('tgl_mulai', $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '') }}" required />
+                                                            autocomplete="off"
+                                                            value="{{ old('tgl_mulai', $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '') }}"
+                                                            required />
                                                     </div>
                                                     @error('tgl_mulai')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -119,10 +123,13 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
                                                     <div class="position-relative">
-                                                        <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
+                                                        <i
+                                                            class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_selesai" type="text" name="tgl_selesai"
                                                             class="form-control ps-12" placeholder="Pilih tanggal selesai"
-                                                            autocomplete="off" value="{{ old('tgl_selesai', $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '') }}" required />
+                                                            autocomplete="off"
+                                                            value="{{ old('tgl_selesai', $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '') }}"
+                                                            required />
                                                     </div>
                                                     @error('tgl_selesai')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -131,7 +138,8 @@
 
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
-                                                    <textarea name="judul_penelitian" class="form-control" rows="3" placeholder="Masukkan judul penelitian..." required>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                                    <textarea name="judul_penelitian" class="form-control" rows="3" placeholder="Masukkan judul penelitian..."
+                                                        required>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                                     @error('judul_penelitian')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
@@ -142,9 +150,8 @@
                                         <div class="text-center mt-8">
                                             <button type="submit" data-kt-contacts-type="submit"
                                                 class="btn btn-primary w-100 w-md-auto px-10">
-                                                <span class="indicator-label">
-                                                    <i class="fas fa-save me-2"></i> Update Pengajuan
-                                                </span>
+                                                <span class="indicator-label"><i class="fas fa-paper-plane me-2"></i>
+                                                    Ajukan Ulang</span>
                                                 <span class="indicator-progress" style="display: none;">
                                                     Tunggu sebentar...
                                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
