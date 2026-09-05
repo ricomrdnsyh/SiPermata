@@ -91,9 +91,11 @@ class MahasiswaSuratPenelitianController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
-        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        
+        $isNers = $user->mahasiswa?->prodi_id === '423716ff-d094-41ef-99e6-02cbd05c72d1';
+        $dataSimpt = $isNers ? null : $this->getDataSimpt($user->mahasiswa?->nim);
 
-        if ($dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
+        if (!$isNers && $dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
             return redirect()->route('mahasiswa.surat-izin-penelitian.index')
                 ->with('failed', 'Anda belum mengisi KRS pada semester aktif, sehingga tidak dapat mengajukan surat.');
         }
@@ -123,20 +125,17 @@ class MahasiswaSuratPenelitianController extends Controller
             return back()->with('failed', 'Data mahasiswa tidak ditemukan.');
         }
 
-        $dataSimpt = $this->getDataSimpt($mahasiswa->nim);
-        $semester = $dataSimpt?->semester;
+        $isNers = $mahasiswa->prodi_id === '423716ff-d094-41ef-99e6-02cbd05c72d1';
+        $dataSimpt = $isNers ? null : $this->getDataSimpt($mahasiswa->nim);
+        $semester = (!empty($dataSimpt?->semester)) ? $dataSimpt->semester : 1;
 
-        if (blank($semester)) {
-            return back()
-                ->withInput()
-                ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
-        }
-
-        $akademik = TahunAkademik::find($request->akademik_id);
-        if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
-            return back()
-                ->withInput()
-                ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
+        if (!$isNers) {
+            $akademik = TahunAkademik::find($request->akademik_id);
+            if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
+                return back()
+                    ->withInput()
+                    ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
+            }
         }
 
         $fakultasId = $mahasiswa->fakultas_id;
@@ -257,9 +256,11 @@ class MahasiswaSuratPenelitianController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mitra    = Mitra::all();
-        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
+        
+        $isNers = $user->mahasiswa?->prodi_id === '423716ff-d094-41ef-99e6-02cbd05c72d1';
+        $dataSimpt = $isNers ? null : $this->getDataSimpt($user->mahasiswa?->nim);
 
-        if ($dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
+        if (!$isNers && $dataSimpt?->id_smt != $latestAkademik?->kode_akademik) {
             return redirect()->route('mahasiswa.surat-izin-penelitian.index')
                 ->with('failed', 'Anda belum mengisi KRS pada semester aktif, sehingga tidak dapat mengajukan surat.');
         }
@@ -290,20 +291,17 @@ class MahasiswaSuratPenelitianController extends Controller
         $pengajuan = $surat->historyPengajuan()
             ->where('nim', $user->mahasiswa?->nim)->firstOrFail();
 
-        $dataSimpt = $this->getDataSimpt($user->mahasiswa?->nim);
-        $semester = $dataSimpt?->semester;
+        $isNers = $user->mahasiswa?->prodi_id === '423716ff-d094-41ef-99e6-02cbd05c72d1';
+        $dataSimpt = $isNers ? null : $this->getDataSimpt($user->mahasiswa?->nim);
+        $semester = (!empty($dataSimpt?->semester)) ? $dataSimpt->semester : 1;
 
-        if (blank($semester)) {
-            return back()
-                ->withInput()
-                ->with('failed', 'Data semester mahasiswa tidak ditemukan di SIMPT. Silakan coba lagi atau hubungi admin.');
-        }
-
-        $akademik = TahunAkademik::find($request->akademik_id);
-        if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
-            return back()
-                ->withInput()
-                ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
+        if (!$isNers) {
+            $akademik = TahunAkademik::find($request->akademik_id);
+            if ($dataSimpt?->id_smt != $akademik?->kode_akademik) {
+                return back()
+                    ->withInput()
+                    ->with('failed', 'Anda belum mengisi KRS pada semester ini, sehingga tidak dapat mengajukan surat.');
+            }
         }
 
         \Illuminate\Support\Facades\DB::beginTransaction();

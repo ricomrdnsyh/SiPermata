@@ -81,10 +81,7 @@
                                                 <div class="col-md-4">
                                                     <label class="required fw-semibold fs-6 mb-2">Semester</label>
                                                     <input type="text" name="semester" class="form-control"
-                                                        value="{{ $dataSimpt?->semester ?? '-' }}" disabled />
-                                                    @if (blank($dataSimpt?->semester))
-                                                        <small class="text-warning mt-1 d-block">Data semester belum ditemukan di SIMPT.</small>
-                                                    @endif
+                                                        value="{{ $dataSimpt?->semester ?? 1 }}" disabled />
                                                 </div>
                                             </div>
                                         </div>

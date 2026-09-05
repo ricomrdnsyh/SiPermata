@@ -73,7 +73,7 @@
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">Semester</label>
                                                     <input type="text" name="semester" class="form-control"
-                                                        value="{{ $dataSimpt?->semester ?? '-' }}" disabled />
+                                                        value="{{ $surat->semester ?? ($dataSimpt?->semester ?? 1) }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">IPK</label>
