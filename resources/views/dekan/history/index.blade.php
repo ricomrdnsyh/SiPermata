@@ -439,7 +439,11 @@
                 });
                 refreshUI();
             });
+            let isProcessingApproveSend = false;
             $btnApproveSend.on('click', function() {
+                if (isProcessingApproveSend) return;
+                isProcessingApproveSend = true;
+
                 const ids = Array.from(selected.keys());
                 const items = Array.from(selected.values());
 
@@ -455,7 +459,10 @@
                         cancelButton: "btn btn-secondary text-black"
                     }
                 }).then((res) => {
-                    if (!res.isConfirmed) return;
+                    if (!res.isConfirmed) {
+                        isProcessingApproveSend = false;
+                        return;
+                    }
                     Swal.fire({
                         icon: "info",
                         title: 'Mohon tunggu...',
@@ -479,17 +486,26 @@
                             if (!data.success || data.success_count === 0) {
                                 Swal.fire("Gagal!", data.message || "Bulk approve & send gagal.",
                                     "error");
+                                isProcessingApproveSend = false;
                             } else {
                                 Swal.fire("Berhasil!", data.message, "success").then(() => {
                                     window.location.reload();
+                                    isProcessingApproveSend = false;
                                 });
                             }
                         })
-                        .catch(() => Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
-                            "error"));
+                        .catch(() => {
+                            Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
+                                "error");
+                            isProcessingApproveSend = false;
+                        });
                 });
             });
+            let isProcessingSend = false;
             $btnSend.on('click', function() {
+                if (isProcessingSend) return;
+                isProcessingSend = true;
+
                 const items = Array.from(selected.values());
                 Swal.fire({
                     title: "Konfirmasi Kirim Surat",
@@ -503,7 +519,10 @@
                         cancelButton: "btn btn-secondary text-black"
                     }
                 }).then((res) => {
-                    if (!res.isConfirmed) return;
+                    if (!res.isConfirmed) {
+                        isProcessingSend = false;
+                        return;
+                    }
                     Swal.fire({
                         icon: "info",
                         title: 'Mohon tunggu...',
@@ -526,14 +545,19 @@
                             if (data.success && data.success_count > 0) {
                                 Swal.fire("Berhasil!", data.message, "success").then(() => {
                                     window.location.reload();
+                                    isProcessingSend = false;
                                 });
                             } else {
                                 Swal.fire("Gagal!", data.message || "Bulk send gagal.",
                                     "error");
+                                isProcessingSend = false;
                             }
                         })
-                        .catch(() => Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
-                            "error"));
+                        .catch(() => {
+                            Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
+                                "error");
+                            isProcessingSend = false;
+                        });
                 });
             });
         });

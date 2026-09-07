@@ -398,7 +398,11 @@
                 });
                 refreshSelectedUI();
             });
+            let isProcessingApproveSelected = false;
             $('#btn-approve-selected').on('click', function() {
+                if (isProcessingApproveSelected) return;
+                isProcessingApproveSelected = true;
+
                 const ids = Array.from(selectedIds);
                 Swal.fire({
                     title: "Konfirmasi Pengajuan",
@@ -412,7 +416,10 @@
                         cancelButton: "btn btn-secondary text-black"
                     }
                 }).then((result) => {
-                    if (!result.isConfirmed) return;
+                    if (!result.isConfirmed) {
+                        isProcessingApproveSelected = false;
+                        return;
+                    }
                     Swal.fire({
                         icon: "info",
                         title: 'Mohon tunggu...',
@@ -444,6 +451,7 @@
                                 }).then(() => {
                                     clearSelection();
                                     table.ajax.reload(null, false);
+                                    isProcessingApproveSelected = false;
                                 });
                             } else {
                                 Swal.fire({
@@ -455,6 +463,7 @@
                                         confirmButton: "btn btn-danger"
                                     }
                                 });
+                                isProcessingApproveSelected = false;
                             }
                         })
                         .catch(() => {
@@ -467,6 +476,7 @@
                                     confirmButton: "btn btn-danger"
                                 }
                             });
+                            isProcessingApproveSelected = false;
                         });
                 });
             });

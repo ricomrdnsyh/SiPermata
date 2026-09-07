@@ -443,7 +443,11 @@
                 });
                 refreshBulkUI();
             });
+            let isProcessingBulkApprove = false;
             $('#btn-bulk-approve').on('click', function() {
+                if (isProcessingBulkApprove) return;
+                isProcessingBulkApprove = true;
+
                 const ids = Array.from(selectedIds);
                 Swal.fire({
                     title: "Konfirmasi Pengajuan",
@@ -457,7 +461,10 @@
                         cancelButton: "btn btn-secondary text-black"
                     }
                 }).then((result) => {
-                    if (!result.isConfirmed) return;
+                    if (!result.isConfirmed) {
+                        isProcessingBulkApprove = false;
+                        return;
+                    }
                     Swal.fire({
                         icon: "info",
                         title: 'Mohon tunggu...',
@@ -481,14 +488,19 @@
                                 Swal.fire("Berhasil!", data.message, "success").then(() => {
                                     clearSelection();
                                     table.ajax.reload(null, false);
+                                    isProcessingBulkApprove = false;
                                 });
                             } else {
                                 Swal.fire("Gagal!", data.message || "Bulk approve gagal.",
                                     "error");
+                                isProcessingBulkApprove = false;
                             }
                         })
-                        .catch(() => Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
-                            "error"));
+                        .catch(() => {
+                            Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
+                                "error");
+                            isProcessingBulkApprove = false;
+                        });
                 });
             });
         });
