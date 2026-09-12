@@ -536,6 +536,7 @@ class DekanHistoryPengajuanController extends Controller
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $success = 0;
+        $alreadyProcessed = [];
         $failed = [];
 
         foreach ($ids as $id) {
@@ -543,10 +544,29 @@ class DekanHistoryPengajuanController extends Controller
                 DB::beginTransaction();
 
                 $pengajuan = HistoryPengajuan::lockForUpdate()->find($id);
-                if (!$pengajuan || $pengajuan->fakultas_id != $fakultasId || $pengajuan->status !== 'proses') {
-                    Log::warning("Bulk approve gagal (id {$id}): Pengajuan tidak valid (tidak ditemukan, fakultas beda, atau status bukan proses). Fakultas ID Dekan: {$fakultasId}");
+                if (!$pengajuan) {
+                    Log::warning("Bulk approve dilewati (id {$id}): Pengajuan tidak ditemukan di database.");
                     DB::rollBack();
                     $failed[] = $id;
+                    continue;
+                }
+
+                if ($pengajuan->fakultas_id != $fakultasId) {
+                    Log::warning("Bulk approve dilewati (id {$id}): Pengajuan milik fakultas {$pengajuan->fakultas_id}, sedangkan Dekan fakultas {$fakultasId}.");
+                    DB::rollBack();
+                    $failed[] = $id;
+                    continue;
+                }
+
+                if ($pengajuan->status !== 'proses') {
+                    if ($pengajuan->status === 'selesai') {
+                        Log::info("Bulk approve dilewati (id {$id}): Pengajuan sudah disetujui / berstatus 'selesai' sebelumnya.");
+                        $alreadyProcessed[] = $id;
+                    } else {
+                        Log::warning("Bulk approve dilewati (id {$id}): Status pengajuan saat ini '{$pengajuan->status}', bukan 'proses'.");
+                        $failed[] = $id;
+                    }
+                    DB::rollBack();
                     continue;
                 }
 
@@ -636,15 +656,26 @@ class DekanHistoryPengajuanController extends Controller
             }
         }
 
-        $msg = "Berhasil approve {$success} pengajuan.";
+        $messages = [];
+        if ($success > 0) {
+            $messages[] = "Berhasil approve {$success} pengajuan.";
+        }
+        if (count($alreadyProcessed) > 0) {
+            $messages[] = count($alreadyProcessed) . " pengajuan dilewati karena sudah berstatus selesai sebelumnya.";
+        }
         if (count($failed) > 0) {
-            $msg .= " Gagal: " . count($failed) . " (cek log / data tidak valid).";
+            $messages[] = count($failed) . " pengajuan gagal diproses (cek log / data tidak valid).";
         }
 
+        $isSuccess = ($success > 0 || (count($alreadyProcessed) > 0 && count($failed) === 0));
+        $msg = !empty($messages) ? implode(' ', $messages) : 'Tidak ada pengajuan yang diproses.';
+
         return response()->json([
-            'success' => true,
+            'success' => $isSuccess,
             'message' => $msg,
             'success_count' => $success,
+            'already_processed_count' => count($alreadyProcessed),
+            'already_processed_ids' => $alreadyProcessed,
             'failed_count' => count($failed),
             'failed_ids' => $failed,
         ]);
@@ -668,12 +699,18 @@ class DekanHistoryPengajuanController extends Controller
         $fakultasId = $user->penduduk?->fakultas_id;
 
         $success = 0;
+        $alreadyProcessed = [];
         $failed = [];
 
         foreach ($data['items'] as $item) {
             if ($item['status_raw'] !== 'diterima') {
-                Log::warning("Bulk send gagal (id {$item['id_surat']}): Status bukan diterima ({$item['status_raw']}).");
-                $failed[] = $item;
+                if ($item['status_raw'] === 'selesai') {
+                    Log::info("Bulk send dilewati (id {$item['id_surat']}): Status surat sudah 'selesai' sebelumnya.");
+                    $alreadyProcessed[] = $item;
+                } else {
+                    Log::warning("Bulk send dilewati (id {$item['id_surat']}): Status bukan diterima ({$item['status_raw']}).");
+                    $failed[] = $item;
+                }
                 continue;
             }
 
@@ -716,8 +753,13 @@ class DekanHistoryPengajuanController extends Controller
                 $pengajuanHistory = HistoryPengajuan::find($item['id_history']);
 
                 if (!$pengajuanHistory || $pengajuanHistory->status !== 'diterima') {
-                    Log::warning("Bulk send gagal (id {$item['id_surat']}): History tidak ditemukan atau status bukan diterima.");
-                    $failed[] = $item;
+                    if ($pengajuanHistory && $pengajuanHistory->status === 'selesai') {
+                        Log::info("Bulk send dilewati (id {$item['id_surat']}): Pengajuan history sudah berstatus 'selesai'.");
+                        $alreadyProcessed[] = $item;
+                    } else {
+                        Log::warning("Bulk send gagal (id {$item['id_surat']}): History tidak ditemukan atau status bukan diterima.");
+                        $failed[] = $item;
+                    }
                     continue;
                 }
 
@@ -758,15 +800,25 @@ class DekanHistoryPengajuanController extends Controller
             }
         }
 
-        $msg = "Berhasil mengirim {$success} surat.";
+        $messages = [];
+        if ($success > 0) {
+            $messages[] = "Berhasil mengirim {$success} surat.";
+        }
+        if (count($alreadyProcessed) > 0) {
+            $messages[] = count($alreadyProcessed) . " surat dilewati karena sudah berstatus selesai sebelumnya.";
+        }
         if (count($failed) > 0) {
-            $msg .= " Gagal: " . count($failed) . " (cek log / data tidak valid).";
+            $messages[] = count($failed) . " pengajuan gagal diproses (cek log / data tidak valid).";
         }
 
+        $isSuccess = ($success > 0 || (count($alreadyProcessed) > 0 && count($failed) === 0));
+        $msg = !empty($messages) ? implode(' ', $messages) : 'Tidak ada pengajuan yang diproses.';
+
         return response()->json([
-            'success' => true,
+            'success' => $isSuccess,
             'message' => $msg,
             'success_count' => $success,
+            'already_processed_count' => count($alreadyProcessed),
             'failed_count' => count($failed),
         ]);
     }

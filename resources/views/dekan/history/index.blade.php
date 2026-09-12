@@ -443,6 +443,7 @@
             $btnApproveSend.on('click', function() {
                 if (isProcessingApproveSend) return;
                 isProcessingApproveSend = true;
+                $btnApproveSend.prop('disabled', true);
 
                 const ids = Array.from(selected.keys());
                 const items = Array.from(selected.values());
@@ -461,6 +462,7 @@
                 }).then((res) => {
                     if (!res.isConfirmed) {
                         isProcessingApproveSend = false;
+                        refreshUI();
                         return;
                     }
                     Swal.fire({
@@ -468,6 +470,8 @@
                         title: 'Mohon tunggu...',
                         text: 'Memproses persetujuan dan pengiriman email...',
                         allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
                         didOpen: () => Swal.showLoading()
                     });
 
@@ -483,12 +487,14 @@
                         })
                         .then(r => r.json())
                         .then(data => {
-                            if (!data.success || data.success_count === 0) {
+                            if (!data.success) {
                                 Swal.fire("Gagal!", data.message || "Bulk approve & send gagal.",
                                     "error");
                                 isProcessingApproveSend = false;
+                                refreshUI();
                             } else {
                                 Swal.fire("Berhasil!", data.message, "success").then(() => {
+                                    clearSelection();
                                     window.location.reload();
                                     isProcessingApproveSend = false;
                                 });
@@ -498,6 +504,7 @@
                             Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
                                 "error");
                             isProcessingApproveSend = false;
+                            refreshUI();
                         });
                 });
             });
@@ -505,6 +512,7 @@
             $btnSend.on('click', function() {
                 if (isProcessingSend) return;
                 isProcessingSend = true;
+                $btnSend.prop('disabled', true);
 
                 const items = Array.from(selected.values());
                 Swal.fire({
@@ -521,6 +529,7 @@
                 }).then((res) => {
                     if (!res.isConfirmed) {
                         isProcessingSend = false;
+                        refreshUI();
                         return;
                     }
                     Swal.fire({
@@ -528,6 +537,8 @@
                         title: 'Mohon tunggu...',
                         text: 'Memproses pengiriman email...',
                         allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
                         didOpen: () => Swal.showLoading()
                     });
                     fetch("{{ route('dekan.history.bulkSend') }}", {
@@ -542,8 +553,9 @@
                         })
                         .then(r => r.json())
                         .then(data => {
-                            if (data.success && data.success_count > 0) {
+                            if (data.success && (data.success_count > 0 || (data.already_processed_count && data.already_processed_count > 0))) {
                                 Swal.fire("Berhasil!", data.message, "success").then(() => {
+                                    clearSelection();
                                     window.location.reload();
                                     isProcessingSend = false;
                                 });
@@ -551,12 +563,14 @@
                                 Swal.fire("Gagal!", data.message || "Bulk send gagal.",
                                     "error");
                                 isProcessingSend = false;
+                                refreshUI();
                             }
                         })
                         .catch(() => {
                             Swal.fire("Gagal!", "Terjadi kesalahan server/jaringan.",
                                 "error");
                             isProcessingSend = false;
+                            refreshUI();
                         });
                 });
             });
