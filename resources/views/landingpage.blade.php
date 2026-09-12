@@ -282,8 +282,8 @@
                                     class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
                             </span>
-                            <span class="text-xs font-bold text-blue-700 uppercase tracking-widest">Portal Surat
-                                Mahasiswa UNUJA</span>
+                            <span class="text-xs font-bold text-blue-700 uppercase tracking-widest">Sistem Permohonan
+                                Surat Mahasiswa Terpadu</span>
                         </div>
 
                         <div class="space-y-5">
