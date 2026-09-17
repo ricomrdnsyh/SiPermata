@@ -27,6 +27,11 @@ class SuratPKLController extends Controller
                       ->orWhere('anggota_kelompok', 'LIKE', '%"nim":' . $nim . '%')
                       ->orWhere('anggota_kelompok', 'LIKE', '%"nim":"' . $nim . '"%');
             })
+            ->orderByRaw("CASE 
+                WHEN status = 'selesai' THEN 1 
+                WHEN status = 'disetujui' THEN 2 
+                WHEN status = 'pengajuan' THEN 3 
+                ELSE 4 END")
             ->orderBy('created_at', 'desc')
             ->first();
 
