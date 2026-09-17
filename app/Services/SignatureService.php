@@ -37,22 +37,22 @@ class SignatureService
         }
 
         if ($suratModel instanceof SuratAktif) {
-            $token  = Crypt::encryptString((string) $suratModel->id_surat_aktif);
+            $token  = base64_encode((string) $suratModel->id_surat_aktif);
             $qrData = route('verifikasi.surat-aktif', ['id' => $token]);
         } elseif ($suratModel instanceof SuratPenelitian) {
-            $token  = Crypt::encryptString((string) $suratModel->id_surat_izin_penelitian);
+            $token  = base64_encode((string) $suratModel->id_surat_izin_penelitian);
             $qrData = route('verifikasi.surat-izin-penelitian', ['id' => $token]);
         } elseif ($suratModel instanceof SuratRekomendasi) {
-            $token  = Crypt::encryptString((string) $suratModel->id_surat_rekomendasi);
+            $token  = base64_encode((string) $suratModel->id_surat_rekomendasi);
             $qrData = route('verifikasi.surat-rekomendasi', ['id' => $token]);
         } elseif ($suratModel instanceof SuratPKL) {
-            $token  = Crypt::encryptString((string) $suratModel->id_surat_pkl);
+            $token  = base64_encode((string) $suratModel->id_surat_pkl);
             $qrData = route('verifikasi.surat-pkl', ['id' => $token]);
         } elseif ($suratModel instanceof SuratObservasi) {
-            $token  = Crypt::encryptString((string) $suratModel->id_surat_observasi);
+            $token  = base64_encode((string) $suratModel->id_surat_observasi);
             $qrData = route('verifikasi.surat-observasi', ['id' => $token]);
         } elseif ($suratModel instanceof SuratLulus) {
-            $token  = Crypt::encryptString((string) $suratModel->id_surat_lulus);
+            $token  = base64_encode((string) $suratModel->id_surat_lulus);
             $qrData = route('verifikasi.surat-keterangan-lulus', ['id' => $token]);
         } else {
             throw new \Exception("Jenis surat tidak didukung untuk penandatanganan.");

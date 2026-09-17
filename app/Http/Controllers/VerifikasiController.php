@@ -104,6 +104,11 @@ class VerifikasiController extends Controller
             $decryptedId = null;
         }
 
+        $decodedId = base64_decode($id, true);
+        if ($decodedId === false || !preg_match('/^[0-9]+$/', $decodedId)) {
+            $decodedId = null;
+        }
+
         return $modelClass::with([
             'mahasiswa.fakultas',
             'mahasiswa.prodi',
@@ -111,9 +116,12 @@ class VerifikasiController extends Controller
             'template.ttdSurat',
             'template.ttdSurat.fakultas',
         ])
-            ->where(function ($q) use ($id, $decryptedId, $pkField) {
+            ->where(function ($q) use ($id, $decryptedId, $decodedId, $pkField) {
                 if ($decryptedId !== null) {
                     $q->where($pkField, $decryptedId);
+                }
+                if ($decodedId !== null) {
+                    $q->orWhere($pkField, $decodedId);
                 }
                 $q->orWhere($pkField, $id)
                     ->orWhere('no_surat', $id);
