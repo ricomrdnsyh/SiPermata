@@ -56,10 +56,13 @@
                                         <div class="col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
-                                                <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                <select name="akademik_id" class="akademik-id-select form-select form-select-sm mb-3 mb-lg-0" data-control="select2" required>
+    @foreach(\App\Models\TahunAkademik::orderBy('id_akademik', 'desc')->get() as $akademik)
+        <option value="{{ $akademik->id_akademik }}" {{ (isset($surat) && $surat->akademik_id == $akademik->id_akademik) || (!isset($surat) && $latestAkademik?->id_akademik == $akademik->id_akademik) ? 'selected' : '' }}>
+            {{ $akademik->tahun_akademik }}
+        </option>
+    @endforeach
+</select>
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -139,10 +142,13 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
-                                                <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                <select name="akademik_id" class="akademik-id-select form-select form-select-sm mb-3 mb-lg-0" data-control="select2" required>
+    @foreach(\App\Models\TahunAkademik::orderBy('id_akademik', 'desc')->get() as $akademik)
+        <option value="{{ $akademik->id_akademik }}" {{ (isset($surat) && $surat->akademik_id == $akademik->id_akademik) || (!isset($surat) && $latestAkademik?->id_akademik == $akademik->id_akademik) ? 'selected' : '' }}>
+            {{ $akademik->tahun_akademik }}
+        </option>
+    @endforeach
+</select>
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -373,10 +379,13 @@
                                             </div>
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $latestAkademik?->tahun_akademik }}" disabled />
-                                                <input type="hidden" name="akademik_id"
-                                                    value="{{ $latestAkademik?->id_akademik }}">
+                                                <select name="akademik_id" class="akademik-id-select form-select form-select-sm mb-3 mb-lg-0" data-control="select2" required>
+    @foreach(\App\Models\TahunAkademik::orderBy('id_akademik', 'desc')->get() as $akademik)
+        <option value="{{ $akademik->id_akademik }}" {{ (isset($surat) && $surat->akademik_id == $akademik->id_akademik) || (!isset($surat) && $latestAkademik?->id_akademik == $akademik->id_akademik) ? 'selected' : '' }}>
+            {{ $akademik->tahun_akademik }}
+        </option>
+    @endforeach
+</select>
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror

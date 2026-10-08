@@ -42,10 +42,13 @@
                                         <div class="col-12 col-md-6">
                                             <div class="fv-row mb-3">
                                                 <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                <input id="field-tahun-akademik" type="text" class="form-control form-control-sm mb-3 mb-lg-0"
-                                                    value="{{ $surat->akademik?->tahun_akademik ?? $latestAkademik?->tahun_akademik }}" disabled />
-                                                <input id="hidden-akademik-id" type="hidden" name="akademik_id"
-                                                    value="{{ $surat->akademik_id ?? $latestAkademik?->id_akademik }}">
+                                                <select name="akademik_id" class="akademik-id-select form-select form-select-sm mb-3 mb-lg-0" data-control="select2" required>
+    @foreach(\App\Models\TahunAkademik::orderBy('id_akademik', 'desc')->get() as $akademik)
+        <option value="{{ $akademik->id_akademik }}" {{ (isset($surat) && $surat->akademik_id == $akademik->id_akademik) || (!isset($surat) && $latestAkademik?->id_akademik == $akademik->id_akademik) ? 'selected' : '' }}>
+            {{ $akademik->tahun_akademik }}
+        </option>
+    @endforeach
+</select>
                                                 @error('akademik_id')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -219,11 +222,9 @@
                         }
 
                         if (data.akademik_id) {
-                            document.getElementById('hidden-akademik-id').value = data.akademik_id;
-                            document.getElementById('field-tahun-akademik').value = data.tahun_akademik;
+                            $('.akademik-id-select').val(data.akademik_id).trigger('change');
                         } else {
-                            document.getElementById('hidden-akademik-id').value = "{{ $latestAkademik?->id_akademik }}";
-                            document.getElementById('field-tahun-akademik').value = "{{ $latestAkademik?->tahun_akademik }}";
+                            $('.akademik-id-select').val(\"{{ $latestAkademik?->id_akademik }}\").trigger('change');
                         }
                     })
                     .catch(() => {
