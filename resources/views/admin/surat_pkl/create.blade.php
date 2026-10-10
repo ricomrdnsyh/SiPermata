@@ -154,7 +154,6 @@
                 altInputClass: "form-control form-control-sm",
                 allowInput: true,
                 defaultDate: mulaiEl.value || null,
-                minDate: "today",
                 maxDate: selesaiEl.value || null,
                 onReady: function(s, d, i) {
                     if (i.altInput) {
@@ -173,7 +172,7 @@
                 altInputClass: "form-control form-control-sm",
                 allowInput: true,
                 defaultDate: selesaiEl.value || null,
-                minDate: mulaiEl.value || "today",
+                minDate: mulaiEl.value,
                 onReady: function(s, d, i) {
                     if (i.altInput) {
                         i.altInput.required = true;

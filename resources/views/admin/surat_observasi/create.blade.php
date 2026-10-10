@@ -189,7 +189,6 @@
                 altInputClass: "form-control form-control-sm",
                 allowInput: true,
                 defaultDate: tglObsVal,
-                minDate: "today",
                 onReady: function(selectedDates, dateStr, instance) {
                     if (instance.altInput) {
                         instance.altInput.required = true;

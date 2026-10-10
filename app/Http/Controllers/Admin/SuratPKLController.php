@@ -149,7 +149,7 @@ class SuratPKLController extends Controller
         if ($user->role !== 'admin') { abort(403); }
 
         $request->validate($this->rules(), [
-            'tgl_mulai.after_or_equal' => 'Tanggal mulai minimal hari ini.',
+
             'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
@@ -252,7 +252,7 @@ class SuratPKLController extends Controller
         if ($user->role !== 'admin') { abort(403); }
 
         $request->validate($this->rules(), [
-            'tgl_mulai.after_or_equal' => 'Tanggal mulai minimal hari ini.',
+
             'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
@@ -331,7 +331,7 @@ class SuratPKLController extends Controller
             'nim' => 'required|string|max:50',
             'akademik_id' => 'required|exists:tahun_akademik,id_akademik',
             'mitra_id' => 'required|exists:mitra,id_mitra',
-            'tgl_mulai' => 'required|date|after_or_equal:today', 'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
+            'tgl_mulai' => 'required|date', 'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
             'anggota_kelompok' => 'nullable|array',
             'anggota_kelompok.*.nim' => 'nullable|string|max:50',
         ];
