@@ -311,8 +311,9 @@ class SuratRekomendasiController extends Controller
 
         $latestAkademik = TahunAkademik::orderByDesc('id_akademik')->first();
         $mahasiswa = Mahasiswa::select('nim', 'nama')->orderBy('nama', 'asc')->get();
+        $dataSimpt = $this->getDataSimpt($surat->nim);
 
-        return view('admin.surat_rekomendasi.edit', compact('surat', 'latestAkademik', 'mahasiswa'));
+        return view('admin.surat_rekomendasi.edit', compact('surat', 'latestAkademik', 'mahasiswa', 'dataSimpt'));
     }
 
     public function update(Request $request, string $id, SuratRekomendasiGenerator $generatorService)

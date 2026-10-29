@@ -63,7 +63,8 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control form-control-sm"
+                                                    <input type="text" name="nim"
+                                                        class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
@@ -91,7 +92,8 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tanggal Mulai</label>
                                                     <div class="position-relative">
-                                                        <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
+                                                        <i
+                                                            class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input type="text" name="tgl_mulai"
                                                             class="form-control form-control-sm ps-12"
                                                             value="{{ $surat->tgl_mulai?->locale('id')->isoFormat('D MMMM YYYY') }}"
@@ -102,7 +104,8 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tanggal Selesai</label>
                                                     <div class="position-relative">
-                                                        <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
+                                                        <i
+                                                            class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input type="text" name="tgl_selesai"
                                                             class="form-control form-control-sm ps-12"
                                                             value="{{ $surat->tgl_selesai?->locale('id')->isoFormat('D MMMM YYYY') }}"
@@ -116,16 +119,18 @@
                                                 </div>
 
                                                 @if ($surat->catatan)
-                                                <div class="col-md-12">
-                                                    <label class="fw-semibold fs-6 mb-2">Catatan Verifikator</label>
-                                                    <div class="alert alert-dismissible bg-light-warning border border-warning border-dashed d-flex align-items-start w-100 p-4 p-sm-5 mb-0">
-                                                        <i class="fas fa-exclamation-circle fs-2hx text-warning me-4"></i>
-                                                        <div class="d-flex flex-column pe-0">
-                                                            <h5 class="mb-1 text-warning">Catatan dari Verifikator</h5>
-                                                            <span>{{ $surat->catatan }}</span>
+                                                    <div class="col-md-12">
+                                                        <label class="fw-semibold fs-6 mb-2">Catatan Verifikator</label>
+                                                        <div
+                                                            class="alert alert-dismissible bg-light-warning border border-warning border-dashed d-flex align-items-start w-100 p-4 p-sm-5 mb-0">
+                                                            <i
+                                                                class="fas fa-exclamation-circle fs-2hx text-warning me-4"></i>
+                                                            <div class="d-flex flex-column pe-0">
+                                                                <h5 class="mb-1 text-warning">Catatan dari Verifikator</h5>
+                                                                <span>{{ $surat->catatan }}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                                 @endif
                                             </div>
                                         </div>

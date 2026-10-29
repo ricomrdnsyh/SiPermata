@@ -35,7 +35,7 @@
             background-color: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.15);
         }
-    </style>
+</style>
 @endsection
 @section('content')
     @php

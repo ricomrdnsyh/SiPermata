@@ -69,7 +69,11 @@ class DashboardController extends Controller
         
         $tahunAkademikList = $this->getTahunAkademikList($validNimList);
 
-        $currentYearLabel = TahunAkademik::where('id_akademik', $currentAkademikId)->first()->tahun_akademik ?? 'N/A';
+        if ($currentAkademikId === 'all') {
+            $currentYearLabel = 'Semua Tahun Akademik';
+        } else {
+            $currentYearLabel = TahunAkademik::where('id_akademik', $currentAkademikId)->first()->tahun_akademik ?? 'N/A';
+        }
 
         
         $globalStats = $this->getGlobalStats($currentAkademikId, $validNimList);
@@ -128,8 +132,11 @@ class DashboardController extends Controller
         if (empty($validNimList)) return compact('totalMasuk', 'totalPengajuan', 'totalProses', 'totalDiterima', 'totalSelesai', 'totalDitolak');
 
         foreach ($this->suratModels as $model) {
-            $baseQuery = $model::where('akademik_id', $akademikId)
-                ->whereIn('nim', $validNimList);
+            $baseQuery = $model::query();
+            if ($akademikId !== 'all') {
+                $baseQuery->where('akademik_id', $akademikId);
+            }
+            $baseQuery->whereIn('nim', $validNimList);
 
             
             $totalMasuk += $baseQuery->count();
@@ -151,8 +158,11 @@ class DashboardController extends Controller
         if (empty($validNimList)) return $data;
 
         foreach ($this->suratModels as $label => $model) {
-            $baseQuery = $model::where('akademik_id', $akademikId)
-                ->whereIn('nim', $validNimList);
+            $baseQuery = $model::query();
+            if ($akademikId !== 'all') {
+                $baseQuery->where('akademik_id', $akademikId);
+            }
+            $baseQuery->whereIn('nim', $validNimList);
 
             $total = $baseQuery->count();
 
@@ -183,9 +193,11 @@ class DashboardController extends Controller
         if (empty($validNimList)) return ['labels' => [], 'data' => []];
 
         foreach ($this->suratModels as $label => $model) {
-            $count = $model::where('akademik_id', $akademikId)
-                ->whereIn('nim', $validNimList)
-                ->count();
+            $query = $model::query();
+            if ($akademikId !== 'all') {
+                $query->where('akademik_id', $akademikId);
+            }
+            $count = $query->whereIn('nim', $validNimList)->count();
             $labels[] = $label;
             $dataCounts[] = $count;
         }
@@ -207,7 +219,11 @@ class DashboardController extends Controller
         foreach ($prodiList as $prodi) {
             $total = 0;
             foreach ($this->suratModels as $model) {
-                $total += $model::where('akademik_id', $akademikId)
+                $query = $model::query();
+                if ($akademikId !== 'all') {
+                    $query->where('akademik_id', $akademikId);
+                }
+                $total += $query
                     ->whereIn('nim', $validNimList)
                     ->whereHas('mahasiswa', function ($q) use ($prodi) {
                         $q->where('prodi_id', $prodi->id_prodi);

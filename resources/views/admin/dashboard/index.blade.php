@@ -22,8 +22,7 @@
                                             <span class="text-primary fw-bolder">{{ $user_name ?? 'Pengguna' }}</span>
                                         </span>
                                         <span class="text-gray-600 fw-semibold fs-7">
-                                            Dashboard Sistem Permohonan Surat Mahasiswa Terpadu - Tahun Akademik
-                                            {{ $currentYearLabel }}
+                                            Dashboard Sistem Permohonan Surat Mahasiswa Terpadu - {{ $currentAkademikId == 'all' ? 'Semua Tahun Akademik' : 'Tahun Akademik ' . $currentYearLabel }}
                                         </span>
                                     </div>
                                 </div>
@@ -35,7 +34,7 @@
                                         style="background-color: #F8F9FA; color: #64748B; border-radius: 6px; font-size: 0.95rem; height: 38px;">
                                         <i class="fas fa-filter me-2" style="color: #64748B;"></i>Tahun Akademik
                                     </div>
-                                    <div class="w-180px">
+                                    <div class="w-210px">
                                         <style>
                                             .select2-container--bootstrap5 .select2-selection {
                                                 border-color: #E2E8F0 !important;
@@ -51,6 +50,7 @@
                                         <select class="form-select form-select-sm" data-control="select2"
                                             data-hide-search="true" data-placeholder="Tahun Akademik"
                                             id="filter_akademik_id">
+                                            <option value="all" @if ($currentAkademikId == "all") selected @endif>Semua Tahun Akademik</option>
                                             @foreach ($tahunAkademikList as $id => $tahun)
                                                 <option value="{{ $id }}"
                                                     @if ($id == $currentAkademikId) selected @endif>
@@ -194,8 +194,7 @@
                                     <div class="card-title d-flex flex-column">
                                         <span class="fw-semibold fs-3 text-gray-900">Perbandingan Pengajuan Per Jenis
                                             Surat</span>
-                                        <span class="text-gray-600 fw-semibold fs-7">Statistik total pengajuan pada Tahun
-                                            Akademik {{ $currentYearLabel }}.</span>
+                                        <span class="text-gray-600 fw-semibold fs-7">Statistik total pengajuan {{ $currentAkademikId == 'all' ? 'pada Semua Tahun Akademik.' : 'pada Tahun Akademik ' . $currentYearLabel . '.' }}</span>
                                     </div>
                                     <div class="card-toolbar">
                                         <div class="dropdown">
@@ -302,7 +301,7 @@
                                     style="font-size: 10px; letter-spacing: .08em;">Distribusi</span>
                                 <span class="fw-semibold fs-3 text-gray-900">Pengajuan Per Fakultas</span>
                                 <span class="text-gray-500 fw-semibold fs-7">Total pengajuan berdasarkan fakultas &mdash;
-                                    TA {{ $currentYearLabel }}</span>
+                                    {{ $currentAkademikId == 'all' ? 'Semua TA' : 'TA ' . $currentYearLabel }}</span>
                             </div>
                             <div class="card-toolbar">
                                 <div class="dropdown">
@@ -337,8 +336,7 @@
                                 <span class="text-uppercase fw-semibold text-gray-500"
                                     style="font-size: 10px; letter-spacing: .08em;">Distribusi</span>
                                 <span class="fw-semibold fs-3 text-gray-900">Pengajuan Per Program Studi</span>
-                                <span class="text-gray-500 fw-semibold fs-7">Total pengajuan berdasarkan prodi &mdash; TA
-                                    {{ $currentYearLabel }}</span>
+                                <span class="text-gray-500 fw-semibold fs-7">Total pengajuan berdasarkan prodi &mdash; {{ $currentAkademikId == 'all' ? 'Semua TA' : 'TA ' . $currentYearLabel }}</span>
                             </div>
                             <div class="card-toolbar">
                                 <div class="dropdown">
@@ -395,8 +393,7 @@
                                                 <td class="ps-4">
                                                     <div class="d-flex flex-column">
                                                         <span class="text-gray-900 fw-bolder">{{ $surat['label'] }}</span>
-                                                        <span class="text-gray-600 fw-semibold fs-7">Tahun Akademik
-                                                            {{ $currentYearLabel }}</span>
+                                                        <span class="text-gray-600 fw-semibold fs-7">{{ $currentAkademikId == 'all' ? 'Semua Tahun Akademik' : 'Tahun Akademik ' . $currentYearLabel }}</span>
                                                     </div>
                                                 </td>
                                                 <td class="text-center"><span

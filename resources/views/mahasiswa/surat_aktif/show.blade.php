@@ -81,7 +81,7 @@
             background-color: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.15);
         }
-    </style>
+</style>
 @endsection
 @section('content')
     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
@@ -91,13 +91,13 @@
                 <div class="card shadow-sm border border-dashed border-dark rounded">
                     <div class="card-body p-lg-8">
                         <div class="d-flex flex-column">
-                            <div class="mb-6 text-center">
-                                <h1 class="fs-2hx fw-bolder mb-5 text-dark">
-                                    <i class="fas fa-file-signature fs-2hx text-primary me-2 align-middle"></i>
-                                    Detail Surat Keterangan Aktif
-                                </h1>
-                                <div class="text-gray-400 fw-bold fs-5">Silakan lihat detail pengajuan Anda !</div>
-                            </div>
+                            <div class="mb-10 text-center">
+                                    <h1 class="fs-2hx fw-bolder mb-3 text-dark">
+                                        <i class="fas fa-file-signature fs-2hx text-primary me-2 align-middle"></i>
+                                        Detail Surat Keterangan Aktif
+                                    </h1>
+                                    <div class="text-muted fw-semibold fs-5">Silakan lihat detail pengajuan Anda !</div>
+                                </div>
                             <div id="form-container" class="mt-2">
                                 <form id="form-umum" class="form-section active" 
                                         >
