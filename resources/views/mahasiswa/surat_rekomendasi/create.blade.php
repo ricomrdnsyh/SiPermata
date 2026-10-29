@@ -64,12 +64,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $latestAkademik?->tahun_akademik }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="{{ $latestAkademik?->id_akademik }}">
@@ -79,12 +79,12 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                    <input type="text" name="semester" class="form-control"
+                                                    <input type="text" name="semester" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->semester ?? 1 }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">IPK</label>
-                                                    <input type="text" name="ipk" class="form-control"
+                                                    <input type="text" name="ipk" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->ipk_ketuntasan ?? '-' }}" disabled />
                                                     @if (blank($dataSimpt?->ipk_ketuntasan))
                                                         <small class="text-warning mt-1 d-block">Data IPK belum ditemukan di SIMPT.</small>
@@ -101,7 +101,7 @@
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_pelaksanaan" type="text" name="tgl_pelaksanaan"
-                                                            class="form-control ps-12" placeholder="Pilih tanggal pelaksanaan"
+                                                            class="form-control form-control-sm ps-12" placeholder="Pilih tanggal pelaksanaan"
                                                             autocomplete="off" required />
                                                     </div>
                                                     @error('tgl_pelaksanaan')
@@ -110,14 +110,14 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Keperluan Rekomendasi</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Penerima Beasiswa GenBi, MBKM Santri, dll" required>{{ old('keperluan') }}</textarea>
+                                                    <textarea name="keperluan" class="form-control form-control-sm" rows="3" placeholder="Penerima Beasiswa GenBi, MBKM Santri, dll" required>{{ old('keperluan') }}</textarea>
                                                     @error('keperluan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Penyelenggara</label>
-                                                    <textarea name="penyelenggara" class="form-control" rows="3" placeholder="Bank Indonesia, LP3M Universitas Nurul Jadid, dll" required>{{ old('penyelenggara') }}</textarea>
+                                                    <textarea name="penyelenggara" class="form-control form-control-sm" rows="3" placeholder="Bank Indonesia, LP3M Universitas Nurul Jadid, dll" required>{{ old('penyelenggara') }}</textarea>
                                                     @error('penyelenggara')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
@@ -152,33 +152,77 @@
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
 
             const tglPel = document.getElementById('tgl_pelaksanaan');
-            const tglPelVal = tglPel.value || null;
+            const tglPelVal = tglPel ? (tglPel.value || null) : null;
 
-            flatpickr(tglPel, {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d/m/Y",
-                altInputClass: "form-control ps-12",
-                allowInput: true,
-                disableMobile: "true",
-                defaultDate: tglPelVal,
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.altInput) {
-                        instance.altInput.required = true;
-                        instance.altInput.placeholder = tglPel.placeholder || '';
+            if (tglPel && typeof flatpickr !== "undefined") {
+                flatpickr(tglPel, {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d/m/Y",
+                    altInputClass: "form-control form-control-sm ps-12",
+                    allowInput: true,
+                    disableMobile: "true",
+                    defaultDate: tglPelVal,
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.altInput) {
+                            instance.altInput.required = true;
+                            instance.altInput.placeholder = tglPel.placeholder || '';
+                        }
                     }
-                }
-            });
+                });
+            }
 
+            let isConfirmed = false;
             form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
+                if (isConfirmed) {
                     return;
                 }
-                submitButton.disabled = true;
-                const label = submitButton.querySelector('.indicator-label');
-                const progress = submitButton.querySelector('.indicator-progress');
-                if (label) label.style.display = 'none';
-                if (progress) progress.style.display = 'inline-block';
+
+                event.preventDefault();
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Konfirmasi Pengajuan",
+                    text: "Apakah Anda yakin ingin membuat pengajuan surat rekomendasi ini?",
+                    icon: "question",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Ya, Buat Pengajuan!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-secondary text-black"
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Mohon tunggu...',
+                            text: 'Permintaan anda sedang diproses',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            const label = submitButton.querySelector('.indicator-label');
+                            const progress = submitButton.querySelector('.indicator-progress');
+                            if (label) label.style.display = 'none';
+                            if (progress) progress.style.display = 'inline-block';
+                        }
+
+                        isConfirmed = true;
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

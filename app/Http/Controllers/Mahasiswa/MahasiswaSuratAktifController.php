@@ -20,9 +20,33 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaSuratAktifController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('mahasiswa.surat_aktif.index');
+        $user = Auth::user();
+        $nim = $user->mahasiswa?->nim;
+
+        if (!$nim) {
+            $suratAktif = collect();
+            $stats = ['total' => 0, 'pengajuan' => 0, 'proses' => 0, 'diterima' => 0, 'selesai' => 0, 'ditolak' => 0];
+            return view('mahasiswa.surat_aktif.index', compact('suratAktif', 'stats'));
+        }
+
+        $suratAktif = SuratAktif::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])
+            ->where('nim', $nim)
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $stats = [
+            'total'     => $suratAktif->count(),
+            'pengajuan' => $suratAktif->where('status', 'pengajuan')->count(),
+            'proses'    => $suratAktif->where('status', 'proses')->count(),
+            'diterima'  => $suratAktif->whereIn('status', ['diterima', 'selesai'])->count(),
+            'selesai'   => $suratAktif->whereIn('status', ['diterima', 'selesai'])->count(),
+            'ditolak'   => $suratAktif->where('status', 'ditolak')->count(),
+        ];
+
+        return view('mahasiswa.surat_aktif.index', compact('suratAktif', 'stats'));
     }
 
     public function getSuratAktif()
@@ -35,7 +59,7 @@ class MahasiswaSuratAktifController extends Controller
         }
 
         $query = SuratAktif::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])->where('nim', $nim)
-            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -64,11 +88,11 @@ class MahasiswaSuratAktifController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
-                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
-                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan'           => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'              => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima', 'selesai' => '<span class="badge text-white bg-success">Selesai</span>',
+                    'ditolak'             => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default               => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('action', function ($row) {

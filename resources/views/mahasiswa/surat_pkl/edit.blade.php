@@ -67,13 +67,13 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
 
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik?->tahun_akademik ?? '-' }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="{{ $surat->akademik_id }}">
@@ -90,7 +90,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Tempat PKL</label>
-                                                    <select class="form-select w-100" data-control="select2"
+                                                    <select class="form-select form-select-sm w-100" data-control="select2"
                                                         data-placeholder="Pilih Tempat PKL" name="mitra_id" required>
                                                         <option value=""></option>
                                                         @foreach ($mitra as $m)
@@ -110,7 +110,7 @@
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_mulai" type="text" name="tgl_mulai"
-                                                            class="form-control ps-12" placeholder="Pilih tanggal mulai"
+                                                            class="form-control form-control-sm ps-12" placeholder="Pilih tanggal mulai"
                                                             autocomplete="off"
                                                             value="{{ old('tgl_mulai', $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '') }}"
                                                             required />
@@ -125,7 +125,7 @@
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_selesai" type="text" name="tgl_selesai"
-                                                            class="form-control ps-12" placeholder="Pilih tanggal selesai"
+                                                            class="form-control form-control-sm ps-12" placeholder="Pilih tanggal selesai"
                                                             autocomplete="off"
                                                             value="{{ old('tgl_selesai', $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '') }}"
                                                             required />
@@ -193,7 +193,7 @@
                     dateFormat: "Y-m-d",
                     altInput: true,
                     altFormat: "d/m/Y",
-                    altInputClass: "form-control ps-12",
+                    altInputClass: "form-control form-control-sm ps-12",
                     allowInput: true,
                     defaultDate: mulaiVal,
                     minDate: mulaiVal || "today",
@@ -218,7 +218,7 @@
                     dateFormat: "Y-m-d",
                     altInput: true,
                     altFormat: "d/m/Y",
-                    altInputClass: "form-control ps-12",
+                    altInputClass: "form-control form-control-sm ps-12",
                     allowInput: true,
                     defaultDate: selesaiVal,
                     minDate: mulaiVal || "today",
@@ -456,7 +456,12 @@
                 });
             }
 
+            let isConfirmed = false;
             form.addEventListener('submit', function(event) {
+                if (isConfirmed) {
+                    return;
+                }
+
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -470,11 +475,39 @@
                         return;
                     }
 
-                    submitButton.disabled = true;
-                    submitButton.querySelector('.indicator-label').style.display = 'none';
-                    submitButton.querySelector('.indicator-progress').style.display =
-                        'inline-block';
-                    form.submit();
+                    Swal.fire({
+                        title: "Konfirmasi Pengajuan",
+                        text: "Apakah Anda yakin ingin mengajukan ulang surat permohonan PKL ini?",
+                        icon: "question",
+                        showCancelButton: true,
+                        buttonsStyling: false,
+                        confirmButtonText: "Ya, Ajukan Ulang!",
+                        cancelButtonText: "Batal",
+                        customClass: {
+                            confirmButton: "btn btn-primary",
+                            cancelButton: "btn btn-secondary text-black"
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Mohon tunggu...',
+                                text: 'Permintaan anda sedang diproses',
+                                icon: 'info',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            submitButton.disabled = true;
+                            submitButton.querySelector('.indicator-label').style.display = 'none';
+                            submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+                            isConfirmed = true;
+                            form.submit();
+                        }
+                    });
                 });
             });
         });

@@ -69,18 +69,18 @@
                                             <div class="row g-5">
                                                 <div class="col-md-4">
                                                     <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled />
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" name="akademik_id" class="form-control"
+                                                    <input type="text" name="akademik_id" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
                                                         disabled />
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="fw-semibold fs-6 mb-2">Semester</label>
-                                                    <input type="text" name="semester" class="form-control"
+                                                    <input type="text" name="semester" class="form-control form-control-sm"
                                                         value="{{ $surat->semester }}" disabled />
                                                 </div>
                                             </div>
@@ -92,7 +92,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">Tempat Observasi</label>
-                                                    <input type="text" name="mitra_id" class="form-control"
+                                                    <input type="text" name="mitra_id" class="form-control form-control-sm"
                                                         value="{{ $surat->mitra ? $surat->mitra->nama_mitra : '-' }}"
                                                         disabled />
                                                 </div>
@@ -103,7 +103,7 @@
                                                         <i
                                                             class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input type="text" name="tgl_observasi"
-                                                            class="form-control ps-12"
+                                                            class="form-control form-control-sm ps-12"
                                                             value="{{ $surat->tgl_observasi?->locale('id')->isoFormat('D MMMM YYYY') }}"
                                                             disabled />
                                                     </div>
@@ -111,7 +111,7 @@
 
                                                 <div class="col-md-12">
                                                     <label class="fw-semibold fs-6 mb-2">Keperluan Observasi</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
+                                                    <textarea name="keperluan" class="form-control form-control-sm" rows="3" disabled>{{ old('keperluan', $surat->keperluan) }}</textarea>
                                                 </div>
 
                                                 @if ($surat->catatan)

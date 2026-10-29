@@ -26,9 +26,29 @@ use App\Services\SuratObservasiGenerator;
 class MahasiswaSuratObservasiController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        return view('mahasiswa.surat_observasi.index');
+        $user = Auth::user();
+        $nim = $user->mahasiswa?->nim;
+
+        $suratObservasi = $nim
+            ? SuratObservasi::with(['akademik', 'mahasiswa', 'mahasiswa.prodi', 'mitra'])
+                ->where('nim', $nim)
+                ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak'])
+                ->orderBy('created_at', 'desc')
+                ->get()
+            : collect();
+
+        $stats = [
+            'total'     => $suratObservasi->count(),
+            'pengajuan' => $suratObservasi->where('status', 'pengajuan')->count(),
+            'proses'    => $suratObservasi->where('status', 'proses')->count(),
+            'diterima'  => $suratObservasi->whereIn('status', ['diterima', 'selesai'])->count(),
+            'selesai'   => $suratObservasi->whereIn('status', ['diterima', 'selesai'])->count(),
+            'ditolak'   => $suratObservasi->where('status', 'ditolak')->count(),
+        ];
+
+        return view('mahasiswa.surat_observasi.index', compact('suratObservasi', 'stats'));
     }
 
     public function getSuratObservasi()
@@ -41,7 +61,7 @@ class MahasiswaSuratObservasiController extends Controller
         }
 
         $query = SuratObservasi::with(['akademik', 'mahasiswa', 'mahasiswa.prodi', 'mitra'])->where('nim', $nim)
-            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -61,11 +81,11 @@ class MahasiswaSuratObservasiController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
-                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
-                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan'           => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'              => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima', 'selesai' => '<span class="badge text-white bg-success">Selesai</span>',
+                    'ditolak'             => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default               => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('action', function ($row) {

@@ -67,12 +67,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $latestAkademik?->tahun_akademik }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="{{ $latestAkademik?->id_akademik }}">
@@ -89,7 +89,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Tempat Penelitian</label>
-                                                    <select class="form-select w-100" data-control="select2"
+                                                    <select class="form-select form-select-sm w-100" data-control="select2"
                                                         data-placeholder="Pilih Tempat Penelitian" name="mitra_id" required>
                                                         <option value=""></option>
                                                         @foreach ($mitra as $m)
@@ -110,7 +110,7 @@
                                                         <i
                                                             class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_mulai" type="text" name="tgl_mulai"
-                                                            class="form-control ps-12" placeholder="Pilih tanggal mulai"
+                                                            class="form-control form-control-sm ps-12" placeholder="Pilih tanggal mulai"
                                                             autocomplete="off"
                                                             value="{{ old('tgl_mulai', $surat->tgl_mulai ? $surat->tgl_mulai->format('Y-m-d') : '') }}"
                                                             required />
@@ -126,7 +126,7 @@
                                                         <i
                                                             class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_selesai" type="text" name="tgl_selesai"
-                                                            class="form-control ps-12" placeholder="Pilih tanggal selesai"
+                                                            class="form-control form-control-sm ps-12" placeholder="Pilih tanggal selesai"
                                                             autocomplete="off"
                                                             value="{{ old('tgl_selesai', $surat->tgl_selesai ? $surat->tgl_selesai->format('Y-m-d') : '') }}"
                                                             required />
@@ -138,7 +138,7 @@
 
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Judul Penelitian</label>
-                                                    <textarea name="judul_penelitian" class="form-control" rows="3" placeholder="Masukkan judul penelitian..."
+                                                    <textarea name="judul_penelitian" class="form-control form-control-sm" rows="3" placeholder="Masukkan judul penelitian..."
                                                         required>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                                     @error('judul_penelitian')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -177,58 +177,105 @@
             const mulaiEl = document.getElementById('tgl_mulai');
             const selesaiEl = document.getElementById('tgl_selesai');
 
-            const mulaiVal = mulaiEl.value || null;
-            const selesaiVal = selesaiEl.value || null;
+            const mulaiVal = mulaiEl ? (mulaiEl.value || null) : null;
+            const selesaiVal = selesaiEl ? (selesaiEl.value || null) : null;
 
-            const fpMulai = flatpickr(mulaiEl, {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d/m/Y",
-                altInputClass: "form-control ps-12",
-                allowInput: true,
-                defaultDate: mulaiVal,
-                maxDate: selesaiVal,
-                disableMobile: "true",
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.altInput) {
-                        instance.altInput.required = true;
-                        instance.altInput.placeholder = mulaiEl.placeholder || '';
+            let fpMulai, fpSelesai;
+            if (mulaiEl && typeof flatpickr !== "undefined") {
+                fpMulai = flatpickr(mulaiEl, {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d/m/Y",
+                    altInputClass: "form-control form-control-sm ps-12",
+                    allowInput: true,
+                    defaultDate: mulaiVal,
+                    maxDate: selesaiVal,
+                    disableMobile: "true",
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.altInput) {
+                            instance.altInput.required = true;
+                            instance.altInput.placeholder = mulaiEl.placeholder || '';
+                        }
+                    },
+                    onChange: function(selectedDates, dateStr) {
+                        if (fpSelesai) fpSelesai.set("minDate", dateStr || null);
                     }
-                },
-                onChange: function(selectedDates, dateStr) {
-                    if (fpSelesai) fpSelesai.set("minDate", dateStr || null);
-                }
-            });
+                });
+            }
 
-            const fpSelesai = flatpickr(selesaiEl, {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d/m/Y",
-                altInputClass: "form-control ps-12",
-                allowInput: true,
-                defaultDate: selesaiVal,
-                minDate: mulaiVal || "today",
-                disableMobile: "true",
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.altInput) {
-                        instance.altInput.required = true;
-                        instance.altInput.placeholder = selesaiEl.placeholder || '';
+            if (selesaiEl && typeof flatpickr !== "undefined") {
+                fpSelesai = flatpickr(selesaiEl, {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d/m/Y",
+                    altInputClass: "form-control form-control-sm ps-12",
+                    allowInput: true,
+                    defaultDate: selesaiVal,
+                    minDate: mulaiVal || "today",
+                    disableMobile: "true",
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.altInput) {
+                            instance.altInput.required = true;
+                            instance.altInput.placeholder = selesaiEl.placeholder || '';
+                        }
+                    },
+                    onChange: function(selectedDates, dateStr) {
+                        if (fpMulai) fpMulai.set("maxDate", dateStr || null);
                     }
-                },
-                onChange: function(selectedDates, dateStr) {
-                    if (fpMulai) fpMulai.set("maxDate", dateStr || null);
-                }
-            });
+                });
+            }
 
+            let isConfirmed = false;
             form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
+                if (isConfirmed) {
                     return;
                 }
-                submitButton.disabled = true;
-                const label = submitButton.querySelector('.indicator-label');
-                const progress = submitButton.querySelector('.indicator-progress');
-                if (label) label.style.display = 'none';
-                if (progress) progress.style.display = 'inline-block';
+
+                event.preventDefault();
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Konfirmasi Pengajuan",
+                    text: "Apakah Anda yakin ingin mengajukan ulang surat izin penelitian ini?",
+                    icon: "question",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Ya, Ajukan Ulang!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-secondary text-black"
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Mohon tunggu...',
+                            text: 'Permintaan anda sedang diproses',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            const label = submitButton.querySelector('.indicator-label');
+                            const progress = submitButton.querySelector('.indicator-progress');
+                            if (label) label.style.display = 'none';
+                            if (progress) progress.style.display = 'inline-block';
+                        }
+
+                        isConfirmed = true;
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

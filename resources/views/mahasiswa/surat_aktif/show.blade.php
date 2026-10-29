@@ -115,12 +115,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="">
@@ -130,7 +130,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $surat->semester }}" disabled />
                                                     <input type="hidden" name="semester"
                                                         value="{{ $surat->semester }}">
@@ -140,7 +140,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Alamat Saat Ini</label>
-                                                    <textarea name="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap..."  disabled>{{ $surat->alamat }}</textarea>
+                                                    <textarea name="alamat" class="form-control form-control-sm" rows="3" placeholder="Masukkan alamat lengkap..."  disabled>{{ $surat->alamat }}</textarea>
                                                     @error('alamat')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
                                                     @enderror
@@ -155,7 +155,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Keperluan Surat</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Jelaskan keperluan pembuatan surat..."
+                                                    <textarea name="keperluan" class="form-control form-control-sm" rows="3" placeholder="Jelaskan keperluan pembuatan surat..."
                                                          disabled >{{ $surat->keperluan }}</textarea>
                                                     @error('keperluan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -194,12 +194,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="">
@@ -209,7 +209,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->semester ?? 'Tidak tersedia' }}"
                                                         disabled />
                                                     <input type="hidden" name="semester"
@@ -228,7 +228,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIP Sesuai SK</label>
-                                                    <input type="number" name="nip" class="form-control"
+                                                    <input type="number" name="nip" class="form-control form-control-sm"
                                                         placeholder="Contoh: 198010202005011003" value="{{ $surat->nip }}" disabled />
                                                     @error('nip')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -237,7 +237,7 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Nama Lengkap Sesuai
                                                         SK</label>
-                                                    <input type="text" name="nama_ortu" class="form-control"
+                                                    <input type="text" name="nama_ortu" class="form-control form-control-sm"
                                                         placeholder="Nama Lengkap Orang Tua" value="{{ $surat->nama_ortu }}" disabled />
                                                     @error('nama_ortu')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -246,7 +246,7 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Pendidikan
                                                         Terakhir</label>
-                                                    <select class="form-select" data-control="select2"
+                                                    <select class="form-select form-select-sm" data-control="select2"
                                                         data-placeholder="Pilih Pendidikan Terakhir"
                                                         name="pendidikan_terakhir" disabled>
                                                         <option value=""></option>
@@ -280,7 +280,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Pangkat</label>
-                                                    <input type="text" name="pangkat" class="form-control"
+                                                    <input type="text" name="pangkat" class="form-control form-control-sm"
                                                         placeholder="Contoh: Pembina Tk. I" value="{{ $surat->pangkat }}" disabled />
                                                     @error('pangkat')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -288,7 +288,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Golongan</label>
-                                                    <input type="text" name="golongan" class="form-control"
+                                                    <input type="text" name="golongan" class="form-control form-control-sm"
                                                         placeholder="Contoh: IV/b" value="{{ $surat->golongan }}" disabled />
                                                     @error('golongan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -300,7 +300,7 @@
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input type="text" name="tmt"
-                                                        class="form-control ps-12 kt_datepicker_tmt"
+                                                        class="form-control form-control-sm ps-12 kt_datepicker_tmt"
                                                         placeholder="Pilih tanggal mulai tugas"
                                                         value="{{ $surat->tmt ? date('Y-m-d', strtotime($surat->tmt)) : '' }}" disabled />
 </div>
@@ -310,7 +310,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                    <input type="text" name="unit_kerja" class="form-control"
+                                                    <input type="text" name="unit_kerja" class="form-control form-control-sm"
                                                         placeholder="Unit kerja orang tua" value="{{ $surat->unit_kerja }}" disabled />
                                                     @error('unit_kerja')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -319,7 +319,7 @@
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Alamat Orang Tua Sesuai
                                                         SK</label>
-                                                    <textarea name="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap orang tua..."
+                                                    <textarea name="alamat" class="form-control form-control-sm" rows="3" placeholder="Masukkan alamat lengkap orang tua..."
                                                          disabled>{{ $surat->alamat }}</textarea>
                                                     @error('alamat')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -335,7 +335,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Keperluan Surat</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Jelaskan keperluan pembuatan surat..."
+                                                    <textarea name="keperluan" class="form-control form-control-sm" rows="3" placeholder="Jelaskan keperluan pembuatan surat..."
                                                          disabled >{{ $surat->keperluan }}</textarea>
                                                     @error('keperluan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -374,12 +374,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="">
@@ -389,7 +389,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->semester ?? 'Tidak tersedia' }}"
                                                         disabled />
                                                     <input type="hidden" name="semester"
@@ -408,7 +408,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">NIP / NI PPPK</label>
-                                                    <input type="number" name="nip" class="form-control"
+                                                    <input type="number" name="nip" class="form-control form-control-sm"
                                                         placeholder="Contoh: 198010202005011003" value="{{ $surat->nip }}" disabled />
                                                     @error('nip')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -417,7 +417,7 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Nama Lengkap Sesuai
                                                         SK</label>
-                                                    <input type="text" name="nama_ortu" class="form-control"
+                                                    <input type="text" name="nama_ortu" class="form-control form-control-sm"
                                                         placeholder="Nama Lengkap Orang Tua" value="{{ $surat->nama_ortu }}" disabled />
                                                     @error('nama_ortu')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -426,7 +426,7 @@
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Pendidikan
                                                         Terakhir</label>
-                                                    <select class="form-select" data-control="select2"
+                                                    <select class="form-select form-select-sm" data-control="select2"
                                                         data-placeholder="Pilih Pendidikan Terakhir"
                                                         name="pendidikan_terakhir" disabled>
                                                         <option value=""></option>
@@ -460,7 +460,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Pangkat</label>
-                                                    <input type="text" name="pangkat" class="form-control"
+                                                    <input type="text" name="pangkat" class="form-control form-control-sm"
                                                         placeholder="Contoh: Ahli Muda" value="{{ $surat->pangkat }}" disabled />
                                                     @error('pangkat')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -468,7 +468,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Golongan</label>
-                                                    <input type="text" name="golongan" class="form-control"
+                                                    <input type="text" name="golongan" class="form-control form-control-sm"
                                                         placeholder="Contoh: IX" value="{{ $surat->golongan }}" disabled />
                                                     @error('golongan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -480,7 +480,7 @@
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input type="text" name="tmt"
-                                                        class="form-control ps-12 kt_datepicker_tmt"
+                                                        class="form-control form-control-sm ps-12 kt_datepicker_tmt"
                                                         placeholder="Pilih tanggal mulai tugas"
                                                         value="{{ $surat->tmt ? date('Y-m-d', strtotime($surat->tmt)) : '' }}" disabled />
 </div>
@@ -490,7 +490,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Unit Kerja</label>
-                                                    <input type="text" name="unit_kerja" class="form-control"
+                                                    <input type="text" name="unit_kerja" class="form-control form-control-sm"
                                                         placeholder="Unit kerja orang tua" value="{{ $surat->unit_kerja }}" disabled />
                                                     @error('unit_kerja')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -499,7 +499,7 @@
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Alamat Orang Tua Sesuai
                                                         SK</label>
-                                                    <textarea name="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap orang tua..."
+                                                    <textarea name="alamat" class="form-control form-control-sm" rows="3" placeholder="Masukkan alamat lengkap orang tua..."
                                                          disabled >{{ $surat->alamat }}</textarea>
                                                     @error('alamat')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -515,7 +515,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Keperluan Surat</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Jelaskan keperluan pembuatan surat..."
+                                                    <textarea name="keperluan" class="form-control form-control-sm" rows="3" placeholder="Jelaskan keperluan pembuatan surat..."
                                                          disabled >{{ $surat->keperluan }}</textarea>
                                                     @error('keperluan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>

@@ -22,13 +22,39 @@ use Throwable;
 class MahasiswaSuratLulusController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user();
-        $mahasiswa = $user->mahasiswa;
+        $user       = Auth::user();
+        $mahasiswa  = $user->mahasiswa;
+        $nim        = $mahasiswa?->nim;
         $isEligible = $mahasiswa ? $mahasiswa->isEligibleLulus() : false;
 
-        return view('mahasiswa.surat_lulus.index', compact('isEligible'));
+        $suratLulus = collect();
+        $stats = [
+            'total'     => 0,
+            'pengajuan' => 0,
+            'proses'    => 0,
+            'diterima'  => 0,
+            'selesai'   => 0,
+            'ditolak'   => 0,
+        ];
+
+        if ($nim) {
+            $suratLulus = SuratLulus::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])
+                ->where('nim', $nim)
+                ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $stats['total']     = $suratLulus->count();
+            $stats['pengajuan'] = $suratLulus->where('status', 'pengajuan')->count();
+            $stats['proses']    = $suratLulus->where('status', 'proses')->count();
+            $stats['diterima']  = $suratLulus->whereIn('status', ['diterima', 'selesai'])->count();
+            $stats['selesai']   = $suratLulus->whereIn('status', ['diterima', 'selesai'])->count();
+            $stats['ditolak']   = $suratLulus->where('status', 'ditolak')->count();
+        }
+
+        return view('mahasiswa.surat_lulus.index', compact('suratLulus', 'stats', 'isEligible'));
     }
 
     public function getSuratLulus()
@@ -41,7 +67,7 @@ class MahasiswaSuratLulusController extends Controller
         }
 
         $query = SuratLulus::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])->where('nim', $nim)
-            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -61,11 +87,11 @@ class MahasiswaSuratLulusController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
-                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
-                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan'           => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'              => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima', 'selesai' => '<span class="badge text-white bg-success">Selesai</span>',
+                    'ditolak'             => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default               => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('action', function ($row) {

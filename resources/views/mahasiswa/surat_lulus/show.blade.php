@@ -62,17 +62,17 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" name="akademik_id" class="form-control"
+                                                    <input type="text" name="akademik_id" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">IPK</label>
-                                                    <input type="text" name="ipk" class="form-control"
+                                                    <input type="text" name="ipk" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->ipk_ketuntasan ?? '-' }}" disabled />
                                                 </div>
                                             </div>
@@ -83,14 +83,14 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">Tempat Lahir</label>
-                                                    <input type="text" name="tempat_lahir" class="form-control"
+                                                    <input type="text" name="tempat_lahir" class="form-control form-control-sm"
                                                         value="{{ $surat->tempat_lahir }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">Tanggal Lahir</label>
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
-                                                        <input type="text" name="tgl_lahir" class="form-control ps-12"
+                                                        <input type="text" name="tgl_lahir" class="form-control form-control-sm ps-12"
                                                             value="{{ $surat->tgl_lahir?->locale('id')->isoFormat('D MMMM YYYY') }}"
                                                             disabled />
                                                     </div>
@@ -103,7 +103,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="fw-semibold fs-6 mb-2">Judul Penelitian/Tugas Akhir</label>
-                                                    <textarea name="judul_penelitian" class="form-control" rows="3" disabled>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
+                                                    <textarea name="judul_penelitian" class="form-control form-control-sm" rows="3" disabled>{{ old('judul_penelitian', $surat->judul_penelitian) }}</textarea>
                                                 </div>
 
                                                 @if ($surat->catatan)

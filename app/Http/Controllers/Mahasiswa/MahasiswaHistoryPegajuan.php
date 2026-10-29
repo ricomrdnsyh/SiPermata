@@ -23,7 +23,64 @@ class MahasiswaHistoryPegajuan extends Controller
 {
     public function index()
     {
-        return view('mahasiswa.history.index');
+        $user = Auth::user();
+        $nim  = $user->mahasiswa?->nim;
+
+        $historyPengajuan = collect();
+        $stats = [
+            'total'                  => 0,
+            'surat_aktif'            => 0,
+            'surat_izin_penelitian'  => 0,
+            'surat_observasi'        => 0,
+            'surat_rekomendasi'      => 0,
+            'surat_pkl'              => 0,
+            'surat_keterangan_lulus' => 0,
+        ];
+
+        if ($nim) {
+            $historyPengajuan = HistoryPengajuan::with(['mahasiswa', 'mahasiswa.prodi'])
+                ->where('nim', $nim)
+                ->whereIn('status', ['selesai'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $stats['total']                  = $historyPengajuan->count();
+            $stats['surat_aktif']            = $historyPengajuan->where('tabel', 'surat_aktif')->count();
+            $stats['surat_izin_penelitian']  = $historyPengajuan->where('tabel', 'surat_izin_penelitian')->count();
+            $stats['surat_observasi']        = $historyPengajuan->where('tabel', 'surat_observasi')->count();
+            $stats['surat_rekomendasi']      = $historyPengajuan->where('tabel', 'surat_rekomendasi')->count();
+            $stats['surat_pkl']              = $historyPengajuan->where('tabel', 'surat_pkl')->count();
+            $stats['surat_keterangan_lulus'] = $historyPengajuan->where('tabel', 'surat_keterangan_lulus')->count();
+
+            $aktifIds = $historyPengajuan->where('tabel', 'surat_aktif')->pluck('id_tabel_surat')->filter()->all();
+            $penelitianIds = $historyPengajuan->where('tabel', 'surat_izin_penelitian')->pluck('id_tabel_surat')->filter()->all();
+            $observasiIds = $historyPengajuan->where('tabel', 'surat_observasi')->pluck('id_tabel_surat')->filter()->all();
+            $rekomendasiIds = $historyPengajuan->where('tabel', 'surat_rekomendasi')->pluck('id_tabel_surat')->filter()->all();
+            $pklIds = $historyPengajuan->where('tabel', 'surat_pkl')->pluck('id_tabel_surat')->filter()->all();
+            $lulusIds = $historyPengajuan->where('tabel', 'surat_keterangan_lulus')->pluck('id_tabel_surat')->filter()->all();
+
+            $aktifs = !empty($aktifIds) ? SuratAktif::with('akademik')->whereIn('id_surat_aktif', $aktifIds)->get()->keyBy('id_surat_aktif') : collect();
+            $penelitians = !empty($penelitianIds) ? SuratPenelitian::with(['akademik', 'mitra'])->whereIn('id_surat_izin_penelitian', $penelitianIds)->get()->keyBy('id_surat_izin_penelitian') : collect();
+            $observasis = !empty($observasiIds) ? SuratObservasi::with(['akademik', 'mitra'])->whereIn('id_surat_observasi', $observasiIds)->get()->keyBy('id_surat_observasi') : collect();
+            $rekomendasis = !empty($rekomendasiIds) ? SuratRekomendasi::with('akademik')->whereIn('id_surat_rekomendasi', $rekomendasiIds)->get()->keyBy('id_surat_rekomendasi') : collect();
+            $pkls = !empty($pklIds) ? SuratPKL::with(['akademik', 'mitra'])->whereIn('id_surat_pkl', $pklIds)->get()->keyBy('id_surat_pkl') : collect();
+            $luluss = !empty($lulusIds) ? SuratLulus::with(['akademik', 'mahasiswa'])->whereIn('id_surat_lulus', $lulusIds)->get()->keyBy('id_surat_lulus') : collect();
+
+            foreach ($historyPengajuan as $history) {
+                $detail = match ($history->tabel) {
+                    'surat_aktif'            => $aktifs->get($history->id_tabel_surat),
+                    'surat_izin_penelitian'  => $penelitians->get($history->id_tabel_surat),
+                    'surat_observasi'        => $observasis->get($history->id_tabel_surat),
+                    'surat_rekomendasi'      => $rekomendasis->get($history->id_tabel_surat),
+                    'surat_pkl'              => $pkls->get($history->id_tabel_surat),
+                    'surat_keterangan_lulus' => $luluss->get($history->id_tabel_surat),
+                    default                  => null,
+                };
+                $history->setRelation('suratData', $detail);
+            }
+        }
+
+        return view('mahasiswa.history.index', compact('historyPengajuan', 'stats'));
     }
 
     public function getHistory()

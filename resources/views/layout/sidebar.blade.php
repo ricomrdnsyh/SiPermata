@@ -764,7 +764,7 @@
                         </div>
                         <div class="menu-item pt-5">
                             <div class="menu-content pb-2">
-                                <span class="menu-section text-muted text-uppercase fs-8 ls-1">Surat</span>
+                                <span class="menu-section text-muted text-uppercase fs-8 ls-1">Jenis Surat</span>
                             </div>
                         </div>
                         <div class="menu-item">

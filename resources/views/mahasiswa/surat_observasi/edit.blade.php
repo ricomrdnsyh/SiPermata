@@ -68,12 +68,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-4">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $latestAkademik?->tahun_akademik }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="{{ $latestAkademik?->id_akademik }}">
@@ -83,7 +83,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="required fw-semibold fs-6 mb-2">Semester</label>
-                                                    <input type="text" name="semester" class="form-control"
+                                                    <input type="text" name="semester" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->semester ?? ($surat->semester ?? 1) }}" disabled />
                                                 </div>
                                             </div>
@@ -95,7 +95,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tempat Observasi</label>
-                                                    <select class="form-select w-100" data-control="select2"
+                                                    <select class="form-select form-select-sm w-100" data-control="select2"
                                                         data-placeholder="Pilih Tempat Observasi" name="mitra_id" required>
                                                         <option value=""></option>
                                                         @foreach ($mitra as $m)
@@ -116,7 +116,7 @@
                                                         <i
                                                             class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
                                                         <input id="tgl_observasi" type="text" name="tgl_observasi"
-                                                            class="form-control ps-12" placeholder="Pilih tanggal observasi"
+                                                            class="form-control form-control-sm ps-12" placeholder="Pilih tanggal observasi"
                                                             autocomplete="off"
                                                             value="{{ old('tgl_observasi', $surat->tgl_observasi ? date('Y-m-d', strtotime($surat->tgl_observasi)) : '') }}"
                                                             required />
@@ -129,7 +129,7 @@
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Keperluan
                                                         Observasi</label>
-                                                    <textarea name="keperluan" class="form-control" rows="3" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll"
+                                                    <textarea name="keperluan" class="form-control form-control-sm" rows="3" placeholder="Tugas Mata Kuliah, Tugas Akhir, dll"
                                                         required>{{ old('keperluan', $surat->keperluan) }}</textarea>
                                                     @error('keperluan')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -190,7 +190,7 @@
                     dateFormat: "Y-m-d",
                     altInput: true,
                     altFormat: "d/m/Y",
-                    altInputClass: "form-control ps-12",
+                    altInputClass: "form-control form-control-sm ps-12",
                     allowInput: true,
                     disableMobile: "true",
                     defaultDate: tglObsVal,
@@ -425,7 +425,12 @@
                 });
             }
 
+            let isConfirmed = false;
             form.addEventListener('submit', function(event) {
+                if (isConfirmed) {
+                    return;
+                }
+
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -439,11 +444,39 @@
                         return;
                     }
 
-                    submitButton.disabled = true;
-                    submitButton.querySelector('.indicator-label').style.display = 'none';
-                    submitButton.querySelector('.indicator-progress').style.display =
-                        'inline-block';
-                    form.submit();
+                    Swal.fire({
+                        title: "Konfirmasi Pengajuan",
+                        text: "Apakah Anda yakin ingin mengajukan ulang surat permohonan observasi ini?",
+                        icon: "question",
+                        showCancelButton: true,
+                        buttonsStyling: false,
+                        confirmButtonText: "Ya, Ajukan Ulang!",
+                        cancelButtonText: "Batal",
+                        customClass: {
+                            confirmButton: "btn btn-primary",
+                            cancelButton: "btn btn-secondary text-black"
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Mohon tunggu...',
+                                text: 'Permintaan anda sedang diproses',
+                                icon: 'info',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            submitButton.disabled = true;
+                            submitButton.querySelector('.indicator-label').style.display = 'none';
+                            submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+                            isConfirmed = true;
+                            form.submit();
+                        }
+                    });
                 });
             });
         });

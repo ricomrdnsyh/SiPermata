@@ -64,12 +64,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled required />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ $akademikLulusan ? $akademikLulusan->tahun_akademik : $latestAkademik?->tahun_akademik }}" disabled />
                                                     <input type="hidden" name="akademik_id"
                                                         value="{{ $akademikLulusan ? $akademikLulusan->id_akademik : $latestAkademik?->id_akademik }}">
@@ -79,7 +79,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">IPK</label>
-                                                    <input type="text" name="ipk" class="form-control"
+                                                    <input type="text" name="ipk" class="form-control form-control-sm"
                                                         value="{{ $dataSimpt?->ipk_ketuntasan ?? '-' }}" disabled />
                                                 </div>
                                             </div>
@@ -90,7 +90,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="required fw-semibold fs-6 mb-2">Tempat Lahir</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->mahasiswa?->tempat_lahir ?? '-' }}" disabled />
                                                     <input type="hidden" name="tempat_lahir" value="{{ auth()->user()->mahasiswa?->tempat_lahir }}">
                                                     @error('tempat_lahir')
@@ -101,7 +101,7 @@
                                                     <label class="required fw-semibold fs-6 mb-2">Tanggal Lahir</label>
                                                     <div class="position-relative">
                                                         <i class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
-                                                        <input type="text" class="form-control ps-12"
+                                                        <input type="text" class="form-control form-control-sm ps-12"
                                                             value="{{ auth()->user()->mahasiswa?->tanggal_lahir ? \Carbon\Carbon::parse(auth()->user()->mahasiswa->tanggal_lahir)->format('d/m/Y') : '-' }}" disabled />
                                                         <input type="hidden" name="tgl_lahir" value="{{ auth()->user()->mahasiswa?->tanggal_lahir }}">
                                                     </div>
@@ -117,7 +117,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="required fw-semibold fs-6 mb-2">Judul Penelitian/Tugas Akhir</label>
-                                                    <textarea class="form-control" rows="3" disabled>{{ $judulPenelitian ?? '' }}</textarea>
+                                                    <textarea class="form-control form-control-sm" rows="3" disabled>{{ $judulPenelitian ?? '' }}</textarea>
                                                     <input type="hidden" name="judul_penelitian" value="{{ $judulPenelitian ?? '' }}">
                                                     @error('judul_penelitian')
                                                         <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -152,14 +152,58 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('kt_ecommerce_settings_general_form');
             const submitButton = form.querySelector('[data-kt-contacts-type="submit"]');
+            let isConfirmed = false;
 
             form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
+                if (isConfirmed) {
                     return;
                 }
-                submitButton.disabled = true;
-                submitButton.querySelector('.indicator-label').style.display = 'none';
-                submitButton.querySelector('.indicator-progress').style.display = 'inline-block';
+
+                event.preventDefault();
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Konfirmasi Pengajuan",
+                    text: "Apakah Anda yakin ingin membuat pengajuan surat keterangan lulus ini?",
+                    icon: "question",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Ya, Buat Pengajuan!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-secondary text-black"
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Mohon tunggu...',
+                            text: 'Permintaan anda sedang diproses',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            const label = submitButton.querySelector('.indicator-label');
+                            const progress = submitButton.querySelector('.indicator-progress');
+                            if (label) label.style.display = 'none';
+                            if (progress) progress.style.display = 'inline-block';
+                        }
+
+                        isConfirmed = true;
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

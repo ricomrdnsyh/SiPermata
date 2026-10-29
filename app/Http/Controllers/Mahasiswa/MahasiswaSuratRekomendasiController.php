@@ -21,9 +21,37 @@ use Yajra\DataTables\Facades\DataTables;
 class MahasiswaSuratRekomendasiController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        return view('mahasiswa.surat_rekomendasi.index');
+        $user = Auth::user();
+        $nim  = $user->mahasiswa?->nim;
+
+        $suratRekomendasi = collect();
+        $stats = [
+            'total'     => 0,
+            'pengajuan' => 0,
+            'proses'    => 0,
+            'diterima'  => 0,
+            'selesai'   => 0,
+            'ditolak'   => 0,
+        ];
+
+        if ($nim) {
+            $suratRekomendasi = SuratRekomendasi::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])
+                ->where('nim', $nim)
+                ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $stats['total']     = $suratRekomendasi->count();
+            $stats['pengajuan'] = $suratRekomendasi->where('status', 'pengajuan')->count();
+            $stats['proses']    = $suratRekomendasi->where('status', 'proses')->count();
+            $stats['diterima']  = $suratRekomendasi->whereIn('status', ['diterima', 'selesai'])->count();
+            $stats['selesai']   = $suratRekomendasi->whereIn('status', ['diterima', 'selesai'])->count();
+            $stats['ditolak']   = $suratRekomendasi->where('status', 'ditolak')->count();
+        }
+
+        return view('mahasiswa.surat_rekomendasi.index', compact('suratRekomendasi', 'stats'));
     }
 
     public function getSuratRekomendasi()
@@ -36,7 +64,7 @@ class MahasiswaSuratRekomendasiController extends Controller
         }
 
         $query = SuratRekomendasi::with(['akademik', 'mahasiswa', 'mahasiswa.prodi'])->where('nim', $nim)
-            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'ditolak']);
+            ->whereIn('status', ['pengajuan', 'proses', 'diterima', 'selesai', 'ditolak']);
 
         return DataTables::of($query)
             ->order(function ($query) {
@@ -56,11 +84,11 @@ class MahasiswaSuratRekomendasiController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return match ($row->status) {
-                    'pengajuan' => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
-                    'proses'    => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
-                    'diterima'  => '<span class="badge text-white bg-success">Disetujui</span>',
-                    'ditolak'   => '<span class="badge text-white bg-danger">Ditolak</span>',
-                    default     => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
+                    'pengajuan'           => '<span class="badge text-white bg-warning">Menunggu BAK</span>',
+                    'proses'              => '<span class="badge text-white bg-info">Menunggu Dekan</span>',
+                    'diterima', 'selesai' => '<span class="badge text-white bg-success">Selesai</span>',
+                    'ditolak'             => '<span class="badge text-white bg-danger">Ditolak</span>',
+                    default               => '<span class="badge text-white bg-secondary">Tidak Diketahui</span>'
                 };
             })
             ->addColumn('action', function ($row) {

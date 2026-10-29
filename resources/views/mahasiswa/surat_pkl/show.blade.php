@@ -69,12 +69,12 @@
                                             <div class="row g-5">
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">NIM</label>
-                                                    <input type="text" name="nim" class="form-control"
+                                                    <input type="text" name="nim" class="form-control form-control-sm"
                                                         value="{{ auth()->user()->reference_id }}" disabled />
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold fs-6 mb-2">Tahun Akademik</label>
-                                                    <input type="text" name="akademik_id" class="form-control"
+                                                    <input type="text" name="akademik_id" class="form-control form-control-sm"
                                                         value="{{ $surat->akademik ? $surat->akademik->tahun_akademik : '-' }}"
                                                         disabled />
                                                 </div>
@@ -87,7 +87,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-12">
                                                     <label class="fw-semibold fs-6 mb-2">Tempat PKL</label>
-                                                    <input type="text" name="mitra_id" class="form-control"
+                                                    <input type="text" name="mitra_id" class="form-control form-control-sm"
                                                         value="{{ $surat->mitra ? $surat->mitra->nama_mitra : '-' }}"
                                                         disabled />
                                                 </div>
@@ -97,7 +97,7 @@
                                                     <div class="position-relative">
                                                         <i
                                                             class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
-                                                        <input type="text" name="tgl_mulai" class="form-control ps-12"
+                                                        <input type="text" name="tgl_mulai" class="form-control form-control-sm ps-12"
                                                             value="{{ $surat->tgl_mulai?->locale('id')->isoFormat('D MMMM YYYY') }}"
                                                             disabled />
                                                     </div>
@@ -108,7 +108,7 @@
                                                     <div class="position-relative">
                                                         <i
                                                             class="fas fa-calendar-alt position-absolute top-50 translate-middle-y ms-4 text-gray-500"></i>
-                                                        <input type="text" name="tgl_selesai" class="form-control ps-12"
+                                                        <input type="text" name="tgl_selesai" class="form-control form-control-sm ps-12"
                                                             value="{{ $surat->tgl_selesai?->locale('id')->isoFormat('D MMMM YYYY') }}"
                                                             disabled />
                                                     </div>
