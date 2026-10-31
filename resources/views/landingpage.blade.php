@@ -12,7 +12,7 @@
     <title>SiPermata | Universitas Nurul Jadid</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -24,16 +24,23 @@
                     },
                     colors: {
                         primary: {
-                            DEFAULT: '#1e40af',
-                            dark: '#1e3a5f',
-                            soft: '#eff6ff'
+                            DEFAULT: '#0056b3',
+                            dark: '#0e345c',
+                            light: '#0284c7',
+                            soft: '#f0f7ff'
                         },
-                        accent: '#0f2744',
+                        accent: '#0e345c',
                         muted: '#64748b',
+                        unuja: {
+                            blue: '#0056b3',
+                            navy: '#0e345c',
+                            sky: '#0284c7',
+                            soft: '#f0f7ff'
+                        }
                     },
                     boxShadow: {
-                        soft: '0 14px 40px rgba(15,39,68,0.08)',
-                        lift: '0 20px 60px rgba(15,39,68,0.12)',
+                        soft: '0 14px 40px rgba(14,52,92,0.08)',
+                        lift: '0 20px 60px rgba(14,52,92,0.14)',
                     }
                 }
             }
@@ -140,6 +147,92 @@
             opacity: 0;
         }
 
+        @keyframes hero-character-float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-14px) rotate(0.8deg);
+            }
+        }
+
+        @keyframes float-badge-1 {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(-1deg);
+            }
+        }
+
+        @keyframes float-badge-2 {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-8px) rotate(1deg);
+            }
+        }
+
+        @keyframes float-badge-3 {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px);
+            }
+            50% {
+                transform: translateY(-6px) translateX(3px);
+            }
+        }
+
+        @keyframes glow-breathe {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.85;
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-hero-character {
+            animation: hero-character-float 5.5s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .animate-float-badge-1 {
+            animation: float-badge-1 4.5s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .animate-float-badge-2 {
+            animation: float-badge-2 5s ease-in-out 0.8s infinite;
+            will-change: transform;
+        }
+
+        .animate-float-badge-3 {
+            animation: float-badge-3 4s ease-in-out 1.5s infinite;
+            will-change: transform;
+        }
+
+        .animate-glow-breathe {
+            animation: glow-breathe 6s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 40s linear infinite;
+            will-change: transform;
+        }
+
         @keyframes float-up {
             0% {
                 opacity: 0;
@@ -209,9 +302,12 @@
 
                 <div class="flex items-center gap-2">
                     <a href="https://sso.unuja.ac.id"
-                        class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-sm text-white
-                        bg-primary hover:bg-primary-dark shadow-soft hover:shadow-lift transition">
-                        Login Mahasiswa
+                        class="hidden sm:inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white
+                        bg-primary hover:bg-primary-dark shadow-soft hover:shadow-lift transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                        </svg>
+                        <span>Login</span>
                     </a>
                     <button id="btnMobileMenu"
                         class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl
@@ -238,9 +334,12 @@
                     <a href="#alur" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">Alur</a>
                     <a href="#faq" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">FAQ</a>
                     <a href="https://sso.unuja.ac.id"
-                        class="mt-2 inline-flex items-center justify-center px-4 py-3 rounded-xl font-semibold text-white
-                        bg-primary shadow-soft hover:shadow-lift transition">
-                        Login Mahasiswa
+                        class="mt-2 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white
+                        bg-primary shadow-soft hover:shadow-lift transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                        </svg>
+                        <span>Login</span>
                     </a>
                 </div>
             </div>
@@ -249,242 +348,99 @@
 
     <main>
 
-        <section id="beranda" class="relative overflow-hidden bg-slate-50">
-            <div class="absolute inset-0 z-0">
-                <div
-                    class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100/60 via-indigo-50/40 to-white opacity-80">
+                <section id="beranda" class="relative overflow-hidden bg-gradient-to-b from-blue-50/60 via-slate-50/40 to-slate-50">
+            <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <div class="relative mx-auto max-w-7xl h-full pointer-events-none">
+                    <div class="absolute -top-24 -right-12 w-[520px] lg:w-[620px] h-[520px] lg:h-[620px] bg-gradient-to-br from-[#0056b3]/20 via-[#0284c7]/15 to-transparent rounded-full filter blur-[100px] animate-[pulse_8s_ease-in-out_infinite]"></div>
+                    <div class="absolute top-[20%] -left-20 w-[420px] lg:w-[520px] h-[420px] lg:h-[520px] bg-gradient-to-tr from-[#0e345c]/15 via-[#0056b3]/15 to-transparent rounded-full filter blur-[110px] animate-[pulse_10s_ease-in-out_infinite]"></div>
+                    <div class="absolute bottom-16 right-1/4 w-[360px] lg:w-[460px] h-[360px] lg:h-[460px] bg-cyan-400/10 rounded-full filter blur-[100px]"></div>
                 </div>
-                <div
-                    class="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-[pulse_8s_ease-in-out_infinite]">
-                </div>
-                <div
-                    class="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyan-300/20 rounded-full mix-blend-multiply filter blur-[100px] animate-[pulse_10s_ease-in-out_infinite]">
-                </div>
-                <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-300/10 rounded-full mix-blend-multiply filter blur-[120px] animate-[pulse_12s_ease-in-out_infinite]">
-                </div>
-                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-60"
-                    style="-webkit-mask-image:linear-gradient(to bottom,transparent,black,transparent);mask-image:linear-gradient(to bottom,transparent,black,transparent);">
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgwLCA4NiwgMTc5LCAwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-70"
+                    style="-webkit-mask-image:linear-gradient(to bottom,transparent,black 15%,black 75%,transparent);mask-image:linear-gradient(to bottom,transparent,black 15%,black 75%,transparent);">
                 </div>
             </div>
-            <div
-                class="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent z-0 pointer-events-none">
-            </div>
 
-            <div class="relative mx-auto max-w-7xl px-6 md:px-14 lg:px-20 pt-16 md:pt-24 pb-12 md:pb-32 z-10">
-                <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div class="relative mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-6 pb-14 sm:pt-8 sm:pb-16 lg:pt-10 lg:pb-20 xl:pt-12 xl:pb-24 z-20">
+                <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-center w-full">
 
-                    <div class="lg:col-span-7 space-y-8">
-                        <div
-                            class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/60 backdrop-blur-md border border-white/80 shadow-sm animate-slide-up hover:shadow-md hover:bg-white/80 transition-all cursor-default">
-                            <span class="relative flex h-2.5 w-2.5">
-                                <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
+                    <div class="order-2 lg:order-1 lg:col-span-7 xl:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left flex flex-col justify-center items-center lg:items-start">
+                        <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-blue-200/70 shadow-sm shadow-blue-900/5 animate-slide-up">
+                            <img src="{{ asset('assets/media/logos/unuja.png') }}" class="w-5 h-5 object-contain" alt="UNUJA">
+                            <span class="h-3 w-px bg-slate-200"></span>
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0056b3] opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#0056b3]"></span>
                             </span>
-                            <span class="text-xs font-bold text-blue-700 uppercase tracking-widest">Sistem Permohonan
-                                Surat Mahasiswa Terpadu</span>
+                            <span class="text-xs font-semibold text-[#0056b3] tracking-wide">Portal Resmi Surat Mahasiswa UNUJA</span>
                         </div>
 
-                        <div class="space-y-5">
-                            <h1
-                                class="text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold leading-[1.15] tracking-tight animate-slide-up-delay-1 text-slate-900">
-                                Ajukan Surat Resmi
-                                <br class="hidden lg:block">
-                                <span class="relative inline-block mt-2">
-                                    <span
-                                        class="absolute inset-0 bg-blue-200/40 transform -skew-x-12 -rotate-2 rounded-lg"></span>
-                                    <span
-                                        class="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Lebih
-                                        Cepat &amp; Mudah</span>
-                                </span>
+                        <div class="space-y-3 sm:space-y-3.5 max-w-xl lg:max-w-none">
+                            <h1 class="text-[1.8rem] sm:text-3xl md:text-4xl lg:text-[2.65rem] xl:text-[2.85rem] 2xl:text-[3.15rem] font-extrabold leading-[1.22] tracking-tight text-[#0e345c] animate-slide-up-delay-1">
+                                <span class="block py-0.5">Layanan Surat Kampus</span>
+                                <span class="inline-block mt-0.5 pt-0.5 pb-2 pr-2 bg-gradient-to-r from-[#0056b3] via-[#0170c0] to-[#0284c7] bg-clip-text text-transparent">Cepat, Sah &amp; Praktis</span>
                             </h1>
-                            <p
-                                class="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed animate-slide-up-delay-2">
-                                Platform digital terintegrasi untuk pengajuan surat akademik. Bebas antre, lacak status
-                                secara real-time, dan unduh surat resmi ber-QR code di mana saja.
+                            <p class="text-sm sm:text-base lg:text-lg text-slate-600 max-w-xl xl:max-w-2xl leading-relaxed animate-slide-up-delay-2 font-normal mx-auto lg:mx-0">
+                                Ajukan surat akademik secara online kapan saja tanpa antre. Terhubung dengan SSO UNUJA, ber-QR Code resmi, dan diproses langsung oleh fakultas.
                             </p>
                         </div>
 
-                        <div
-                            class="flex flex-col sm:flex-row items-center sm:items-start gap-4 animate-slide-up-delay-3 pt-2">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-3.5 pt-1 w-full sm:w-auto animate-slide-up-delay-3">
                             <a href="https://sso.unuja.ac.id"
-                                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-white text-sm
-                                bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-[0_10px_20px_-10px_rgba(37,99,235,0.5)] hover:shadow-[0_15px_25px_-10px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 transition-all duration-300">
-                                Mulai Ajukan Surat
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-white text-sm bg-gradient-to-r from-[#0056b3] to-[#0e345c] hover:from-[#00479e] hover:to-[#09233f] shadow-[0_12px_24px_-8px_rgba(0,86,179,0.5)] hover:shadow-[0_16px_30px_-8px_rgba(0,86,179,0.65)] hover:-translate-y-0.5 transition-all duration-300">
+                                <span>Mulai Ajukan Surat</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                 </svg>
                             </a>
                             <a href="{{ asset('panduan.pdf') }}" target="_blank" rel="noopener noreferrer"
-                                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-sm text-slate-700
-                                    bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 hover:text-blue-600 hover:-translate-y-0.5 transition-all duration-300 group">
-                                <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors"
-                                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm text-[#0e345c] bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 hover:bg-blue-50/50 hover:-translate-y-0.5 transition-all duration-300">
+                                <svg class="w-4 h-4 text-[#0056b3]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                 </svg>
-                                Lihat Panduan
+                                <span>Lihat Panduan</span>
                             </a>
-                        </div>
-
-                        <div class="grid sm:grid-cols-3 gap-4 pt-4 animate-slide-up-delay-3">
-                            <div
-                                class="group rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 p-4 shadow-sm hover:shadow-md hover:-translate-y-1 hover:bg-white transition-all duration-300 cursor-default">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-300">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                        stroke-width="2.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                </div>
-                                <h3 class="font-bold text-slate-800 text-sm mb-1">Cepat &amp; Instan</h3>
-                                <p class="text-[11px] font-medium text-slate-500 leading-relaxed">Proses digital tanpa
-                                    perlu datang ke kampus.</p>
-                            </div>
-                            <div
-                                class="group rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 p-4 shadow-sm hover:shadow-md hover:-translate-y-1 hover:bg-white transition-all duration-300 cursor-default">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
-                                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor"
-                                        stroke-width="2.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                    </svg>
-                                </div>
-                                <h3 class="font-bold text-slate-800 text-sm mb-1">Resmi ber-QR</h3>
-                                <p class="text-[11px] font-medium text-slate-500 leading-relaxed">Dilengkapi TTE dan
-                                    QRCode verifikasi sah.</p>
-                            </div>
-                            <div
-                                class="group rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 p-4 shadow-sm hover:shadow-md hover:-translate-y-1 hover:bg-white transition-all duration-300 cursor-default">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-cyan-100 transition-all duration-300">
-                                    <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor"
-                                        stroke-width="2.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <h3 class="font-bold text-slate-800 text-sm mb-1">Real-time</h3>
-                                <p class="text-[11px] font-medium text-slate-500 leading-relaxed">Pantau status
-                                    pengajuan langsung di dasbor.</p>
-                            </div>
                         </div>
                     </div>
 
-                    <div class="lg:col-span-5 hidden lg:block animate-slide-up relative z-20">
-                        <div
-                            class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse">
-                        </div>
-                        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-[pulse_4s_ease-in-out_infinite]"
-                            style="animation-delay: 1s;"></div>
+                    <div class="order-1 lg:order-2 lg:col-span-5 xl:col-span-5 animate-slide-up relative z-20 flex items-center justify-center w-full py-2 sm:py-4 lg:py-0">
+                        <div class="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[380px] lg:max-w-[460px] xl:max-w-[500px] flex items-center justify-center">
+                            <div class="absolute w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] lg:w-[440px] lg:h-[440px] rounded-full bg-gradient-to-tr from-[#0056b3]/25 via-[#0284c7]/20 to-indigo-100/40 blur-2xl sm:blur-3xl pointer-events-none animate-glow-breathe"></div>
+                            <div class="absolute w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] lg:w-[400px] lg:h-[400px] rounded-full border border-blue-200/60 -rotate-6 pointer-events-none"></div>
+                            <div class="absolute w-[245px] h-[245px] sm:w-[310px] sm:h-[310px] lg:w-[430px] lg:h-[430px] rounded-full border border-dashed border-blue-300/40 pointer-events-none animate-spin-slow"></div>
 
-                        <div
-                            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] border border-white p-7 shadow-[0_20px_60px_-15px_rgba(30,64,175,0.15)] transition-all duration-500 hover:shadow-[0_30px_70px_-15px_rgba(30,64,175,0.2)] hover:-translate-y-2 group/card">
-                            <div class="flex items-center justify-between mb-8 border-b border-slate-100 pb-5">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-inner">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-extrabold text-slate-800 text-base tracking-tight">SiPermata</p>
-                                        <p class="text-xs font-medium text-slate-500">Pengajuan Surat
-                                            Mahasiswa Terpadu
-                                        </p>
-                                    </div>
+                            <div class="absolute top-1 sm:top-2 -left-1 sm:-left-3 lg:-left-6 bg-white/95 backdrop-blur-md border border-blue-100/90 rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2.5 shadow-[0_12px_30px_-5px_rgba(0,86,179,0.2)] flex items-center gap-2 sm:gap-3 animate-float-badge-1 z-30 transition-transform duration-300 hover:scale-105 cursor-default">
+                                <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-[#0056b3] to-[#0e345c] text-white flex items-center justify-center shadow-sm shrink-0">
+                                    <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-3 mb-6">
-                                <div
-                                    class="rounded-xl bg-slate-50/80 border border-slate-100 p-3 text-center transition-colors group-hover/card:bg-blue-50/50">
-                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Surat
-                                    </p>
-                                    <p class="text-xl font-black text-slate-800">6</p>
-                                </div>
-                                <div
-                                    class="rounded-xl bg-slate-50/80 border border-slate-100 p-3 text-center transition-colors group-hover/card:bg-indigo-50/50">
-                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                        Proses</p>
-                                    <p class="text-xl font-black text-slate-800">1-2<span
-                                            class="text-sm font-bold text-slate-400">hr</span></p>
-                                </div>
-                                <div
-                                    class="rounded-xl bg-slate-50/80 border border-slate-100 p-3 text-center transition-colors group-hover/card:bg-cyan-50/50">
-                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                        Status</p>
-                                    <p class="text-xl font-black text-slate-800">100%</p>
-                                </div>
-                            </div>
-                            <div class="space-y-3 mb-6">
-                                <div
-                                    class="animate-float delay-1 flex items-center gap-4 rounded-xl bg-white border border-slate-100 p-3 shadow-sm hover:border-blue-200 hover:shadow-md transition-all cursor-default">
-                                    <div
-                                        class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                            stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-slate-800">Autentikasi SSO</p>
-                                        <p class="text-[11px] font-medium text-slate-500">Otomatis sinkron NIM &amp;
-                                            Prodi</p>
-                                    </div>
-                                    <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor"
-                                            stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <div
-                                    class="animate-float delay-2 flex items-center gap-4 rounded-xl bg-white border border-slate-100 p-3 shadow-sm hover:border-indigo-200 hover:shadow-md transition-all cursor-default">
-                                    <div
-                                        class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
-                                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor"
-                                            stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-slate-800">Tanda Tangan Elektronik</p>
-                                        <p class="text-[11px] font-medium text-slate-500">Disertai QRCode verifikasi
-                                        </p>
-                                    </div>
-                                    <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor"
-                                            stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </div>
+                                <div class="text-left">
+                                    <p class="text-[11px] sm:text-xs font-bold text-[#0e345c] leading-tight">TTE Sah &amp; Ber-QR</p>
+                                    <p class="text-[9px] sm:text-[10px] text-slate-500 font-medium">Verifikasi Resmi Dekan</p>
                                 </div>
                             </div>
 
-                            <div
-                                class="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50 p-4 flex items-center justify-between gap-3 shadow-inner">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <p class="text-xs font-bold text-slate-700">Surat Resmi Tersedia 24/7</p>
+                            <div class="absolute bottom-1 sm:bottom-2 -right-1 sm:-right-3 lg:-right-6 bg-white/95 backdrop-blur-md border border-blue-100/90 rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2.5 shadow-[0_12px_30px_-5px_rgba(0,86,179,0.2)] flex items-center gap-2.5 sm:gap-3 animate-float-badge-2 z-30 transition-transform duration-300 hover:scale-105 cursor-default">
+                                <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-sm shrink-0">
+                                    <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
                                 </div>
+                                <div class="text-left">
+                                    <p class="text-[11px] sm:text-xs font-bold text-[#0e345c] leading-tight">Unduh Dokumen PDF</p>
+                                    <p class="text-[9px] sm:text-[10px] text-slate-500 font-medium">Akses Online 24/7</p>
+                                </div>
+                            </div>
+
+                            <div class="absolute bottom-16 sm:bottom-20 -left-2 sm:-left-4 lg:-left-6 bg-white/95 backdrop-blur-md border border-blue-100 rounded-full px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-md flex items-center gap-1.5 sm:gap-2 animate-float-badge-3 z-30 transition-transform duration-300 hover:scale-105 cursor-default">
+                                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-[10px] sm:text-[11px] font-bold text-[#0e345c]">SSO UNUJA Aktif</span>
+                            </div>
+
+                            <div class="relative z-10 w-full animate-hero-character transition-transform duration-500 hover:scale-[1.03]">
+                                <img src="{{ asset('assets/media/illustrations/student-hero.png') }}"
+                                    alt="Ilustrasi Mahasiswa UNUJA"
+                                    class="w-full h-auto drop-shadow-[0_30px_45px_rgba(0,86,179,0.28)] object-contain select-none">
                             </div>
                         </div>
                     </div>
@@ -493,12 +449,13 @@
             </div>
         </section>
 
-        <section id="layanan" class="py-12 md:py-20 bg-slate-50 relative overflow-hidden">
+        <section id="layanan" class="py-14 md:py-24 bg-gradient-to-b from-slate-50 via-slate-50/80 to-slate-50 relative overflow-hidden">
             <div
-                class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMDQpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-60 z-0">
+                class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMDQpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50 z-0"
+                style="-webkit-mask-image:linear-gradient(to bottom,transparent,black 20%,black 85%,transparent);mask-image:linear-gradient(to bottom,transparent,black 20%,black 85%,transparent);">
             </div>
 
-            <div class="relative mx-auto max-w-7xl px-6 lg:px-8 z-10">
+            <div class="relative mx-auto max-w-7xl px-6 md:px-14 lg:px-20 z-10">
 
                 <div class="text-center max-w-2xl mx-auto mb-14">
                     <h3
