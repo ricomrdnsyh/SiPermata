@@ -736,7 +736,11 @@ class HistoryPengajuanController extends Controller
 
     public function getProdiByFakultas($fakultas_id)
     {
-        $prodi = Prodi::where('fakultas_id', $fakultas_id)->get(['id_prodi', 'nama_prodi']);
+        if ($fakultas_id === 'all') {
+            $prodi = Prodi::orderBy('nama_prodi')->get(['id_prodi', 'nama_prodi']);
+        } else {
+            $prodi = Prodi::where('fakultas_id', $fakultas_id)->orderBy('nama_prodi')->get(['id_prodi', 'nama_prodi']);
+        }
         return response()->json($prodi);
     }
 }

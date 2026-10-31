@@ -283,10 +283,10 @@
     </style>
 </head>
 
-<body class="text-accent font-sans">
+<body class="text-accent font-sans bg-slate-50">
 
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-100 shadow-sm">
-        <div class="mx-auto max-w-7xl px-6 md:px-14 lg:px-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
             <div class="flex items-center justify-between py-3.5">
                 <a href="#beranda" class="flex items-center gap-3">
                     <img src="{{ asset('assets/media/logos/sipermata-dark.png') }}" class="h-9 md:h-10"
@@ -295,6 +295,7 @@
 
                 <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-accent">
                     <a href="#beranda" class="hover:text-primary transition">Beranda</a>
+                    <a href="#statistik" class="hover:text-primary transition">Statistik</a>
                     <a href="#layanan" class="hover:text-primary transition">Layanan</a>
                     <a href="#alur" class="hover:text-primary transition">Alur</a>
                     <a href="#faq" class="hover:text-primary transition">FAQ</a>
@@ -330,6 +331,7 @@
             <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100 pb-4">
                 <div class="pt-3 flex flex-col gap-1 text-sm font-semibold">
                     <a href="#beranda" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">Beranda</a>
+                    <a href="#statistik" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">Statistik</a>
                     <a href="#layanan" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">Layanan</a>
                     <a href="#alur" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">Alur</a>
                     <a href="#faq" class="py-2.5 px-3 rounded-xl hover:bg-slate-50 transition">FAQ</a>
@@ -346,7 +348,7 @@
         </div>
     </header>
 
-    <main>
+    <main class="bg-slate-50">
 
                 <section id="beranda" class="relative overflow-hidden bg-gradient-to-b from-blue-50/60 via-slate-50/40 to-slate-50">
             <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -360,7 +362,7 @@
                 </div>
             </div>
 
-            <div class="relative mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-6 pb-14 sm:pt-8 sm:pb-16 lg:pt-10 lg:pb-20 xl:pt-12 xl:pb-24 z-20">
+            <div class="relative mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-6 pb-20 sm:pt-8 sm:pb-24 lg:pt-10 lg:pb-32 xl:pt-12 xl:pb-36 z-20">
                 <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-center w-full">
 
                     <div class="order-2 lg:order-1 lg:col-span-7 xl:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left flex flex-col justify-center items-center lg:items-start">
@@ -420,7 +422,7 @@
                                 </div>
                             </div>
 
-                            <div class="absolute bottom-1 sm:bottom-2 -right-1 sm:-right-3 lg:-right-6 bg-white/95 backdrop-blur-md border border-blue-100/90 rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2.5 shadow-[0_12px_30px_-5px_rgba(0,86,179,0.2)] flex items-center gap-2.5 sm:gap-3 animate-float-badge-2 z-30 transition-transform duration-300 hover:scale-105 cursor-default">
+                            <div class="absolute bottom-3 sm:bottom-4 lg:bottom-5 -right-1 sm:-right-3 lg:-right-6 bg-white/95 backdrop-blur-md border border-blue-100/90 rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2.5 shadow-[0_12px_30px_-5px_rgba(0,86,179,0.2)] flex items-center gap-2.5 sm:gap-3 animate-float-badge-2 z-30 transition-transform duration-300 hover:scale-105 cursor-default">
                                 <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-sm shrink-0">
                                     <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -449,13 +451,171 @@
             </div>
         </section>
 
-        <section id="layanan" class="py-14 md:py-24 bg-gradient-to-b from-slate-50 via-slate-50/80 to-slate-50 relative overflow-hidden">
+        <section id="statistik" class="relative z-30 -mt-8 sm:-mt-10 lg:-mt-12 xl:-mt-14 pb-10 sm:pb-14">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div class="relative rounded-3xl p-6 sm:p-7 lg:p-8 border border-blue-400/20 shadow-[0_25px_60px_-15px_rgba(14,52,92,0.4)] overflow-hidden"
+                    style="background: linear-gradient(135deg, #0e345c 0%, #0056b3 100%);">
+
+                    <div class="absolute -top-24 -right-24 w-80 h-80 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-300/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-white/15">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-semibold uppercase tracking-wider mb-2.5 border border-white/20">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                                </span>
+                                <span>Statistik Pengajuan Surat</span>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                                Akumulasi Pengajuan Surat Mahasiswa
+                            </h2>
+                            <p class="text-sm text-blue-100/90 mt-1 max-w-2xl font-normal leading-relaxed">
+                                Rekapitulasi permohonan surat akademik yang diajukan oleh mahasiswa Universitas Nurul Jadid secara transparan dan terintegrasi.
+                            </p>
+                        </div>
+                        <div class="shrink-0 flex items-center gap-2 text-xs font-semibold text-white bg-white/15 px-3.5 py-2 rounded-xl border border-white/20 self-start md:self-auto shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Terhubung Database Sistem</span>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-8">
+                        
+                        <div class="relative rounded-2xl bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 border border-slate-100 group">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#0056b3]">Total Pengajuan</span>
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#0056b3] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-[#0e345c] flex items-baseline gap-1.5">
+                                    <span class="counter-number" data-target="{{ $totalPengajuan ?? 0 }}">{{ number_format($totalPengajuan ?? 0) }}</span>
+                                    <span class="text-base font-semibold text-[#0056b3]">Surat</span>
+                                </div>
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed">
+                                    Total seluruh surat dari 6 layanan yang diajukan
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="relative rounded-2xl bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 border border-slate-100 group">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Selesai / Terbit</span>
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-[#0e345c] flex items-baseline gap-1.5">
+                                    <span class="counter-number" data-target="{{ $totalSelesai ?? 0 }}">{{ number_format($totalSelesai ?? 0) }}</span>
+                                    <span class="text-base font-semibold text-slate-400">Surat</span>
+                                </div>
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed">
+                                    Surat telah disetujui &amp; ber-QR Code TTE sah
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="relative rounded-2xl bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 border border-slate-100 group">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Dalam Proses</span>
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-[#0e345c] flex items-baseline gap-1.5">
+                                    <span class="counter-number" data-target="{{ $totalProses ?? 0 }}">{{ number_format($totalProses ?? 0) }}</span>
+                                    <span class="text-base font-semibold text-slate-400">Surat</span>
+                                </div>
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed">
+                                    Tahap verifikasi oleh BAK &amp; Dekan Fakultas
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="relative rounded-2xl bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 border border-slate-100 group">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Cakupan Layanan</span>
+                                <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-[#0e345c] flex items-baseline gap-1.5">
+                                    <span>{{ $totalFakultas ?? 5 }}</span>
+                                    <span class="text-base font-semibold text-slate-400">Fakultas</span>
+                                </div>
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed">
+                                    Melayani {{ $totalProdi ?? 27 }} Prodi &amp; {{ number_format($totalMahasiswa ?? 0) }} Mahasiswa
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="relative z-10 pt-5 border-t border-white/15">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                            <span class="text-xs font-bold text-blue-100 uppercase tracking-wider flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                </svg>
+                                Rincian Pengajuan Berdasarkan Jenis Layanan:
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
+                            @php
+                                $letterIcons = [
+                                    'Surat Aktif' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+                                    'Izin Penelitian' => 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z',
+                                    'Observasi' => 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
+                                    'Permohonan PKL' => 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+                                    'Rekomendasi' => 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
+                                    'Keterangan Lulus' => 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z',
+                                ];
+                            @endphp
+                            @if(isset($suratBreakdown) && is_array($suratBreakdown))
+                                @foreach ($suratBreakdown as $item)
+                                    <div class="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 transition-colors">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <div class="w-6 h-6 rounded-lg bg-white/20 text-white flex items-center justify-center shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $letterIcons[$item['label']] ?? 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' }}" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-xs font-semibold text-white truncate" title="{{ $item['label'] }}">{{ $item['label'] }}</span>
+                                        </div>
+                                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-white text-[#0056b3] shadow-xs shrink-0">
+                                            {{ $item['count'] }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="layanan" class="pt-6 sm:pt-8 pb-14 md:pb-24 bg-slate-50 relative overflow-hidden">
             <div
                 class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMDQpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50 z-0"
                 style="-webkit-mask-image:linear-gradient(to bottom,transparent,black 20%,black 85%,transparent);mask-image:linear-gradient(to bottom,transparent,black 20%,black 85%,transparent);">
             </div>
 
-            <div class="relative mx-auto max-w-7xl px-6 md:px-14 lg:px-20 z-10">
+            <div class="relative mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 z-10">
 
                 <div class="text-center max-w-2xl mx-auto mb-14">
                     <h3
@@ -657,7 +817,7 @@
                 class="absolute w-[500px] h-[500px] -bottom-40 -right-20 bg-cyan-400/20 rounded-full blur-[100px] opacity-30 pointer-events-none">
             </div>
 
-            <div class="max-w-7xl mx-auto px-6 md:px-14 lg:px-20 relative z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
                 <div class="text-center mb-16 relative">
                     <h2 class="font-black text-white text-2xl lg:text-3xl">Alur Pengajuan Surat</h2>
                 </div>
@@ -761,7 +921,7 @@
                 </div>
             </div>
 
-            <div class="mx-auto max-w-7xl px-6 md:px-14 lg:px-20 relative z-10">
+            <div class="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 relative z-10">
                 <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
                     <div class="lg:col-span-4 lg:sticky lg:top-28 text-center lg:text-left">
                         <p
@@ -1235,6 +1395,47 @@
                 if (!isOpen) item.classList.add('open');
             });
         });
+
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target') || '0', 10);
+                if (isNaN(target) || target === 0) return;
+                
+                const duration = 1200;
+                const start = 0;
+                const startTime = performance.now();
+
+                function updateCount(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const ease = 1 - Math.pow(1 - progress, 4);
+                    const currentVal = Math.floor(start + (target - start) * ease);
+                    counter.innerText = currentVal.toLocaleString('id-ID');
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        counter.innerText = target.toLocaleString('id-ID');
+                    }
+                }
+                requestAnimationFrame(updateCount);
+            });
+        }
+
+        const statSection = document.getElementById('statistik');
+        if (statSection) {
+            let animated = false;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animated) {
+                        animated = true;
+                        animateCounters();
+                    }
+                });
+            }, { threshold: 0.15 });
+            observer.observe(statSection);
+        }
     </script>
 </body>
 

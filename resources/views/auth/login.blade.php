@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
-    <base href="../../../">
-    <title>Login SiPermata</title>
-    <meta name="description"
-        content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 94,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue &amp; Laravel versions. Grab your copy now and get life-time updates for free." />
-    <meta name="keywords"
-        content="Metronic, bootstrap, bootstrap 5, Angular, VueJs, React, Laravel, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="utf-8" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title"
-        content="Metronic - Bootstrap 5 HTML, VueJS, React, Angular &amp; Laravel Admin Dashboard Theme" />
-    <meta property="og:url" content="https://keenthemes.com/metronic" />
-    <meta property="og:site_name" content="Keenthemes | Metronic" />
-    <link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SiPermata UNUJA</title>
+    <meta name="description" content="SiPermata - Sistem Informasi Pengajuan Surat Mahasiswa Terpadu Universitas Nurul Jadid" />
     <link rel="shortcut icon" href="{{ asset('assets/media/logos/unuja.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --dark-color: #1f2937;
+            --border-color: #94a3b8;
+        }
+
         body.bg-grid {
             background-color: #f1f4f8;
             background-image:
@@ -28,10 +30,13 @@
                 linear-gradient(to bottom, rgba(206, 206, 206, 0.31) 1px, transparent 1px);
             background-size: 25px 25px;
             position: relative;
+            font-family: 'Poppins', sans-serif;
         }
+
         .auth-wrapper {
             min-height: 100vh;
         }
+
         .auth-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
@@ -43,6 +48,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .auth-card::before {
             content: "";
             position: absolute;
@@ -52,74 +58,188 @@
             opacity: 0.9;
             pointer-events: none;
         }
+
         .auth-card-inner {
             position: relative;
             z-index: 1;
         }
+
         .auth-title {
             font-weight: 600;
             letter-spacing: 0.02em;
+            color: var(--dark-color);
         }
+
         .auth-subtitle {
             font-size: 0.95rem;
+            color: #6b7280;
         }
-        .auth-card .form-control form-control-sm.form-control form-control-sm-lg {
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
             border-radius: 0.75rem;
+            border: 1.5px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
-        .auth-card .input-group .form-control form-control-sm.form-control form-control-sm-lg {
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-group .form-control {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
-        .auth-card .input-group-text {
+
+        .input-group-text {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
+            border: 1.5px solid #e5e7eb;
+            background-color: #f9fafb;
+            cursor: pointer;
+            color: #6b7280;
+            transition: all 0.3s ease;
         }
+
+        .input-group-text:hover {
+            color: var(--primary-color);
+            background-color: #f3f4f6;
+        }
+
+        .btn-login {
+            background: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 0.75rem;
+            color: white;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
         .auth-footer-text {
             font-size: 0.8rem;
+            color: #9ca3af;
         }
+
+        .btn-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 0.45rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.06);
+            transform: translateX(-2px);
+        }
+
+        .btn-back-link i {
+            font-size: 0.78rem;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-back-link:hover i {
+            transform: translateX(-3px);
+        }
+
+        .fv-row {
+            margin-bottom: 1.25rem;
+        }
+
         @media (max-width: 576px) {
             .auth-card {
                 padding: 2rem 1.5rem;
             }
+
+            .auth-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        .swal2-popup {
+            font-family: 'Poppins', sans-serif;
         }
     </style>
 </head>
+
 <body id="kt_body" class="bg-body bg-grid">
     <div class="d-flex flex-column flex-root auth-wrapper">
-        <div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
-            <a href="{{ route('login') }}" class="mb-8">
-                <img alt="Logo" src="assets/media/logos/sipermata-dark.png" class="h-60px" />
-            </a>
+        <div class="d-flex flex-center flex-column flex-column-fluid px-4 py-5 pb-lg-20">
             <div class="w-lg-500px mx-auto auth-card">
                 <div class="auth-card-inner">
+                    <div class="text-center mb-7">
+                        <a href="{{ url('/') }}" class="d-inline-block mb-4"
+                            title="Kembali ke Beranda SiPermata">
+                            <img alt="Logo SiPermata" src="{{ asset('assets/media/logos/sipermata-dark.png') }}"
+                                class="h-50px" style="max-height: 50px; width: auto;" />
+                        </a>
+                        <h1 class="text-dark mb-2 auth-title fs-2">Selamat Datang</h1>
+                        <p class="text-muted auth-subtitle">Silakan masuk untuk mengakses SiPermata UNUJA</p>
+                    </div>
+
                     <form id="login_form" class="form w-100" action="{{ route('login-proses') }}" method="POST">
                         @csrf
-                        <div class="text-center mb-8">
-                            <h1 class="text-dark mb-2 auth-title">Selamat Datang Kembali</h1>
-                            <p class="text-muted auth-subtitle">Silakan masuk untuk mengakses dashboard Anda.</p>
-                        </div>
                         <div class="fv-row mb-3">
-                            <label class="form-label fs-6 fw-bolder text-dark">Username</label>
-                            <input class="form-control form-control-sm form-control form-control-sm-lg" type="text" name="identifier"
-                                value="{{ old('identifier') }}" required autofocus />
+                            <label class="form-label">Username / NIM</label>
+                            <input class="form-control" type="text" name="identifier" value="{{ old('identifier') }}"
+                                placeholder="Masukkan Username atau NIM Anda" required autofocus />
                         </div>
+
                         <div class="fv-row mb-5">
                             <div class="d-flex flex-stack mb-2">
-                                <label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
+                                <label class="form-label mb-0">Password</label>
                             </div>
                             <div class="input-group">
-                                <input class="form-control form-control-sm form-control form-control-sm-lg" type="password" id="password"
-                                    name="password" autocomplete="off" required />
+                                <input class="form-control" type="password" id="password" name="password"
+                                    placeholder="Masukkan password Anda" autocomplete="off" required />
                                 <span class="input-group-text bg-transparent" id="togglePassword"
                                     style="cursor: pointer;">
                                     <i class="fas fa-eye"></i>
                                 </span>
                             </div>
                         </div>
+
                         <div class="text-center mt-5">
-                            <button type="submit" class="btn btn-sm btn-lg btn-primary w-100 mb-3">
+                            <button type="submit" class="btn btn-sm btn-lg btn-login w-100 mb-4">
                                 Login
                             </button>
+
+                            <div class="d-flex align-items-center justify-content-center mb-4">
+                                <a href="{{ url('/') }}" class="btn-back-link">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Kembali ke Beranda</span>
+                                </a>
+                            </div>
+
                             <div class="text-muted auth-footer-text">
                                 SiPermata Universitas Nurul Jadid
                             </div>
@@ -129,12 +249,11 @@
             </div>
         </div>
     </div>
-    <script>
-        var hostUrl = "assets/";
-    </script>
+
     <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
-    <script src="{{ asset('assets/js/custom/authentication/sign-in/general.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         const form = document.getElementById('login_form');
         form.addEventListener('submit', function(event) {
@@ -149,6 +268,7 @@
             });
         });
     </script>
+
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({
@@ -175,16 +295,19 @@
             });
         </script>
     @endif
+
     <script>
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#password');
+
         togglePassword.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            this.innerHTML = type === 'password'
-                ? '<i class="fas fa-eye"></i>'
-                : '<i class="fas fa-eye-slash"></i>';
+            this.innerHTML = type === 'password' ?
+                '<i class="fas fa-eye"></i>' :
+                '<i class="fas fa-eye-slash"></i>';
         });
     </script>
 </body>
+
 </html>

@@ -53,7 +53,45 @@ Route::get('/sso', [SsoController::class, 'sso']);
 Route::get('/sso/logout/{sessionId}', [SsoController::class, 'logout']);
 
 Route::get('/', function () {
-    return view('landingpage');
+    $suratModels = [
+        'Surat Aktif'       => \App\Models\SuratAktif::class,
+        'Izin Penelitian'   => \App\Models\SuratPenelitian::class,
+        'Observasi'         => \App\Models\SuratObservasi::class,
+        'Permohonan PKL'    => \App\Models\SuratPKL::class,
+        'Rekomendasi'       => \App\Models\SuratRekomendasi::class,
+        'Keterangan Lulus'  => \App\Models\SuratLulus::class,
+    ];
+
+    $totalPengajuan = 0;
+    $totalSelesai   = 0;
+    $totalProses    = 0;
+    $suratBreakdown = [];
+
+    foreach ($suratModels as $label => $model) {
+        $count = $model::count();
+        $totalPengajuan += $count;
+        $totalSelesai   += $model::whereIn('status', ['selesai', 'diterima'])->count();
+        $totalProses    += $model::whereIn('status', ['pengajuan', 'proses'])->count();
+
+        $suratBreakdown[] = [
+            'label' => $label,
+            'count' => $count,
+        ];
+    }
+
+    $totalFakultas  = \App\Models\Fakultas::count();
+    $totalProdi     = \App\Models\Prodi::count();
+    $totalMahasiswa = \App\Models\Mahasiswa::count();
+
+    return view('landingpage', compact(
+        'totalPengajuan',
+        'totalSelesai',
+        'totalProses',
+        'totalFakultas',
+        'totalProdi',
+        'totalMahasiswa',
+        'suratBreakdown'
+    ));
 });
 
 Route::middleware('guest')->group(function () {
@@ -102,6 +140,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/statistik', [DashboardController::class, 'statistik'])->name('statistik');
+        Route::get('/statistik/data', [DashboardController::class, 'getStatistikData'])->name('statistik.data');
 
         Route::get('/sso-sinkronisasi', [SSOSinkronisasiController::class, 'index'])->name('sso.sinkronisasi');
         Route::post('/sso/refresh-token', [SSOSinkronisasiController::class, 'refresh'])->name('sso.refresh-token');
@@ -231,6 +271,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:DEKAN'])->prefix('dekan')->name('dekan.')->group(function () {
 
         Route::get('/dashboard', [DekanDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/statistik', [DekanDashboardController::class, 'statistik'])->name('statistik');
+        Route::get('/statistik/data', [DekanDashboardController::class, 'getStatistikData'])->name('statistik.data');
 
         Route::get('/history-pengajuan', [DekanHistoryPengajuanController::class, 'index'])->name('history.index');
         Route::get('/history/data', [DekanHistoryPengajuanController::class, 'historyData'])->name('history.data');
@@ -249,6 +291,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:BAK'])->prefix('bak')->name('bak.')->group(function () {
 
         Route::get('/dashboard', [BAKDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/statistik', [BAKDashboardController::class, 'statistik'])->name('statistik');
+        Route::get('/statistik/data', [BAKDashboardController::class, 'getStatistikData'])->name('statistik.data');
 
         Route::get('/mitra/data', [BAKMitraController::class, 'getMitra'])->name('mitra.data');
         Route::resource('mitra', BAKMitraController::class)->except(['destroy']);

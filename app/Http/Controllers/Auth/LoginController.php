@@ -15,13 +15,16 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        $identifier = $request->input('identifier', $request->input('username'));
+        $request->merge(['identifier' => $identifier]);
+
         $request->validate([
             'identifier' => 'required',
             'password' => 'required'
         ]);
 
         if (Auth::attempt([
-            'identifier' => $request->identifier,
+            'identifier' => $identifier,
             'password'   => $request->password
         ])) {
             $request->session()->regenerate();
