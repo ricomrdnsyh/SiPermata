@@ -3,10 +3,13 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && tailwindcss -i resources/css/landingpage.css -o public/assets/css/landingpage.css --minify",
+        "build:landing": "tailwindcss -i resources/css/landingpage.css -o public/assets/css/landingpage.css --minify",
+        "watch:landing": "tailwindcss -i resources/css/landingpage.css -o public/assets/css/landingpage.css --watch",
         "dev": "vite"
     },
     "devDependencies": {
+        "@tailwindcss/cli": "^4.3.3",
         "@tailwindcss/vite": "^4.0.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
